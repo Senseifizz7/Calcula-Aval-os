@@ -958,6 +958,68 @@
       <h1><i class="fas fa-home"></i> Sistema de Avalúos</h1>
     </header>
 
+    <!-- === AUTH GATE (mostrar si NO hay sesión) === -->
+    <div class="card" id="auth-gate" style="display:none; margin-top: -16px;">
+      <h2><i class="fas fa-user-lock"></i> Acceso requerido</h2>
+      <p style="margin-bottom:12px;color:var(--text-light)">
+        Inicia sesión para usar el Sistema de Avalúos.
+      </p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+        <!-- Email + Password -->
+        <div style="border:1px solid var(--border);border-radius:var(--radius);padding:12px;">
+          <div style="font-weight:600;margin-bottom:8px">Con correo</div>
+          <input id="auth-email" type="email" placeholder="tu@correo.com" style="width:100%;margin-bottom:8px;padding:10px;border:1px solid var(--border);border-radius:8px;">
+          <input id="auth-pass" type="password" placeholder="Contraseña" style="width:100%;margin-bottom:8px;padding:10px;border:1px solid var(--border);border-radius:8px;">
+          <input id="auth-username" type="text" placeholder="Username (nuevo)" style="width:100%;margin-bottom:8px;padding:10px;border:1px solid var(--border);border-radius:8px;">
+          <button class="btn-primary" type="button" onclick="__signInWithEmail(
+            document.getElementById('auth-email').value,
+            document.getElementById('auth-pass').value
+          )">
+            <i class="fas fa-right-to-bracket"></i> Iniciar sesión
+          </button>
+          <button class="btn-secondary" type="button" style="margin-top:8px" onclick="__signUpWithEmail(
+            document.getElementById('auth-email').value,
+            document.getElementById('auth-pass').value,
+            document.getElementById('auth-username').value,
+            undefined
+          )">
+            <i class="fas fa-user-plus"></i> Crear cuenta
+          </button>
+        </div>
+
+        <!-- Google -->
+        <div style="border:1px solid var(--border);border-radius:var(--radius);padding:12px;">
+          <div style="font-weight:600;margin-bottom:8px">Con Google</div>
+          <button class="btn-primary" type="button" onclick="__signInWithGoogle()">
+            <i class="fab fa-google"></i> Continuar con Google
+          </button>
+        </div>
+
+        <!-- Teléfono (OTP) -->
+        <div style="border:1px solid var(--border);border-radius:var(--radius);padding:12px;">
+          <div style="font-weight:600;margin-bottom:8px">Con teléfono (OTP)</div>
+          <input id="auth-phone" type="tel" placeholder="+502xxxxxxxx" style="width:100%;margin-bottom:8px;padding:10px;border:1px solid var(--border);border-radius:8px;">
+          <button class="btn-primary" type="button" onclick="__signInWithPhone(
+            document.getElementById('auth-phone').value
+          )">
+            <i class="fas fa-sms"></i> Enviar código
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- === BARRA DE USUARIO (mostrar si SÍ hay sesión) === -->
+    <div id="user-box" style="display:none;align-items:center;gap:12px;justify-content:space-between;margin-top:-16px;">
+      <div style="color:var(--text-light)">
+        <i class="fas fa-circle-user"></i>
+        <span data-user-name></span> · <span data-user-email></span>
+      </div>
+      <button class="btn-secondary" type="button" onclick="__signOut()">
+        <i class="fas fa-arrow-right-from-bracket"></i> Cerrar sesión
+      </button>
+    </div>
+
     <!-- Sistema de Pasos -->
     <div class="form-steps">
       <div class="step active" data-step="1">
@@ -2319,295 +2381,117 @@
     });
   </script>
 
-  <!-- >>> AUTH (AGREGADO) >>> -->
-  <style>
-    /* ====== Auth UI (namespaced) ====== */
-    .auth-fab {
-      position: fixed; left: 24px; bottom: 240px; z-index: 1100;
-      background: var(--primary); color: #fff; border: 0; border-radius: 999px;
-      padding: 12px 16px; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-md);
-      display: inline-flex; gap: 8px; align-items: center;
-    }
-    .auth-fab:hover { filter: brightness(0.95); transform: translateY(-1px); }
-
-    .auth-modal {
-      position: fixed; inset: 0; display: none; place-items: center; z-index: 1500;
-      background: rgba(0,0,0,.45); padding: 20px;
-    }
-    .auth-modal.active { display: grid; }
-    .auth-card {
-      width: 100%; max-width: 720px; background: #fff; border-radius: 16px; box-shadow: var(--shadow-lg);
-      overflow: hidden; border: 1px solid var(--border);
-    }
-    .auth-head { padding: 18px 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
-    .auth-title { font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-    .auth-close { background: transparent; border: 0; font-size: 20px; cursor: pointer; color: var(--text-light); }
-
-    .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 16px 16px 0 16px; }
-    .auth-tabs button { padding: 10px; border: 1px solid var(--border); border-radius: 10px; background: #fff; cursor: pointer; }
-    .auth-tabs button.active { background: #f4f4f5; font-weight: 600; }
-
-    .auth-body { padding: 16px; }
-    .auth-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .auth-field { display: flex; flex-direction: column; gap: 6px; }
-    .auth-label { font-size: 14px; color: var(--text-light); }
-    .auth-input { padding: 12px; border: 1px solid var(--border); border-radius: 10px; font-size: 16px; }
-    .auth-actions { margin-top: 12px; display: grid; gap: 10px; }
-    .auth-btn { padding: 12px; border-radius: 10px; border: 0; cursor: pointer; font-weight: 600; }
-    .auth-btn.primary { background: #111827; color: #fff; }
-    .auth-btn.outline { background: #fff; border: 1px solid var(--border); }
-    .auth-hr { height: 1px; background: var(--border-light); margin: 12px 0; }
-    .auth-muted { color: var(--text-light); font-size: 14px; }
-    .auth-error { color: var(--error); font-size: 14px; margin-top: 6px; min-height: 18px; }
-
-    /* Panel pequeño cuando hay sesión */
-    .auth-session {
-      position: fixed; left: 24px; bottom: 170px; z-index: 1100;
-      background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px;
-      display: none; box-shadow: var(--shadow-md); min-width: 220px;
-    }
-    .auth-session .u { font-weight: 600; color: var(--primary); }
-    .auth-session .x { margin-top: 8px; }
-    .auth-session .x button { width: 100%; }
-    @media (max-width: 768px) {
-      .auth-grid { grid-template-columns: 1fr; }
-      .auth-fab { bottom: 200px; }
-      .auth-session { bottom: 130px; }
-    }
-  </style>
-
-  <!-- Botón para abrir modal de auth -->
-  <button id="auth-open" class="auth-fab"><i class="fa-solid fa-user-lock"></i> Acceder</button>
-
-  <!-- Panel de sesión activa -->
-  <div id="auth-session" class="auth-session">
-    <div>Sesión: <span class="u" id="auth-user-email">—</span></div>
-    <div class="auth-muted" id="auth-username-line" style="display:none;">Usuario: <span id="auth-username-text"></span></div>
-    <div class="x"><button id="auth-logout" class="auth-btn outline">Cerrar sesión</button></div>
-  </div>
-
-  <!-- Modal de autenticación -->
-  <div id="auth-modal" class="auth-modal" aria-hidden="true">
-    <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-title">
-      <div class="auth-head">
-        <div class="auth-title" id="auth-title"><i class="fa-solid fa-right-to-bracket"></i> Acceso</div>
-        <button class="auth-close" id="auth-close" aria-label="Cerrar">&times;</button>
-      </div>
-
-      <div class="auth-tabs">
-        <button id="tab-signup" class="active" type="button">Crear cuenta</button>
-        <button id="tab-login" type="button">Ya tengo cuenta</button>
-      </div>
-
-      <div class="auth-body">
-        <!-- Registro -->
-        <form id="form-signup">
-          <div class="auth-grid">
-            <div class="auth-field">
-              <label class="auth-label" for="su-username">Usuario (username)</label>
-              <input class="auth-input" id="su-username" type="text" placeholder="p.ej. luis_amezquita" required />
-            </div>
-            <div class="auth-field">
-              <label class="auth-label" for="su-phone">Teléfono (opcional)</label>
-              <input class="auth-input" id="su-phone" type="tel" placeholder="+502 5555-5555" />
-            </div>
-          </div>
-
-          <div class="auth-grid">
-            <div class="auth-field">
-              <label class="auth-label" for="su-email">Correo</label>
-              <input class="auth-input" id="su-email" type="email" placeholder="tucorreo@dominio.com" required />
-            </div>
-            <div class="auth-field">
-              <label class="auth-label" for="su-password">Contraseña</label>
-              <input class="auth-input" id="su-password" type="password" placeholder="••••••••" required />
-            </div>
-            <div class="auth-field">
-              <label class="auth-label" for="su-password2">Confirmar contraseña</label>
-              <input class="auth-input" id="su-password2" type="password" placeholder="••••••••" required />
-            </div>
-          </div>
-
-          <div class="auth-actions">
-            <button class="auth-btn primary" type="submit">Crear cuenta</button>
-            <div class="auth-hr"></div>
-            <button type="button" id="btn-google-signup" class="auth-btn outline"><i class="fa-brands fa-google"></i> Continuar con Google</button>
-            <div id="auth-msg-signup" class="auth-error"></div>
-            <div class="auth-muted">Al crear su cuenta acepta nuestros términos y políticas.</div>
-          </div>
-        </form>
-
-        <!-- Login -->
-        <form id="form-login" hidden>
-          <div class="auth-field">
-            <label class="auth-label" for="li-email">Correo</label>
-            <input class="auth-input" id="li-email" type="email" placeholder="tucorreo@dominio.com" required />
-          </div>
-          <div class="auth-field">
-            <label class="auth-label" for="li-password">Contraseña</label>
-            <input class="auth-input" id="li-password" type="password" placeholder="••••••••" required />
-          </div>
-
-          <div class="auth-actions">
-            <button class="auth-btn primary" type="submit">Iniciar sesión</button>
-            <div class="auth-hr"></div>
-            <button type="button" id="btn-google-login" class="auth-btn outline"><i class="fa-brands fa-google"></i> Entrar con Google</button>
-            <div class="auth-muted">¿Olvidó su contraseña? <a href="#" id="auth-forgot">Recuperar</a></div>
-            <div id="auth-msg-login" class="auth-error"></div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <!-- SDK de Supabase y lógica -->
-  <script src="https://esm.sh/@supabase/supabase-js@2"></script>
+  <!-- === SUPABASE AUTH (cargar cliente y proteger cálculo) === -->
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    // TODO: Reemplazar por sus valores reales
-    const SUPABASE_URL = "https://SU-PROJECT.supabase.co";
-    const SUPABASE_ANON_KEY = "SU-ANON-KEY";
+    // 🔧 Rellena con tus valores reales de Supabase:
+    const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Cliente global
+    window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // UI refs
-    const modal     = document.getElementById('auth-modal');
-    const openBtn   = document.getElementById('auth-open');
-    const closeBtn  = document.getElementById('auth-close');
-    const tabSignup = document.getElementById('tab-signup');
-    const tabLogin  = document.getElementById('tab-login');
-    const formSignup= document.getElementById('form-signup');
-    const formLogin = document.getElementById('form-login');
-    const msgSignup = document.getElementById('auth-msg-signup');
-    const msgLogin  = document.getElementById('auth-msg-login');
+    // Estado inicial de sesión
+    (async () => {
+      const { data: { session } } = await window.supabase.auth.getSession();
+      window.__session = session || null;
+      __updateAuthUI(!!session);
+    })();
 
-    const btnGoogleSignup = document.getElementById('btn-google-signup');
-    const btnGoogleLogin  = document.getElementById('btn-google-login');
-    const forgotLink      = document.getElementById('auth-forgot');
-
-    const sessionPanel    = document.getElementById('auth-session');
-    const userEmailSpan   = document.getElementById('auth-user-email');
-    const usernameLine    = document.getElementById('auth-username-line');
-    const usernameText    = document.getElementById('auth-username-text');
-    const logoutBtn       = document.getElementById('auth-logout');
-
-    // Helpers
-    const openModal  = () => { modal.classList.add('active'); modal.setAttribute('aria-hidden','false'); };
-    const closeModal = () => { modal.classList.remove('active'); modal.setAttribute('aria-hidden','true'); clearMsgs(); };
-    const clearMsgs  = () => { msgSignup.textContent = ""; msgLogin.textContent = ""; };
-
-    // Tabs
-    tabSignup.addEventListener('click', () => {
-      tabSignup.classList.add('active'); tabLogin.classList.remove('active');
-      formSignup.hidden = false; formLogin.hidden = true; clearMsgs();
-    });
-    tabLogin.addEventListener('click', () => {
-      tabLogin.classList.add('active'); tabSignup.classList.remove('active');
-      formLogin.hidden = false; formSignup.hidden = true; clearMsgs();
+    // Eventos de sesión (login/logout)
+    window.supabase.auth.onAuthStateChange((_event, session) => {
+      window.__session = session || null;
+      __updateAuthUI(!!session);
     });
 
-    // Open/close
-    openBtn.addEventListener('click', () => openModal());
-    closeBtn.addEventListener('click', () => closeModal());
-    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    // Helpers ===
+    window.__signUpWithEmail = async (email, password, username, phone) => {
+      const { error } = await window.supabase.auth.signUp({
+        email, password, phone,
+        options: { data: { username } }
+      });
+      if (error) return alert("Error al crear cuenta: " + error.message);
+      alert("Revisa tu correo/SMS para confirmar tu cuenta.");
+    };
 
-    // Signup
-    formSignup.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      clearMsgs();
+    window.__signInWithEmail = async (email, password) => {
+      const { error } = await window.supabase.auth.signInWithPassword({ email, password });
+      if (error) return alert("Error al iniciar sesión: " + error.message);
+    };
 
-      const username = (document.getElementById('su-username').value || "").trim();
-      const phone    = (document.getElementById('su-phone').value || "").trim();
-      const email    = (document.getElementById('su-email').value || "").trim();
-      const pass1    = document.getElementById('su-password').value;
-      const pass2    = document.getElementById('su-password2').value;
+    window.__signInWithGoogle = async () => {
+      const { error } = await window.supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: "https://sensefizz7.github.io/Aval-os/" }
+      });
+      if (error) alert("Google login error: " + error.message);
+    };
 
-      if (pass1 !== pass2) { msgSignup.textContent = "Las contraseñas no coinciden."; return; }
+    window.__signInWithPhone = async (phone) => {
+      const { error: sendErr } = await window.supabase.auth.signInWithOtp({ phone });
+      if (sendErr) return alert("Error enviando OTP: " + sendErr.message);
+      const token = prompt("Ingresa el código recibido por SMS:");
+      if (!token) return;
+      const { error: verifyErr } = await window.supabase.auth.verifyOtp({ phone, token, type: 'sms' });
+      if (verifyErr) return alert("Código inválido: " + verifyErr.message);
+    };
 
-      const { data, error } = await supabase.auth.signUp({
-        email, password: pass1,
-        options: {
-          data: { username, phone },
-          emailRedirectTo: window.location.origin + window.location.pathname
+    window.__signOut = async () => {
+      await window.supabase.auth.signOut();
+    };
+
+    window.__canUseApp = () => !!window.__session;
+
+    window.__updateAuthUI = (isLogged) => {
+      // Gate visible solo si NO hay sesión
+      const gate = document.getElementById('auth-gate');
+      if (gate) gate.style.display = isLogged ? 'none' : 'block';
+
+      // Mostrar barra de usuario si hay sesión
+      const userBox = document.getElementById('user-box');
+      if (userBox) {
+        userBox.style.display = isLogged ? 'flex' : 'none';
+        if (isLogged) {
+          const email = window.__session?.user?.email || "";
+          const username = window.__session?.user?.user_metadata?.username || "";
+          const emailEl = userBox.querySelector('[data-user-email]');
+          const nameEl = userBox.querySelector('[data-user-name]');
+          if (emailEl) emailEl.textContent = email;
+          if (nameEl) nameEl.textContent = username || "(sin username)";
         }
-      });
-      if (error) { msgSignup.textContent = error.message; return; }
-
-      msgSignup.style.color = "var(--success)";
-      msgSignup.textContent = "Registro exitoso. Revise su correo si se requiere confirmación.";
-      // Si el proyecto no exige confirmación de email, ya habrá sesión:
-      await refreshSessionUI();
-      closeModal();
-    });
-
-    // Login
-    formLogin.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      clearMsgs();
-      const email = (document.getElementById('li-email').value || "").trim();
-      const password = document.getElementById('li-password').value;
-
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) { msgLogin.textContent = error.message; return; }
-
-      await refreshSessionUI();
-      closeModal();
-    });
-
-    // OAuth Google
-    async function signInWithGoogle() {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin + window.location.pathname }
-      });
-      if (error) alert("Error OAuth: " + error.message);
-    }
-    btnGoogleSignup.addEventListener('click', signInWithGoogle);
-    btnGoogleLogin.addEventListener('click', signInWithGoogle);
-
-    // Forgot password
-    forgotLink?.addEventListener('click', async (e) => {
-      e.preventDefault();
-      const email = prompt("Ingrese su correo para recuperar contraseña:");
-      if (!email) return;
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + window.location.pathname
-      });
-      if (error) alert("Error: " + error.message);
-      else alert("Revise su correo para continuar el proceso.");
-    });
-
-    // Logout
-    logoutBtn.addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      await refreshSessionUI();
-    });
-
-    // Session UI
-    async function refreshSessionUI() {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const u = session.user;
-        userEmailSpan.textContent = u.email ?? "(sin correo)";
-        const uname = u.user_metadata?.username;
-        if (uname) { usernameLine.style.display = ""; usernameText.textContent = uname; }
-        else { usernameLine.style.display = "none"; usernameText.textContent = ""; }
-        sessionPanel.style.display = "block";
-        openBtn.style.display = "none";
-      } else {
-        sessionPanel.style.display = "none";
-        openBtn.style.display = "inline-flex";
       }
+
+      // Bloquear navegación/cálculo si no hay sesión
+      const nextBtn = document.getElementById('next-step');
+      if (nextBtn) nextBtn.disabled = !isLogged;
+    };
+
+    // Interceptor del botón "Siguiente" para evitar avanzar sin sesión
+    document.addEventListener('DOMContentLoaded', () => {
+      const nextBtn = document.getElementById('next-step');
+      if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+          if (!window.__canUseApp()) {
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            alert("Inicia sesión para continuar.");
+          }
+        }, true); // captura para frenar otros listeners
+      }
+    });
+
+    // Proteger la función de cálculo (doble seguro)
+    const _origCalculate = window.calculateRealAppraisal;
+    if (_origCalculate) {
+      window.calculateRealAppraisal = function () {
+        if (!window.__canUseApp()) {
+          alert("Inicia sesión para calcular el avalúo.");
+          return;
+        }
+        return _origCalculate.apply(this, arguments);
+      };
     }
-
-    // React to auth changes (incluye regreso de OAuth)
-    supabase.auth.onAuthStateChange((_event, _session) => { refreshSessionUI(); });
-
-    // Primera carga
-    refreshSessionUI();
   </script>
-  <!-- <<< AUTH (AGREGADO) <<< -->
-
 </body>
 </html>
