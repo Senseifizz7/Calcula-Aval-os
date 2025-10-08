@@ -227,7 +227,7 @@
 
     <!-- ===== OVERLAY DE AUTENTICACIÓN ===== -->
     <div class="auth-overlay" id="auth-overlay">
-      <button class="auth-close" title="Cerrar" onclick="/* opcional: no permitir cerrar sin login */void(0)">×</button>
+      <button class="auth-close" title="Cerrar" onclick="/* no permitir cerrar sin login */void(0)">×</button>
       <div class="auth-panel card">
         <h2><i class="fas fa-user-lock"></i> Acceso requerido</h2>
         <p style="margin-bottom:12px;color:var(--text-light)">Inicia sesión para usar el Sistema de Avalúos.</p>
@@ -608,12 +608,12 @@
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    // 🔧 Rellena con tus valores reales de Supabase:
-    const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
+    const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co"; 
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";         
 
-    // (Opcional) URL pública de tu GitHub Pages para el redirect de Google
-    const PUBLIC_APP_URL = "https://TU_USUARIO.github.io/TU_REPO/"; // cámbialo
+    // Descubre automáticamente tu URL pública (GitHub Pages) y garantiza "/" final
+    let PUBLIC_APP_URL = window.location.origin + window.location.pathname;
+    if (!PUBLIC_APP_URL.endsWith("/")) PUBLIC_APP_URL += "/";
 
     // Cliente global
     window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -632,7 +632,6 @@
           userBox.querySelector('[data-user-name]').textContent = username || "(sin username)";
         }
       }
-      // Botón "Siguiente" bloqueado si no hay sesión
       const nextBtn = document.getElementById('next-step');
       if(nextBtn) nextBtn.disabled = !isLogged;
     }
@@ -650,24 +649,44 @@
       __updateAuthUI(!!session);
     });
 
-    // Helpers de autenticación
+    // Helpers de autenticación (con mejores errores y redirects)
     window.__signUpWithEmail = async (email, password, username, phone) => {
-      const { error } = await window.supabase.auth.signUp({ email, password, phone, options:{ data:{ username } }});
-      if(error) return alert("Error al crear cuenta: " + error.message);
-      alert("Revisa tu correo/SMS para confirmar tu cuenta.");
+      try {
+        const { error } = await window.supabase.auth.signUp({
+          email,
+          password,
+          phone,
+          options: { data: { username }, emailRedirectTo: PUBLIC_APP_URL }
+        });
+        if (error) throw error;
+        alert("Cuenta creada. Revisa tu correo para confirmar (si está activado).");
+      } catch (e) {
+        console.error("signUp error:", e);
+        alert("Error al crear cuenta: " + (e?.message || e));
+      }
     };
 
     window.__signInWithEmail = async (email, password) => {
-      const { error } = await window.supabase.auth.signInWithPassword({ email, password });
-      if(error) return alert("Error al iniciar sesión: " + error.message);
+      try {
+        const { error } = await window.supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      } catch (e) {
+        console.error("signIn error:", e);
+        alert("Error al iniciar sesión: " + (e?.message || e));
+      }
     };
 
     window.__signInWithGoogle = async () => {
-      const { error } = await window.supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: PUBLIC_APP_URL }
-      });
-      if(error) alert("Google login error: " + error.message);
+      try {
+        const { error } = await window.supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: PUBLIC_APP_URL, queryParams: { prompt: "select_account" } }
+        });
+        if (error) throw error;
+      } catch (e) {
+        console.error("google oauth error:", e);
+        alert("Google login error: " + (e?.message || e));
+      }
     };
 
     window.__signInWithPhone = async (phone) => {
@@ -683,7 +702,7 @@
 
     window.__canUseApp = () => !!window.__session;
 
-    // Interceptor del botón "Siguiente" (doble seguro)
+    // Interceptor del botón "Siguiente"
     document.addEventListener('DOMContentLoaded', () => {
       const nextBtn = document.getElementById('next-step');
       if(nextBtn){
@@ -710,6 +729,21 @@
         return _origCalculate.apply(this, arguments);
       };
     }
+  </script>
+
+  <!-- Mostrar errores que vienen del callback (hash o query) -->
+  <script>
+    (function () {
+      const url = new URL(window.location.href);
+      const hashStr = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+      const hash = new URLSearchParams(hashStr);
+      const qs = new URLSearchParams(url.search);
+      const msg = hash.get("error_description") || hash.get("error") || qs.get("error_description") || qs.get("error");
+      if (msg) {
+        console.error("Auth callback error:", msg);
+        alert("Autenticación: " + msg);
+      }
+    })();
   </script>
 </body>
 </html>
