@@ -197,7 +197,7 @@
 
     /* ===== AUTH OVERLAY ===== */
     .auth-overlay{ position:fixed; inset:0; background: rgba(0,0,0,.45); display:none; z-index:1500; align-items:center; justify-content:center; padding:24px; }
-    .auth-panel{ width:100%; max-width:980px; }
+    .auth-panel{ width:100%; max-width:880px; } /* más compacto al quitar teléfono */
     .auth-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
     .auth-col{ border:1px solid var(--border); border-radius: var(--radius); padding:12px; background:#fff; }
     .auth-col-title{ font-weight:600; margin-bottom:8px; }
@@ -230,7 +230,9 @@
       <button class="auth-close" title="Cerrar" onclick="/* no permitir cerrar sin login */void(0)">×</button>
       <div class="auth-panel card">
         <h2><i class="fas fa-user-lock"></i> Acceso requerido</h2>
-        <p style="margin-bottom:12px;color:var(--text-light)">Inicia sesión para usar el Sistema de Avalúos.</p>
+        <p style="margin-bottom:12px;color:var(--text-light)">
+          Inicia sesión para usar el Sistema de Avalúos. Si creas cuenta con correo, debes confirmar desde tu email.
+        </p>
         <div class="auth-grid">
           <!-- Email + Password -->
           <div class="auth-col">
@@ -260,17 +262,9 @@
             <button class="btn-primary" type="button" onclick="__signInWithGoogle()">
               <i class="fab fa-google"></i> Continuar con Google
             </button>
-          </div>
-
-          <!-- Teléfono -->
-          <div class="auth-col">
-            <div class="auth-col-title">Con teléfono (OTP)</div>
-            <input id="auth-phone" type="tel" placeholder="+502xxxxxxxx" class="auth-input">
-            <button class="btn-primary" type="button" onclick="__signInWithPhone(
-              document.getElementById('auth-phone').value
-            )">
-              <i class="fas fa-sms"></i> Enviar código
-            </button>
+            <div class="form-help" style="margin-top:8px">
+              Requiere configurar Google OAuth en Supabase/Google Cloud.
+            </div>
           </div>
         </div>
       </div>
@@ -608,10 +602,11 @@
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+    // 🔧 Rellena con tus valores reales de Supabase:
     const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co"; 
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";         
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";           
 
-    // Descubre automáticamente tu URL pública (GitHub Pages) y garantiza "/" final
+    // Detecta automáticamente tu URL pública (GitHub Pages) y garantiza "/" final
     let PUBLIC_APP_URL = window.location.origin + window.location.pathname;
     if (!PUBLIC_APP_URL.endsWith("/")) PUBLIC_APP_URL += "/";
 
@@ -638,7 +633,7 @@
 
     // Estado inicial
     (async () => {
-      const { data: { session } } = await window.supabase.auth.getSession();
+      const { data: { session} } = await window.supabase.auth.getSession();
       window.__session = session || null;
       __updateAuthUI(!!session);
     })();
@@ -649,17 +644,30 @@
       __updateAuthUI(!!session);
     });
 
-    // Helpers de autenticación (con mejores errores y redirects)
+    // Helpers de autenticación (correo + Google)
     window.__signUpWithEmail = async (email, password, username, phone) => {
       try {
-        const { error } = await window.supabase.auth.signUp({
+        const { data, error } = await window.supabase.auth.signUp({
           email,
           password,
           phone,
           options: { data: { username }, emailRedirectTo: PUBLIC_APP_URL }
         });
-        if (error) throw error;
-        alert("Cuenta creada. Revisa tu correo para confirmar (si está activado).");
+        if (error) {
+          // Si el usuario ya existe, intenta login
+          if (String(error.message || '').toLowerCase().includes('already')) {
+            const { error: e2 } = await window.supabase.auth.signInWithPassword({ email, password });
+            if (e2) throw e2;
+            return;
+          }
+          throw error;
+        }
+
+        // Con confirmación ON, no hay session hasta que confirme
+        if (!data?.session) {
+          alert("Te enviamos un correo de confirmación. Revisa spam/promociones.\n" +
+                "Después de confirmar, vuelve a esta página.");
+        }
       } catch (e) {
         console.error("signUp error:", e);
         alert("Error al crear cuenta: " + (e?.message || e));
@@ -671,8 +679,13 @@
         const { error } = await window.supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } catch (e) {
+        const msg = String(e?.message || '').toLowerCase();
+        if (msg.includes('email') && msg.includes('confirm')) {
+          alert("Tu correo aún no está confirmado. Revisa tu email y confirma la cuenta.");
+        } else {
+          alert("Error al iniciar sesión: " + (e?.message || e));
+        }
         console.error("signIn error:", e);
-        alert("Error al iniciar sesión: " + (e?.message || e));
       }
     };
 
@@ -687,15 +700,6 @@
         console.error("google oauth error:", e);
         alert("Google login error: " + (e?.message || e));
       }
-    };
-
-    window.__signInWithPhone = async (phone) => {
-      const { error: sendErr } = await window.supabase.auth.signInWithOtp({ phone });
-      if(sendErr) return alert("Error enviando OTP: " + sendErr.message);
-      const token = prompt("Ingresa el código recibido por SMS:");
-      if(!token) return;
-      const { error: verifyErr } = await window.supabase.auth.verifyOtp({ phone, token, type: 'sms' });
-      if(verifyErr) return alert("Código inválido: " + verifyErr.message);
     };
 
     window.__signOut = async () => { await window.supabase.auth.signOut(); };
