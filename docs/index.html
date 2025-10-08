@@ -197,7 +197,7 @@
 
     /* ===== AUTH OVERLAY ===== */
     .auth-overlay{ position:fixed; inset:0; background: rgba(0,0,0,.45); display:none; z-index:1500; align-items:center; justify-content:center; padding:24px; }
-    .auth-panel{ width:100%; max-width:880px; } /* más compacto al quitar teléfono */
+    .auth-panel{ width:100%; max-width:880px; }
     .auth-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
     .auth-col{ border:1px solid var(--border); border-radius: var(--radius); padding:12px; background:#fff; }
     .auth-col-title{ font-weight:600; margin-bottom:8px; }
@@ -249,10 +249,13 @@
             <button class="btn-secondary" type="button" style="margin-top:8px" onclick="__signUpWithEmail(
               document.getElementById('auth-email').value,
               document.getElementById('auth-pass').value,
-              document.getElementById('auth-username').value,
-              undefined
+              document.getElementById('auth-username').value
             )">
               <i class="fas fa-user-plus"></i> Crear cuenta
+            </button>
+            <button class="btn-secondary" type="button" style="margin-top:8px"
+              onclick="__resendVerification(document.getElementById('auth-email').value)">
+              <i class="fas fa-envelope"></i> Reenviar correo de verificación
             </button>
           </div>
 
@@ -602,9 +605,9 @@
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    // 🔧 Rellena con tus valores reales de Supabase:
-    const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co"; 
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";           
+    // ✅ Tus credenciales reales de Supabase:
+    const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
 
     // Detecta automáticamente tu URL pública (GitHub Pages) y garantiza "/" final
     let PUBLIC_APP_URL = window.location.origin + window.location.pathname;
@@ -645,12 +648,11 @@
     });
 
     // Helpers de autenticación (correo + Google)
-    window.__signUpWithEmail = async (email, password, username, phone) => {
+    window.__signUpWithEmail = async (email, password, username) => {
       try {
         const { data, error } = await window.supabase.auth.signUp({
           email,
           password,
-          phone,
           options: { data: { username }, emailRedirectTo: PUBLIC_APP_URL }
         });
         if (error) {
@@ -699,6 +701,18 @@
       } catch (e) {
         console.error("google oauth error:", e);
         alert("Google login error: " + (e?.message || e));
+      }
+    };
+
+    window.__resendVerification = async (email) => {
+      try {
+        if (!email) return alert("Escribe tu correo primero.");
+        const { data, error } = await window.supabase.auth.resend({ type: 'signup', email });
+        if (error) throw error;
+        alert("Listo, te reenviamos el correo. Revisa bandeja y spam.");
+      } catch (e) {
+        console.error("resend error:", e);
+        alert("No se pudo reenviar: " + (e?.message || e));
       }
     };
 
