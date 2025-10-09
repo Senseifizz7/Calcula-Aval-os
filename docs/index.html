@@ -91,6 +91,9 @@
     .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,123,122,.1); }
     .form-help { font-size: .85rem; color: var(--text-light); margin-top: var(--space-xs); }
 
+    /* más espacio entre secciones dentro del mismo paso */
+    .form-grid + .form-section-title { margin-top: var(--space-xl); }
+
     /* ===== TIPOS ===== */
     .typology-selector{ margin-top: var(--space-xs); }
     .typology-trigger{ background: var(--bg-card); border:1px solid var(--border); border-radius: var(--radius); padding:20px; cursor:pointer; display:flex; align-items:center; gap:var(--space-sm); transition:.2s; }
@@ -103,38 +106,7 @@
     .selected-title{ font-weight: 500; color: var(--text); font-size:.9rem; }
     .selected-price{ font-size:.85rem; color: var(--text-light); margin-top:4px; }
 
-    /* ===== LIMPIAR COLINDANCIAS ===== */
-    #norte-actual,#norte-propietario,#sur-actual,#sur-propietario,#oriente-actual,#oriente-propietario,#poniente-actual,#poniente-propietario,#norte-metros,#sur-metros,#oriente-metros,#poniente-metros{
-      background: var(--bg-card)!important; border:1px solid var(--border)!important; color: var(--text)!important;
-    }
-
-    /* ===== NIVELES (ocultos) ===== */
-    #area-n2,#area-n3,.form-group:has(#area-n2),.form-group:has(#area-n3){ display:none!important; opacity:0!important; visibility:hidden!important; height:0!important; margin:0!important; padding:0!important; }
-
-    /* Botón Agregar Nivel */
-    .add-level-btn{ background: var(--primary-light)!important; color:#fff!important; border:none!important; border-radius: var(--radius-sm)!important; padding:10px 16px!important; font-size:.9rem!important; cursor:pointer!important; margin-top:12px!important; display:inline-flex!important; align-items:center!important; gap:8px!important; transition:.2s!important; width:auto!important; }
-    .add-level-btn:hover{ background: var(--primary)!important; transform: translateY(-1px)!important; }
-
-    .extra-levels-container{ margin-top: var(--space-md)!important; padding: var(--space-md)!important; background: rgba(91,123,122,.03)!important; border-radius: var(--radius)!important; border:1px dashed var(--primary-light)!important; }
-    .extra-level{ display:flex!important; align-items:center!important; gap:var(--space-sm)!important; margin-bottom: var(--space-sm)!important; padding: var(--space-sm)!important; background: var(--bg-card)!important; border-radius: var(--radius)!important; border:1px solid var(--border-light)!important; }
-    .extra-level:last-child{ margin-bottom:0!important; }
-    .extra-level label{ min-width:140px!important; font-weight:500!important; color: var(--text)!important; margin:0!important; }
-    .extra-level input{ flex:1!important; margin:0!important; }
-    .remove-level-btn{ background: var(--error)!important; color:#fff!important; border:none!important; border-radius: var(--radius-sm)!important; width:32px!important; height:32px!important; display:flex!important; align-items:center!important; justify-content:center!important; cursor:pointer!important; font-size:.8rem!important; transition:.2s!important; }
-    .remove-level-btn:hover{ background:#dc2626!important; transform: scale(1.05)!important; }
-
-    .coeficientes-dinamicos{ background: rgba(91,123,122,.05)!important; padding: var(--space-sm)!important; border-radius: var(--radius)!important; margin-top: var(--space-sm)!important; border:1px solid var(--border-light)!important; }
-    .coeficiente-dinamico{ display:flex!important; justify-content:space-between!important; align-items:center!important; padding:6px 0!important; font-size:.9rem!important; border-bottom:1px solid var(--border-light)!important; }
-    .coeficiente-dinamico:last-child{ border-bottom:none!important; }
-    .coeficiente-dinamico .nivel{ font-weight:500!important; color: var(--text)!important; }
-    .coeficiente-dinamico .valor{ font-weight:600!important; color: var(--primary)!important; background:#fff!important; padding:4px 10px!important; border-radius:12px!important; border:1px solid var(--primary-light)!important; }
-
-    .form-group:has(input[value*="N1: 1.00"]){ display:none!important; }
-    .form-section[data-step="3"] .form-grid{ grid-template-columns: 1fr!important; gap: var(--space-md)!important; }
-    .form-section[data-step="3"] .form-section-title:has(i.fa-seedling),
-    .form-section[data-step="3"] .form-section-title:has(i.fa-seedling)+.form-grid{ display:none!important; height:0!important; margin:0!important; padding:0!important; opacity:0!important; visibility:hidden!important; }
-
-    /* ===== TABLA ===== */
+    /* ===== TABLA COLINDANCIAS ===== */
     .colindancias-table{ width:100%; border-collapse:collapse; margin: var(--space-md) 0; background: var(--bg-card); border-radius: var(--radius); overflow:hidden; border:1px solid var(--border); }
     .colindancias-table th{ background: rgba(91,123,122,.05); color: var(--text); padding:16px; text-align:left; font-weight:600; font-size:.9rem; }
     .colindancias-table td{ padding:16px; border-bottom:1px solid var(--border-light); }
@@ -183,7 +155,6 @@
     .catalog-features-modal li i{ color: var(--primary); font-size:.8rem; }
 
     .select-button{ background: var(--primary); color:#fff; border:none; border-radius: var(--radius); padding:12px 20px; font-weight:500; cursor:pointer; margin-top:12px; width:100%; transition:.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
-    .select-button:hover{ background: var(--primary-dark); }
 
     /* ===== FLOTANTES ===== */
     #save-btn,#pdf-btn{ position:fixed; right:24px; z-index:100; background: var(--primary); color:#fff; border:none; border-radius:50px; padding:14px 20px; font-weight:500; box-shadow: var(--shadow-md); display:none; cursor:pointer; transition:.2s; align-items:center; gap:8px; font-size:.9rem; }
@@ -203,7 +174,7 @@
     .auth-col-title{ font-weight:600; margin-bottom:8px; }
     .auth-input{ width:100%; margin-bottom:8px; padding:10px; border:1px solid var(--border); border-radius:8px; }
     .auth-close{ position:absolute; top:18px; right:18px; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; }
-    
+
     /* ===== RESPONSIVE ===== */
     @media (max-width:768px){
       .app-container{ padding:0 var(--space-sm); }
@@ -338,7 +309,7 @@
             <input type="number" id="land-area" placeholder="Ej: 200" min="1" required />
           </div>
         </div>
-        
+
         <div style="margin: var(--space-md) 0;">
           <button class="btn-primary" type="button" onclick="locateMeOnce()">
             <i class="fas fa-location-crosshairs"></i> Usar mi ubicación
@@ -372,13 +343,33 @@
         <div class="form-section-title"><i class="fas fa-map-marker-alt"></i> Colindancias</div>
         <table class="colindancias-table">
           <thead>
-            <tr><th>Dirección</th><th>Propietario</th><th>Metros</th></tr>
+            <tr>
+              <th>Dirección</th>
+              <th>Propietario</th>
+              <th>Metros</th>
+            </tr>
           </thead>
           <tbody>
-            <tr><td><strong>Norte:</strong></td><td><input type="text" id="norte-propietario" placeholder="Propietario" /></td><td><input type="number" id="norte-metros" placeholder="Metros" step="0.01" /></td></tr>
-            <tr><td><strong>Sur:</strong></td><td><input type="text" id="sur-propietario" placeholder="Propietario" /></td><td><input type="number" id="sur-metros" placeholder="Metros" step="0.01" /></td></tr>
-            <tr><td><strong>Oriente:</strong></td><td><input type="text" id="oriente-propietario" placeholder="Propietario" /></td><td><input type="number" id="oriente-metros" placeholder="Metros" step="0.01" /></td></tr>
-            <tr><td><strong>Poniente:</strong></td><td><input type="text" id="poniente-propietario" placeholder="Propietario" /></td><td><input type="number" id="poniente-metros" placeholder="Metros" step="0.01" /></td></tr>
+            <tr>
+              <td><strong>Norte:</strong></td>
+              <td><input type="text" id="norte-propietario" placeholder="Propietario" /></td>
+              <td><input type="number" id="norte-metros" placeholder="Metros" step="0.01" /></td>
+            </tr>
+            <tr>
+              <td><strong>Sur:</strong></td>
+              <td><input type="text" id="sur-propietario" placeholder="Propietario" /></td>
+              <td><input type="number" id="sur-metros" placeholder="Metros" step="0.01" /></td>
+            </tr>
+            <tr>
+              <td><strong>Oriente:</strong></td>
+              <td><input type="text" id="oriente-propietario" placeholder="Propietario" /></td>
+              <td><input type="number" id="oriente-metros" placeholder="Metros" step="0.01" /></td>
+            </tr>
+            <tr>
+              <td><strong>Poniente:</strong></td>
+              <td><input type="text" id="poniente-propietario" placeholder="Propietario" /></td>
+              <td><input type="number" id="poniente-metros" placeholder="Metros" step="0.01" /></td>
+            </tr>
           </tbody>
         </table>
 
@@ -427,60 +418,40 @@
       <!-- ===== Paso 3 ===== -->
       <div class="form-section" data-step="3">
 
-        <!-- NUEVO: Cálculo del Valor del Terreno (manual) -->
+        <!-- primero: CALCULO DEL VALOR DEL TERRENO -->
         <div class="form-section-title"><i class="fas fa-seedling"></i> Cálculo del Valor del Terreno</div>
-        <table class="colindancias-table">
-          <thead>
-            <tr>
-              <th>V/Base</th>
-              <th>Frente</th>
-              <th>Fondo</th>
-              <th>Área m²</th>
-              <th>Fac Fte</th>
-              <th>Fac Fdo</th>
-              <th>Fac Fma</th>
-              <th>Fac Ext</th>
-              <th>Otros Fac</th>
-              <th>MONTO</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-terreno">
-            <tr>
-              <td><input type="number" id="vbase-terreno" step="0.01" /></td>
-              <td><input type="number" id="frente-terreno" step="0.01" /></td>
-              <td><input type="number" id="fondo-terreno" step="0.01" /></td>
-              <td><input type="number" id="area-terreno-valor" step="0.01" /></td>
-              <td><input type="number" id="fac-fte" step="0.01" /></td>
-              <td><input type="number" id="fac-fdo" step="0.01" /></td>
-              <td><input type="number" id="fac-fma" step="0.01" /></td>
-              <td><input type="number" id="fac-ext" step="0.01" /></td>
-              <td><input type="number" id="fac-otros" step="0.01" /></td>
-              <td><input type="number" id="monto-terreno" step="0.01" /></td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="9" style="text-align:right;font-weight:600;">TOTAL</td>
-              <td><input type="number" id="total-terreno" /></td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <div class="form-section-title"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
         <div class="form-grid">
-          <div class="form-group">
-            <label for="area-n1">Área Primer Nivel (m²)</label>
-            <input type="number" id="area-n1" placeholder="Ej: 90" min="0" step="0.01">
+          <div class="form-group"><label for="terr-vbase">V/Base</label><input type="text" id="terr-vbase" placeholder="Q0.00"></div>
+          <div class="form-group"><label for="terr-frente">Frente</label><input type="number" id="terr-frente" step="0.01" placeholder="0.00"></div>
+          <div class="form-group"><label for="terr-fondo">Fondo</label><input type="number" id="terr-fondo" step="0.01" placeholder="0.00"></div>
+          <div class="form-group"><label for="terr-area">Área m²</label><input type="number" id="terr-area" step="0.01" placeholder="0.00"></div>
+          <div class="form-group"><label for="terr-fac-fte">Fac Fte</label><input type="number" id="terr-fac-fte" step="0.01" placeholder="1.00"></div>
+          <div class="form-group"><label for="terr-fac-fdo">Fac Fdo</label><input type="number" id="terr-fac-fdo" step="0.01" placeholder="1.00"></div>
+          <div class="form-group"><label for="terr-fac-fma">Fac Fma</label><input type="number" id="terr-fac-fma" step="0.01" placeholder="1.00"></div>
+          <div class="form-group"><label for="terr-fac-ext">Fac Ext</label><input type="number" id="terr-fac-ext" step="0.01" placeholder="1.00"></div>
+          <div class="form-group"><label for="terr-otros">Otros Fac</label><input type="number" id="terr-otros" step="0.01" placeholder="1.00"></div>
+          <div class="form-group"><label for="terr-monto">MONTO</label><input type="text" id="terr-monto" placeholder="Q0.00"></div>
+        </div>
+        <div class="form-help">Este bloque es 100% manual y editable (sin cálculos automáticos).</div>
+
+        <!-- después: CALCULO DEL VALOR DE LA CONSTRUCCION -->
+        <div class="form-section-title" style="margin-top:var(--space-xl)"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
+
+        <!-- Niveles dinámicos (manuales) -->
+        <div id="levelsContainer" class="extra-levels-container" style="display:block">
+          <!-- Nivel 1 por defecto -->
+          <div class="extra-level">
+            <label style="min-width:110px">Primer Nivel</label>
+            <input type="number" id="lvl1-metros" placeholder="Metros (m²)" step="0.01" class="nivel-input" style="max-width:160px">
+            <input type="text" id="lvl1-vbase" placeholder="V/Base (Q)" style="max-width:160px">
+            <input type="text" id="lvl1-tipo" placeholder="Tipo de Construcción" style="flex:1">
+            <input type="number" id="lvl1-coef" placeholder="% (ej: 1.00)" step="0.01" style="max-width:140px">
           </div>
         </div>
+        <button type="button" class="add-level-btn" id="btnAddLevel"><i class="fas fa-plus"></i> Agregar otro nivel</button>
 
-        <div class="form-group" style="display:none;"><label for="area-n2">Área Segundo Nivel (m²)</label><input type="number" id="area-n2" placeholder="Ej: 60" min="0" step="0.01"></div>
-        <div class="form-group" style="display:none;"><label for="area-n3">Área Tercer Nivel (m²)</label><input type="number" id="area-n3" placeholder="Ej: 40" min="0" step="0.01"></div>
-
-        <div class="form-group" style="display:none;">
-          <label>Coeficientes por nivel</label>
-          <input type="text" value="N1: 1.00 · N2: 0.85 · N3+: 0.75" readonly style="background: var(--bg);">
-          <div class="form-help">Si no llenas por niveles, usamos el campo "Área Construida (m²)"</div>
+        <div class="form-help" style="margin-top:8px">
+          Los campos son manuales: ingresa Metros por nivel, V/Base, Tipo y el coeficiente (%).
         </div>
       </div>
 
@@ -546,16 +517,25 @@
     window.__openTypology=__openTypology; window.__closeTypology=__closeTypology;
   </script>
 
-  <!-- ===== NIVELES DINÁMICOS ===== -->
+  <!-- ===== NIVELES DINÁMICOS (manuales) ===== -->
   <script>
-    let nivelesCount=1;
-    function agregarNivel(){nivelesCount++;const container=document.getElementById('extraLevelsContainer')||crearContenedorNiveles();const nuevoNivel=document.createElement('div');nuevoNivel.className='extra-level';nuevoNivel.innerHTML=`<label>Área Nivel ${nivelesCount} (m²)</label><input type="number" id="area-n${nivelesCount}" placeholder="Ej: ${60-(nivelesCount-1)*10}" min="0" step="0.01" class="nivel-input"><button type="button" class="remove-level-btn" onclick="removerNivel(this)"><i class="fas fa-times"></i></button>`;container.appendChild(nuevoNivel);container.style.display='block';actualizarCoeficientes();}
-    function crearContenedorNiveles(){const c=document.createElement('div');c.id='extraLevelsContainer';c.className='extra-levels-container';c.style.display='none';const grupoN1=document.querySelector('.form-group:has(#area-n1)');grupoN1.parentNode.insertBefore(c,grupoN1.nextSibling);return c;}
-    function removerNivel(b){b.parentElement.remove();nivelesCount--;const c=document.getElementById('extraLevelsContainer');if(c&&c.children.length===0){c.style.display='none';}actualizarCoeficientes();}
-    function actualizarCoeficientes(){const cont=document.getElementById('coeficientesDinamicos')||crearCoeficientesContainer();let html='<div class="coeficientes-dinamicos">';html+='<div class="coeficiente-dinamico"><span class="nivel">Nivel 1</span><span class="valor">1.00</span></div>';for(let i=2;i<=nivelesCount;i++){const k=i===2?0.85:0.75;html+=`<div class="coeficiente-dinamico"><span class="nivel">Nivel ${i}</span><span class="valor">${k}</span></div>`;}html+='</div>';cont.innerHTML=html;}
-    function crearCoeficientesContainer(){const c=document.createElement('div');c.id='coeficientesDinamicos';document.querySelector('.form-group:has(#area-n1)').appendChild(c);return c;}
-    document.addEventListener('DOMContentLoaded',function(){const g=document.querySelector('.form-group:has(#area-n1)');const b=document.createElement('button');b.type='button';b.className='add-level-btn';b.innerHTML='<i class="fas fa-plus"></i> Agregar otro nivel';b.onclick=agregarNivel;g.appendChild(b);actualizarCoeficientes();});
-    function calcularConNivelesDinamicos(){let t=0;const n1=parseFloat(document.getElementById('area-n1').value)||0;t+=n1*1.00;for(let i=2;i<=nivelesCount;i++){const input=document.getElementById(`area-n${i}`);if(input){const a=parseFloat(input.value)||0;const c=i===2?0.85:0.75;t+=a*c;}}return t;}
+    let nivelCounter = 1;
+    document.getElementById('btnAddLevel').addEventListener('click', () => {
+      nivelCounter++;
+      const c = document.getElementById('levelsContainer');
+      const div = document.createElement('div');
+      div.className = 'extra-level';
+      const etiqueta = nivelCounter === 2 ? 'Segundo Nivel' : `Nivel ${nivelCounter}`;
+      div.innerHTML = `
+        <label style="min-width:110px">${etiqueta}</label>
+        <input type="number" placeholder="Metros (m²)" step="0.01" class="nivel-input" style="max-width:160px">
+        <input type="text" placeholder="V/Base (Q)" style="max-width:160px">
+        <input type="text" placeholder="Tipo de Construcción" style="flex:1">
+        <input type="number" placeholder="% (ej: 0.85)" step="0.01" style="max-width:140px">
+        <button type="button" class="remove-level-btn" title="Quitar nivel" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+      `;
+      c.appendChild(div);
+    });
   </script>
 
   <!-- ===== GOOGLE MAPS ===== -->
@@ -579,19 +559,21 @@
   <script>
     function calculateRealAppraisal(){
       const constructionArea=parseFloat(document.getElementById('construction-area').value)||0;
-      const landArea=parseFloat(document.getElementById('land-area').value)||0;
-      const areaN1=parseFloat(document.getElementById('area-n1').value)||0;
+      const areaN1=parseFloat(document.getElementById('area-n1')?.value)||0; // preservado pero no visible
       let areaConstruccion=constructionArea;
-      if(areaN1>0){ areaConstruccion=calcularConNivelesDinamicos(); }
+      if(areaN1>0){ areaConstruccion=areaN1; }
+
       const tipologiaId=document.getElementById('typology').value;
       const tipologia=(()=>{try{ return __getTipos().find(t=>t.id===tipologiaId);}catch{return null;}})();
+
       let valorConstruccion=0;
       if(tipologia){ valorConstruccion=areaConstruccion*tipologia.pricePerM2; }
-      const valorTotal=valorConstruccion;
+
       const estado=document.getElementById('estado-inmueble').value||'No especificado';
       const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
       const antiguedad=anioConstruccion? new Date().getFullYear()-anioConstruccion : 0;
       const formatCurrency=(v)=> new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(v);
+
       document.getElementById('resultArea').textContent=`${areaConstruccion.toFixed(2)} m²`;
       document.getElementById('resultTypology').textContent=tipologia?`${tipologia.category}-${tipologia.type}`:'No seleccionada';
       document.getElementById('resultCondition').textContent=estado;
@@ -599,8 +581,8 @@
       document.getElementById('resultLandValue').textContent=formatCurrency(0);
       document.getElementById('resultLandAppraisal').textContent=formatCurrency(0);
       document.getElementById('resultBuildValue').textContent=formatCurrency(valorConstruccion);
-      document.getElementById('resultGrandTotal').textContent=formatCurrency(valorTotal);
-      document.getElementById('resultTotal').textContent=formatCurrency(valorTotal);
+      document.getElementById('resultGrandTotal').textContent=formatCurrency(valorConstruccion);
+      document.getElementById('resultTotal').textContent=formatCurrency(valorConstruccion);
     }
 
     async function generateReport(){
@@ -609,61 +591,157 @@
         if(typeof window.jspdf==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); }
         if(typeof window.jspdfAutoTable==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js'); }
         const { jsPDF }=window.jspdf; const doc=new jsPDF(); const pageWidth=doc.internal.pageSize.getWidth(); const margin=20; const contentWidth=pageWidth-(margin*2);
+
         doc.setFillColor(91,123,122); doc.rect(0,0,pageWidth,60,'F');
         doc.setTextColor(255,255,255); doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.text('REPORTE DE AVALÚO',margin,30);
         doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')}`,margin,45); doc.text('Sistema de Avalúos Profesional', pageWidth - margin - 80, 45);
-        let y=80; doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN DE LA PROPIEDAD',margin,y); y+=20;
-        const basicData=[['Asociado:',document.getElementById('associate-name').value||'No especificado'],['Dirección:',document.getElementById('address').value||'No especificado'],['Propietario:',document.getElementById('owner-name').value||'No especificado'],['Área Construida:',document.getElementById('construction-area').value?document.getElementById('construction-area').value+' m²':'No especificado'],['Área Terreno:',document.getElementById('land-area').value?document.getElementById('land-area').value+' m²':'No especificado']];
+
+        let y=80;
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F');
+        doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN DE LA PROPIEDAD',margin,y); y+=20;
+
+        const basicData=[
+          ['Asociado:',document.getElementById('associate-name').value||'No especificado'],
+          ['Dirección:',document.getElementById('address').value||'No especificado'],
+          ['Propietario:',document.getElementById('owner-name').value||'No especificado'],
+          ['Área Construida:',document.getElementById('construction-area').value?document.getElementById('construction-area').value+' m²':'No especificado'],
+          ['Área Terreno:',document.getElementById('land-area').value?document.getElementById('land-area').value+' m²':'No especificado']
+        ];
         doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','normal');
         basicData.forEach(([l,v])=>{doc.setFont('helvetica','bold'); doc.text(l,margin,y); doc.setFont('helvetica','normal'); doc.text(v,margin+40,y); y+=8;}); y+=10;
-        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('RESULTADOS DEL AVALÚO',margin,y); y+=20;
-        const resultsData=[['Área Construida',document.getElementById('resultArea').textContent],['Tipología',document.getElementById('resultTypology').textContent],['Estado',document.getElementById('resultCondition').textContent],['Antigüedad',document.getElementById('resultAge').textContent],['Valor Construcción',document.getElementById('resultBuildValue').textContent],['TOTAL',document.getElementById('resultTotal').textContent]];
+
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F');
+        doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('RESULTADOS DEL AVALÚO',margin,y); y+=20;
+
+        const resultsData=[
+          ['Área Construida',document.getElementById('resultArea').textContent],
+          ['Tipología',document.getElementById('resultTypology').textContent],
+          ['Estado',document.getElementById('resultCondition').textContent],
+          ['Antigüedad',document.getElementById('resultAge').textContent],
+          ['Valor Construcción',document.getElementById('resultBuildValue').textContent],
+          ['TOTAL',document.getElementById('resultTotal').textContent]
+        ];
         doc.autoTable({startY:y, head:[['Concepto','Valor']], body:resultsData, theme:'grid', headStyles:{fillColor:[91,123,122], textColor:255, fontStyle:'bold'}, styles:{fontSize:10, cellPadding:5}, columnStyles:{0:{fontStyle:'bold', cellWidth:100},1:{cellWidth:80}}, margin:{left:margin,right:margin}});
         y=doc.lastAutoTable.finalY+15;
-        doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15); doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
+
+        doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F');
+        doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15);
+        doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
+
         if(y>240){ doc.addPage(); y=20; }
-        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
+
+        // Colindancias (sin columna "Actual")
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F');
+        doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
         const colData=[
-          ['Norte',document.getElementById('norte-propietario').value,(document.getElementById('norte-metros').value||'')+' m'],
-          ['Sur',document.getElementById('sur-propietario').value,(document.getElementById('sur-metros').value||'')+' m'],
-          ['Oriente',document.getElementById('oriente-propietario').value,(document.getElementById('oriente-metros').value||'')+' m'],
-          ['Poniente',document.getElementById('poniente-propietario').value,(document.getElementById('poniente-metros').value||'')+' m']
+          ['Norte',document.getElementById('norte-propietario').value,document.getElementById('norte-metros').value+' m'],
+          ['Sur',document.getElementById('sur-propietario').value,document.getElementById('sur-metros').value+' m'],
+          ['Oriente',document.getElementById('oriente-propietario').value,document.getElementById('oriente-metros').value+' m'],
+          ['Poniente',document.getElementById('poniente-propietario').value,document.getElementById('poniente-metros').value+' m']
         ];
         doc.autoTable({startY:y, head:[['Dirección','Propietario','Metros']], body:colData, theme:'grid', headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'}, styles:{fontSize:9, cellPadding:4}, margin:{left:margin,right:margin}});
-        const totalPages=doc.internal.getNumberOfPages(); for(let i=1;i<=totalPages;i++){doc.setPage(i); doc.setFontSize(8); doc.setTextColor(128,128,128); doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos`, pageWidth/2, doc.internal.pageSize.getHeight()-10, {align:'center'});}
-        const fileName=`Avaluo_${document.getElementById('associate-name').value||'Propiedad'}_${new Date().toISOString().slice(0,10)}.pdf`; doc.save(fileName);
-      }catch(error){ console.error('Error generando PDF:',error); alert('Error al generar el PDF: '+error.message); }
-      finally{ loadingOverlay.style.display='none'; }
+
+        const totalPages=doc.internal.getNumberOfPages();
+        for(let i=1;i<=totalPages;i++){
+          doc.setPage(i); doc.setFontSize(8); doc.setTextColor(128,128,128);
+          doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos`, pageWidth/2, doc.internal.pageSize.getHeight()-10, {align:'center'});
+        }
+        const fileName=`Avaluo_${document.getElementById('associate-name').value||'Propiedad'}_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(fileName);
+      }catch(error){
+        console.error('Error generando PDF:',error);
+        alert('Error al generar el PDF: '+error.message);
+      } finally {
+        loadingOverlay.style.display='none';
+      }
     }
+
     function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);});}
-    class FormWizard{constructor(){this.currentStep=1; this.totalSteps=4; this.init();} init(){this.bindEvents(); this.updateUI();} bindEvents(){document.getElementById('next-step').addEventListener('click',()=>this.next()); document.getElementById('prev-step').addEventListener('click',()=>this.previous()); document.querySelectorAll('.step').forEach(step=>{step.addEventListener('click',(e)=>{const n=parseInt(e.currentTarget.dataset.step); if(n<this.currentStep){this.goToStep(n);}});});}
-      validateStep(step){const req=document.querySelectorAll(`[data-step="${step}"] [required]`); let ok=true; req.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--error)'; ok=false;} else{f.style.borderColor='';}}); if(!ok){alert('Por favor completa todos los campos requeridos marcados con *');} return ok;}
+
+    class FormWizard{
+      constructor(){this.currentStep=1; this.totalSteps=4; this.init();}
+      init(){this.bindEvents(); this.updateUI();}
+      bindEvents(){
+        document.getElementById('next-step').addEventListener('click',()=>this.next());
+        document.getElementById('prev-step').addEventListener('click',()=>this.previous());
+        document.querySelectorAll('.step').forEach(step=>{
+          step.addEventListener('click',(e)=>{
+            const n=parseInt(e.currentTarget.dataset.step);
+            if(n<this.currentStep){this.goToStep(n);}
+          });
+        });
+      }
+      validateStep(step){
+        const req=document.querySelectorAll(`[data-step="${step}"] [required]`);
+        let ok=true;
+        req.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--error)'; ok=false;} else{f.style.borderColor='';}});
+        if(!ok){alert('Por favor completa todos los campos requeridos marcados con *');}
+        return ok;
+      }
       next(){ if(this.currentStep<this.totalSteps){ if(this.validateStep(this.currentStep)){ this.currentStep++; this.updateUI(); } } else { this.calculateAppraisal(); } }
       previous(){ if(this.currentStep>1){ this.currentStep--; this.updateUI(); } }
       goToStep(step){ if(step>=1&&step<=this.totalSteps){ this.currentStep=step; this.updateUI(); } }
-      updateUI(){ document.querySelectorAll('.step').forEach(s=>{const n=parseInt(s.dataset.step); s.classList.remove('active','completed'); if(n===this.currentStep){s.classList.add('active');} else if(n<this.currentStep){s.classList.add('completed');}}); document.querySelectorAll('.form-section').forEach(sec=>{sec.classList.remove('active'); if(parseInt(sec.dataset.step)===this.currentStep){sec.classList.add('active');}}); const prevBtn=document.getElementById('prev-step'); const nextBtn=document.getElementById('next-step'); prevBtn.style.display=this.currentStep>1?'flex':'none'; nextBtn.innerHTML=this.currentStep===this.totalSteps?'<i class="fas fa-calculator"></i> Calcular Avalúo':'Siguiente <i class="fas fa-arrow-right"></i>'; }
-      calculateAppraisal(){ if(this.validateStep(this.currentStep)){ const nextBtn=document.getElementById('next-step'); const original=nextBtn.innerHTML; nextBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Calculando...'; nextBtn.disabled=true; setTimeout(()=>{ calculateRealAppraisal(); document.getElementById('resultSection').classList.add('active'); document.getElementById('save-btn').style.display='flex'; document.getElementById('pdf-btn').style.display='flex'; nextBtn.innerHTML=original; nextBtn.disabled=false; },1500); } }
+      updateUI(){
+        document.querySelectorAll('.step').forEach(s=>{
+          const n=parseInt(s.dataset.step);
+          s.classList.remove('active','completed');
+          if(n===this.currentStep){s.classList.add('active');}
+          else if(n<this.currentStep){s.classList.add('completed');}
+        });
+        document.querySelectorAll('.form-section').forEach(sec=>{
+          sec.classList.remove('active');
+          if(parseInt(sec.dataset.step)===this.currentStep){sec.classList.add('active');}
+        });
+        const prevBtn=document.getElementById('prev-step');
+        const nextBtn=document.getElementById('next-step');
+        prevBtn.style.display=this.currentStep>1?'flex':'none';
+        nextBtn.innerHTML=this.currentStep===this.totalSteps?'<i class="fas fa-calculator"></i> Calcular Avalúo':'Siguiente <i class="fas fa-arrow-right"></i>';
+      }
+      calculateAppraisal(){
+        if(this.validateStep(this.currentStep)){
+          const nextBtn=document.getElementById('next-step');
+          const original=nextBtn.innerHTML;
+          nextBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Calculando...';
+          nextBtn.disabled=true;
+          setTimeout(()=>{
+            calculateRealAppraisal();
+            document.getElementById('resultSection').classList.add('active');
+            document.getElementById('save-btn').style.display='flex';
+            document.getElementById('pdf-btn').style.display='flex';
+            nextBtn.innerHTML=original;
+            nextBtn.disabled=false;
+          },1500);
+        }
+      }
     }
-    function newAppraisal(){ document.getElementById('resultSection').classList.remove('active'); document.getElementById('save-btn').style.display='none'; document.getElementById('pdf-btn').style.display='none'; window.formWizard.goToStep(1); }
-    document.addEventListener('DOMContentLoaded',function(){ window.formWizard=new FormWizard(); document.getElementById('save-btn').addEventListener('click',function(){ alert('Datos guardados exitosamente'); }); document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); }); document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } }); document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); }); });
+
+    function newAppraisal(){
+      document.getElementById('resultSection').classList.remove('active');
+      document.getElementById('save-btn').style.display='none';
+      document.getElementById('pdf-btn').style.display='none';
+      window.formWizard.goToStep(1);
+    }
+
+    document.addEventListener('DOMContentLoaded',function(){
+      window.formWizard=new FormWizard();
+      document.getElementById('save-btn').addEventListener('click',function(){ alert('Datos guardados exitosamente'); });
+      document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
+      document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
+      document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
+    });
   </script>
 
   <!-- ===== SUPABASE AUTH (overlay + protección) ===== -->
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-    // ✅ Tus credenciales reales de Supabase:
     const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
 
-    // Detecta automáticamente tu URL pública (GitHub Pages) y garantiza "/" final
     let PUBLIC_APP_URL = window.location.origin + window.location.pathname;
     if (!PUBLIC_APP_URL.endsWith("/")) PUBLIC_APP_URL += "/";
 
-    // Cliente global
     window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Mostrar/ocultar overlay y barra de usuario
     function __updateAuthUI(isLogged){
       const overlay = document.getElementById('auth-overlay');
       const userBox = document.getElementById('user-box');
@@ -681,20 +759,17 @@
       if(nextBtn) nextBtn.disabled = !isLogged;
     }
 
-    // Estado inicial
     (async () => {
       const { data: { session} } = await window.supabase.auth.getSession();
       window.__session = session || null;
       __updateAuthUI(!!session);
     })();
 
-    // Suscribir cambios de sesión
     window.supabase.auth.onAuthStateChange((_event, session) => {
       window.__session = session || null;
       __updateAuthUI(!!session);
     });
 
-    // Helpers de autenticación (correo + Google)
     window.__signUpWithEmail = async (email, password, username) => {
       try {
         const { data, error } = await window.supabase.auth.signUp({
@@ -703,7 +778,6 @@
           options: { data: { username }, emailRedirectTo: PUBLIC_APP_URL }
         });
         if (error) {
-          // Si el usuario ya existe, intenta login
           if (String(error.message || '').toLowerCase().includes('already')) {
             const { error: e2 } = await window.supabase.auth.signInWithPassword({ email, password });
             if (e2) throw e2;
@@ -711,11 +785,8 @@
           }
           throw error;
         }
-
-        // Con confirmación ON, no hay session hasta que confirme
         if (!data?.session) {
-          alert("Te enviamos un correo de confirmación. Revisa spam/promociones.\n" +
-                "Después de confirmar, vuelve a esta página.");
+          alert("Te enviamos un correo de confirmación. Revisa spam/promociones.\nDespués de confirmar, vuelve a esta página.");
         }
       } catch (e) {
         console.error("signUp error:", e);
@@ -764,10 +835,8 @@
     };
 
     window.__signOut = async () => { await window.supabase.auth.signOut(); };
-
     window.__canUseApp = () => !!window.__session;
 
-    // Interceptor del botón "Siguiente"
     document.addEventListener('DOMContentLoaded', () => {
       const nextBtn = document.getElementById('next-step');
       if(nextBtn){
@@ -782,7 +851,6 @@
       }
     });
 
-    // Blindar cálculo también
     const _origCalculate = window.calculateRealAppraisal;
     if(_origCalculate){
       window.calculateRealAppraisal = function(){
