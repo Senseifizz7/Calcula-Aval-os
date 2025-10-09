@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    
+    /* ===== SISTEMA DE DISEÑO MEJORADO ===== */
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -46,7 +46,7 @@
 
     .app-container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-md); }
 
-   
+    /* ===== HEADER MEJORADO ===== */
     .app-header {
       background: var(--bg-card);
       padding: var(--space-md) 0;
@@ -59,7 +59,7 @@
     .app-header h1 { font-size: 1.75rem; font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); color: var(--primary); }
     .app-header h1 i { background: rgba(91,123,122,.1); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 
-   
+    /* ===== PASOS ===== */
     .form-steps { display: flex; justify-content: space-between; margin-bottom: var(--space-xl); position: relative; padding: 0 var(--space-md); }
     .form-steps::before { content: ''; position: absolute; top: 24px; left: var(--space-md); right: var(--space-md); height: 2px; background: var(--border); z-index: 1; }
     .step { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; cursor: pointer; transition: .3s; flex: 1; }
@@ -69,20 +69,20 @@
     .step.active .step-label { color: var(--primary); font-weight: 600; }
     .step.completed .step-number { background: var(--success); border-color: var(--success); color:#fff; }
 
-   
+    /* ===== CARDS ===== */
     .card { background: var(--bg-card); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-lg) 0; box-shadow: var(--shadow); border: 1px solid var(--border); transition: .3s; }
     .card:hover { box-shadow: var(--shadow-lg); }
     .card h2 { font-size: 1.5rem; color: var(--text); margin-bottom: var(--space-lg); font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); }
     .card h2 i { background: rgba(91,123,122,.1); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
 
-   
+    /* ===== SECCIONES ===== */
     .form-section { margin-bottom: var(--space-xl); display: none; animation: fadeIn .5s ease; }
     .form-section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to{ opacity:1; transform:translateY(0);} }
     .form-section-title { font-size: 1.25rem; color: var(--text); margin-bottom: var(--space-md); font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid var(--border-light); }
     .form-section-title i { background: rgba(91,123,122,.1); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
 
-   
+    /* ===== GRID ===== */
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: var(--space-md); }
     .form-group { display: flex; flex-direction: column; }
     .form-group label { font-size: .9rem; font-weight: 500; color: var(--text); margin-bottom: var(--space-xs); display: flex; align-items: center; gap: var(--space-xs); }
@@ -91,7 +91,7 @@
     .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,123,122,.1); }
     .form-help { font-size: .85rem; color: var(--text-light); margin-top: var(--space-xs); }
 
-   
+    /* ===== TIPOS ===== */
     .typology-selector{ margin-top: var(--space-xs); }
     .typology-trigger{ background: var(--bg-card); border:1px solid var(--border); border-radius: var(--radius); padding:20px; cursor:pointer; display:flex; align-items:center; gap:var(--space-sm); transition:.2s; }
     .typology-trigger:hover{ border-color: var(--primary); background: var(--bg-hover); }
@@ -103,15 +103,15 @@
     .selected-title{ font-weight: 500; color: var(--text); font-size:.9rem; }
     .selected-price{ font-size:.85rem; color: var(--text-light); margin-top:4px; }
 
-    
+    /* ===== LIMPIAR COLINDANCIAS ===== */
     #norte-actual,#norte-propietario,#sur-actual,#sur-propietario,#oriente-actual,#oriente-propietario,#poniente-actual,#poniente-propietario,#norte-metros,#sur-metros,#oriente-metros,#poniente-metros{
       background: var(--bg-card)!important; border:1px solid var(--border)!important; color: var(--text)!important;
     }
 
-   
+    /* ===== NIVELES (ocultos) ===== */
     #area-n2,#area-n3,.form-group:has(#area-n2),.form-group:has(#area-n3){ display:none!important; opacity:0!important; visibility:hidden!important; height:0!important; margin:0!important; padding:0!important; }
 
-   
+    /* Botón Agregar Nivel */
     .add-level-btn{ background: var(--primary-light)!important; color:#fff!important; border:none!important; border-radius: var(--radius-sm)!important; padding:10px 16px!important; font-size:.9rem!important; cursor:pointer!important; margin-top:12px!important; display:inline-flex!important; align-items:center!important; gap:8px!important; transition:.2s!important; width:auto!important; }
     .add-level-btn:hover{ background: var(--primary)!important; transform: translateY(-1px)!important; }
 
@@ -134,13 +134,13 @@
     .form-section[data-step="3"] .form-section-title:has(i.fa-seedling),
     .form-section[data-step="3"] .form-section-title:has(i.fa-seedling)+.form-grid{ display:none!important; height:0!important; margin:0!important; padding:0!important; opacity:0!important; visibility:hidden!important; }
 
-    
+    /* ===== TABLA ===== */
     .colindancias-table{ width:100%; border-collapse:collapse; margin: var(--space-md) 0; background: var(--bg-card); border-radius: var(--radius); overflow:hidden; border:1px solid var(--border); }
     .colindancias-table th{ background: rgba(91,123,122,.05); color: var(--text); padding:16px; text-align:left; font-weight:600; font-size:.9rem; }
     .colindancias-table td{ padding:16px; border-bottom:1px solid var(--border-light); }
     .colindancias-table input{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); }
 
-    
+    /* ===== BOTONES ===== */
     .btn-primary{ background: var(--primary); color:#fff; border:none; border-radius: var(--radius); padding:16px 24px; font-size:1rem; font-weight:500; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:10px; margin-top: var(--space-sm); }
     .btn-primary:hover{ background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
     .btn-secondary{ background:transparent; color: var(--primary); border:2px solid var(--primary); border-radius: var(--radius); padding:14px 22px; font-size:1rem; font-weight:500; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:10px; }
@@ -371,12 +371,14 @@
 
         <div class="form-section-title"><i class="fas fa-map-marker-alt"></i> Colindancias</div>
         <table class="colindancias-table">
-          <thead><tr><th>Dirección</th><th>Actual</th><th>Propietario</th><th>Metros</th></tr></thead>
+          <thead>
+            <tr><th>Dirección</th><th>Propietario</th><th>Metros</th></tr>
+          </thead>
           <tbody>
-            <tr><td><strong>Norte:</strong></td><td><input type="text" id="norte-actual" placeholder="Actual" /></td><td><input type="text" id="norte-propietario" placeholder="Propietario" /></td><td><input type="number" id="norte-metros" placeholder="Metros" step="0.01" /></td></tr>
-            <tr><td><strong>Sur:</strong></td><td><input type="text" id="sur-actual" placeholder="Actual" /></td><td><input type="text" id="sur-propietario" placeholder="Propietario" /></td><td><input type="number" id="sur-metros" placeholder="Metros" step="0.01" /></td></tr>
-            <tr><td><strong>Oriente:</strong></td><td><input type="text" id="oriente-actual" placeholder="Actual" /></td><td><input type="text" id="oriente-propietario" placeholder="Propietario" /></td><td><input type="number" id="oriente-metros" placeholder="Metros" step="0.01" /></td></tr>
-            <tr><td><strong>Poniente:</strong></td><td><input type="text" id="poniente-actual" placeholder="Actual" /></td><td><input type="text" id="poniente-propietario" placeholder="Propietario" /></td><td><input type="number" id="poniente-metros" placeholder="Metros" step="0.01" /></td></tr>
+            <tr><td><strong>Norte:</strong></td><td><input type="text" id="norte-propietario" placeholder="Propietario" /></td><td><input type="number" id="norte-metros" placeholder="Metros" step="0.01" /></td></tr>
+            <tr><td><strong>Sur:</strong></td><td><input type="text" id="sur-propietario" placeholder="Propietario" /></td><td><input type="number" id="sur-metros" placeholder="Metros" step="0.01" /></td></tr>
+            <tr><td><strong>Oriente:</strong></td><td><input type="text" id="oriente-propietario" placeholder="Propietario" /></td><td><input type="number" id="oriente-metros" placeholder="Metros" step="0.01" /></td></tr>
+            <tr><td><strong>Poniente:</strong></td><td><input type="text" id="poniente-propietario" placeholder="Propietario" /></td><td><input type="number" id="poniente-metros" placeholder="Metros" step="0.01" /></td></tr>
           </tbody>
         </table>
 
@@ -391,7 +393,7 @@
           <div class="form-group"><label for="paredes">Paredes</label><select id="paredes"><option value="">Seleccionar</option><option value="block">Block</option><option value="adobe">Adobe</option><option value="madera">Madera</option><option value="bahareque">Bahareque</option><option value="prefabricado">Prefabricado</option><option value="concreto">Concreto</option></select></div>
           <div class="form-group"><label for="ventanas">Ventanas</label><select id="ventanas"><option value="">Seleccionar</option><option value="upvc">UPVC</option><option value="aluminio">Aluminio</option><option value="metal">Metal</option><option value="madera">Madera</option><option value="otros">Otros</option></select></div>
           <div class="form-group"><label for="puertas">Puertas</label><select id="puertas"><option value="">Seleccionar</option><option value="upvc">UPVC</option><option value="madera">Madera</option><option value="metal">Metal</option><option value="pre-fab">Pre-Fab</option><option value="rustica">Rústica</option><option value="otros">Otros</option></select></div>
-          <div class="form-group"><label for="cielos">Cielos</label><select id="cielos"><option value="">Seleccionar</option><option value="concreto">Concreto</option><option value="prefabricado">Prefabricado</option><option value="machimbre">Machimbre</option><option value="madera">Madera</option><option value="falsa-teasa">Falsa Teasa</option><option value="sin-cielo">Sin Cielo</option><option value="otros">Otros</option></select></div>
+          <div class="form-group"><label for="cielos">Cielos</label><select id="cielos"><option value="">Seleccionar</option><option value="concreto">Concreto</option><option value="prefabricado">Prefabricado</option><option value="machimbre">Machimbre</option><option value="madera">Madera</option><option value="falsa-terraza">Falsa Terraza</option><option value="sin-cielo">Sin Cielo</option><option value="otros">Otros</option></select></div>
           <div class="form-group"><label for="sanitario">Sanitario</label><select id="sanitario"><option value="">Seleccionar</option><option value="bueno">Bueno</option><option value="medio">Medio</option><option value="bajo">Bajo</option><option value="letrina">Letrina</option><option value="pozo">Pozo</option></select></div>
           <div class="form-group"><label for="red-electric">Red Eléctrica</label><select id="red-electric"><option value="">Seleccionar</option><option value="municipal">Municipal</option><option value="energuate">Energuate</option><option value="solar">Solar</option><option value="solar-fed">Solar/Fed</option><option value="sin-elec">Sin Electricidad</option></select></div>
           <div class="form-group"><label for="agua">Servicio de Agua</label><select id="agua"><option value="">Seleccionar</option><option value="municipal">Municipal</option><option value="comunal">Comunal</option><option value="pozo">Pozo</option><option value="otros">Otros</option></select></div>
@@ -424,6 +426,46 @@
 
       <!-- ===== Paso 3 ===== -->
       <div class="form-section" data-step="3">
+
+        <!-- NUEVO: Cálculo del Valor del Terreno (manual) -->
+        <div class="form-section-title"><i class="fas fa-seedling"></i> Cálculo del Valor del Terreno</div>
+        <table class="colindancias-table">
+          <thead>
+            <tr>
+              <th>V/Base</th>
+              <th>Frente</th>
+              <th>Fondo</th>
+              <th>Área m²</th>
+              <th>Fac Fte</th>
+              <th>Fac Fdo</th>
+              <th>Fac Fma</th>
+              <th>Fac Ext</th>
+              <th>Otros Fac</th>
+              <th>MONTO</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-terreno">
+            <tr>
+              <td><input type="number" id="vbase-terreno" step="0.01" /></td>
+              <td><input type="number" id="frente-terreno" step="0.01" /></td>
+              <td><input type="number" id="fondo-terreno" step="0.01" /></td>
+              <td><input type="number" id="area-terreno-valor" step="0.01" /></td>
+              <td><input type="number" id="fac-fte" step="0.01" /></td>
+              <td><input type="number" id="fac-fdo" step="0.01" /></td>
+              <td><input type="number" id="fac-fma" step="0.01" /></td>
+              <td><input type="number" id="fac-ext" step="0.01" /></td>
+              <td><input type="number" id="fac-otros" step="0.01" /></td>
+              <td><input type="number" id="monto-terreno" step="0.01" /></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="9" style="text-align:right;font-weight:600;">TOTAL</td>
+              <td><input type="number" id="total-terreno" /></td>
+            </tr>
+          </tfoot>
+        </table>
+
         <div class="form-section-title"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
         <div class="form-grid">
           <div class="form-group">
@@ -452,7 +494,7 @@
     <!-- ===== Resultados ===== -->
     <div class="result-section" id="resultSection">
       <div class="card">
-        <h2><i class="fas fa-chart-bar"></i> Resultado del Avalúo</h2>
+        <h2><i class="fas fa-chart-bar"></i> Valor Final del Inmueble</h2>
         <div class="result-grid">
           <div class="result-item"><div class="label">Área Construida</div><div class="value" id="resultArea">0 m²</div></div>
           <div class="result-item"><div class="label">Tipología</div><div class="value" id="resultTypology">-</div></div>
@@ -581,8 +623,13 @@
         doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15); doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
         if(y>240){ doc.addPage(); y=20; }
         doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
-        const colData=[['Norte',document.getElementById('norte-actual').value,document.getElementById('norte-propietario').value,document.getElementById('norte-metros').value+' m'],['Sur',document.getElementById('sur-actual').value,document.getElementById('sur-propietario').value,document.getElementById('sur-metros').value+' m'],['Oriente',document.getElementById('oriente-actual').value,document.getElementById('oriente-propietario').value,document.getElementById('oriente-metros').value+' m'],['Poniente',document.getElementById('poniente-actual').value,document.getElementById('poniente-propietario').value,document.getElementById('poniente-metros').value+' m']];
-        doc.autoTable({startY:y, head:[['Dirección','Actual','Propietario','Metros']], body:colData, theme:'grid', headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'}, styles:{fontSize:9, cellPadding:4}, margin:{left:margin,right:margin}});
+        const colData=[
+          ['Norte',document.getElementById('norte-propietario').value,(document.getElementById('norte-metros').value||'')+' m'],
+          ['Sur',document.getElementById('sur-propietario').value,(document.getElementById('sur-metros').value||'')+' m'],
+          ['Oriente',document.getElementById('oriente-propietario').value,(document.getElementById('oriente-metros').value||'')+' m'],
+          ['Poniente',document.getElementById('poniente-propietario').value,(document.getElementById('poniente-metros').value||'')+' m']
+        ];
+        doc.autoTable({startY:y, head:[['Dirección','Propietario','Metros']], body:colData, theme:'grid', headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'}, styles:{fontSize:9, cellPadding:4}, margin:{left:margin,right:margin}});
         const totalPages=doc.internal.getNumberOfPages(); for(let i=1;i<=totalPages;i++){doc.setPage(i); doc.setFontSize(8); doc.setTextColor(128,128,128); doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos`, pageWidth/2, doc.internal.pageSize.getHeight()-10, {align:'center'});}
         const fileName=`Avaluo_${document.getElementById('associate-name').value||'Propiedad'}_${new Date().toISOString().slice(0,10)}.pdf`; doc.save(fileName);
       }catch(error){ console.error('Error generando PDF:',error); alert('Error al generar el PDF: '+error.message); }
