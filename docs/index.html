@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* ===== SISTEMA DE DISEÑO MEJORADO ===== */
+    
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -46,7 +46,7 @@
 
     .app-container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-md); }
 
-    /* ===== HEADER MEJORADO ===== */
+   
     .app-header {
       background: var(--bg-card);
       padding: var(--space-md) 0;
@@ -59,7 +59,7 @@
     .app-header h1 { font-size: 1.75rem; font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); color: var(--primary); }
     .app-header h1 i { background: rgba(91,123,122,.1); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 
-    /* ===== PASOS ===== */
+   
     .form-steps { display: flex; justify-content: space-between; margin-bottom: var(--space-xl); position: relative; padding: 0 var(--space-md); }
     .form-steps::before { content: ''; position: absolute; top: 24px; left: var(--space-md); right: var(--space-md); height: 2px; background: var(--border); z-index: 1; }
     .step { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; cursor: pointer; transition: .3s; flex: 1; }
@@ -69,20 +69,20 @@
     .step.active .step-label { color: var(--primary); font-weight: 600; }
     .step.completed .step-number { background: var(--success); border-color: var(--success); color:#fff; }
 
-    /* ===== CARDS ===== */
+   
     .card { background: var(--bg-card); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-lg) 0; box-shadow: var(--shadow); border: 1px solid var(--border); transition: .3s; }
     .card:hover { box-shadow: var(--shadow-lg); }
     .card h2 { font-size: 1.5rem; color: var(--text); margin-bottom: var(--space-lg); font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); }
     .card h2 i { background: rgba(91,123,122,.1); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
 
-    /* ===== SECCIONES ===== */
+   
     .form-section { margin-bottom: var(--space-xl); display: none; animation: fadeIn .5s ease; }
     .form-section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to{ opacity:1; transform:translateY(0);} }
     .form-section-title { font-size: 1.25rem; color: var(--text); margin-bottom: var(--space-md); font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid var(--border-light); }
     .form-section-title i { background: rgba(91,123,122,.1); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
 
-    /* ===== GRID ===== */
+   
     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: var(--space-md); }
     .form-group { display: flex; flex-direction: column; }
     .form-group label { font-size: .9rem; font-weight: 500; color: var(--text); margin-bottom: var(--space-xs); display: flex; align-items: center; gap: var(--space-xs); }
@@ -91,7 +91,7 @@
     .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,123,122,.1); }
     .form-help { font-size: .85rem; color: var(--text-light); margin-top: var(--space-xs); }
 
-    /* ===== TIPOS ===== */
+   
     .typology-selector{ margin-top: var(--space-xs); }
     .typology-trigger{ background: var(--bg-card); border:1px solid var(--border); border-radius: var(--radius); padding:20px; cursor:pointer; display:flex; align-items:center; gap:var(--space-sm); transition:.2s; }
     .typology-trigger:hover{ border-color: var(--primary); background: var(--bg-hover); }
@@ -103,15 +103,15 @@
     .selected-title{ font-weight: 500; color: var(--text); font-size:.9rem; }
     .selected-price{ font-size:.85rem; color: var(--text-light); margin-top:4px; }
 
-    /* ===== LIMPIAR COLINDANCIAS ===== */
+    
     #norte-actual,#norte-propietario,#sur-actual,#sur-propietario,#oriente-actual,#oriente-propietario,#poniente-actual,#poniente-propietario,#norte-metros,#sur-metros,#oriente-metros,#poniente-metros{
       background: var(--bg-card)!important; border:1px solid var(--border)!important; color: var(--text)!important;
     }
 
-    /* ===== NIVELES (ocultos) ===== */
+   
     #area-n2,#area-n3,.form-group:has(#area-n2),.form-group:has(#area-n3){ display:none!important; opacity:0!important; visibility:hidden!important; height:0!important; margin:0!important; padding:0!important; }
 
-    /* Botón Agregar Nivel */
+   
     .add-level-btn{ background: var(--primary-light)!important; color:#fff!important; border:none!important; border-radius: var(--radius-sm)!important; padding:10px 16px!important; font-size:.9rem!important; cursor:pointer!important; margin-top:12px!important; display:inline-flex!important; align-items:center!important; gap:8px!important; transition:.2s!important; width:auto!important; }
     .add-level-btn:hover{ background: var(--primary)!important; transform: translateY(-1px)!important; }
 
@@ -134,13 +134,13 @@
     .form-section[data-step="3"] .form-section-title:has(i.fa-seedling),
     .form-section[data-step="3"] .form-section-title:has(i.fa-seedling)+.form-grid{ display:none!important; height:0!important; margin:0!important; padding:0!important; opacity:0!important; visibility:hidden!important; }
 
-    /* ===== TABLA ===== */
+    
     .colindancias-table{ width:100%; border-collapse:collapse; margin: var(--space-md) 0; background: var(--bg-card); border-radius: var(--radius); overflow:hidden; border:1px solid var(--border); }
     .colindancias-table th{ background: rgba(91,123,122,.05); color: var(--text); padding:16px; text-align:left; font-weight:600; font-size:.9rem; }
     .colindancias-table td{ padding:16px; border-bottom:1px solid var(--border-light); }
     .colindancias-table input{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); }
 
-    /* ===== BOTONES ===== */
+    
     .btn-primary{ background: var(--primary); color:#fff; border:none; border-radius: var(--radius); padding:16px 24px; font-size:1rem; font-weight:500; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:10px; margin-top: var(--space-sm); }
     .btn-primary:hover{ background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
     .btn-secondary{ background:transparent; color: var(--primary); border:2px solid var(--primary); border-radius: var(--radius); padding:14px 22px; font-size:1rem; font-weight:500; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:10px; }
