@@ -328,7 +328,7 @@
 
         <div class="form-section-title"><i class="fas fa-map"></i> Ubicación en Mapa</div>
         <div id="gmap" style="height: 360px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);"></div>
-        <div class="form-help">Arrastre el pin para ajustar la posición o escriba en "Dirección"</div>
+        <div class="form-help">Arrastre el pin para ajustar la posición o <strong>toque/cliquee en cualquier lugar del mapa</strong> para colocar el marcador</div>
       </div>
 
       
@@ -806,13 +806,120 @@
   
   <script>
     let gMap=null,gMarker=null,gGeocoder=null,gAutocomplete=null;
-    function setLatLngInputs(lat,lng){const latEl=document.getElementById('geo-lat');const lngEl=document.getElementById('geo-lng');if(latEl) latEl.value=Number(lat).toFixed(6); if(lngEl) lngEl.value=Number(lng).toFixed(6);}
-    function setGMarker(lat,lng,center=true){if(!gMap) return;const pos={lat:Number(lat),lng:Number(lng)};if(!gMarker){gMarker=new google.maps.Marker({position:pos,map:gMap,draggable:true,animation:google.maps.Animation.DROP});gMarker.addListener('dragend',()=>{const p=gMarker.getPosition();const la=p.lat(),ln=p.lng();setLatLngInputs(la,ln);reverseGeocodeGoogle(la,ln);});}else{gMarker.setPosition(pos);}if(center) gMap.setCenter(pos);}
-    async function reverseGeocodeGoogle(lat,lng){if(!gGeocoder) gGeocoder=new google.maps.Geocoder();const addressEl=document.getElementById('address');try{const {results}=await gGeocoder.geocode({location:{lat,lng}});if(results&&results[0]&&addressEl){addressEl.value=results[0].formatted_address;}}catch(e){console.warn('Geocoder error:',e);}}
-    function attachAutocomplete(){const addressEl=document.getElementById('address');if(!addressEl) return;try{gAutocomplete=new google.maps.places.Autocomplete(addressEl,{fields:['geometry','formatted_address']});gAutocomplete.addListener('place_changed',()=>{const place=gAutocomplete.getPlace();if(!place?.geometry?.location) return;const lat=place.geometry.location.lat();const lng=place.geometry.location.lng();setLatLngInputs(lat,lng);setGMarker(lat,lng,true);});}catch(e){console.warn('Places Autocomplete no disponible.',e);}}
-    function locateMeOnce(){if(!('geolocation'in navigator)){alert('Geolocalización no disponible.');return;}navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude;const lng=pos.coords.longitude;setLatLngInputs(lat,lng);if(gMap) setGMarker(lat,lng,true);await reverseGeocodeGoogle(lat,lng);},err=>{const msgs={1:'Permiso denegado',2:'Posición no disponible',3:'Tiempo agotado'};alert('No se pudo obtener la ubicación: '+(msgs[err.code]||err.message));},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
+    
+    function setLatLngInputs(lat,lng){
+      const latEl=document.getElementById('geo-lat');
+      const lngEl=document.getElementById('geo-lng');
+      if(latEl) latEl.value=Number(lat).toFixed(6); 
+      if(lngEl) lngEl.value=Number(lng).toFixed(6);
+    }
+    
+    function setGMarker(lat,lng,center=true){
+      if(!gMap) return;
+      const pos={lat:Number(lat),lng:Number(lng)};
+      if(!gMarker){
+        gMarker=new google.maps.Marker({
+          position:pos,
+          map:gMap,
+          draggable:true,
+          animation:google.maps.Animation.DROP
+        });
+        gMarker.addListener('dragend',()=>{
+          const p=gMarker.getPosition();
+          const la=p.lat(),ln=p.lng();
+          setLatLngInputs(la,ln);
+          reverseGeocodeGoogle(la,ln);
+        });
+      }else{
+        gMarker.setPosition(pos);
+      }
+      if(center) gMap.setCenter(pos);
+    }
+    
+    async function reverseGeocodeGoogle(lat,lng){
+      if(!gGeocoder) gGeocoder=new google.maps.Geocoder();
+      const addressEl=document.getElementById('address');
+      try{
+        const {results}=await gGeocoder.geocode({location:{lat,lng}});
+        if(results&&results[0]&&addressEl){
+          addressEl.value=results[0].formatted_address;
+        }
+      }catch(e){
+        console.warn('Geocoder error:',e);
+      }
+    }
+    
+    function attachAutocomplete(){
+      const addressEl=document.getElementById('address');
+      if(!addressEl) return;
+      try{
+        gAutocomplete=new google.maps.places.Autocomplete(addressEl,{
+          fields:['geometry','formatted_address']
+        });
+        gAutocomplete.addListener('place_changed',()=>{
+          const place=gAutocomplete.getPlace();
+          if(!place?.geometry?.location) return;
+          const lat=place.geometry.location.lat();
+          const lng=place.geometry.location.lng();
+          setLatLngInputs(lat,lng);
+          setGMarker(lat,lng,true);
+        });
+      }catch(e){
+        console.warn('Places Autocomplete no disponible.',e);
+      }
+    }
+    
+    function locateMeOnce(){
+      if(!('geolocation'in navigator)){
+        alert('Geolocalización no disponible.');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(async pos=>{
+        const lat=pos.coords.latitude;
+        const lng=pos.coords.longitude;
+        setLatLngInputs(lat,lng);
+        if(gMap) setGMarker(lat,lng,true);
+        await reverseGeocodeGoogle(lat,lng);
+      },err=>{
+        const msgs={1:'Permiso denegado',2:'Posición no disponible',3:'Tiempo agotado'};
+        alert('No se pudo obtener la ubicación: '+(msgs[err.code]||err.message));
+      },{
+        enableHighAccuracy:true,
+        timeout:15000,
+        maximumAge:0
+      });
+    }
+    
+    function initGMap(){
+      const container=document.getElementById('gmap');
+      const start={
+        lat:Number(document.getElementById('geo-lat')?.value)||14.6349,
+        lng:Number(document.getElementById('geo-lng')?.value)||-90.5069
+      };
+      
+      gMap=new google.maps.Map(container,{
+        center:start,
+        zoom:14,
+        mapTypeControl:false,
+        streetViewControl:false,
+        fullscreenControl:true,
+        gestureHandling:'greedy'
+      });
+      
+      
+      gMap.addListener('click', function(event) {
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        setGMarker(lat, lng, false);
+        setLatLngInputs(lat, lng);
+        reverseGeocodeGoogle(lat, lng);
+      });
+      
+      setGMarker(start.lat,start.lng,true);
+      attachAutocomplete();
+    }
+    
     window.locateMeOnce=locateMeOnce;
-    function initGMap(){const container=document.getElementById('gmap');const start={lat:Number(document.getElementById('geo-lat')?.value)||14.6349,lng:Number(document.getElementById('geo-lng')?.value)||-90.5069};gMap=new google.maps.Map(container,{center:start,zoom:14,mapTypeControl:false,streetViewControl:false,fullscreenControl:true,gestureHandling:'greedy'});setGMarker(start.lat,start.lng,true);attachAutocomplete();}
     window.initGMap=initGMap;
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsWVTI4PKDqGp-wJgWZnD2IbOvd0wKPhQ&libraries=places&callback=initGMap" async defer></script>
