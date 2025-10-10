@@ -257,7 +257,7 @@
     <div id="user-box" style="display:none;align-items:center;gap:12px;justify-content:space-between;margin-top:-16px;">
       <div style="color:var(--text-light)">
         <i class="fas fa-circle-user"></i>
-        <span data-user-name></span> · <span data-user-email"></span>
+        <span data-user-name></span> · <span data-user-email></span>
       </div>
       <button class="btn-secondary" type="button" onclick="__signOut()">
         <i class="fas fa-arrow-right-from-bracket"></i> Cerrar sesión
@@ -445,11 +445,11 @@
           </button>
         </div>
 
-        <!-- ÚNICO CAMBIO: leyenda con fórmula del Excel -->
+        <!-- ÚNICO CAMBIO AÑADIDO: leyenda con fórmula del Excel -->
         <div class="form-help" style="margin-top:8px;">
           Fórmula según Excel: <strong>MONTO = V/Base × Área m² × Fac Fte × Fac Fdo × Fac Fma × Fac Ext × Otros Fac</strong>.<br>
-          En esta versión, el campo <strong>%</strong> representa el <em>producto de todos los factores</em> (por defecto 1).<br>
-          Ejemplo: si Fac Fte=1.00, Fac Fdo=0.95, Fac Fma=1.05, Fac Ext=1.00, Otros=1.00 ⇒ % = 0.9975.
+          En esta página, el campo <strong>%</strong> representa el <em>producto de todos los factores</em> (por defecto 1).<br>
+          Ejemplo: Fac Fte=1.00, Fac Fdo=0.95, Fac Fma=1.05, Fac Ext=1.00, Otros=1.00 ⇒ % = 0.9975.
         </div>
       </div>
 
@@ -655,7 +655,7 @@
   <script>
     let gMap=null,gMarker=null,gGeocoder=null,gAutocomplete=null;
     function setLatLngInputs(lat,lng){const latEl=document.getElementById('geo-lat');const lngEl=document.getElementById('geo-lng');if(latEl) latEl.value=Number(lat).toFixed(6); if(lngEl) lngEl.value=Number(lng).toFixed(6);}
-    function setGMarker(lat,lng,center=true){if(!gMap) return;const pos={lat:Number(lat),lng:Number(lng)};if(!gMarker){gMarker=new google.maps.Marker({position:pos,map=gMap,draggable:true,animation:google.maps.Animation.DROP});gMarker.addListener('dragend',()=>{const p=gMarker.getPosition();const la=p.lat(),ln=p.lng();setLatLngInputs(la,ln);reverseGeocodeGoogle(la,ln);});}else{gMarker.setPosition(pos);}if(center) gMap.setCenter(pos);}
+    function setGMarker(lat,lng,center=true){if(!gMap) return;const pos={lat:Number(lat),lng:Number(lng)};if(!gMarker){gMarker=new google.maps.Marker({position:pos,map:gMap,draggable:true,animation:google.maps.Animation.DROP});gMarker.addListener('dragend',()=>{const p=gMarker.getPosition();const la=p.lat(),ln=p.lng();setLatLngInputs(la,ln);reverseGeocodeGoogle(la,ln);});}else{gMarker.setPosition(pos);}if(center) gMap.setCenter(pos);}
     async function reverseGeocodeGoogle(lat,lng){if(!gGeocoder) gGeocoder=new google.maps.Geocoder();const addressEl=document.getElementById('address');try{const {results}=await gGeocoder.geocode({location:{lat,lng}});if(results&&results[0]&&addressEl){addressEl.value=results[0].formatted_address;}}catch(e){console.warn('Geocoder error:',e);}}
     function attachAutocomplete(){const addressEl=document.getElementById('address');if(!addressEl) return;try{gAutocomplete=new google.maps.places.Autocomplete(addressEl,{fields:['geometry','formatted_address']});gAutocomplete.addListener('place_changed',()=>{const place=gAutocomplete.getPlace();if(!place?.geometry?.location) return;const lat=place.geometry.location.lat();const lng=place.geometry.location.lng();setLatLngInputs(lat,lng);setGMarker(lat,lng,true);});}catch(e){console.warn('Places Autocomplete no disponible.',e);}}
     function locateMeOnce(){if(!('geolocation'in navigator)){alert('Geolocalización no disponible.');return;}navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude;const lng=pos.coords.longitude;setLatLngInputs(lat,lng);if(gMap) setGMarker(lat,lng,true);await reverseGeocodeGoogle(lat,lng);},err=>{const msgs={1:'Permiso denegado',2:'Posición no disponible',3:'Tiempo agotado'};alert('No se pudo obtener la ubicación: '+(msgs[err.code]||err.message));},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
@@ -860,7 +860,7 @@
         userBox.style.display = isLogged ? 'flex' : 'none';
         if(isLogged){
           const email = window.__session?.user?.email || "";
-          const username = window.__session?.user?.user_metadata?.username || "";
+                   const username = window.__session?.user?.user_metadata?.username || "";
           userBox.querySelector('[data-user-email]').textContent = email;
           userBox.querySelector('[data-user-name]').textContent = username || "(sin username)";
         }
