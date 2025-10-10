@@ -445,11 +445,8 @@
           </button>
         </div>
 
-        <!-- ÚNICO CAMBIO AÑADIDO: leyenda con fórmula del Excel -->
         <div class="form-help" style="margin-top:8px;">
-          Fórmula según Excel: <strong>MONTO = V/Base × Área m² × Fac Fte × Fac Fdo × Fac Fma × Fac Ext × Otros Fac</strong>.<br>
-          En esta página, el campo <strong>%</strong> representa el <em>producto de todos los factores</em> (por defecto 1).<br>
-          Ejemplo: Fac Fte=1.00, Fac Fdo=0.95, Fac Fma=1.05, Fac Ext=1.00, Otros=1.00 ⇒ % = 0.9975.
+          El MONTO se calcula como: <strong>Área m² × V/Base × %</strong>. Todos los campos son manuales (editables), excepto MONTO.
         </div>
       </div>
 
@@ -860,7 +857,7 @@
         userBox.style.display = isLogged ? 'flex' : 'none';
         if(isLogged){
           const email = window.__session?.user?.email || "";
-                   const username = window.__session?.user?.user_metadata?.username || "";
+          const username = window.__session?.user?.user_metadata?.username || "";
           userBox.querySelector('[data-user-email]').textContent = email;
           userBox.querySelector('[data-user-name]').textContent = username || "(sin username)";
         }
