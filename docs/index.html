@@ -4,364 +4,205 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#5B7B7A" />
-  <title>Sistema de Avalúos</title>
+  <title>Sistema de Avalúos - Mejorado</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
   <style>
-   
-    :root {
-      --primary: #5B7B7A;
-      --primary-light: #8AA6A5;
-      --primary-dark: #3A5958;
-      --secondary: #A6B5A5;
-      --accent: #8C9B9A;
-      --success: #10B981;
-      --warning: #F59E0B;
-      --error: #EF4444;
-      --text: #2D3748;
-      --text-light: #718096;
-      --text-lighter: #A0AEC0;
-      --bg: #F9FAFB;
-      --bg-card: #FFFFFF;
-      --bg-hover: #F8FAFC;
-      --border: #E2E8F0;
-      --border-light: #F1F5F9;
-      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
-      --radius: 12px;
-      --radius-sm: 8px;
-      --radius-lg: 16px;
-      --space-xs: 8px;
-      --space-sm: 16px;
-      --space-md: 24px;
-      --space-lg: 32px;
-      --space-xl: 48px;
+    :root{
+      --primary:#5B7B7A;--primary-light:#8AA6A5;--primary-dark:#3A5958;--secondary:#A6B5A5;
+      --success:#10B981;--warning:#F59E0B;--error:#EF4444;
+      --text:#2D3748;--text-light:#718096;--bg:#F9FAFB;--bg-card:#fff;--bg-hover:#F8FAFC;
+      --border:#E2E8F0;--border-light:#F1F5F9;
+      --shadow:0 1px 3px rgba(0,0,0,.02),0 1px 2px rgba(0,0,0,.03);
+      --shadow-md:0 4px 6px -1px rgba(0,0,0,.03),0 2px 4px -1px rgba(0,0,0,.02);
+      --shadow-lg:0 10px 15px -3px rgba(0,0,0,.03),0 4px 6px -2px rgba(0,0,0,.02);
+      --radius:12px;--radius-sm:8px;--radius-lg:16px;
+      --space-xs:8px;--space-sm:16px;--space-md:24px;--space-lg:32px;--space-xl:48px
     }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; }
-
-    body { background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
-
-    .app-container { max-width: 1200px; margin: 0 auto; padding: 0 var(--space-md); }
-
-    /* ===== HEADER MEJORADO ===== */
-    .app-header {
-      background: var(--bg-card);
-      padding: var(--space-md) 0;
-      position: sticky; top: 0; z-index: 100;
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(10px);
-      background: rgba(255, 255, 255, 0.95);
-      margin-bottom: var(--space-lg);
-    }
-    .app-header h1 { font-size: 1.75rem; font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); color: var(--primary); }
-    .app-header h1 i { background: rgba(91,123,122,.1); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-
-    /* ===== PASOS ===== */
-    .form-steps { display: flex; justify-content: space-between; margin-bottom: var(--space-xl); position: relative; padding: 0 var(--space-md); }
-    .form-steps::before { content: ''; position: absolute; top: 24px; left: var(--space-md); right: var(--space-md); height: 2px; background: var(--border); z-index: 1; }
-    .step { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; cursor: pointer; transition: .3s; flex: 1; }
-    .step-number { width: 48px; height: 48px; border-radius: 50%; background: var(--bg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-weight: 600; margin-bottom: var(--space-xs); transition: .3s; }
-    .step-label { font-size: .875rem; font-weight: 500; color: var(--text-light); text-align: center; transition: .3s; }
-    .step.active .step-number { background: var(--primary); border-color: var(--primary); color:#fff; }
-    .step.active .step-label { color: var(--primary); font-weight: 600; }
-    .step.completed .step-number { background: var(--success); border-color: var(--success); color:#fff; }
-
-    /* ===== CARDS ===== */
-    .card { background: var(--bg-card); border-radius: var(--radius-lg); padding: var(--space-xl); margin: var(--space-lg) 0; box-shadow: var(--shadow); border: 1px solid var(--border); transition: .3s; }
-    .card:hover { box-shadow: var(--shadow-lg); }
-    .card h2 { font-size: 1.5rem; color: var(--text); margin-bottom: var(--space-lg); font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); }
-    .card h2 i { background: rgba(91,123,122,.1); width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-
-    /* ===== SECCIONES ===== */
-    .form-section { margin-bottom: var(--space-xl); display: none; animation: fadeIn .5s ease; }
-    .form-section.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px);} to{ opacity:1; transform:translateY(0);} }
-    .form-section-title { font-size: 1.25rem; color: var(--text); margin-bottom: var(--space-md); font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid var(--border-light); }
-    .form-section-title i { background: rgba(91,123,122,.1); width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-
-    /* ===== GRID ===== */
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: var(--space-md); }
-    .form-group { display: flex; flex-direction: column; }
-    .form-group label { font-size: .9rem; font-weight: 500; color: var(--text); margin-bottom: var(--space-xs); display: flex; align-items: center; gap: var(--space-xs); }
-    .required::after { content:'*'; color: var(--error); margin-left: 4px; }
-    .form-group input,.form-group select,.form-group textarea { padding: 14px 16px; border:1px solid var(--border); border-radius: var(--radius); font-size:1rem; transition:.2s; background: var(--bg-card); color: var(--text); }
-    .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,123,122,.1); }
-    .form-help { font-size: .85rem; color: var(--text-light); margin-top: var(--space-xs); }
-
-    /* ===== TIPOS ===== */
-    .typology-selector{ margin-top: var(--space-xs); }
-    .typology-trigger{ background: var(--bg-card); border:1px solid var(--border); border-radius: var(--radius); padding:20px; cursor:pointer; display:flex; align-items:center; gap:var(--space-sm); transition:.2s; }
-    .typology-trigger:hover{ border-color: var(--primary); background: var(--bg-hover); }
-    .typology-trigger:after{ content:"▼"; font-size:.8rem; margin-left:auto; transition: transform .3s; color: var(--primary); }
-    .typology-trigger.active:after{ transform: rotate(180deg); }
-    .selected-image{ width:60px; height:60px; border-radius: var(--radius); object-fit: cover; flex-shrink: 0; }
-    .selected-text{ display:flex; flex-direction:column; flex:1; }
-    .selected-type{ font-weight: 600; color: var(--primary); font-size:1rem; margin-bottom:4px; }
-    .selected-title{ font-weight: 500; color: var(--text); font-size:.9rem; }
-    .selected-price{ font-size:.85rem; color: var(--text-light); margin-top:4px; }
-
-    /* ===== LIMPIAR COLINDANCIAS ===== */
-    #norte-propietario,#sur-propietario,#oriente-propietario,#poniente-propietario,
-    #norte-metros,#sur-metros,#oriente-metros,#poniente-metros{
-      background: var(--bg-card)!important; border:1px solid var(--border)!important; color: var(--text)!important;
-    }
-
-    /* ===== TABLAS ===== */
-    .table-ui{ width:100%; border-collapse:collapse; margin: var(--space-md) 0; background: var(--bg-card); border-radius: var(--radius); overflow:hidden; border:1px solid var(--border); }
-    .table-ui th{ background: rgba(91,123,122,.05); color: var(--text); padding:16px; text-align:left; font-weight:600; font-size:.9rem; }
-    .table-ui td{ padding:16px; border-bottom:1px solid var(--border-light); }
-    .table-ui input, .table-ui select{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); }
-
-    /* Extra separación entre Finca y Colindancias */
-    .form-section-title + .form-grid + .form-section-title{ margin-top: var(--space-lg); }
-
-    /* ===== BOTONES ===== */
-    .btn-primary{ background: var(--primary); color:#fff; border:none; border-radius: var(--radius); padding:16px 24px; font-size:1rem; font-weight:500; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:10px; margin-top: var(--space-sm); }
-    .btn-primary:hover{ background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
-    .btn-secondary{ background:transparent; color: var(--primary); border:2px solid var(--primary); border-radius: var(--radius); padding:14px 22px; font-size:1rem; font-weight:500; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:10px; }
-    .btn-secondary:hover{ background: var(--primary); color:#fff; }
-
-    .btn-small{ padding:10px 14px; font-size:.9rem; border-radius:10px; }
-
-    .form-navigation{ display:flex; justify-content:space-between; margin-top: var(--space-xl); padding-top: var(--space-md); border-top:1px solid var(--border-light); }
-
-    /* ===== RESULTADOS ===== */
-    .result-section{ display:none; animation: fadeIn .5s ease; }
-    .result-section.active{ display:block; }
-    .result-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:20px; margin-bottom: var(--space-lg); }
-    .result-item{ text-align:center; padding:24px 16px; background: rgba(91,123,122,.03); border-radius: var(--radius); border:1px solid var(--border-light); }
-    .result-item .label{ font-size:.85rem; color: var(--text-light); margin-bottom:8px; font-weight:500;}
-    .result-item .value{ font-size:1.2rem; font-weight:700; color: var(--primary); }
-    .result-total{ text-align:center; padding:32px; background: rgba(91,123,122,.05); border-radius: var(--radius); margin-top:24px; border:1px solid var(--border-light); }
-    .result-total .label{ font-size:1rem; margin-bottom:12px; color: var(--text); font-weight:500;}
-    .result-total .value{ font-size:2rem; font-weight:700; color: var(--primary); }
-
-    /* ===== MODAL CATALOGO ===== */
-    .catalog-modal{ position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,.5); display:none; justify-content:center; align-items:center; z-index:1000; padding:20px; }
-    .catalog-modal.active{ display:flex; }
-    .modal-content{ background: var(--bg-card); border-radius: var(--radius-lg); width:100%; max-width:600px; max-height:80vh; overflow-y:auto; padding:0; }
-    .modal-header{ padding:24px; border-bottom:1px solid var(--border-light); position:sticky; top:0; background: var(--bg-card); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
-    .modal-header h3{ color: var(--text); font-size:1.3rem; display:flex; align-items:center; gap:12px; font-weight:600; }
-    .modal-close{ position:absolute; top:24px; right:24px; background:none; border:none; font-size:1.2rem; cursor:pointer; color: var(--text-light); width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:.2s; }
-    .modal-close:hover{ background: var(--border-light); }
-
-    .catalog-item-modal{ padding:20px; border-bottom:1px solid var(--border-light); cursor:pointer; transition:.2s; }
-    .catalog-item-modal:last-child{ border-bottom:none; }
-    .catalog-item-modal:hover{ background: rgba(91,123,122,.03); }
-    .catalog-item-content{ display:flex; gap:16px; align-items:flex-start; }
-    .catalog-image-modal{ width:80px; height:80px; border-radius: var(--radius); object-fit:cover; flex-shrink:0; }
-    .catalog-text-modal{ flex:1; }
-    .catalog-type-modal{ font-weight:600; color: var(--primary); font-size:1.1rem; margin-bottom:4px; }
-    .catalog-title-modal{ font-weight:500; color: var(--text); font-size:1rem; margin-bottom:4px; }
-    .catalog-price-modal{ font-size:1rem; font-weight:600; color: var(--text); margin-bottom:8px; }
-    .catalog-description-modal{ font-size:.9rem; color: var(--text-light); line-height:1.5; margin-bottom:12px; }
-    .catalog-features-modal{ list-style:none; }
-    .catalog-features-modal li{ padding:4px 0; display:flex; align-items:center; gap:8px; font-size:.85rem; color: var(--text); }
-    .catalog-features-modal li i{ color: var(--primary); font-size:.8rem; }
-
-    .select-button{ background: var(--primary); color:#fff; border:none; border-radius: var(--radius); padding:12px 20px; font-weight:500; cursor:pointer; margin-top:12px; width:100%; transition:.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
-    .select-button:hover{ background: var(--primary-dark); }
-
-    /* ===== FLOTANTES ===== */
-    #save-btn,#pdf-btn{ position:fixed; right:24px; z-index:100; background: var(--primary); color:#fff; border:none; border-radius:50px; padding:14px 20px; font-weight:500; box-shadow: var(--shadow-md); display:none; cursor:pointer; transition:.2s; align-items:center; gap:8px; font-size:.9rem; }
-    #save-btn:hover,#pdf-btn:hover{ transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-    #save-btn{ bottom:100px; }
-    #pdf-btn{ bottom:170px; background: var(--secondary); }
-
-    .loading-overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(255,255,255,.9); display:none; justify-content:center; align-items:center; z-index:2000; flex-direction:column; gap: var(--space-md); }
-    .loading-spinner{ width:48px; height:48px; border:4px solid var(--border); border-left:4px solid var(--primary); border-radius:50%; animation: spin 1s linear infinite; }
-    @keyframes spin{ 0%{ transform: rotate(0deg);} 100%{ transform: rotate(360deg);} }
-
-    /* ===== AUTH OVERLAY ===== */
-    .auth-overlay{ position:fixed; inset:0; background: rgba(0,0,0,.45); display:none; z-index:1500; align-items:center; justify-content:center; padding:24px; }
-    .auth-panel{ width:100%; max-width:880px; }
-    .auth-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
-    .auth-col{ border:1px solid var(--border); border-radius: var(--radius); padding:12px; background:#fff; }
-    .auth-col-title{ font-weight:600; margin-bottom:8px; }
-    .auth-input{ width:100%; margin-bottom:8px; padding:10px; border:1px solid var(--border); border-radius:8px; }
-    .auth-close{ position:absolute; top:18px; right:18px; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; }
-    
-    /* ===== RESPONSIVE ===== */
-    @media (max-width:768px){
-      .app-container{ padding:0 var(--space-sm); }
-      .card{ padding: var(--space-md); margin: var(--space-md) 0; }
-      .form-grid,.characteristics-grid,.result-grid{ grid-template-columns:1fr; }
-      .form-steps{ flex-direction:column; gap: var(--space-md); }
-      .form-steps::before{ display:none; }
-      .step{ flex-direction:row; gap: var(--space-sm); }
-      .step-label{ text-align:left; }
-      #save-btn,#pdf-btn{ right:16px; bottom:80px; }
-      #pdf-btn{ bottom:140px; }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:Inter,-apple-system,BlinkMacSystemFont,Segoe UI,system-ui,sans-serif}
+    body{background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+    .app-container{max-width:1200px;margin:0 auto;padding:0 var(--space-md)}
+    .app-header{background:rgba(255,255,255,.95);backdrop-filter:blur(10px);padding:var(--space-md) 0;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);margin-bottom:var(--space-lg)}
+    .app-header h1{font-size:1.75rem;font-weight:600;display:flex;align-items:center;gap:var(--space-sm);color:var(--primary)}
+    .app-header h1 i{background:rgba(91,123,122,.1);width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+    .form-steps{display:flex;justify-content:space-between;margin-bottom:var(--space-xl);position:relative;padding:0 var(--space-md)}
+    .form-steps::before{content:'';position:absolute;top:24px;left:var(--space-md);right:var(--space-md);height:2px;background:var(--border);z-index:1}
+    .step{display:flex;flex-direction:column;align-items:center;z-index:2;cursor:pointer;transition:.3s;flex:1}
+    .step-number{width:48px;height:48px;border-radius:50%;background:var(--bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:600;margin-bottom:var(--space-xs);transition:.3s}
+    .step-label{font-size:.875rem;font-weight:500;color:var(--text-light);transition:.3s;text-align:center}
+    .step.active .step-number{background:var(--primary);border-color:var(--primary);color:#fff}
+    .step.active .step-label{color:var(--primary);font-weight:600}
+    .step.completed .step-number{background:var(--success);border-color:var(--success);color:#fff}
+    .card{background:var(--bg-card);border-radius:var(--radius-lg);padding:var(--space-xl);margin:var(--space-lg) 0;box-shadow:var(--shadow);border:1px solid var(--border);transition:.3s}
+    .card:hover{box-shadow:var(--shadow-lg)}
+    .card h2{font-size:1.5rem;color:var(--text);margin-bottom:var(--space-lg);font-weight:600;display:flex;align-items:center;gap:var(--space-sm)}
+    .card h2 i{background:rgba(91,123,122,.1);width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+    .form-section{margin-bottom:var(--space-xl);display:none;animation:fadeIn .5s ease}
+    .form-section.active{display:block}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+    .form-section-title{font-size:1.25rem;color:var(--text);margin-bottom:var(--space-md);font-weight:600;display:flex;align-items:center;gap:var(--space-sm);padding-bottom:var(--space-sm);border-bottom:1px solid var(--border-light)}
+    .form-section-title i{background:rgba(91,123,122,.1);width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:var(--space-md)}
+    .form-group{display:flex;flex-direction:column}
+    .form-group label{font-size:.9rem;font-weight:500;color:var(--text);margin-bottom:var(--space-xs);display:flex;align-items:center;gap:var(--space-xs)}
+    .required::after{content:'*';color:var(--error);margin-left:4px}
+    .form-group input,.form-group select,.form-group textarea{padding:14px 16px;border:1px solid var(--border);border-radius:var(--radius);font-size:1rem;transition:.2s;background:var(--bg-card);color:var(--text)}
+    .form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(91,123,122,.1)}
+    .form-help{font-size:.85rem;color:var(--text-light);margin-top:var(--space-xs)}
+    .typology-selector{margin-top:var(--space-xs)}
+    .typology-trigger{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;cursor:pointer;display:flex;align-items:center;gap:var(--space-sm);transition:.2s}
+    .typology-trigger:hover{border-color:var(--primary);background:var(--bg-hover)}
+    .typology-trigger:after{content:"▼";font-size:.8rem;margin-left:auto;transition:transform .3s;color:var(--primary)}
+    .typology-trigger.active:after{transform:rotate(180deg)}
+    .selected-image{width:60px;height:60px;border-radius:var(--radius);object-fit:cover;flex-shrink:0}
+    .selected-text{display:flex;flex-direction:column;flex:1}
+    .selected-type{font-weight:600;color:var(--primary);font-size:1rem;margin-bottom:4px}
+    .selected-title{font-weight:500;color:var(--text);font-size:.9rem}
+    .selected-price{font-size:.85rem;color:var(--text-light);margin-top:4px}
+    /* tablas uniformes */
+    .table-ui{width:100%;border-collapse:collapse;margin:var(--space-md) 0;background:var(--bg-card);border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+    .table-ui th{background:rgba(91,123,122,.05);color:var(--text);padding:16px;text-align:left;font-weight:600;font-size:.9rem}
+    .table-ui td{padding:16px;border-bottom:1px solid var(--border-light)}
+    .table-ui input,.table-ui select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--bg-card)}
+    .btn-primary{background:var(--primary);color:#fff;border:none;border-radius:12px;padding:16px 24px;font-size:1rem;font-weight:500;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:var(--space-sm)}
+    .btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+    .btn-secondary{background:transparent;color:var(--primary);border:2px solid var(--primary);border-radius:12px;padding:14px 22px;font-size:1rem;font-weight:500;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:10px}
+    .btn-secondary:hover{background:var(--primary);color:#fff}
+    .btn-small{padding:10px 14px;border-radius:10px;font-size:.9rem}
+    .form-navigation{display:flex;justify-content:space-between;margin-top:var(--space-xl);padding-top:var(--space-md);border-top:1px solid var(--border-light)}
+    .result-section{display:none;animation:fadeIn .5s ease}
+    .result-section.active{display:block}
+    .result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-bottom:var(--space-lg)}
+    .result-item{text-align:center;padding:24px 16px;background:rgba(91,123,122,.03);border-radius:12px;border:1px solid var(--border-light)}
+    .result-item .label{font-size:.85rem;color:var(--text-light);margin-bottom:8px;font-weight:500}
+    .result-item .value{font-size:1.2rem;font-weight:700;color:var(--primary)}
+    .result-total{text-align:center;padding:32px;background:rgba(91,123,122,.05);border-radius:12px;margin-top:24px;border:1px solid var(--border-light)}
+    .result-total .label{font-size:1rem;margin-bottom:12px;color:var(--text);font-weight:500}
+    .result-total .value{font-size:2rem;font-weight:700;color:var(--primary)}
+    /* separación extra entre Finca y Colindancias */
+    .form-section-title + .form-grid + .form-section-title{margin-top:var(--space-lg)}
+    /* flotantes */
+    #save-btn,#pdf-btn{position:fixed;right:24px;z-index:100;background:var(--primary);color:#fff;border:none;border-radius:50px;padding:14px 20px;font-weight:500;box-shadow:var(--shadow-md);display:none;cursor:pointer;transition:.2s;align-items:center;gap:8px;font-size:.9rem}
+    #save-btn:hover,#pdf-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+    #save-btn{bottom:100px}#pdf-btn{bottom:170px;background:var(--secondary)}
+    .loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,.9);display:none;justify-content:center;align-items:center;z-index:2000;flex-direction:column;gap:var(--space-md)}
+    .loading-spinner{width:48px;height:48px;border:4px solid var(--border);border-left:4px solid var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+    .auth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:1500;align-items:center;justify-content:center;padding:24px}
+    .auth-panel{width:100%;max-width:880px}
+    .auth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+    .auth-col{border:1px solid var(--border);border-radius:12px;padding:12px;background:#fff}
+    .auth-input{width:100%;margin-bottom:8px;padding:10px;border:1px solid var(--border);border-radius:8px}
+    @media(max-width:768px){
+      .app-container{padding:0 var(--space-sm)}
+      .card{padding:var(--space-md);margin:var(--space-md) 0}
+      .form-grid,.result-grid{grid-template-columns:1fr}
+      .form-steps{flex-direction:column;gap:var(--space-md)}
+      .form-steps::before{display:none}
+      .step{flex-direction:row;gap:var(--space-sm)}
+      #save-btn,#pdf-btn{right:16px;bottom:80px}
+      #pdf-btn{bottom:140px}
     }
   </style>
 </head>
-
 <body>
   <div class="app-container">
     <header class="app-header">
       <h1><i class="fas fa-home"></i> Sistema de Avalúos</h1>
     </header>
 
-    <!-- ===== OVERLAY DE AUTENTICACIÓN ===== -->
+    <!-- Overlay Auth -->
     <div class="auth-overlay" id="auth-overlay">
-      <button class="auth-close" title="Cerrar" onclick="/* no permitir cerrar sin login */void(0)">×</button>
+      <button class="auth-close" title="Cerrar" onclick="void(0)">×</button>
       <div class="auth-panel card">
         <h2><i class="fas fa-user-lock"></i> Acceso requerido</h2>
-        <p style="margin-bottom:12px;color:var(--text-light)">
-          Inicia sesión para usar el Sistema de Avalúos. Si creas cuenta con correo, debes confirmar desde tu email.
-        </p>
+        <p style="margin-bottom:12px;color:var(--text-light)">Inicia sesión para usar el Sistema de Avalúos.</p>
         <div class="auth-grid">
-          <!-- Email + Password -->
           <div class="auth-col">
-            <div class="auth-col-title">Con correo</div>
+            <div class="auth-col-title" style="font-weight:600;margin-bottom:8px;">Con correo</div>
             <input id="auth-email" type="email" placeholder="tu@correo.com" class="auth-input">
             <input id="auth-pass" type="password" placeholder="Contraseña" class="auth-input">
             <input id="auth-username" type="text" placeholder="Username (nuevo)" class="auth-input">
-            <button class="btn-primary" type="button" onclick="__signInWithEmail(
-              document.getElementById('auth-email').value,
-              document.getElementById('auth-pass').value
-            )">
-              <i class="fas fa-right-to-bracket"></i> Iniciar sesión
-            </button>
-            <button class="btn-secondary" type="button" style="margin-top:8px" onclick="__signUpWithEmail(
-              document.getElementById('auth-email').value,
-              document.getElementById('auth-pass').value,
-              document.getElementById('auth-username').value
-            )">
-              <i class="fas fa-user-plus"></i> Crear cuenta
-            </button>
-            <button class="btn-secondary" type="button" style="margin-top:8px"
-              onclick="__resendVerification(document.getElementById('auth-email').value)">
-              <i class="fas fa-envelope"></i> Reenviar correo de verificación
-            </button>
+            <button class="btn-primary" type="button" onclick="__signInWithEmail(auth-email.value,auth-pass.value)"><i class="fas fa-right-to-bracket"></i> Iniciar sesión</button>
+            <button class="btn-secondary" type="button" style="margin-top:8px" onclick="__signUpWithEmail(auth-email.value,auth-pass.value,auth-username.value)"><i class="fas fa-user-plus"></i> Crear cuenta</button>
           </div>
-
-          <!-- Google -->
           <div class="auth-col">
-            <div class="auth-col-title">Con Google</div>
-            <button class="btn-primary" type="button" onclick="__signInWithGoogle()">
-              <i class="fab fa-google"></i> Continuar con Google
-            </button>
-            <div class="form-help" style="margin-top:8px">
-              Requiere configurar Google OAuth en Supabase/Google Cloud.
-            </div>
+            <div class="auth-col-title" style="font-weight:600;margin-bottom:8px;">Con Google</div>
+            <button class="btn-primary" type="button" onclick="__signInWithGoogle()"><i class="fab fa-google"></i> Continuar con Google</button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- (Opcional) Barra de usuario -->
     <div id="user-box" style="display:none;align-items:center;gap:12px;justify-content:space-between;margin-top:-16px;">
-      <div style="color:var(--text-light)">
-        <i class="fas fa-circle-user"></i>
-        <span data-user-name></span> · <span data-user-email></span>
-      </div>
-      <button class="btn-secondary" type="button" onclick="__signOut()">
-        <i class="fas fa-arrow-right-from-bracket"></i> Cerrar sesión
-      </button>
+      <div style="color:var(--text-light)"><i class="fas fa-circle-user"></i> <span data-user-name></span> · <span data-user-email></span></div>
+      <button class="btn-secondary" type="button" onclick="__signOut()"><i class="fas fa-arrow-right-from-bracket"></i> Cerrar sesión</button>
     </div>
 
-    <!-- ===== PASOS ===== -->
+    <!-- Pasos -->
     <div class="form-steps">
-      <div class="step active" data-step="1">
-        <div class="step-number">1</div>
-        <div class="step-label">Información General</div>
-      </div>
-      <div class="step" data-step="2">
-        <div class="step-number">2</div>
-        <div class="step-label">Características</div>
-      </div>
-      <div class="step" data-step="3">
-        <div class="step-number">3</div>
-        <div class="step-label">Cálculos</div>
-      </div>
-      <div class="step" data-step="4">
-        <div class="step-number">4</div>
-        <div class="step-label">Resultados</div>
-      </div>
+      <div class="step active" data-step="1"><div class="step-number">1</div><div class="step-label">Información General</div></div>
+      <div class="step" data-step="2"><div class="step-number">2</div><div class="step-label">Características</div></div>
+      <div class="step" data-step="3"><div class="step-number">3</div><div class="step-label">Cálculos</div></div>
+      <div class="step" data-step="4"><div class="step-number">4</div><div class="step-label">Resultados</div></div>
     </div>
 
     <div class="card">
       <h2><i class="fas fa-edit"></i> Datos de la Propiedad</h2>
 
-      <!-- ===== Paso 1 ===== -->
+      <!-- Paso 1 -->
       <div class="form-section active" data-step="1">
         <div class="form-section-title"><i class="fas fa-info-circle"></i> Información General</div>
         <div class="form-grid">
-          <div class="form-group">
-            <label for="associate-name" class="required">Nombre del Asociado</label>
-            <input type="text" id="associate-name" placeholder="Ingrese el nombre completo" required />
-            <div class="form-help">Nombre completo del solicitante</div>
-          </div>
-          <div class="form-group">
-            <label for="address" class="required">Dirección de la Propiedad</label>
-            <input type="text" id="address" placeholder="Escriba y elija de las sugerencias" required />
-            <div class="form-help">La dirección se completará automáticamente</div>
-          </div>
-          <div class="form-group">
-            <label for="geo-lat">Latitud</label>
-            <input type="text" id="geo-lat" placeholder="-" readonly />
-          </div>
-          <div class="form-group">
-            <label for="geo-lng">Longitud</label>
-            <input type="text" id="geo-lng" placeholder="-" readonly />
-          </div>
-          <div class="form-group">
-            <label for="construction-area" class="required">Área Construida (m²)</label>
-            <input type="number" id="construction-area" placeholder="Ej: 120" min="1" required />
-          </div>
-          <div class="form-group">
-            <label for="land-area" class="required">Área del Terreno (m²)</label>
-            <input type="number" id="land-area" placeholder="Ej: 200" min="1" required />
-          </div>
+          <div class="form-group"><label for="associate-name" class="required">Nombre del Asociado</label><input id="associate-name" required placeholder="Ingrese el nombre completo"></div>
+          <div class="form-group"><label for="address" class="required">Dirección de la Propiedad</label><input id="address" required placeholder="Escriba y elija de las sugerencias"></div>
+          <div class="form-group"><label for="geo-lat">Latitud</label><input id="geo-lat" placeholder="-" readonly></div>
+          <div class="form-group"><label for="geo-lng">Longitud</label><input id="geo-lng" placeholder="-" readonly></div>
+          <div class="form-group"><label for="construction-area" class="required">Área Construida (m²)</label><input type="number" id="construction-area" min="1" required placeholder="Ej: 120"></div>
+          <div class="form-group"><label for="land-area" class="required">Área del Terreno (m²)</label><input type="number" id="land-area" min="1" required placeholder="Ej: 200"></div>
         </div>
-        
-        <div style="margin: var(--space-md) 0;">
-          <button class="btn-primary" type="button" onclick="locateMeOnce()">
-            <i class="fas fa-location-crosshairs"></i> Usar mi ubicación
-          </button>
+
+        <div style="margin:var(--space-md) 0;">
+          <button class="btn-primary" type="button" onclick="locateMeOnce()"><i class="fas fa-location-crosshairs"></i> Usar mi ubicación</button>
           <div class="form-help">Requiere HTTPS o localhost y permiso del navegador</div>
         </div>
 
         <div class="form-section-title"><i class="fas fa-map"></i> Ubicación en Mapa</div>
-        <div id="gmap" style="height: 360px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);"></div>
-        <div class="form-help">Arrastre el pin para ajustar la posición o escriba en "Dirección"</div>
+        <div id="gmap" style="height:360px;border-radius:12px;overflow:hidden;border:1px solid var(--border)"></div>
+        <div class="form-help">Arrastre el pin o escriba en “Dirección”.</div>
       </div>
 
-      <!-- ===== Paso 2 ===== -->
+      <!-- Paso 2 -->
       <div class="form-section" data-step="2">
         <div class="form-section-title"><i class="fas fa-file-contract"></i> Datos Registrales</div>
         <div class="form-grid">
-          <div class="form-group"><label for="owner-name">Nombre del Propietario</label><input type="text" id="owner-name" placeholder="Ingrese el nombre del propietario" /></div>
-          <div class="form-group"><label for="deed-number">Número de Escritura</label><input type="text" id="deed-number" placeholder="Número de escritura" /></div>
-          <div class="form-group"><label for="deed-date">Fecha de Escritura</label><input type="date" id="deed-date" /></div>
-          <div class="form-group"><label for="notary">Notario</label><input type="text" id="notary" placeholder="Nombre del notario" /></div>
+          <div class="form-group"><label for="owner-name">Nombre del Propietario</label><input id="owner-name" placeholder="Ingrese el nombre del propietario"></div>
+          <div class="form-group"><label for="deed-number">Número de Escritura</label><input id="deed-number" placeholder="Número de escritura"></div>
+          <div class="form-group"><label for="deed-date">Fecha de Escritura</label><input type="date" id="deed-date"></div>
+          <div class="form-group"><label for="notary">Notario</label><input id="notary" placeholder="Nombre del notario"></div>
         </div>
 
         <div class="form-section-title"><i class="fas fa-map-marked-alt"></i> Finca Registrada</div>
         <div class="form-grid">
-          <div class="form-group"><label for="finca">Finca</label><input type="text" id="finca" placeholder="Número de finca" /></div>
-          <div class="form-group"><label for="folio">Folio</label><input type="text" id="folio" placeholder="Folio" /></div>
-          <div class="form-group"><label for="libro">Libro</label><input type="text" id="libro" placeholder="Libro" /></div>
-          <div class="form-group"><label for="department">Departamento</label><input type="text" id="department" placeholder="Departamento" /></div>
+          <div class="form-group"><label for="finca">Finca</label><input id="finca" placeholder="Número de finca"></div>
+          <div class="form-group"><label for="folio">Folio</label><input id="folio" placeholder="Folio"></div>
+          <div class="form-group"><label for="libro">Libro</label><input id="libro" placeholder="Libro"></div>
+          <div class="form-group"><label for="department">Departamento</label><input id="department" placeholder="Departamento"></div>
         </div>
 
-        <div class="form-section-title" style="margin-top: var(--space-lg);"><i class="fas fa-map-marker-alt"></i> Colindancias</div>
+        <div class="form-section-title" style="margin-top:var(--space-lg);"><i class="fas fa-map-marker-alt"></i> Colindancias</div>
         <table class="table-ui">
           <thead><tr><th>Dirección</th><th>Propietario</th><th>Metros</th></tr></thead>
           <tbody>
-            <tr><td><strong>Norte:</strong></td><td><input type="text" id="norte-propietario" placeholder="Propietario" /></td><td><input type="number" id="norte-metros" placeholder="Metros" step="0.01" /></td></tr>
-            <tr><td><strong>Sur:</strong></td><td><input type="text" id="sur-propietario" placeholder="Propietario" /></td><td><input type="number" id="sur-metros" placeholder="Metros" step="0.01" /></td></tr>
-            <tr><td><strong>Oriente:</strong></td><td><input type="text" id="oriente-propietario" placeholder="Propietario" /></td><td><input type="number" id="oriente-metros" placeholder="Metros" step="0.01" /></td></tr>
-            <tr><td><strong>Poniente:</strong></td><td><input type="text" id="poniente-propietario" placeholder="Propietario" /></td><td><input type="number" id="poniente-metros" placeholder="Metros" step="0.01" /></td></tr>
+            <tr><td><strong>Norte:</strong></td><td><input id="norte-propietario" placeholder="Propietario"></td><td><input type="number" id="norte-metros" step="0.01" placeholder="Metros"></td></tr>
+            <tr><td><strong>Sur:</strong></td><td><input id="sur-propietario" placeholder="Propietario"></td><td><input type="number" id="sur-metros" step="0.01" placeholder="Metros"></td></tr>
+            <tr><td><strong>Oriente:</strong></td><td><input id="oriente-propietario" placeholder="Propietario"></td><td><input type="number" id="oriente-metros" step="0.01" placeholder="Metros"></td></tr>
+            <tr><td><strong>Poniente:</strong></td><td><input id="poniente-propietario" placeholder="Propietario"></td><td><input type="number" id="poniente-metros" step="0.01" placeholder="Metros"></td></tr>
           </tbody>
         </table>
 
         <div class="form-section-title"><i class="fas fa-hammer"></i> Características Constructivas</div>
-        <div class="characteristics-grid">
+        <div class="form-grid">
           <div class="form-group"><label for="uso-destino">Uso y Destino</label><select id="uso-destino"><option value="">Seleccionar</option><option value="residencia">Residencia</option><option value="cultivo">Cultivo</option><option value="industrial">Industrial</option><option value="comercial">Comercial</option><option value="edificio">Edificio</option></select></div>
           <div class="form-group"><label for="estructura">Estructura</label><select id="estructura"><option value="">Seleccionar</option><option value="acero">Acero</option><option value="hierro">Hierro</option><option value="concreto">Concreto</option><option value="madera">Madera</option><option value="pre-fab">Pre-Fab</option><option value="adobe">Adobe</option></select></div>
           <div class="form-group"><label for="cimiento">Cimiento</label><select id="cimiento"><option value="">Seleccionar</option><option value="concreto">Concreto</option><option value="adobe">Adobe</option><option value="block">Block</option><option value="ladrillo">Ladrillo</option><option value="piedra">Piedra</option><option value="otros">Otros</option></select></div>
@@ -376,12 +217,12 @@
           <div class="form-group"><label for="red-electric">Red Eléctrica</label><select id="red-electric"><option value="">Seleccionar</option><option value="municipal">Municipal</option><option value="energuate">Energuate</option><option value="solar">Solar</option><option value="solar-fed">Solar/Fed</option><option value="sin-elec">Sin Electricidad</option></select></div>
           <div class="form-group"><label for="agua">Servicio de Agua</label><select id="agua"><option value="">Seleccionar</option><option value="municipal">Municipal</option><option value="comunal">Comunal</option><option value="pozo">Pozo</option><option value="otros">Otros</option></select></div>
           <div class="form-group"><label for="estado-inmueble">Estado de Conservación</label><select id="estado-inmueble"><option value="">Seleccionar</option><option value="Excelente">Excelente</option><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
-          <div class="form-group"><label for="anio-construccion">Año de Construcción</label><input type="number" id="anio-construccion" min="1900" max="2025" placeholder="Ej: 2018" /></div>
+          <div class="form-group"><label for="anio-construccion">Año de Construcción</label><input type="number" id="anio-construccion" min="1900" max="2025" placeholder="Ej: 2018"></div>
         </div>
 
         <div class="form-group" style="margin-top:24px;">
           <label for="otros-detalles">Otros Detalles Específicos</label>
-          <textarea id="otros-detalles" placeholder="Describa otros detalles como: Aire Acondicionado, Car-port, Garaje, Chimeneas, etc."></textarea>
+          <textarea id="otros-detalles" placeholder="Aire Acondicionado, Car-port, Garaje, etc."></textarea>
         </div>
 
         <div class="form-section-title"><i class="fas fa-list"></i> Seleccionar tipologías</div>
@@ -389,7 +230,7 @@
           <label>Tipología constructiva</label>
           <div class="typology-selector" onclick="__openTypology()">
             <div id="typologyTrigger" class="typology-trigger">
-              <img id="selectedImage" class="selected-image" src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=200&q=60" alt="Tipología" />
+              <img id="selectedImage" class="selected-image" src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=200&q=60" alt="Tipología">
               <div class="selected-text">
                 <div id="selectedType" class="selected-type">Catálogo</div>
                 <div id="selectedTitle" class="selected-title">Pulsa para elegir del catálogo (A, B o C)</div>
@@ -402,62 +243,87 @@
         </div>
       </div>
 
-      <!-- ===== Paso 3 ===== -->
+      <!-- Paso 3 -->
       <div class="form-section" data-step="3">
-        <div class="form-section-title"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
+        <!-- 3A: Cálculo del Valor del Terreno -->
+        <div class="form-section-title"><i class="fas fa-mountain-city"></i> Cálculo del Valor del Terreno</div>
+        <table class="table-ui" id="tablaTerreno">
+          <thead>
+            <tr>
+              <th style="width:160px">Concepto</th>
+              <th style="width:140px">Área m²</th>
+              <th style="width:140px">Valor Unit.</th>
+              <th style="width:120px">%</th>
+              <th>Tipo de Terreno</th>
+              <th style="width:160px">MONTO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input class="terr-concepto" value="Terreno" /></td>
+              <td><input class="terr-area" id="terr-area" value="0" readonly /></td>
+              <td><input class="terr-vunit" type="number" step="0.01" placeholder="0" /></td>
+              <td><input class="terr-coef" type="number" step="0.01" value="1" /></td>
+              <td><input class="terr-tipo" placeholder="Ej.: Residencial urbano" /></td>
+              <td><input class="terr-monto" id="terr-monto" value="0.00" readonly /></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5" style="text-align:right;font-weight:600">TOTAL TERRENO</td>
+              <td><input id="totalTerreno" value="0.00" readonly></td>
+            </tr>
+          </tfoot>
+        </table>
+        <div class="form-help" style="margin-top:8px;">
+          MONTO = <strong>Área m² × Valor Unit. × %</strong>. Solo el área no es editable (se toma del Paso 1).
+        </div>
 
-        <!-- Tabla estilo Excel: Planta | Área m² | V/Base | % | Tipo de Construcción | MONTO -->
+        <!-- 3B: Cálculo del Valor de la Construcción -->
+        <div class="form-section-title" style="margin-top:var(--space-lg);"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
         <table class="table-ui" id="tablaConstruccion">
           <thead>
             <tr>
               <th style="width:160px">Planta</th>
               <th style="width:140px">Área m²</th>
               <th style="width:140px">V/Base</th>
-              <th style="width:120px">%</th>
+              <th style="width:120px">%</</th>
               <th>Tipo de Construcción</th>
               <th style="width:160px">MONTO</th>
             </tr>
           </thead>
           <tbody id="tbBodyConstruccion">
             <tr>
-              <td><input type="text" value="Primer Nivel" class="planta-input"></td>
-              <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
-              <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
-              <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
-              <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
-              <td><input type="text" class="monto-output" value="0.00" readonly></td>
+              <td><input class="planta-input" value="Primer Nivel"></td>
+              <td><input class="area-input" type="number" step="0.01" placeholder="0"></td>
+              <td><input class="vbase-input" type="number" step="0.01" placeholder="0"></td>
+              <td><input class="coef-input" type="number" step="0.01" value="1"></td>
+              <td><input class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
+              <td><input class="monto-output" value="0.00" readonly></td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="5" style="text-align:right; font-weight:600;">TOTAL</td>
-              <td><input type="text" id="totalConstruccion" value="0.00" readonly></td>
+              <td colspan="5" style="text-align:right;font-weight:600;">TOTAL CONSTRUCCIÓN</td>
+              <td><input id="totalConstruccion" value="0.00" readonly></td>
             </tr>
           </tfoot>
         </table>
-
-        <div style="display:flex; gap:12px; margin-top:8px;">
-          <button class="btn-secondary btn-small" type="button" onclick="agregarFilaConstruccion()">
-            <i class="fas fa-plus"></i> Agregar nivel
-          </button>
-          <button class="btn-secondary btn-small" type="button" onclick="eliminarUltimaFilaConstruccion()">
-            <i class="fas fa-minus"></i> Quitar último nivel
-          </button>
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <button class="btn-secondary btn-small" type="button" onclick="agregarFilaConstruccion()"><i class="fas fa-plus"></i> Agregar nivel</button>
+          <button class="btn-secondary btn-small" type="button" onclick="eliminarUltimaFilaConstruccion()"><i class="fas fa-minus"></i> Quitar último nivel</button>
         </div>
-
-        <div class="form-help" style="margin-top:8px;">
-          El MONTO se calcula como: <strong>Área m² × V/Base × %</strong>. Todos los campos son manuales (editables), excepto MONTO.
-        </div>
+        <div class="form-help" style="margin-top:8px;">MONTO = <strong>Área m² × V/Base × %</strong>. Todo manual/editable excepto MONTO.</div>
       </div>
 
-      <!-- ===== Navegación ===== -->
+      <!-- Navegación -->
       <div class="form-navigation">
         <button class="btn-secondary" id="prev-step"><i class="fas fa-arrow-left"></i> Anterior</button>
         <button class="btn-primary" id="next-step">Siguiente <i class="fas fa-arrow-right"></i></button>
       </div>
     </div>
 
-    <!-- ===== Resultados ===== -->
+    <!-- Resultados -->
     <div class="result-section" id="resultSection">
       <div class="card">
         <h2><i class="fas fa-chart-bar"></i> Valor Final del Inmueble</h2>
@@ -472,14 +338,14 @@
           <div class="result-item"><div class="label">TOTAL Terreno + Construcción</div><div class="value" id="resultGrandTotal">Q0.00</div></div>
         </div>
         <div class="result-total"><div class="label">VALOR TOTAL ESTIMADO</div><div class="value" id="resultTotal">Q0.00</div></div>
-        <div style="display:flex; gap:12px; margin-top:24px;">
+        <div style="display:flex;gap:12px;margin-top:24px;">
           <button class="btn-primary" onclick="generateReport()" style="flex:1;"><i class="fas fa-file-pdf"></i> Generar Reporte PDF</button>
           <button class="btn-secondary" onclick="newAppraisal()" style="flex:1;"><i class="fas fa-redo"></i> Nuevo Avalúo</button>
         </div>
       </div>
     </div>
 
-    <!-- ===== Modal Tipologías ===== -->
+    <!-- Modal Tipologías -->
     <div class="catalog-modal" id="catalogModal">
       <div class="modal-content">
         <div class="modal-header">
@@ -491,499 +357,248 @@
     </div>
   </div>
 
-  <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-spinner"></div>
-    <div style="color: var(--primary); font-weight: 500;">Generando PDF...</div>
+    <div style="color:var(--primary);font-weight:500;">Generando PDF...</div>
   </div>
-
-  <!-- Botones flotantes -->
   <button id="save-btn" type="button"><i class="fas fa-save"></i> Guardar</button>
   <button id="pdf-btn" type="button"><i class="fas fa-file-pdf"></i> PDF</button>
 
-  <!-- ===== SCRIPT DE TIPOLOGÍAS COMPLETO ===== -->
+  <!-- Tipologías -->
   <script>
-    const __FALLBACK_TIPOLOGIAS=[
-      {id:"baja-A",category:"Baja",type:"A",title:"Categoría Baja — A",img:"https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=800&q=80",priceRange:"Q250–Q650/m²",pricePerM2:450,bullets:["Materiales básicos","Cubiertas simples","Servicios esenciales"]},
-      {id:"baja-B",category:"Baja",type:"B",title:"Categoría Baja — B",img:"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",priceRange:"Q650–Q850/m²",pricePerM2:750,bullets:["Mampostería básica","Acabados sencillos","Instalaciones normales"]},
-      {id:"baja-C",category:"Baja",type:"C",title:"Categoría Baja — C",img:"https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80",priceRange:"Q850–Q1,050/m²",pricePerM2:950,bullets:["Estructura reforzada","Acabados mejores","Servicios completos"]},
-      {id:"media-A",category:"Media",type:"A",title:"Categoría Media — A",img:"https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&w=800&q=80",priceRange:"Q800–Q1,100/m²",pricePerM2:950,bullets:["Materiales normados","Acabados estándar","Losas parciales"]},
-      {id:"media-B",category:"Media",type:"B",title:"Categoría Media — B",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=800&q=80",priceRange:"Q900–Q1,400/m²",pricePerM2:1150,bullets:["Columnas y castillos","Instalaciones ocultas","Accesos mejorados"]},
-      {id:"media-C",category:"Media",type:"C",title:"Categoría Media — C",img:"https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,300–Q1,900/m²",pricePerM2:1600,bullets:["Buen diseño estructural","Acabados superiores","Servicios completos"]},
-      {id:"alta-A",category:"Alta",type:"A",title:"Categoría Alta — A",img:"https://images.unsplash.com/photo-1597047084897-51e81819a499?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,400–Q1,900/m²",pricePerM2:1650,bullets:["Mampostería reforzada","Losas de concreto","Puertas/ventanas mejoradas"]},
-      {id:"alta-B",category:"Alta",type:"B",title:"Categoría Alta — B",img:"https://images.unsplash.com/photo-1502003148287-a82ef80a6abc?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,800–Q2,300/m²",pricePerM2:2050,bullets:["Calidad alta","Instalaciones ocultas","Mejor estándar"]}
-    ];
+    const __FALLBACK_TIPOLOGIAS=[{id:"baja-A",category:"Baja",type:"A",title:"Categoría Baja — A",img:"https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=800&q=80",priceRange:"Q250–Q650/m²",pricePerM2:450,bullets:["Materiales básicos","Cubiertas simples","Servicios esenciales"]},{id:"baja-B",category:"Baja",type:"B",title:"Categoría Baja — B",img:"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",priceRange:"Q650–Q850/m²",pricePerM2:750,bullets:["Mampostería básica","Acabados sencillos","Instalaciones normales"]},{id:"baja-C",category:"Baja",type:"C",title:"Categoría Baja — C",img:"https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80",priceRange:"Q850–Q1,050/m²",pricePerM2:950,bullets:["Estructura reforzada","Acabados mejores","Servicios completos"]},{id:"media-A",category:"Media",type:"A",title:"Categoría Media — A",img:"https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&w=800&q=80",priceRange:"Q800–Q1,100/m²",pricePerM2:950,bullets:["Materiales normados","Acabados estándar","Losas parciales"]},{id:"media-B",category:"Media",type:"B",title:"Categoría Media — B",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=800&q=80",priceRange:"Q900–Q1,400/m²",pricePerM2:1150,bullets:["Columnas y castillos","Instalaciones ocultas","Accesos mejorados"]},{id:"media-C",category:"Media",type:"C",title:"Categoría Media — C",img:"https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,300–Q1,900/m²",pricePerM2:1600,bullets:["Buen diseño estructural","Acabados superiores","Servicios completos"]},{id:"alta-A",category:"Alta",type:"A",title:"Categoría Alta — A",img:"https://images.unsplash.com/photo-1597047084897-51e81819a499?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,400–Q1,900/m²",pricePerM2:1650,bullets:["Mampostería reforzada","Losas de concreto","Puertas/ventanas mejoradas"]},{id:"alta-B",category:"Alta",type:"B",title:"Categoría Alta — B",img:"https://images.unsplash.com/photo-1502003148287-a82ef80a6abc?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,800–Q2,300/m²",pricePerM2:2050,bullets:["Calidad alta","Instalaciones ocultas","Mejor estándar"]}];
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
-    function __renderTipos(){
-      const t=__getTipos();
-      const b=t.reduce((a,x)=>{((a[x.category]??=[]).push(x));return a;},{});for(const k in b) b[k].sort((a,c)=>a.type.localeCompare(c.type));
-      const d=document.getElementById('modalCatalogContent');if(!d) return;let h='';
-      for(const c of ['Baja','Media','Alta']){
-        if(!b[c])continue;
-        h+=`<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología A, B o C</div></div></div></div>`;
-        for(const it of b[c]){
-          h+=`<div class="catalog-item-modal" data-id="${it.id}"><div class="catalog-item-content"><img class="catalog-image-modal" src="${it.img}" alt="${it.title}"><div class="catalog-text-modal"><div class="catalog-type-modal">Tipología ${it.type}</div><div class="catalog-title-modal">${it.title}</div><div class="catalog-price-modal">${it.priceRange}</div><div class="catalog-description-modal"><ul class="catalog-features-modal">${(it.bullets||[]).map(m=>`<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul></div><button class="select-button" data-select="${it.id}"><i class="fas fa-hand-pointer"></i> Seleccionar</button></div></div></div>`;
-        }
-      }
-      d.innerHTML=h;
-      d.querySelectorAll('.catalog-item-modal').forEach(c=>{
-        const id=c.getAttribute('data-id');if(!id)return;
-        c.addEventListener('click',e=>{if(e.target.closest('button'))return;__selectTipo(id);});
-      });
-      d.querySelectorAll('[data-select]').forEach(b=>{
-        b.addEventListener('click',e=>{e.stopPropagation();__selectTipo(b.getAttribute('data-select'));});
-      });
-    }
+    function __renderTipos(){const t=__getTipos();const b=t.reduce((a,x)=>{(a[x.category]??=[]).push(x);return a;},{});for(const k in b) b[k].sort((a,c)=>a.type.localeCompare(c.type));const d=document.getElementById('modalCatalogContent');if(!d) return;let h='';for(const c of ['Baja','Media','Alta']){if(!b[c])continue;h+=`<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología A, B o C</div></div></div></div>`;for(const it of b[c]){h+=`<div class="catalog-item-modal" data-id="${it.id}"><div class="catalog-item-content"><img class="catalog-image-modal" src="${it.img}" alt="${it.title}"><div class="catalog-text-modal"><div class="catalog-type-modal">Tipología ${it.type}</div><div class="catalog-title-modal">${it.title}</div><div class="catalog-price-modal">${it.priceRange}</div><div class="catalog-description-modal"><ul class="catalog-features-modal">${(it.bullets||[]).map(m=>`<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul></div><button class="select-button" data-select="${it.id}"><i class="fas fa-hand-pointer"></i> Seleccionar</button></div></div></div>`;}}d.innerHTML=h;d.querySelectorAll('.catalog-item-modal').forEach(c=>{const id=c.getAttribute('data-id');if(!id)return;c.addEventListener('click',e=>{if(e.target.closest('button'))return;__selectTipo(id);});});d.querySelectorAll('[data-select]').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();__selectTipo(b.getAttribute('data-select'));});});}
     function __openTypology(){const m=document.getElementById('catalogModal');const t=document.getElementById('typologyTrigger');if(!m) return alert('No se encontró el modal (#catalogModal).');m.classList.add('active');t?.classList.add('active');__renderTipos();const hb=e=>{if(e.target===m){__closeTypology();m.removeEventListener('click',hb);}};m.addEventListener('click',hb);const x=document.getElementById('closeModal');if(x) x.onclick=__closeTypology;}
     function __closeTypology(){const m=document.getElementById('catalogModal');const t=document.getElementById('typologyTrigger');if(!m) return;m.classList.remove('active');t?.classList.remove('active');}
-    function __selectTipo(id){
-      const s=__getTipos().find(z=>z.id===id);if(!s)return;
-      const img=document.getElementById('selectedImage');const tp=document.getElementById('selectedType');const ti=document.getElementById('selectedTitle');const pr=document.getElementById('selectedPrice');const hd=document.getElementById('typology');
-      if(img) img.src=s.img;if(tp) tp.textContent=`Categoría ${s.category} — Tipología ${s.type}`;if(ti) ti.textContent=s.title;if(pr) pr.textContent=s.priceRange;if(hd) hd.value=s.id;
-      if(document.getElementById('resultSection').classList.contains('active')){calculateRealAppraisal();}
-      __closeTypology();
-    }
-    window.__openTypology=__openTypology; window.__closeTypology=__closeTypology;
+    function __selectTipo(id){const s=__getTipos().find(z=>z.id===id);if(!s)return;selectedImage.src=s.img;selectedType.textContent=`Categoría ${s.category} — Tipología ${s.type}`;selectedTitle.textContent=s.title;selectedPrice.textContent=s.priceRange;document.getElementById('typology').value=s.id;if(document.getElementById('resultSection').classList.contains('active')){calculateRealAppraisal();}__closeTypology();}
+    window.__openTypology=__openTypology;window.__closeTypology=__closeTypology;
   </script>
 
-  <!-- ===== CONSTRUCCIÓN: TABLA DINÁMICA ===== -->
+  <!-- Cálculos Terreno + Construcción -->
   <script>
-    function formatMoneyGTQ(v){
-      return new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(Number(v||0));
+    // ====== TERRENO ======
+    function syncTerrAreaFromStep1(){
+      const a = parseFloat(document.getElementById('land-area').value)||0;
+      const terrArea = document.getElementById('terr-area');
+      if(terrArea){ terrArea.value = a.toString(); }
+      recalcularTerreno();
+    }
+    function recalcularTerreno(){
+      const area = parseFloat(document.getElementById('terr-area')?.value)||0;
+      const vunit = parseFloat(document.querySelector('.terr-vunit')?.value)||0;
+      const coef = parseFloat(document.querySelector('.terr-coef')?.value)||0;
+      const montoSinAjuste = area * vunit;
+      const monto = montoSinAjuste * coef;
+      const out = document.getElementById('terr-monto');
+      if(out) out.value = monto.toFixed(2);
+      const total = document.getElementById('totalTerreno');
+      if(total) total.value = monto.toFixed(2);
+
+      // Actualizar resultados si están visibles
+      if(document.getElementById('resultSection').classList.contains('active')){
+        document.getElementById('resultLandValue').textContent = formatMoneyGTQ(montoSinAjuste);
+        document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(monto);
+        // recomputar totales finales junto con construcción
+        const build = parseFloat(document.getElementById('totalConstruccion')?.value)||0;
+        const grand = build + monto;
+        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(grand);
+        document.getElementById('resultTotal').textContent = formatMoneyGTQ(grand);
+      }
     }
 
-    function recalcularFila(tr){
+    // ====== CONSTRUCCIÓN ======
+    function formatMoneyGTQ(v){return new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(Number(v||0));}
+    function recalcularFilaConstruccion(tr){
       const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
       const vbase = parseFloat(tr.querySelector('.vbase-input')?.value)||0;
       const coef = parseFloat(tr.querySelector('.coef-input')?.value)||0;
       const monto = area * vbase * coef;
-      const out = tr.querySelector('.monto-output');
-      if(out){ out.value = monto.toFixed(2); }
-      return monto;
+      const out = tr.querySelector('.monto-output'); if(out) out.value = monto.toFixed(2);
+      return {monto,area};
     }
-
     function recalcularTablaConstruccion(){
       const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
       let total = 0, sumaArea = 0;
-      rows.forEach(tr=>{
-        total += recalcularFila(tr);
-        const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
-        sumaArea += area;
-      });
-      const totalEl = document.getElementById('totalConstruccion');
-      if(totalEl) totalEl.value = total.toFixed(2);
+      rows.forEach(tr=>{const r=recalcularFilaConstruccion(tr);total+=r.monto;sumaArea+=r.area;});
+      const totalEl=document.getElementById('totalConstruccion'); if(totalEl) totalEl.value = total.toFixed(2);
 
-      // Actualizar resultados en vivo si ya se muestran
       if(document.getElementById('resultSection').classList.contains('active')){
         document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(total);
-        // Área mostrada: suma de la tabla si > 0, si no, usa el campo del paso 1
         const fallbackArea = parseFloat(document.getElementById('construction-area').value)||0;
-        const areaMostrar = (sumaArea>0? sumaArea : fallbackArea).toFixed(2);
-        document.getElementById('resultArea').textContent = `${areaMostrar} m²`;
+        document.getElementById('resultArea').textContent = `${(sumaArea>0?sumaArea:fallbackArea).toFixed(2)} m²`;
 
-        // Tipología, estado, antigüedad
-        const estado = document.getElementById('estado-inmueble').value || 'No especificado';
-        document.getElementById('resultCondition').textContent = estado;
-
-        const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
-        const antiguedad = anioConstruccion? (new Date().getFullYear()-anioConstruccion) : 0;
-        document.getElementById('resultAge').textContent = `${antiguedad} años`;
-
-        const tipId=document.getElementById('typology').value;
-        let tipText='No seleccionada';
-        try{
-          const t = (Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipId);
-          if(t) tipText = `${t.category}-${t.type}`;
-        }catch{}
-        document.getElementById('resultTypology').textContent = tipText;
-
-        // Totales
-        const land=0;
-        document.getElementById('resultLandValue').textContent = formatMoneyGTQ(land);
-        document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(land);
-        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(land + total);
-        document.getElementById('resultTotal').textContent = formatMoneyGTQ(land + total);
+        // recomputar totales finales junto con terreno
+        const terr = parseFloat(document.getElementById('totalTerreno')?.value)||0;
+        const grand = terr + total;
+        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(grand);
+        document.getElementById('resultTotal').textContent = formatMoneyGTQ(grand);
       }
     }
-
     function bindRowEvents(tr){
-      ['input','change'].forEach(evt=>{
-        tr.addEventListener(evt, e=>{
-          if(e.target.matches('.area-input,.vbase-input,.coef-input')){
-            recalcularTablaConstruccion();
-          }
-        });
+      tr.addEventListener('input', e=>{
+        if(e.target.matches('.area-input,.vbase-input,.coef-input')) recalcularTablaConstruccion();
       });
     }
-
     function agregarFilaConstruccion(){
-      const tbody = document.getElementById('tbBodyConstruccion');
+      const tbody=document.getElementById('tbBodyConstruccion');
       const n = tbody.querySelectorAll('tr').length + 1;
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><input type="text" value="Nivel ${n}" class="planta-input"></td>
-        <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
-        <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
-        <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
-        <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
-        <td><input type="text" class="monto-output" value="0.00" readonly></td>
-      `;
-      tbody.appendChild(tr);
-      bindRowEvents(tr);
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td><input class="planta-input" value="Nivel ${n}"></td>
+        <td><input class="area-input" type="number" step="0.01" placeholder="0"></td>
+        <td><input class="vbase-input" type="number" step="0.01" placeholder="0"></td>
+        <td><input class="coef-input" type="number" step="0.01" value="1"></td>
+        <td><input class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
+        <td><input class="monto-output" value="0.00" readonly></td>`;
+      tbody.appendChild(tr); bindRowEvents(tr);
+    }
+    function eliminarUltimaFilaConstruccion(){
+      const tbody=document.getElementById('tbBodyConstruccion');
+      const rows=tbody.querySelectorAll('tr');
+      if(rows.length>1){tbody.removeChild(rows[rows.length-1]);recalcularTablaConstruccion();}
     }
 
-    function eliminarUltimaFilaConstruccion(){
-      const tbody = document.getElementById('tbBodyConstruccion');
-      const rows = tbody.querySelectorAll('tr');
-      if(rows.length>1){
-        tbody.removeChild(rows[rows.length-1]);
-        recalcularTablaConstruccion();
-      }
+    // ====== WIZARD + RESULTADOS ======
+    function calculateRealAppraisal(){
+      // asegurar cálculos actualizados
+      recalcularTerreno();
+      recalcularTablaConstruccion();
+
+      const estado=document.getElementById('estado-inmueble').value||'No especificado';
+      const anio=parseInt(document.getElementById('anio-construccion').value)||0;
+      const antiguedad=anio? new Date().getFullYear()-anio : 0;
+      document.getElementById('resultCondition').textContent=estado;
+      document.getElementById('resultAge').textContent=`${antiguedad} años`;
+
+      const tipId=document.getElementById('typology').value;
+      let tipText='No seleccionada';
+      try{
+        const t=(Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipId);
+        if(t) tipText=`${t.category}-${t.type}`;
+      }catch{}
+      document.getElementById('resultTypology').textContent=tipText;
     }
 
     document.addEventListener('DOMContentLoaded', ()=>{
-      // enlazar primera fila
-      const firstRow = document.querySelector('#tbBodyConstruccion tr');
-      if(firstRow) bindRowEvents(firstRow);
+      // enlazar eventos terreno
+      document.getElementById('land-area').addEventListener('input', syncTerrAreaFromStep1);
+      document.querySelector('.terr-vunit').addEventListener('input', recalcularTerreno);
+      document.querySelector('.terr-coef').addEventListener('input', recalcularTerreno);
+      syncTerrAreaFromStep1();
+
+      // enlazar primera fila construcción
+      const firstRow=document.querySelector('#tbBodyConstruccion tr'); if(firstRow) bindRowEvents(firstRow);
     });
   </script>
 
-  <!-- ===== GOOGLE MAPS ===== -->
+  <!-- GOOGLE MAPS -->
   <script>
     let gMap=null,gMarker=null,gGeocoder=null,gAutocomplete=null;
-    function setLatLngInputs(lat,lng){const latEl=document.getElementById('geo-lat');const lngEl=document.getElementById('geo-lng');if(latEl) latEl.value=Number(lat).toFixed(6); if(lngEl) lngEl.value=Number(lng).toFixed(6);}
-    function setGMarker(lat,lng,center=true){if(!gMap) return;const pos={lat:Number(lat),lng:Number(lng)};if(!gMarker){gMarker=new google.maps.Marker({position:pos,map:gMap,draggable:true,animation:google.maps.Animation.DROP});gMarker.addListener('dragend',()=>{const p=gMarker.getPosition();const la=p.lat(),ln=p.lng();setLatLngInputs(la,ln);reverseGeocodeGoogle(la,ln);});}else{gMarker.setPosition(pos);}if(center) gMap.setCenter(pos);}
-    async function reverseGeocodeGoogle(lat,lng){if(!gGeocoder) gGeocoder=new google.maps.Geocoder();const addressEl=document.getElementById('address');try{const {results}=await gGeocoder.geocode({location:{lat,lng}});if(results&&results[0]&&addressEl){addressEl.value=results[0].formatted_address;}}catch(e){console.warn('Geocoder error:',e);}}
-    function attachAutocomplete(){const addressEl=document.getElementById('address');if(!addressEl) return;try{gAutocomplete=new google.maps.places.Autocomplete(addressEl,{fields:['geometry','formatted_address']});gAutocomplete.addListener('place_changed',()=>{const place=gAutocomplete.getPlace();if(!place?.geometry?.location) return;const lat=place.geometry.location.lat();const lng=place.geometry.location.lng();setLatLngInputs(lat,lng);setGMarker(lat,lng,true);});}catch(e){console.warn('Places Autocomplete no disponible.',e);}}
-    function locateMeOnce(){if(!('geolocation'in navigator)){alert('Geolocalización no disponible.');return;}navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude;const lng=pos.coords.longitude;setLatLngInputs(lat,lng);if(gMap) setGMarker(lat,lng,true);await reverseGeocodeGoogle(lat,lng);},err=>{const msgs={1:'Permiso denegado',2:'Posición no disponible',3:'Tiempo agotado'};alert('No se pudo obtener la ubicación: '+(msgs[err.code]||err.message));},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
+    function setLatLngInputs(lat,lng){geo-lat.value=Number(lat).toFixed(6);geo-lng.value=Number(lng).toFixed(6);}
+    function setGMarker(lat,lng,center=true){if(!gMap)return;const pos={lat:Number(lat),lng:Number(lng)};if(!gMarker){gMarker=new google.maps.Marker({position:pos,map:gMap,draggable:true,animation:google.maps.Animation.DROP});gMarker.addListener('dragend',()=>{const p=gMarker.getPosition();const la=p.lat(),ln=p.lng();setLatLngInputs(la,ln);reverseGeocodeGoogle(la,ln);});}else{gMarker.setPosition(pos);}if(center) gMap.setCenter(pos);}
+    async function reverseGeocodeGoogle(lat,lng){if(!gGeocoder) gGeocoder=new google.maps.Geocoder();try{const {results}=await gGeocoder.geocode({location:{lat,lng}});if(results&&results[0]) address.value=results[0].formatted_address;}catch(e){console.warn('Geocoder error:',e);}}
+    function attachAutocomplete(){try{gAutocomplete=new google.maps.places.Autocomplete(address,{fields:['geometry','formatted_address']});gAutocomplete.addListener('place_changed',()=>{const place=gAutocomplete.getPlace();if(!place?.geometry?.location) return;const lat=place.geometry.location.lat();const lng=place.geometry.location.lng();setLatLngInputs(lat,lng);setGMarker(lat,lng,true);});}catch(e){console.warn('Places Autocomplete no disponible.',e);}}
+    function locateMeOnce(){if(!('geolocation'in navigator))return alert('Geolocalización no disponible.');navigator.geolocation.getCurrentPosition(async pos=>{const lat=pos.coords.latitude,lng=pos.coords.longitude;setLatLngInputs(lat,lng);if(gMap) setGMarker(lat,lng,true);await reverseGeocodeGoogle(lat,lng);},err=>{const msgs={1:'Permiso denegado',2:'Posición no disponible',3:'Tiempo agotado'};alert('No se pudo obtener la ubicación: '+(msgs[err.code]||err.message));},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
     window.locateMeOnce=locateMeOnce;
-    function initGMap(){const container=document.getElementById('gmap');const start={lat:Number(document.getElementById('geo-lat')?.value)||14.6349,lng:Number(document.getElementById('geo-lng')?.value)||-90.5069};gMap=new google.maps.Map(container,{center:start,zoom:14,mapTypeControl:false,streetViewControl:false,fullscreenControl:true,gestureHandling:'greedy'});setGMarker(start.lat,start.lng,true);attachAutocomplete();}
+    function initGMap(){const start={lat:Number(geo-lat?.value)||14.6349,lng:Number(geo-lng?.value)||-90.5069};gMap=new google.maps.Map(document.getElementById('gmap'),{center:start,zoom:14,mapTypeControl:false,streetViewControl:false,fullscreenControl:true,gestureHandling:'greedy'});setGMarker(start.lat,start.lng,true);attachAutocomplete();}
     window.initGMap=initGMap;
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsWVTI4PKDqGp-wJgWZnD2IbOvd0wKPhQ&libraries=places&callback=initGMap" async defer></script>
 
-  <!-- ===== PDF ===== -->
+  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
   <script>
-    function calculateRealAppraisal(){
-      // Tomar el total de la tabla de construcción
-      const totalConstruccion = parseFloat(document.getElementById('totalConstruccion')?.value)||0;
-
-      // Área construida: si hay filas con área, usar su suma; si no, usar campo del paso 1
-      let sumaArea = 0;
-      document.querySelectorAll('#tbBodyConstruccion .area-input').forEach(i=>{
-        sumaArea += parseFloat(i.value)||0;
-      });
-      const areaConstruccion = sumaArea>0 ? sumaArea : (parseFloat(document.getElementById('construction-area').value)||0);
-
-      const estado=document.getElementById('estado-inmueble').value||'No especificado';
-      const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
-      const antiguedad=anioConstruccion? new Date().getFullYear()-anioConstruccion : 0;
-
-      const tipologiaId=document.getElementById('typology').value;
-      let tipText='No seleccionada';
-      try{
-        const t=(Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipologiaId);
-        if(t) tipText=`${t.category}-${t.type}`;
-      }catch{}
-
-      const formatCurrency=(v)=> new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(v);
-
-      document.getElementById('resultArea').textContent=`${areaConstruccion.toFixed(2)} m²`;
-      document.getElementById('resultTypology').textContent=tipText;
-      document.getElementById('resultCondition').textContent=estado;
-      document.getElementById('resultAge').textContent=`${antiguedad} años`;
-
-      // Terreno aún en 0 (pendiente de tu lógica específica)
-      document.getElementById('resultLandValue').textContent=formatCurrency(0);
-      document.getElementById('resultLandAppraisal').textContent=formatCurrency(0);
-
-      document.getElementById('resultBuildValue').textContent=formatCurrency(totalConstruccion);
-      document.getElementById('resultGrandTotal').textContent=formatCurrency(totalConstruccion);
-      document.getElementById('resultTotal').textContent=formatCurrency(totalConstruccion);
-    }
-
     async function generateReport(){
-      const loadingOverlay=document.getElementById('loadingOverlay'); loadingOverlay.style.display='flex';
+      const overlay=document.getElementById('loadingOverlay'); overlay.style.display='flex';
       try{
-        if(typeof window.jspdf==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); }
-        if(typeof window.jspdfAutoTable==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js'); }
-        const { jsPDF }=window.jspdf; const doc=new jsPDF(); const pageWidth=doc.internal.pageSize.getWidth(); const margin=20; const contentWidth=pageWidth-(margin*2);
-        doc.setFillColor(91,123,122); doc.rect(0,0,pageWidth,60,'F');
-        doc.setTextColor(255,255,255); doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.text('REPORTE DE AVALÚO',margin,30);
-        doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')}`,margin,45); doc.text('Sistema de Avalúos Profesional', pageWidth - margin - 80, 45);
-
+        const { jsPDF }=window.jspdf; const doc=new jsPDF(); const W=doc.internal.pageSize.getWidth(), M=20, CW=W-40;
+        doc.setFillColor(91,123,122);doc.rect(0,0,W,60,'F');doc.setTextColor(255,255,255);doc.setFontSize(20);doc.setFont('helvetica','bold');doc.text('REPORTE DE AVALÚO',M,30);
+        doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')}`,M,45);doc.text('Sistema de Avalúos Profesional',W-M-80,45);
         let y=80;
-        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN DE LA PROPIEDAD',margin,y); y+=20;
-        const basicData=[
-          ['Asociado:',document.getElementById('associate-name').value||'No especificado'],
-          ['Dirección:',document.getElementById('address').value||'No especificado'],
-          ['Propietario:',document.getElementById('owner-name').value||'No especificado'],
-          ['Área Construida:',document.getElementById('resultArea').textContent||'No especificado'],
-          ['Área Terreno:',document.getElementById('land-area').value?document.getElementById('land-area').value+' m²':'No especificado']
-        ];
-        doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','normal');
-        basicData.forEach(([l,v])=>{doc.setFont('helvetica','bold'); doc.text(l,margin,y); doc.setFont('helvetica','normal'); doc.text(v,margin+45,y); y+=8;}); y+=10;
 
-        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('RESULTADOS DEL AVALÚO',margin,y); y+=20;
-        const resultsData=[
-          ['Tipología',document.getElementById('resultTypology').textContent],
-          ['Estado',document.getElementById('resultCondition').textContent],
-          ['Antigüedad',document.getElementById('resultAge').textContent],
-          ['Valor Construcción',document.getElementById('resultBuildValue').textContent],
-          ['TOTAL',document.getElementById('resultTotal').textContent]
-        ];
-        doc.autoTable({startY:y, head:[['Concepto','Valor']], body:resultsData, theme:'grid', headStyles:{fillColor:[91,123,122], textColor:255, fontStyle:'bold'}, styles:{fontSize:10, cellPadding:5}, columnStyles:{0:{fontStyle:'bold', cellWidth:100},1:{cellWidth:80}}, margin:{left:margin,right:margin}});
+        // Propiedad
+        doc.setFillColor(240,240,240);doc.rect(M,y-10,CW,15,'F');doc.setTextColor(91,123,122);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('INFORMACIÓN DE LA PROPIEDAD',M,y);y+=20;
+        const info=[['Asociado:',associate-name.value||'-'],['Dirección:',address.value||'-'],['Propietario:',owner-name.value||'-'],['Área Construida:',resultArea.textContent||'-'],['Área Terreno:',(land-area.value?land-area.value+' m²':'-')]];
+        doc.setTextColor(0,0,0);doc.setFontSize(10);doc.setFont('helvetica','normal');
+        info.forEach(([l,v])=>{doc.setFont('helvetica','bold');doc.text(l,M,y);doc.setFont('helvetica','normal');doc.text(v,M+45,y);y+=8;}); y+=10;
+
+        // Resultados
+        doc.setFillColor(240,240,240);doc.rect(M,y-10,CW,15,'F');doc.setTextColor(91,123,122);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('RESULTADOS DEL AVALÚO',M,y);y+=20;
+        const res=[['Tipología',resultTypology.textContent],['Estado',resultCondition.textContent],['Antigüedad',resultAge.textContent],['Valor Terreno (sin ajuste)',resultLandValue.textContent],['Avaluó Terreno (con ajuste)',resultLandAppraisal.textContent],['Valor Construcción',resultBuildValue.textContent],['TOTAL',resultTotal.textContent]];
+        doc.autoTable({startY:y,head:[['Concepto','Valor']],body:res,theme:'grid',headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'},styles:{fontSize:10,cellPadding:5},columnStyles:{0:{fontStyle:'bold',cellWidth:100},1:{cellWidth:80}},margin:{left:M,right:M}});
         y=doc.lastAutoTable.finalY+15;
 
-        doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15); doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
+        doc.setFillColor(91,123,122);doc.rect(M,y,CW,25,'F');doc.setTextColor(255,255,255);doc.setFontSize(16);doc.setFont('helvetica','bold');doc.text('VALOR TOTAL ESTIMADO',M+10,y+15);doc.setFontSize(20);doc.text(resultTotal.textContent,W-M-80,y+15);y+=40;
 
-        if(y>240){ doc.addPage(); y=20; }
+        if(y>240){doc.addPage();y=20;}
+        // Colindancias
+        doc.setFillColor(240,240,240);doc.rect(M,y-10,CW,15,'F');doc.setTextColor(91,123,122);doc.setFontSize(14);doc.setFont('helvetica','bold');doc.text('COLINDANCIAS',M,y);y+=20;
+        const col=[['Norte',norte-propietario.value||'',(norte-metros.value||'')+' m'],['Sur',sur-propietario.value||'',(sur-metros.value||'')+' m'],['Oriente',oriente-propietario.value||'',(oriente-metros.value||'')+' m'],['Poniente',poniente-propietario.value||'',(poniente-metros.value||'')+' m']];
+        doc.autoTable({startY:y,head:[['Dirección','Propietario','Metros']],body:col,theme:'grid',headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'},styles:{fontSize:9,cellPadding:4},margin:{left:M,right:M}});
 
-        // Colindancias (sin columna "Actual")
-        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
-        const colData=[
-          ['Norte',document.getElementById('norte-propietario').value||'',(document.getElementById('norte-metros').value||'')+' m'],
-          ['Sur',document.getElementById('sur-propietario').value||'',(document.getElementById('sur-metros').value||'')+' m'],
-          ['Oriente',document.getElementById('oriente-propietario').value||'',(document.getElementById('oriente-metros').value||'')+' m'],
-          ['Poniente',document.getElementById('poniente-propietario').value||'',(document.getElementById('poniente-metros').value||'')+' m']
-        ];
-        doc.autoTable({startY:y, head:[['Dirección','Propietario','Metros']], body:colData, theme:'grid', headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'}, styles:{fontSize:9, cellPadding:4}, margin:{left:margin,right:margin}});
-
-        const totalPages=doc.internal.getNumberOfPages();
-        for(let i=1;i<=totalPages;i++){
-          doc.setPage(i); doc.setFontSize(8); doc.setTextColor(128,128,128);
-          doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos`, pageWidth/2, doc.internal.pageSize.getHeight()-10, {align:'center'});
-        }
-        const fileName=`Avaluo_${document.getElementById('associate-name').value||'Propiedad'}_${new Date().toISOString().slice(0,10)}.pdf`;
-        doc.save(fileName);
-      }catch(error){
-        console.error('Error generando PDF:',error); alert('Error al generar el PDF: '+error.message);
-      }
-      finally{ loadingOverlay.style.display='none'; }
+        const pages=doc.internal.getNumberOfPages();
+        for(let i=1;i<=pages;i++){doc.setPage(i);doc.setFontSize(8);doc.setTextColor(128,128,128);doc.text(`Página ${i} de ${pages} - Sistema de Avalúos`,W/2,doc.internal.pageSize.getHeight()-10,{align:'center'});}
+        const fname=`Avaluo_${(associate-name.value||'Propiedad').replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.pdf`;doc.save(fname);
+      }catch(e){console.error(e);alert('Error al generar el PDF: '+(e?.message||e));}
+      finally{overlay.style.display='none';}
     }
-    function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);});}
+    function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+  </script>
 
+  <!-- Wizard + Auth guard -->
+  <script>
     class FormWizard{
-      constructor(){this.currentStep=1; this.totalSteps=4; this.init();}
-      init(){this.bindEvents(); this.updateUI();}
+      constructor(){this.currentStep=1;this.totalSteps=4;this.init();}
+      init(){this.bindEvents();this.updateUI();}
       bindEvents(){
         document.getElementById('next-step').addEventListener('click',()=>this.next());
         document.getElementById('prev-step').addEventListener('click',()=>this.previous());
-        document.querySelectorAll('.step').forEach(step=>{
-          step.addEventListener('click',(e)=>{
-            const n=parseInt(e.currentTarget.dataset.step);
-            if(n<this.currentStep){this.goToStep(n);}
-          });
-        });
+        document.querySelectorAll('.step').forEach(s=>s.addEventListener('click',e=>{const n=parseInt(e.currentTarget.dataset.step);if(n<this.currentStep)this.goToStep(n);}));
       }
-      validateStep(step){
-        const req=document.querySelectorAll(`[data-step="${step}"] [required]`);
-        let ok=true; req.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--error)'; ok=false;} else{f.style.borderColor='';}});
-        if(!ok){alert('Por favor completa todos los campos requeridos marcados con *');}
-        return ok;
-      }
-      next(){
-        if(this.currentStep<this.totalSteps){
-          if(this.validateStep(this.currentStep)){ this.currentStep++; this.updateUI(); }
-        } else { this.calculateAppraisal(); }
-      }
-      previous(){ if(this.currentStep>1){ this.currentStep--; this.updateUI(); } }
-      goToStep(step){ if(step>=1&&step<=this.totalSteps){ this.currentStep=step; this.updateUI(); } }
+      validateStep(step){const req=document.querySelectorAll(`[data-step="${step}"] [required]`);let ok=true;req.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--error)';ok=false;}else f.style.borderColor='';});if(!ok)alert('Completa los campos requeridos');return ok;}
+      next(){if(this.currentStep<this.totalSteps){if(this.validateStep(this.currentStep)){this.currentStep++;this.updateUI();}}else{this.calculateAppraisal();}}
+      previous(){if(this.currentStep>1){this.currentStep--;this.updateUI();}}
+      goToStep(s){if(s>=1&&s<=this.totalSteps){this.currentStep=s;this.updateUI();}}
       updateUI(){
-        document.querySelectorAll('.step').forEach(s=>{
-          const n=parseInt(s.dataset.step);
-          s.classList.remove('active','completed');
-          if(n===this.currentStep){s.classList.add('active');}
-          else if(n<this.currentStep){s.classList.add('completed');}
-        });
-        document.querySelectorAll('.form-section').forEach(sec=>{
-          sec.classList.remove('active'); if(parseInt(sec.dataset.step)===this.currentStep){sec.classList.add('active');}
-        });
-        const prevBtn=document.getElementById('prev-step');
-        const nextBtn=document.getElementById('next-step');
-        prevBtn.style.display=this.currentStep>1?'flex':'none';
-        nextBtn.innerHTML=this.currentStep===this.totalSteps?'<i class="fas fa-calculator"></i> Calcular Avalúo':'Siguiente <i class="fas fa-arrow-right"></i>';
+        document.querySelectorAll('.step').forEach(s=>{const n=parseInt(s.dataset.step);s.classList.remove('active','completed');if(n===this.currentStep)s.classList.add('active');else if(n<this.currentStep)s.classList.add('completed');});
+        document.querySelectorAll('.form-section').forEach(sec=>{sec.classList.remove('active');if(parseInt(sec.dataset.step)===this.currentStep)sec.classList.add('active');});
+        prev-step.style.display=this.currentStep>1?'flex':'none';
+        next-step.innerHTML=this.currentStep===this.totalSteps?'<i class="fas fa-calculator"></i> Calcular Avalúo':'Siguiente <i class="fas fa-arrow-right"></i>';
       }
       calculateAppraisal(){
         if(this.validateStep(this.currentStep)){
-          const nextBtn=document.getElementById('next-step');
-          const original=nextBtn.innerHTML;
-          nextBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Calculando...'; nextBtn.disabled=true;
-          setTimeout(()=>{
-            calculateRealAppraisal();
-            document.getElementById('resultSection').classList.add('active');
-            document.getElementById('save-btn').style.display='flex';
-            document.getElementById('pdf-btn').style.display='flex';
-            nextBtn.innerHTML=original; nextBtn.disabled=false;
-          },800);
+          const btn=next-step, old=btn.innerHTML;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Calculando...';btn.disabled=true;
+          setTimeout(()=>{calculateRealAppraisal();resultSection.classList.add('active');save-btn.style.display='flex';pdf-btn.style.display='flex';btn.innerHTML=old;btn.disabled=false;},700);
         }
       }
     }
-    function newAppraisal(){
-      document.getElementById('resultSection').classList.remove('active');
-      document.getElementById('save-btn').style.display='none';
-      document.getElementById('pdf-btn').style.display='none';
-      window.formWizard.goToStep(1);
-    }
-    document.addEventListener('DOMContentLoaded',function(){
-      window.formWizard=new FormWizard();
-      document.getElementById('save-btn').addEventListener('click',function(){ alert('Datos guardados exitosamente'); });
-      document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
-      document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
-      document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
-    });
+    function newAppraisal(){resultSection.classList.remove('active');save-btn.style.display='none';pdf-btn.style.display='none';window.formWizard.goToStep(1);}
+    document.addEventListener('DOMContentLoaded',()=>{window.formWizard=new FormWizard();save-btn.addEventListener('click',()=>alert('Datos guardados exitosamente'));pdf-btn.addEventListener('click',()=>generateReport());catalogModal.addEventListener('click',e=>{if(e.target===catalogModal)__closeTypology();});closeModal.addEventListener('click',()=>__closeTypology());});
   </script>
 
-  <!-- ===== SUPABASE AUTH (overlay + protección) ===== -->
+  <!-- Supabase Auth (protección mínima como tenías) -->
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-    const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
-
-    let PUBLIC_APP_URL = window.location.origin + window.location.pathname;
-    if (!PUBLIC_APP_URL.endsWith("/")) PUBLIC_APP_URL += "/";
-
-    window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    function __updateAuthUI(isLogged){
-      const overlay = document.getElementById('auth-overlay');
-      const userBox = document.getElementById('user-box');
-      if(overlay) overlay.style.display = isLogged ? 'none' : 'flex';
-      if(userBox){
-        userBox.style.display = isLogged ? 'flex' : 'none';
-        if(isLogged){
-          const email = window.__session?.user?.email || "";
-          const username = window.__session?.user?.user_metadata?.username || "";
-          userBox.querySelector('[data-user-email]').textContent = email;
-          userBox.querySelector('[data-user-name]').textContent = username || "(sin username)";
-        }
-      }
-      const nextBtn = document.getElementById('next-step');
-      if(nextBtn) nextBtn.disabled = !isLogged;
-    }
-
-    (async () => {
-      const { data: { session} } = await window.supabase.auth.getSession();
-      window.__session = session || null;
-      __updateAuthUI(!!session);
-    })();
-
-    window.supabase.auth.onAuthStateChange((_event, session) => {
-      window.__session = session || null;
-      __updateAuthUI(!!session);
-    });
-
-    window.__signUpWithEmail = async (email, password, username) => {
-      try {
-        const { data, error } = await window.supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { username }, emailRedirectTo: PUBLIC_APP_URL }
-        });
-        if (error) {
-          if (String(error.message || '').toLowerCase().includes('already')) {
-            const { error: e2 } = await window.supabase.auth.signInWithPassword({ email, password });
-            if (e2) throw e2;
-            return;
-          }
-          throw error;
-        }
-        if (!data?.session) {
-          alert("Te enviamos un correo de confirmación. Revisa spam/promociones.\nDespués de confirmar, vuelve a esta página.");
-        }
-      } catch (e) {
-        console.error("signUp error:", e);
-        alert("Error al crear cuenta: " + (e?.message || e));
-      }
-    };
-
-    window.__signInWithEmail = async (email, password) => {
-      try {
-        const { error } = await window.supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      } catch (e) {
-        const msg = String(e?.message || '').toLowerCase();
-        if (msg.includes('email') && msg.includes('confirm')) {
-          alert("Tu correo aún no está confirmado. Revisa tu email y confirma la cuenta.");
-        } else {
-          alert("Error al iniciar sesión: " + (e?.message || e));
-        }
-        console.error("signIn error:", e);
-      }
-    };
-
-    window.__signInWithGoogle = async () => {
-      try {
-        const { error } = await window.supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: { redirectTo: PUBLIC_APP_URL, queryParams: { prompt: "select_account" } }
-        });
-        if (error) throw error;
-      } catch (e) {
-        console.error("google oauth error:", e);
-        alert("Google login error: " + (e?.message || e));
-      }
-    };
-
-    window.__resendVerification = async (email) => {
-      try {
-        if (!email) return alert("Escribe tu correo primero.");
-        const { data, error } = await window.supabase.auth.resend({ type: 'signup', email });
-        if (error) throw error;
-        alert("Listo, te reenviamos el correo. Revisa bandeja y spam.");
-      } catch (e) {
-        console.error("resend error:", e);
-        alert("No se pudo reenviar: " + (e?.message || e));
-      }
-    };
-
-    window.__signOut = async () => { await window.supabase.auth.signOut(); };
-    window.__canUseApp = () => !!window.__session;
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const nextBtn = document.getElementById('next-step');
-      if(nextBtn){
-        nextBtn.addEventListener('click', (e) => {
-          if(!window.__canUseApp()){
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            document.getElementById('auth-overlay').style.display='flex';
-            alert("Inicia sesión para continuar.");
-          }
-        }, true);
-      }
-    });
-
-    const _origCalculate = window.calculateRealAppraisal;
-    if(_origCalculate){
-      window.calculateRealAppraisal = function(){
-        if(!window.__canUseApp()){
-          document.getElementById('auth-overlay').style.display='flex';
-          alert("Inicia sesión para calcular el avalúo.");
-          return;
-        }
-        return _origCalculate.apply(this, arguments);
-      };
-    }
+    const SUPABASE_URL="https://csinbmcauuyljjqshawi.supabase.co";
+    const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
+    let PUBLIC_APP_URL=window.location.origin+window.location.pathname; if(!PUBLIC_APP_URL.endsWith("/")) PUBLIC_APP_URL+="/";
+    window.supabase=createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    function __updateAuthUI(isLogged){auth-overlay.style.display=isLogged?'none':'flex';user-box.style.display=isLogged?'flex':'none';if(isLogged){user-box.querySelector('[data-user-email]').textContent=window.__session?.user?.email||"";user-box.querySelector('[data-user-name]').textContent=window.__session?.user?.user_metadata?.username||"(sin username)";}next-step.disabled=!isLogged;}
+    (async()=>{const {data:{session}}=await window.supabase.auth.getSession();window.__session=session||null;__updateAuthUI(!!session);})();
+    window.supabase.auth.onAuthStateChange((_e,session)=>{window.__session=session||null;__updateAuthUI(!!session);});
+    window.__signUpWithEmail=async(e,p,u)=>{try{const {data,error}=await window.supabase.auth.signUp({email:e,password:p,options:{data:{username:u},emailRedirectTo:PUBLIC_APP_URL}});if(error){if(String(error.message||'').toLowerCase().includes('already')){const {error:e2}=await window.supabase.auth.signInWithPassword({email:e,password:p});if(e2) throw e2;return;}throw error}if(!data?.session) alert("Te enviamos un correo de confirmación.");}catch(err){alert("Error al crear cuenta: "+(err?.message||err));}};
+    window.__signInWithEmail=async(e,p)=>{try{const {error}=await window.supabase.auth.signInWithPassword({email:e,password:p});if(error) throw error;}catch(err){const m=String(err?.message||'').toLowerCase();if(m.includes('confirm')) alert("Confirma tu correo."); else alert("Error al iniciar sesión: "+(err?.message||err));}};
+    window.__signInWithGoogle=async()=>{try{const {error}=await window.supabase.auth.signInWithOAuth({provider:"google",options:{redirectTo:PUBLIC_APP_URL,queryParams:{prompt:"select_account"}}});if(error) throw error;}catch(err){alert("Google login error: "+(err?.message||err));}};
+    window.__signOut=async()=>{await window.supabase.auth.signOut();};
+    window.__canUseApp=()=>!!window.__session;
+    document.addEventListener('DOMContentLoaded',()=>{next-step.addEventListener('click',(e)=>{if(!window.__canUseApp()){e.stopImmediatePropagation();e.preventDefault();auth-overlay.style.display='flex';alert("Inicia sesión para continuar.");}},true);});
+    const _origCalc = window.calculateRealAppraisal;
+    if(_origCalc){window.calculateRealAppraisal=function(){if(!window.__canUseApp()){auth-overlay.style.display='flex';alert("Inicia sesión para calcular el avalúo.");return;}return _origCalc.apply(this,arguments);};}
   </script>
 
-  
   <script>
-    (function () {
-      const url = new URL(window.location.href);
-      const hashStr = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
-      const hash = new URLSearchParams(hashStr);
-      const qs = new URLSearchParams(url.search);
-      const msg = hash.get("error_description") || hash.get("error") || qs.get("error_description") || qs.get("error");
-      if (msg) {
-        console.error("Auth callback error:", msg);
-        alert("Autenticación: " + msg);
-      }
-    })();
+    (function(){const url=new URL(window.location.href);const hash=new URLSearchParams(url.hash.startsWith('#')?url.hash.slice(1):url.hash);const qs=new URLSearchParams(url.search);const msg=hash.get("error_description")||hash.get("error")||qs.get("error_description")||qs.get("error");if(msg){console.error("Auth callback error:",msg);alert("Autenticación: "+msg);}})();
   </script>
 </body>
 </html>
