@@ -337,7 +337,7 @@
         <div class="form-grid">
           <div class="form-group"><label for="owner-name">Nombre del Propietario</label><input type="text" id="owner-name" placeholder="Ingrese el nombre del propietario" /></div>
           <div class="form-group"><label for="deed-number">Número de Escritura</label><input type="text" id="deed-number" placeholder="Número de escritura" /></div>
-          <div class="form-group"><label for="deed-date">Fecha de Escritura</label><input type="date" id="deed-date /></div>
+          <div class="form-group"><label for="deed-date">Fecha de Escritura</label><input type="date" id="deed-date" /></div>
           <div class="form-group"><label for="notary">Notario</label><input type="text" id="notary" placeholder="Nombre del notario" /></div>
         </div>
 
@@ -403,10 +403,49 @@
       </div>
 
       
+      <!-- Paso 3: Cálculos -->
       <div class="form-section" data-step="3">
-        <div class="form-section-title"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
+        <!-- NUEVO: primero Terreno -->
+        <div class="form-section-title"><i class="fas fa-mountain"></i> Cálculo del Valor del Terreno</div>
+        <table class="table-ui" id="tablaTerreno">
+          <thead>
+            <tr>
+              <th style="width:140px">V/Base (Q/m²)</th>
+              <th style="width:120px">Frente</th>
+              <th style="width:120px">Fondo</th>
+              <th style="width:140px">Área m²</th>
+              <th style="width:120px">Fac. Fte.</th>
+              <th style="width:120px">Fac. Fdo.</th>
+              <th style="width:120px">Fac. Fma.</th>
+              <th style="width:120px">Fac. Ext.</th>
+              <th style="width:140px">Otros Fac.</th>
+              <th style="width:160px">MONTO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="number" min="0" step="0.01" class="t-vbase" placeholder="1500"></td>
+              <td><input type="number" min="0" step="0.01" class="t-frente" placeholder="0"></td>
+              <td><input type="number" min="0" step="0.01" class="t-fondo" placeholder="0"></td>
+              <td><input type="number" min="0" step="0.01" class="t-area" id="t-area" placeholder="0"></td>
+              <td><input type="number" min="0" step="0.01" class="t-ffte" placeholder="1" value="1"></td>
+              <td><input type="number" min="0" step="0.01" class="t-ffdo" placeholder="1" value="1"></td>
+              <td><input type="number" min="0" step="0.01" class="t-ffma" placeholder="1" value="1"></td>
+              <td><input type="number" min="0" step="0.01" class="t-fext" placeholder="1" value="1"></td>
+              <td><input type="number" min="0" step="0.01" class="t-fotros" placeholder="1" value="1"></td>
+              <td><input type="text" class="t-monto" id="t-monto" value="0.00" readonly></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="9" style="text-align:right; font-weight:600;">TOTAL TERRENO</td>
+              <td><input type="text" id="totalTerreno" value="0.00" readonly></td>
+            </tr>
+          </tfoot>
+        </table>
 
-        
+        <!-- Después Construcción -->
+        <div class="form-section-title"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
         <table class="table-ui" id="tablaConstruccion">
           <thead>
             <tr>
@@ -449,46 +488,7 @@
           El MONTO se calcula como: <strong>Área m² × V/Base × %</strong>. Todos los campos son manuales (editables), excepto MONTO.
         </div>
 
-        <!-- NUEVO: Cálculo del Terreno -->
-        <div class="form-section-title"><i class="fas fa-mountain"></i> Cálculo del Valor del Terreno</div>
-        <table class="table-ui" id="tablaTerreno">
-          <thead>
-            <tr>
-              <th style="width:140px">V/Base (Q/m²)</th>
-              <th style="width:120px">Frente</th>
-              <th style="width:120px">Fondo</th>
-              <th style="width:140px">Área m²</th>
-              <th style="width:120px">Fac. Fte.</th>
-              <th style="width:120px">Fac. Fdo.</th>
-              <th style="width:120px">Fac. Fma.</th>
-              <th style="width:120px">Fac. Ext.</th>
-              <th style="width:140px">Otros Fac.</th>
-              <th style="width:160px">MONTO</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><input type="number" min="0" step="0.01" class="t-vbase" placeholder="1500"></td>
-              <td><input type="number" min="0" step="0.01" class="t-frente" placeholder="0"></td>
-              <td><input type="number" min="0" step="0.01" class="t-fondo" placeholder="0"></td>
-              <td><input type="number" min="0" step="0.01" class="t-area" id="t-area" placeholder="0"></td>
-              <td><input type="number" min="0" step="0.01" class="t-ffte" placeholder="1" value="1"></td>
-              <td><input type="number" min="0" step="0.01" class="t-ffdo" placeholder="1" value="1"></td>
-              <td><input type="number" min="0" step="0.01" class="t-ffma" placeholder="1" value="1"></td>
-              <td><input type="number" min="0" step="0.01" class="t-fext" placeholder="1" value="1"></td>
-              <td><input type="number" min="0" step="0.01" class="t-fotros" placeholder="1" value="1"></td>
-              <td><input type="text" class="t-monto" id="t-monto" value="0.00" readonly></td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="9" style="text-align:right; font-weight:600;">TOTAL TERRENO</td>
-              <td><input type="text" id="totalTerreno" value="0.00" readonly></td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <!-- NUEVO: Integración de Valores -->
+        <!-- Integración al final -->
         <div class="form-section-title"><i class="fas fa-layer-group"></i> Integración de Valores</div>
         <div class="result-grid" id="integracionValores">
           <div class="result-item">
@@ -629,7 +629,6 @@
       const totalEl = document.getElementById('totalConstruccion');
       if(totalEl) totalEl.value = total.toFixed(2);
 
-      
       if(document.getElementById('resultSection').classList.contains('active')){
         document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(total);
         
@@ -637,7 +636,6 @@
         const areaMostrar = (sumaArea>0? sumaArea : fallbackArea).toFixed(2);
         document.getElementById('resultArea').textContent = `${areaMostrar} m²`;
 
-        
         const estado = document.getElementById('estado-inmueble').value || 'No especificado';
         document.getElementById('resultCondition').textContent = estado;
 
@@ -653,8 +651,7 @@
         }catch{}
         document.getElementById('resultTypology').textContent = tipText;
 
-        
-        const land=parseFloat(document.getElementById('totalTerreno')?.value)||0; /* NUEVO: usar terreno real */
+        const land=parseFloat(document.getElementById('totalTerreno')?.value)||0;
         document.getElementById('resultLandValue').textContent = formatMoneyGTQ(land);
         document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(land);
         document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(land + total);
@@ -667,7 +664,7 @@
         tr.addEventListener(evt, e=>{
           if(e.target.matches('.area-input,.vbase-input,.coef-input')){
             recalcularTablaConstruccion();
-            integrarValores(); /* NUEVO: integrar cuando cambie construcción */
+            integrarValores();
           }
         });
       });
@@ -695,12 +692,11 @@
       if(rows.length>1){
         tbody.removeChild(rows[rows.length-1]);
         recalcularTablaConstruccion();
-        integrarValores(); /* NUEVO */
+        integrarValores();
       }
     }
 
     document.addEventListener('DOMContentLoaded', ()=>{
-      
       const firstRow = document.querySelector('#tbBodyConstruccion tr');
       if(firstRow) bindRowEvents(firstRow);
     });
@@ -718,7 +714,6 @@
         return isNaN(v) || v <= 0 ? 1 : v;
       };
 
-      // Si no hay área, derivar de frente × fondo
       let area = num('.t-area');
       const frente = num('.t-frente');
       const fondo = num('.t-fondo');
@@ -743,11 +738,9 @@
       const totalTerrenoEl = document.getElementById('totalTerreno');
       if (totalTerrenoEl) totalTerrenoEl.value = monto.toFixed(2);
 
-      // Integración local
       const ivTerrenoEl = document.getElementById('ivTerreno');
       if (ivTerrenoEl) ivTerrenoEl.textContent = formatMoneyGTQ(monto);
 
-      // Si el panel de resultados está activo, reflejar
       if (document.getElementById('resultSection').classList.contains('active')) {
         document.getElementById('resultLandValue').textContent = formatMoneyGTQ(monto);
         document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(monto);
@@ -761,7 +754,6 @@
       const construccion = parseFloat(document.getElementById('totalConstruccion')?.value) || 0;
       const total = terreno + construccion;
 
-      // Bloque de integración
       const ivT = document.getElementById('ivTerreno');
       const ivC = document.getElementById('ivConstruccion');
       const ivTot = document.getElementById('ivTotal');
@@ -769,7 +761,6 @@
       if (ivC) ivC.textContent = formatMoneyGTQ(construccion);
       if (ivTot) ivTot.textContent = formatMoneyGTQ(total);
 
-      // Panel resultados global
       if (document.getElementById('resultSection').classList.contains('active')) {
         document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(total);
         document.getElementById('resultTotal').textContent = formatMoneyGTQ(total);
@@ -798,7 +789,6 @@
           });
         });
       }
-      // Primera evaluación
       recalcularTerreno();
       integrarValores();
     });
@@ -824,10 +814,8 @@
 
   <script>
     function calculateRealAppraisal(){
-      
       const totalConstruccion = parseFloat(document.getElementById('totalConstruccion')?.value)||0;
 
-      
       let sumaArea = 0;
       document.querySelectorAll('#tbBodyConstruccion .area-input').forEach(i=>{
         sumaArea += parseFloat(i.value)||0;
@@ -852,7 +840,6 @@
       document.getElementById('resultCondition').textContent=estado;
       document.getElementById('resultAge').textContent=`${antiguedad} años`;
 
-      // NUEVO: usar valor real de terreno desde totalTerreno
       const terreno = parseFloat(document.getElementById('totalTerreno')?.value) || 0;
       document.getElementById('resultLandValue').textContent=formatCurrency(terreno);
       document.getElementById('resultLandAppraisal').textContent=formatCurrency(terreno);
@@ -889,7 +876,7 @@
           ['Tipología',document.getElementById('resultTypology').textContent],
           ['Estado',document.getElementById('resultCondition').textContent],
           ['Antigüedad',document.getElementById('resultAge').textContent],
-          ['Valor Terreno',document.getElementById('resultLandValue').textContent], /* NUEVO */
+          ['Valor Terreno',document.getElementById('resultLandValue').textContent], /* primero terreno */
           ['Valor Construcción',document.getElementById('resultBuildValue').textContent],
           ['TOTAL',document.getElementById('resultTotal').textContent]
         ];
