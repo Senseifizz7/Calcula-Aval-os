@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* ===== SISTEMA DE DISEÑO MEJORADO ===== */
+   
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -91,9 +91,6 @@
     .form-group input:focus,.form-group select:focus,.form-group textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(91,123,122,.1); }
     .form-help { font-size: .85rem; color: var(--text-light); margin-top: var(--space-xs); }
 
-    /* más espacio entre secciones dentro del mismo paso */
-    .form-grid + .form-section-title { margin-top: var(--space-xl); }
-
     /* ===== TIPOS ===== */
     .typology-selector{ margin-top: var(--space-xs); }
     .typology-trigger{ background: var(--bg-card); border:1px solid var(--border); border-radius: var(--radius); padding:20px; cursor:pointer; display:flex; align-items:center; gap:var(--space-sm); transition:.2s; }
@@ -106,17 +103,28 @@
     .selected-title{ font-weight: 500; color: var(--text); font-size:.9rem; }
     .selected-price{ font-size:.85rem; color: var(--text-light); margin-top:4px; }
 
-    /* ===== TABLA COLINDANCIAS ===== */
-    .colindancias-table{ width:100%; border-collapse:collapse; margin: var(--space-md) 0; background: var(--bg-card); border-radius: var(--radius); overflow:hidden; border:1px solid var(--border); }
-    .colindancias-table th{ background: rgba(91,123,122,.05); color: var(--text); padding:16px; text-align:left; font-weight:600; font-size:.9rem; }
-    .colindancias-table td{ padding:16px; border-bottom:1px solid var(--border-light); }
-    .colindancias-table input{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); }
+    /* ===== LIMPIAR COLINDANCIAS ===== */
+    #norte-propietario,#sur-propietario,#oriente-propietario,#poniente-propietario,
+    #norte-metros,#sur-metros,#oriente-metros,#poniente-metros{
+      background: var(--bg-card)!important; border:1px solid var(--border)!important; color: var(--text)!important;
+    }
+
+    /* ===== TABLAS ===== */
+    .table-ui{ width:100%; border-collapse:collapse; margin: var(--space-md) 0; background: var(--bg-card); border-radius: var(--radius); overflow:hidden; border:1px solid var(--border); }
+    .table-ui th{ background: rgba(91,123,122,.05); color: var(--text); padding:16px; text-align:left; font-weight:600; font-size:.9rem; }
+    .table-ui td{ padding:16px; border-bottom:1px solid var(--border-light); }
+    .table-ui input, .table-ui select{ width:100%; padding:10px 12px; border:1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); }
+
+    /* Extra separación entre Finca y Colindancias */
+    .form-section-title + .form-grid + .form-section-title{ margin-top: var(--space-lg); }
 
     /* ===== BOTONES ===== */
     .btn-primary{ background: var(--primary); color:#fff; border:none; border-radius: var(--radius); padding:16px 24px; font-size:1rem; font-weight:500; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:10px; margin-top: var(--space-sm); }
     .btn-primary:hover{ background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
     .btn-secondary{ background:transparent; color: var(--primary); border:2px solid var(--primary); border-radius: var(--radius); padding:14px 22px; font-size:1rem; font-weight:500; cursor:pointer; transition:.2s; display:flex; align-items:center; justify-content:center; gap:10px; }
     .btn-secondary:hover{ background: var(--primary); color:#fff; }
+
+    .btn-small{ padding:10px 14px; font-size:.9rem; border-radius:10px; }
 
     .form-navigation{ display:flex; justify-content:space-between; margin-top: var(--space-xl); padding-top: var(--space-md); border-top:1px solid var(--border-light); }
 
@@ -155,6 +163,7 @@
     .catalog-features-modal li i{ color: var(--primary); font-size:.8rem; }
 
     .select-button{ background: var(--primary); color:#fff; border:none; border-radius: var(--radius); padding:12px 20px; font-weight:500; cursor:pointer; margin-top:12px; width:100%; transition:.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .select-button:hover{ background: var(--primary-dark); }
 
     /* ===== FLOTANTES ===== */
     #save-btn,#pdf-btn{ position:fixed; right:24px; z-index:100; background: var(--primary); color:#fff; border:none; border-radius:50px; padding:14px 20px; font-weight:500; box-shadow: var(--shadow-md); display:none; cursor:pointer; transition:.2s; align-items:center; gap:8px; font-size:.9rem; }
@@ -174,7 +183,7 @@
     .auth-col-title{ font-weight:600; margin-bottom:8px; }
     .auth-input{ width:100%; margin-bottom:8px; padding:10px; border:1px solid var(--border); border-radius:8px; }
     .auth-close{ position:absolute; top:18px; right:18px; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; }
-
+    
     /* ===== RESPONSIVE ===== */
     @media (max-width:768px){
       .app-container{ padding:0 var(--space-sm); }
@@ -309,7 +318,7 @@
             <input type="number" id="land-area" placeholder="Ej: 200" min="1" required />
           </div>
         </div>
-
+        
         <div style="margin: var(--space-md) 0;">
           <button class="btn-primary" type="button" onclick="locateMeOnce()">
             <i class="fas fa-location-crosshairs"></i> Usar mi ubicación
@@ -340,36 +349,14 @@
           <div class="form-group"><label for="department">Departamento</label><input type="text" id="department" placeholder="Departamento" /></div>
         </div>
 
-        <div class="form-section-title"><i class="fas fa-map-marker-alt"></i> Colindancias</div>
-        <table class="colindancias-table">
-          <thead>
-            <tr>
-              <th>Dirección</th>
-              <th>Propietario</th>
-              <th>Metros</th>
-            </tr>
-          </thead>
+        <div class="form-section-title" style="margin-top: var(--space-lg);"><i class="fas fa-map-marker-alt"></i> Colindancias</div>
+        <table class="table-ui">
+          <thead><tr><th>Dirección</th><th>Propietario</th><th>Metros</th></tr></thead>
           <tbody>
-            <tr>
-              <td><strong>Norte:</strong></td>
-              <td><input type="text" id="norte-propietario" placeholder="Propietario" /></td>
-              <td><input type="number" id="norte-metros" placeholder="Metros" step="0.01" /></td>
-            </tr>
-            <tr>
-              <td><strong>Sur:</strong></td>
-              <td><input type="text" id="sur-propietario" placeholder="Propietario" /></td>
-              <td><input type="number" id="sur-metros" placeholder="Metros" step="0.01" /></td>
-            </tr>
-            <tr>
-              <td><strong>Oriente:</strong></td>
-              <td><input type="text" id="oriente-propietario" placeholder="Propietario" /></td>
-              <td><input type="number" id="oriente-metros" placeholder="Metros" step="0.01" /></td>
-            </tr>
-            <tr>
-              <td><strong>Poniente:</strong></td>
-              <td><input type="text" id="poniente-propietario" placeholder="Propietario" /></td>
-              <td><input type="number" id="poniente-metros" placeholder="Metros" step="0.01" /></td>
-            </tr>
+            <tr><td><strong>Norte:</strong></td><td><input type="text" id="norte-propietario" placeholder="Propietario" /></td><td><input type="number" id="norte-metros" placeholder="Metros" step="0.01" /></td></tr>
+            <tr><td><strong>Sur:</strong></td><td><input type="text" id="sur-propietario" placeholder="Propietario" /></td><td><input type="number" id="sur-metros" placeholder="Metros" step="0.01" /></td></tr>
+            <tr><td><strong>Oriente:</strong></td><td><input type="text" id="oriente-propietario" placeholder="Propietario" /></td><td><input type="number" id="oriente-metros" placeholder="Metros" step="0.01" /></td></tr>
+            <tr><td><strong>Poniente:</strong></td><td><input type="text" id="poniente-propietario" placeholder="Propietario" /></td><td><input type="number" id="poniente-metros" placeholder="Metros" step="0.01" /></td></tr>
           </tbody>
         </table>
 
@@ -384,12 +371,12 @@
           <div class="form-group"><label for="paredes">Paredes</label><select id="paredes"><option value="">Seleccionar</option><option value="block">Block</option><option value="adobe">Adobe</option><option value="madera">Madera</option><option value="bahareque">Bahareque</option><option value="prefabricado">Prefabricado</option><option value="concreto">Concreto</option></select></div>
           <div class="form-group"><label for="ventanas">Ventanas</label><select id="ventanas"><option value="">Seleccionar</option><option value="upvc">UPVC</option><option value="aluminio">Aluminio</option><option value="metal">Metal</option><option value="madera">Madera</option><option value="otros">Otros</option></select></div>
           <div class="form-group"><label for="puertas">Puertas</label><select id="puertas"><option value="">Seleccionar</option><option value="upvc">UPVC</option><option value="madera">Madera</option><option value="metal">Metal</option><option value="pre-fab">Pre-Fab</option><option value="rustica">Rústica</option><option value="otros">Otros</option></select></div>
-          <div class="form-group"><label for="cielos">Cielos</label><select id="cielos"><option value="">Seleccionar</option><option value="concreto">Concreto</option><option value="prefabricado">Prefabricado</option><option value="machimbre">Machimbre</option><option value="madera">Madera</option><option value="falsa-terraza">Falsa Terraza</option><option value="sin-cielo">Sin Cielo</option><option value="otros">Otros</option></select></div>
+          <div class="form-group"><label for="cielos">Cielos</label><select id="cielos"><option value="">Seleccionar</option><option value="concreto">Concreto</option><option value="prefabricado">Prefabricado</option><option value="machimbre">Machimbre</option><option value="madera">Madera</option><option value="falsa-terraza">Falsa terraza</option><option value="sin-cielo">Sin Cielo</option><option value="otros">Otros</option></select></div>
           <div class="form-group"><label for="sanitario">Sanitario</label><select id="sanitario"><option value="">Seleccionar</option><option value="bueno">Bueno</option><option value="medio">Medio</option><option value="bajo">Bajo</option><option value="letrina">Letrina</option><option value="pozo">Pozo</option></select></div>
           <div class="form-group"><label for="red-electric">Red Eléctrica</label><select id="red-electric"><option value="">Seleccionar</option><option value="municipal">Municipal</option><option value="energuate">Energuate</option><option value="solar">Solar</option><option value="solar-fed">Solar/Fed</option><option value="sin-elec">Sin Electricidad</option></select></div>
           <div class="form-group"><label for="agua">Servicio de Agua</label><select id="agua"><option value="">Seleccionar</option><option value="municipal">Municipal</option><option value="comunal">Comunal</option><option value="pozo">Pozo</option><option value="otros">Otros</option></select></div>
           <div class="form-group"><label for="estado-inmueble">Estado de Conservación</label><select id="estado-inmueble"><option value="">Seleccionar</option><option value="Excelente">Excelente</option><option value="Bueno">Bueno</option><option value="Regular">Regular</option><option value="Malo">Malo</option></select></div>
-          <div class="form-group"><label for="anio-construccion">Año de Construcción</label><input type="number" id="anio-construccion" min="1900" max="2024" placeholder="Ej: 2018" /></div>
+          <div class="form-group"><label for="anio-construccion">Año de Construcción</label><input type="number" id="anio-construccion" min="1900" max="2025" placeholder="Ej: 2018" /></div>
         </div>
 
         <div class="form-group" style="margin-top:24px;">
@@ -417,41 +404,49 @@
 
       <!-- ===== Paso 3 ===== -->
       <div class="form-section" data-step="3">
+        <div class="form-section-title"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
 
-        <!-- primero: CALCULO DEL VALOR DEL TERRENO -->
-        <div class="form-section-title"><i class="fas fa-seedling"></i> Cálculo del Valor del Terreno</div>
-        <div class="form-grid">
-          <div class="form-group"><label for="terr-vbase">V/Base</label><input type="text" id="terr-vbase" placeholder="Q0.00"></div>
-          <div class="form-group"><label for="terr-frente">Frente</label><input type="number" id="terr-frente" step="0.01" placeholder="0.00"></div>
-          <div class="form-group"><label for="terr-fondo">Fondo</label><input type="number" id="terr-fondo" step="0.01" placeholder="0.00"></div>
-          <div class="form-group"><label for="terr-area">Área m²</label><input type="number" id="terr-area" step="0.01" placeholder="0.00"></div>
-          <div class="form-group"><label for="terr-fac-fte">Fac Fte</label><input type="number" id="terr-fac-fte" step="0.01" placeholder="1.00"></div>
-          <div class="form-group"><label for="terr-fac-fdo">Fac Fdo</label><input type="number" id="terr-fac-fdo" step="0.01" placeholder="1.00"></div>
-          <div class="form-group"><label for="terr-fac-fma">Fac Fma</label><input type="number" id="terr-fac-fma" step="0.01" placeholder="1.00"></div>
-          <div class="form-group"><label for="terr-fac-ext">Fac Ext</label><input type="number" id="terr-fac-ext" step="0.01" placeholder="1.00"></div>
-          <div class="form-group"><label for="terr-otros">Otros Fac</label><input type="number" id="terr-otros" step="0.01" placeholder="1.00"></div>
-          <div class="form-group"><label for="terr-monto">MONTO</label><input type="text" id="terr-monto" placeholder="Q0.00"></div>
+        <!-- Tabla estilo Excel: Planta | Área m² | V/Base | % | Tipo de Construcción | MONTO -->
+        <table class="table-ui" id="tablaConstruccion">
+          <thead>
+            <tr>
+              <th style="width:160px">Planta</th>
+              <th style="width:140px">Área m²</th>
+              <th style="width:140px">V/Base</th>
+              <th style="width:120px">%</th>
+              <th>Tipo de Construcción</th>
+              <th style="width:160px">MONTO</th>
+            </tr>
+          </thead>
+          <tbody id="tbBodyConstruccion">
+            <tr>
+              <td><input type="text" value="Primer Nivel" class="planta-input"></td>
+              <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
+              <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
+              <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
+              <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
+              <td><input type="text" class="monto-output" value="0.00" readonly></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5" style="text-align:right; font-weight:600;">TOTAL</td>
+              <td><input type="text" id="totalConstruccion" value="0.00" readonly></td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <div style="display:flex; gap:12px; margin-top:8px;">
+          <button class="btn-secondary btn-small" type="button" onclick="agregarFilaConstruccion()">
+            <i class="fas fa-plus"></i> Agregar nivel
+          </button>
+          <button class="btn-secondary btn-small" type="button" onclick="eliminarUltimaFilaConstruccion()">
+            <i class="fas fa-minus"></i> Quitar último nivel
+          </button>
         </div>
-        <div class="form-help">Este bloque es 100% manual y editable (sin cálculos automáticos).</div>
 
-        <!-- después: CALCULO DEL VALOR DE LA CONSTRUCCION -->
-        <div class="form-section-title" style="margin-top:var(--space-xl)"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
-
-        <!-- Niveles dinámicos (manuales) -->
-        <div id="levelsContainer" class="extra-levels-container" style="display:block">
-          <!-- Nivel 1 por defecto -->
-          <div class="extra-level">
-            <label style="min-width:110px">Primer Nivel</label>
-            <input type="number" id="lvl1-metros" placeholder="Metros (m²)" step="0.01" class="nivel-input" style="max-width:160px">
-            <input type="text" id="lvl1-vbase" placeholder="V/Base (Q)" style="max-width:160px">
-            <input type="text" id="lvl1-tipo" placeholder="Tipo de Construcción" style="flex:1">
-            <input type="number" id="lvl1-coef" placeholder="% (ej: 1.00)" step="0.01" style="max-width:140px">
-          </div>
-        </div>
-        <button type="button" class="add-level-btn" id="btnAddLevel"><i class="fas fa-plus"></i> Agregar otro nivel</button>
-
-        <div class="form-help" style="margin-top:8px">
-          Los campos son manuales: ingresa Metros por nivel, V/Base, Tipo y el coeficiente (%).
+        <div class="form-help" style="margin-top:8px;">
+          El MONTO se calcula como: <strong>Área m² × V/Base × %</strong>. Todos los campos son manuales (editables), excepto MONTO.
         </div>
       </div>
 
@@ -508,33 +503,148 @@
 
   <!-- ===== SCRIPT DE TIPOLOGÍAS COMPLETO ===== -->
   <script>
-    const __FALLBACK_TIPOLOGIAS=[{id:"baja-A",category:"Baja",type:"A",title:"Categoría Baja — A",img:"https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=800&q=80",priceRange:"Q250–Q650/m²",pricePerM2:450,bullets:["Materiales básicos","Cubiertas simples","Servicios esenciales"]},{id:"baja-B",category:"Baja",type:"B",title:"Categoría Baja — B",img:"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",priceRange:"Q650–Q850/m²",pricePerM2:750,bullets:["Mampostería básica","Acabados sencillos","Instalaciones normales"]},{id:"baja-C",category:"Baja",type:"C",title:"Categoría Baja — C",img:"https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80",priceRange:"Q850–Q1,050/m²",pricePerM2:950,bullets:["Estructura reforzada","Acabados mejores","Servicios completos"]},{id:"media-A",category:"Media",type:"A",title:"Categoría Media — A",img:"https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&w=800&q=80",priceRange:"Q800–Q1,100/m²",pricePerM2:950,bullets:["Materiales normados","Acabados estándar","Losas parciales"]},{id:"media-B",category:"Media",type:"B",title:"Categoría Media — B",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=800&q=80",priceRange:"Q900–Q1,400/m²",pricePerM2:1150,bullets:["Columnas y castillos","Instalaciones ocultas","Accesos mejorados"]},{id:"media-C",category:"Media",type:"C",title:"Categoría Media — C",img:"https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,300–Q1,900/m²",pricePerM2:1600,bullets:["Buen diseño estructural","Acabados superiores","Servicios completos"]},{id:"alta-A",category:"Alta",type:"A",title:"Categoría Alta — A",img:"https://images.unsplash.com/photo-1597047084897-51e81819a499?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,400–Q1,900/m²",pricePerM2:1650,bullets:["Mampostería reforzada","Losas de concreto","Puertas/ventanas mejoradas"]},{id:"alta-B",category:"Alta",type:"B",title:"Categoría Alta — B",img:"https://images.unsplash.com/photo-1502003148287-a82ef80a6abc?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,800–Q2,300/m²",pricePerM2:2050,bullets:["Calidad alta","Instalaciones ocultas","Mejor estándar"]}];
+    const __FALLBACK_TIPOLOGIAS=[
+      {id:"baja-A",category:"Baja",type:"A",title:"Categoría Baja — A",img:"https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=800&q=80",priceRange:"Q250–Q650/m²",pricePerM2:450,bullets:["Materiales básicos","Cubiertas simples","Servicios esenciales"]},
+      {id:"baja-B",category:"Baja",type:"B",title:"Categoría Baja — B",img:"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",priceRange:"Q650–Q850/m²",pricePerM2:750,bullets:["Mampostería básica","Acabados sencillos","Instalaciones normales"]},
+      {id:"baja-C",category:"Baja",type:"C",title:"Categoría Baja — C",img:"https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80",priceRange:"Q850–Q1,050/m²",pricePerM2:950,bullets:["Estructura reforzada","Acabados mejores","Servicios completos"]},
+      {id:"media-A",category:"Media",type:"A",title:"Categoría Media — A",img:"https://images.unsplash.com/photo-1577412647305-991150c7d163?auto=format&fit=crop&w=800&q=80",priceRange:"Q800–Q1,100/m²",pricePerM2:950,bullets:["Materiales normados","Acabados estándar","Losas parciales"]},
+      {id:"media-B",category:"Media",type:"B",title:"Categoría Media — B",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=800&q=80",priceRange:"Q900–Q1,400/m²",pricePerM2:1150,bullets:["Columnas y castillos","Instalaciones ocultas","Accesos mejorados"]},
+      {id:"media-C",category:"Media",type:"C",title:"Categoría Media — C",img:"https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,300–Q1,900/m²",pricePerM2:1600,bullets:["Buen diseño estructural","Acabados superiores","Servicios completos"]},
+      {id:"alta-A",category:"Alta",type:"A",title:"Categoría Alta — A",img:"https://images.unsplash.com/photo-1597047084897-51e81819a499?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,400–Q1,900/m²",pricePerM2:1650,bullets:["Mampostería reforzada","Losas de concreto","Puertas/ventanas mejoradas"]},
+      {id:"alta-B",category:"Alta",type:"B",title:"Categoría Alta — B",img:"https://images.unsplash.com/photo-1502003148287-a82ef80a6abc?auto=format&fit=crop&w=800&q=80",priceRange:"Q1,800–Q2,300/m²",pricePerM2:2050,bullets:["Calidad alta","Instalaciones ocultas","Mejor estándar"]}
+    ];
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
-    function __renderTipos(){const t=__getTipos();const b=t.reduce((a,x)=>{((a[x.category]??=[]).push(x));return a;},{});for(const k in b) b[k].sort((a,c)=>a.type.localeCompare(c.type));const d=document.getElementById('modalCatalogContent');if(!d) return;let h='';for(const c of ['Baja','Media','Alta']){if(!b[c])continue;h+=`<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología A, B o C</div></div></div></div>`;for(const it of b[c]){h+=`<div class="catalog-item-modal" data-id="${it.id}"><div class="catalog-item-content"><img class="catalog-image-modal" src="${it.img}" alt="${it.title}"><div class="catalog-text-modal"><div class="catalog-type-modal">Tipología ${it.type}</div><div class="catalog-title-modal">${it.title}</div><div class="catalog-price-modal">${it.priceRange}</div><div class="catalog-description-modal"><ul class="catalog-features-modal">${(it.bullets||[]).map(m=>`<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul></div><button class="select-button" data-select="${it.id}"><i class="fas fa-hand-pointer"></i> Seleccionar</button></div></div></div>`;}}d.innerHTML=h;d.querySelectorAll('.catalog-item-modal').forEach(c=>{const id=c.getAttribute('data-id');if(!id)return;c.addEventListener('click',e=>{if(e.target.closest('button'))return;__selectTipo(id);});});d.querySelectorAll('[data-select]').forEach(b=>{b.addEventListener('click',e=>{e.stopPropagation();__selectTipo(b.getAttribute('data-select'));});});}
+    function __renderTipos(){
+      const t=__getTipos();
+      const b=t.reduce((a,x)=>{((a[x.category]??=[]).push(x));return a;},{});for(const k in b) b[k].sort((a,c)=>a.type.localeCompare(c.type));
+      const d=document.getElementById('modalCatalogContent');if(!d) return;let h='';
+      for(const c of ['Baja','Media','Alta']){
+        if(!b[c])continue;
+        h+=`<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología A, B o C</div></div></div></div>`;
+        for(const it of b[c]){
+          h+=`<div class="catalog-item-modal" data-id="${it.id}"><div class="catalog-item-content"><img class="catalog-image-modal" src="${it.img}" alt="${it.title}"><div class="catalog-text-modal"><div class="catalog-type-modal">Tipología ${it.type}</div><div class="catalog-title-modal">${it.title}</div><div class="catalog-price-modal">${it.priceRange}</div><div class="catalog-description-modal"><ul class="catalog-features-modal">${(it.bullets||[]).map(m=>`<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul></div><button class="select-button" data-select="${it.id}"><i class="fas fa-hand-pointer"></i> Seleccionar</button></div></div></div>`;
+        }
+      }
+      d.innerHTML=h;
+      d.querySelectorAll('.catalog-item-modal').forEach(c=>{
+        const id=c.getAttribute('data-id');if(!id)return;
+        c.addEventListener('click',e=>{if(e.target.closest('button'))return;__selectTipo(id);});
+      });
+      d.querySelectorAll('[data-select]').forEach(b=>{
+        b.addEventListener('click',e=>{e.stopPropagation();__selectTipo(b.getAttribute('data-select'));});
+      });
+    }
     function __openTypology(){const m=document.getElementById('catalogModal');const t=document.getElementById('typologyTrigger');if(!m) return alert('No se encontró el modal (#catalogModal).');m.classList.add('active');t?.classList.add('active');__renderTipos();const hb=e=>{if(e.target===m){__closeTypology();m.removeEventListener('click',hb);}};m.addEventListener('click',hb);const x=document.getElementById('closeModal');if(x) x.onclick=__closeTypology;}
     function __closeTypology(){const m=document.getElementById('catalogModal');const t=document.getElementById('typologyTrigger');if(!m) return;m.classList.remove('active');t?.classList.remove('active');}
-    function __selectTipo(id){const s=__getTipos().find(z=>z.id===id);if(!s)return;const img=document.getElementById('selectedImage');const tp=document.getElementById('selectedType');const ti=document.getElementById('selectedTitle');const pr=document.getElementById('selectedPrice');const hd=document.getElementById('typology');if(img) img.src=s.img;if(tp) tp.textContent=`Categoría ${s.category} — Tipología ${s.type}`;if(ti) ti.textContent=s.title;if(pr) pr.textContent=s.priceRange;if(hd) hd.value=s.id;if(document.getElementById('resultSection').classList.contains('active')){calculateRealAppraisal();}__closeTypology();}
+    function __selectTipo(id){
+      const s=__getTipos().find(z=>z.id===id);if(!s)return;
+      const img=document.getElementById('selectedImage');const tp=document.getElementById('selectedType');const ti=document.getElementById('selectedTitle');const pr=document.getElementById('selectedPrice');const hd=document.getElementById('typology');
+      if(img) img.src=s.img;if(tp) tp.textContent=`Categoría ${s.category} — Tipología ${s.type}`;if(ti) ti.textContent=s.title;if(pr) pr.textContent=s.priceRange;if(hd) hd.value=s.id;
+      if(document.getElementById('resultSection').classList.contains('active')){calculateRealAppraisal();}
+      __closeTypology();
+    }
     window.__openTypology=__openTypology; window.__closeTypology=__closeTypology;
   </script>
 
-  <!-- ===== NIVELES DINÁMICOS (manuales) ===== -->
+  <!-- ===== CONSTRUCCIÓN: TABLA DINÁMICA ===== -->
   <script>
-    let nivelCounter = 1;
-    document.getElementById('btnAddLevel').addEventListener('click', () => {
-      nivelCounter++;
-      const c = document.getElementById('levelsContainer');
-      const div = document.createElement('div');
-      div.className = 'extra-level';
-      const etiqueta = nivelCounter === 2 ? 'Segundo Nivel' : `Nivel ${nivelCounter}`;
-      div.innerHTML = `
-        <label style="min-width:110px">${etiqueta}</label>
-        <input type="number" placeholder="Metros (m²)" step="0.01" class="nivel-input" style="max-width:160px">
-        <input type="text" placeholder="V/Base (Q)" style="max-width:160px">
-        <input type="text" placeholder="Tipo de Construcción" style="flex:1">
-        <input type="number" placeholder="% (ej: 0.85)" step="0.01" style="max-width:140px">
-        <button type="button" class="remove-level-btn" title="Quitar nivel" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+    function formatMoneyGTQ(v){
+      return new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(Number(v||0));
+    }
+
+    function recalcularFila(tr){
+      const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
+      const vbase = parseFloat(tr.querySelector('.vbase-input')?.value)||0;
+      const coef = parseFloat(tr.querySelector('.coef-input')?.value)||0;
+      const monto = area * vbase * coef;
+      const out = tr.querySelector('.monto-output');
+      if(out){ out.value = monto.toFixed(2); }
+      return monto;
+    }
+
+    function recalcularTablaConstruccion(){
+      const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
+      let total = 0, sumaArea = 0;
+      rows.forEach(tr=>{
+        total += recalcularFila(tr);
+        const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
+        sumaArea += area;
+      });
+      const totalEl = document.getElementById('totalConstruccion');
+      if(totalEl) totalEl.value = total.toFixed(2);
+
+      // Actualizar resultados en vivo si ya se muestran
+      if(document.getElementById('resultSection').classList.contains('active')){
+        document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(total);
+        // Área mostrada: suma de la tabla si > 0, si no, usa el campo del paso 1
+        const fallbackArea = parseFloat(document.getElementById('construction-area').value)||0;
+        const areaMostrar = (sumaArea>0? sumaArea : fallbackArea).toFixed(2);
+        document.getElementById('resultArea').textContent = `${areaMostrar} m²`;
+
+        // Tipología, estado, antigüedad
+        const estado = document.getElementById('estado-inmueble').value || 'No especificado';
+        document.getElementById('resultCondition').textContent = estado;
+
+        const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
+        const antiguedad = anioConstruccion? (new Date().getFullYear()-anioConstruccion) : 0;
+        document.getElementById('resultAge').textContent = `${antiguedad} años`;
+
+        const tipId=document.getElementById('typology').value;
+        let tipText='No seleccionada';
+        try{
+          const t = (Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipId);
+          if(t) tipText = `${t.category}-${t.type}`;
+        }catch{}
+        document.getElementById('resultTypology').textContent = tipText;
+
+        // Totales
+        const land=0;
+        document.getElementById('resultLandValue').textContent = formatMoneyGTQ(land);
+        document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(land);
+        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(land + total);
+        document.getElementById('resultTotal').textContent = formatMoneyGTQ(land + total);
+      }
+    }
+
+    function bindRowEvents(tr){
+      ['input','change'].forEach(evt=>{
+        tr.addEventListener(evt, e=>{
+          if(e.target.matches('.area-input,.vbase-input,.coef-input')){
+            recalcularTablaConstruccion();
+          }
+        });
+      });
+    }
+
+    function agregarFilaConstruccion(){
+      const tbody = document.getElementById('tbBodyConstruccion');
+      const n = tbody.querySelectorAll('tr').length + 1;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="text" value="Nivel ${n}" class="planta-input"></td>
+        <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
+        <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
+        <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
+        <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
+        <td><input type="text" class="monto-output" value="0.00" readonly></td>
       `;
-      c.appendChild(div);
+      tbody.appendChild(tr);
+      bindRowEvents(tr);
+    }
+
+    function eliminarUltimaFilaConstruccion(){
+      const tbody = document.getElementById('tbBodyConstruccion');
+      const rows = tbody.querySelectorAll('tr');
+      if(rows.length>1){
+        tbody.removeChild(rows[rows.length-1]);
+        recalcularTablaConstruccion();
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      // enlazar primera fila
+      const firstRow = document.querySelector('#tbBodyConstruccion tr');
+      if(firstRow) bindRowEvents(firstRow);
     });
   </script>
 
@@ -558,31 +668,41 @@
 
   <script>
     function calculateRealAppraisal(){
-      const constructionArea=parseFloat(document.getElementById('construction-area').value)||0;
-      const areaN1=parseFloat(document.getElementById('area-n1')?.value)||0; // preservado pero no visible
-      let areaConstruccion=constructionArea;
-      if(areaN1>0){ areaConstruccion=areaN1; }
+      // Tomar el total de la tabla de construcción
+      const totalConstruccion = parseFloat(document.getElementById('totalConstruccion')?.value)||0;
 
-      const tipologiaId=document.getElementById('typology').value;
-      const tipologia=(()=>{try{ return __getTipos().find(t=>t.id===tipologiaId);}catch{return null;}})();
-
-      let valorConstruccion=0;
-      if(tipologia){ valorConstruccion=areaConstruccion*tipologia.pricePerM2; }
+      // Área construida: si hay filas con área, usar su suma; si no, usar campo del paso 1
+      let sumaArea = 0;
+      document.querySelectorAll('#tbBodyConstruccion .area-input').forEach(i=>{
+        sumaArea += parseFloat(i.value)||0;
+      });
+      const areaConstruccion = sumaArea>0 ? sumaArea : (parseFloat(document.getElementById('construction-area').value)||0);
 
       const estado=document.getElementById('estado-inmueble').value||'No especificado';
       const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
       const antiguedad=anioConstruccion? new Date().getFullYear()-anioConstruccion : 0;
+
+      const tipologiaId=document.getElementById('typology').value;
+      let tipText='No seleccionada';
+      try{
+        const t=(Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipologiaId);
+        if(t) tipText=`${t.category}-${t.type}`;
+      }catch{}
+
       const formatCurrency=(v)=> new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(v);
 
       document.getElementById('resultArea').textContent=`${areaConstruccion.toFixed(2)} m²`;
-      document.getElementById('resultTypology').textContent=tipologia?`${tipologia.category}-${tipologia.type}`:'No seleccionada';
+      document.getElementById('resultTypology').textContent=tipText;
       document.getElementById('resultCondition').textContent=estado;
       document.getElementById('resultAge').textContent=`${antiguedad} años`;
+
+      // Terreno aún en 0 (pendiente de tu lógica específica)
       document.getElementById('resultLandValue').textContent=formatCurrency(0);
       document.getElementById('resultLandAppraisal').textContent=formatCurrency(0);
-      document.getElementById('resultBuildValue').textContent=formatCurrency(valorConstruccion);
-      document.getElementById('resultGrandTotal').textContent=formatCurrency(valorConstruccion);
-      document.getElementById('resultTotal').textContent=formatCurrency(valorConstruccion);
+
+      document.getElementById('resultBuildValue').textContent=formatCurrency(totalConstruccion);
+      document.getElementById('resultGrandTotal').textContent=formatCurrency(totalConstruccion);
+      document.getElementById('resultTotal').textContent=formatCurrency(totalConstruccion);
     }
 
     async function generateReport(){
@@ -591,30 +711,24 @@
         if(typeof window.jspdf==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); }
         if(typeof window.jspdfAutoTable==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js'); }
         const { jsPDF }=window.jspdf; const doc=new jsPDF(); const pageWidth=doc.internal.pageSize.getWidth(); const margin=20; const contentWidth=pageWidth-(margin*2);
-
         doc.setFillColor(91,123,122); doc.rect(0,0,pageWidth,60,'F');
         doc.setTextColor(255,255,255); doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.text('REPORTE DE AVALÚO',margin,30);
         doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')}`,margin,45); doc.text('Sistema de Avalúos Profesional', pageWidth - margin - 80, 45);
 
         let y=80;
-        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F');
-        doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN DE LA PROPIEDAD',margin,y); y+=20;
-
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN DE LA PROPIEDAD',margin,y); y+=20;
         const basicData=[
           ['Asociado:',document.getElementById('associate-name').value||'No especificado'],
           ['Dirección:',document.getElementById('address').value||'No especificado'],
           ['Propietario:',document.getElementById('owner-name').value||'No especificado'],
-          ['Área Construida:',document.getElementById('construction-area').value?document.getElementById('construction-area').value+' m²':'No especificado'],
+          ['Área Construida:',document.getElementById('resultArea').textContent||'No especificado'],
           ['Área Terreno:',document.getElementById('land-area').value?document.getElementById('land-area').value+' m²':'No especificado']
         ];
         doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','normal');
-        basicData.forEach(([l,v])=>{doc.setFont('helvetica','bold'); doc.text(l,margin,y); doc.setFont('helvetica','normal'); doc.text(v,margin+40,y); y+=8;}); y+=10;
+        basicData.forEach(([l,v])=>{doc.setFont('helvetica','bold'); doc.text(l,margin,y); doc.setFont('helvetica','normal'); doc.text(v,margin+45,y); y+=8;}); y+=10;
 
-        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F');
-        doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('RESULTADOS DEL AVALÚO',margin,y); y+=20;
-
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('RESULTADOS DEL AVALÚO',margin,y); y+=20;
         const resultsData=[
-          ['Área Construida',document.getElementById('resultArea').textContent],
           ['Tipología',document.getElementById('resultTypology').textContent],
           ['Estado',document.getElementById('resultCondition').textContent],
           ['Antigüedad',document.getElementById('resultAge').textContent],
@@ -624,20 +738,17 @@
         doc.autoTable({startY:y, head:[['Concepto','Valor']], body:resultsData, theme:'grid', headStyles:{fillColor:[91,123,122], textColor:255, fontStyle:'bold'}, styles:{fontSize:10, cellPadding:5}, columnStyles:{0:{fontStyle:'bold', cellWidth:100},1:{cellWidth:80}}, margin:{left:margin,right:margin}});
         y=doc.lastAutoTable.finalY+15;
 
-        doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F');
-        doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15);
-        doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
+        doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15); doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
 
         if(y>240){ doc.addPage(); y=20; }
 
         // Colindancias (sin columna "Actual")
-        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F');
-        doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
         const colData=[
-          ['Norte',document.getElementById('norte-propietario').value,document.getElementById('norte-metros').value+' m'],
-          ['Sur',document.getElementById('sur-propietario').value,document.getElementById('sur-metros').value+' m'],
-          ['Oriente',document.getElementById('oriente-propietario').value,document.getElementById('oriente-metros').value+' m'],
-          ['Poniente',document.getElementById('poniente-propietario').value,document.getElementById('poniente-metros').value+' m']
+          ['Norte',document.getElementById('norte-propietario').value||'',(document.getElementById('norte-metros').value||'')+' m'],
+          ['Sur',document.getElementById('sur-propietario').value||'',(document.getElementById('sur-metros').value||'')+' m'],
+          ['Oriente',document.getElementById('oriente-propietario').value||'',(document.getElementById('oriente-metros').value||'')+' m'],
+          ['Poniente',document.getElementById('poniente-propietario').value||'',(document.getElementById('poniente-metros').value||'')+' m']
         ];
         doc.autoTable({startY:y, head:[['Dirección','Propietario','Metros']], body:colData, theme:'grid', headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'}, styles:{fontSize:9, cellPadding:4}, margin:{left:margin,right:margin}});
 
@@ -649,13 +760,10 @@
         const fileName=`Avaluo_${document.getElementById('associate-name').value||'Propiedad'}_${new Date().toISOString().slice(0,10)}.pdf`;
         doc.save(fileName);
       }catch(error){
-        console.error('Error generando PDF:',error);
-        alert('Error al generar el PDF: '+error.message);
-      } finally {
-        loadingOverlay.style.display='none';
+        console.error('Error generando PDF:',error); alert('Error al generar el PDF: '+error.message);
       }
+      finally{ loadingOverlay.style.display='none'; }
     }
-
     function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);});}
 
     class FormWizard{
@@ -673,12 +781,15 @@
       }
       validateStep(step){
         const req=document.querySelectorAll(`[data-step="${step}"] [required]`);
-        let ok=true;
-        req.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--error)'; ok=false;} else{f.style.borderColor='';}});
+        let ok=true; req.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--error)'; ok=false;} else{f.style.borderColor='';}});
         if(!ok){alert('Por favor completa todos los campos requeridos marcados con *');}
         return ok;
       }
-      next(){ if(this.currentStep<this.totalSteps){ if(this.validateStep(this.currentStep)){ this.currentStep++; this.updateUI(); } } else { this.calculateAppraisal(); } }
+      next(){
+        if(this.currentStep<this.totalSteps){
+          if(this.validateStep(this.currentStep)){ this.currentStep++; this.updateUI(); }
+        } else { this.calculateAppraisal(); }
+      }
       previous(){ if(this.currentStep>1){ this.currentStep--; this.updateUI(); } }
       goToStep(step){ if(step>=1&&step<=this.totalSteps){ this.currentStep=step; this.updateUI(); } }
       updateUI(){
@@ -689,8 +800,7 @@
           else if(n<this.currentStep){s.classList.add('completed');}
         });
         document.querySelectorAll('.form-section').forEach(sec=>{
-          sec.classList.remove('active');
-          if(parseInt(sec.dataset.step)===this.currentStep){sec.classList.add('active');}
+          sec.classList.remove('active'); if(parseInt(sec.dataset.step)===this.currentStep){sec.classList.add('active');}
         });
         const prevBtn=document.getElementById('prev-step');
         const nextBtn=document.getElementById('next-step');
@@ -701,27 +811,23 @@
         if(this.validateStep(this.currentStep)){
           const nextBtn=document.getElementById('next-step');
           const original=nextBtn.innerHTML;
-          nextBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Calculando...';
-          nextBtn.disabled=true;
+          nextBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Calculando...'; nextBtn.disabled=true;
           setTimeout(()=>{
             calculateRealAppraisal();
             document.getElementById('resultSection').classList.add('active');
             document.getElementById('save-btn').style.display='flex';
             document.getElementById('pdf-btn').style.display='flex';
-            nextBtn.innerHTML=original;
-            nextBtn.disabled=false;
-          },1500);
+            nextBtn.innerHTML=original; nextBtn.disabled=false;
+          },800);
         }
       }
     }
-
     function newAppraisal(){
       document.getElementById('resultSection').classList.remove('active');
       document.getElementById('save-btn').style.display='none';
       document.getElementById('pdf-btn').style.display='none';
       window.formWizard.goToStep(1);
     }
-
     document.addEventListener('DOMContentLoaded',function(){
       window.formWizard=new FormWizard();
       document.getElementById('save-btn').addEventListener('click',function(){ alert('Datos guardados exitosamente'); });
@@ -734,6 +840,7 @@
   <!-- ===== SUPABASE AUTH (overlay + protección) ===== -->
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
     const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
 
@@ -864,7 +971,7 @@
     }
   </script>
 
-  <!-- Mostrar errores que vienen del callback (hash o query) -->
+  
   <script>
     (function () {
       const url = new URL(window.location.href);
