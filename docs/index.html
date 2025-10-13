@@ -712,20 +712,30 @@
       const row = document.querySelector('#tablaTerreno tbody tr');
       if (!row) return 0;
 
-      const num = (sel) => parseFloat(row.querySelector(sel)?.value) || 0;
+      const num = (sel) => {
+        const value = row.querySelector(sel)?.value;
+        return value === '' ? 0 : parseFloat(value) || 0;
+      };
+
       const fac = (sel) => {
         const v = parseFloat(row.querySelector(sel)?.value);
         return isNaN(v) || v <= 0 ? 1 : v;
       };
 
-      
+      // Calcular área basada en frente y fondo
       let area = num('.t-area');
       const frente = num('.t-frente');
       const fondo = num('.t-fondo');
-      if (area <= 0 && frente > 0 && fondo > 0) {
+      
+      // Si el área está vacía o es 0, pero tenemos frente y fondo, calcular
+      if ((area === 0 || isNaN(area)) && frente > 0 && fondo > 0) {
         area = frente * fondo;
         const tAreaEl = row.querySelector('.t-area');
         if (tAreaEl) tAreaEl.value = area.toFixed(2);
+      }
+      // Si el usuario borra frente o fondo, el área debe actualizarse a 0 si estaba calculada automáticamente
+      else if (area > 0 && (frente === 0 || fondo === 0)) {
+        area = num('.t-area'); // Mantener el valor manual si el usuario lo ingresó
       }
 
       const vbase = num('.t-vbase');
@@ -743,11 +753,11 @@
       const totalTerrenoEl = document.getElementById('totalTerreno');
       if (totalTerrenoEl) totalTerrenoEl.value = monto.toFixed(2);
 
-      
+      // Actualizar integración de valores
       const ivTerrenoEl = document.getElementById('ivTerreno');
       if (ivTerrenoEl) ivTerrenoEl.textContent = formatMoneyGTQ(monto);
 
-      
+      // Actualizar resultados si está visible
       if (document.getElementById('resultSection').classList.contains('active')) {
         document.getElementById('resultLandValue').textContent = formatMoneyGTQ(monto);
         document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(monto);
