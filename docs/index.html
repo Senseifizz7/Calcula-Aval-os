@@ -59,6 +59,50 @@
     .app-header h1 { font-size: 1.75rem; font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); color: var(--primary); }
     .app-header h1 i { background: rgba(91,123,122,.1); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 
+    .floating-actions {
+      position: fixed;
+      top: 100px;
+      right: 24px;
+      z-index: 99;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .floating-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      transition: all 0.3s ease;
+      font-size: 1.2rem;
+    }
+    .floating-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .floating-btn:active {
+      transform: translateY(0);
+    }
+    @media (max-width: 768px){
+      .floating-actions {
+        top: 90px;
+        right: 16px;
+      }
+      .floating-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 1.1rem;
+      }
+    }
+
     
     .form-steps { display: flex; justify-content: space-between; margin-bottom: var(--space-xl); position: relative; padding: 0 var(--space-md); }
     .form-steps::before { content: ''; position: absolute; top: 24px; left: var(--space-md); right: var(--space-md); height: 2px; background: var(--border); z-index: 1; }
@@ -204,6 +248,16 @@
     <header class="app-header">
       <h1><i class="fas fa-home"></i> Sistema de Avalúos</h1>
     </header>
+
+    <!-- BOTONES FLOTANTES AGREGADOS -->
+    <div class="floating-actions">
+      <button class="floating-btn" id="all-appraisals-btn" title="Lista de Avalúos">
+        <i class="fas fa-list"></i>
+      </button>
+      <button class="floating-btn" id="my-appraisals-btn" title="Mis Avalúos">
+        <i class="fas fa-user"></i>
+      </button>
+    </div>
 
     
     <div class="auth-overlay" id="auth-overlay">
@@ -600,6 +654,14 @@
       __closeTypology();
     }
     window.__openTypology=__openTypology; window.__closeTypology=__closeTypology;
+
+    // Funcionalidad botones flotantes
+    document.getElementById('all-appraisals-btn')?.addEventListener('click', function() {
+      alert('Función: Lista de Avalúos\n\nAquí se mostrarán todos los avalúos realizados con sus fechas.');
+    });
+    document.getElementById('my-appraisals-btn')?.addEventListener('click', function() {
+      alert('Función: Mis Avalúos\n\nAquí se mostrarán tus avalúos con opción de editar.');
+    });
   </script>
 
   
