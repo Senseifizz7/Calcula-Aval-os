@@ -92,7 +92,7 @@
     .form-help { font-size: .85rem; color: var(--text-light); margin-top: var(--space-xs); }
 
     
-    .typology-selector{ margin-top: var(--space-md); } /* CAMBIO: Aumenté de space-xs a space-md (24px) */
+    .typology-selector{ margin-top: var(--space-md); }
     .typology-trigger{ background: var(--bg-card); border:1px solid var(--border); border-radius: var(--radius); padding:20px; cursor:pointer; display:flex; align-items:center; gap:var(--space-sm); transition:.2s; }
     .typology-trigger:hover{ border-color: var(--primary); background: var(--bg-hover); }
     .typology-trigger:after{ content:"▼"; font-size:.8rem; margin-left:auto; transition: transform .3s; color: var(--primary); }
@@ -384,7 +384,8 @@
           <textarea id="otros-detalles" placeholder="Describa otros detalles como: Aire Acondicionado, Car-port, Garaje, Chimeneas, etc."></textarea>
         </div>
 
-        <div class="form-section-title"><i class="fas fa-list"></i> Seleccionar tipologías</div>
+        <!-- CAMBIO: Agregué margen superior al título de tipologías -->
+        <div class="form-section-title" style="margin-top: var(--space-lg);"><i class="fas fa-list"></i> Seleccionar tipologías</div>
         <div class="form-group">
           <label>Tipología constructiva</label>
           <div class="typology-selector" onclick="__openTypology()">
