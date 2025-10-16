@@ -231,6 +231,64 @@
     #username-modal .form-group {
       margin-bottom: 0;
     }
+
+    .appraisal-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .appraisal-item:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .appraisal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .appraisal-date {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .appraisal-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .appraisal-details {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .appraisal-details div {
+      margin-bottom: 4px;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-light);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
   </style>
 </head>
 
@@ -249,6 +307,7 @@
       </button>
     </div>
 
+    <!-- Modal para username después de Google SignIn -->
     <div class="catalog-modal" id="username-modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -263,6 +322,39 @@
           <button class="btn-primary" id="save-google-username" style="width: 100%; margin-top: 16px;">
             <i class="fas fa-check"></i> Guardar y continuar
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Lista de Avalúos -->
+    <div class="catalog-modal" id="all-appraisals-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-list"></i> Lista de Avalúos</h3>
+          <button class="modal-close" onclick="closeModal('all-appraisals-modal')">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <div class="form-group">
+            <input type="text" id="search-appraisals" placeholder="Buscar avalúos..." style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius);">
+          </div>
+          <div id="all-appraisals-list" style="max-height: 400px; overflow-y: auto;">
+            <!-- Los avalúos se cargarán aquí -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Mis Avalúos -->
+    <div class="catalog-modal" id="my-appraisals-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-user"></i> Mis Avalúos</h3>
+          <button class="modal-close" onclick="closeModal('my-appraisals-modal')">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <div id="my-appraisals-list" style="max-height: 400px; overflow-y: auto;">
+            <!-- Mis avalúos se cargarán aquí -->
+          </div>
         </div>
       </div>
     </div>
@@ -603,6 +695,255 @@
   <button id="pdf-btn" type="button"><i class="fas fa-file-pdf"></i> PDF</button>
 
   <script>
+    // Sistema de almacenamiento de avalúos
+    window.avaluosStorage = {
+      getAllAppraisals: function() {
+        try {
+          const stored = localStorage.getItem('sistema_avaluos');
+          return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+          console.error('Error al cargar avalúos:', e);
+          return [];
+        }
+      },
+
+      saveAppraisal: function(avaluoData) {
+        try {
+          const avaluos = this.getAllAppraisals();
+          const newAppraisal = {
+            id: 'av-' + Date.now(),
+            usuario_id: window.__session?.user?.id || 'anonimo',
+            usuario_nombre: window.__session?.user?.user_metadata?.username || 'Anónimo',
+            fecha_creacion: new Date().toISOString(),
+            fecha_formateada: new Date().toLocaleDateString('es-GT'),
+            datos: avaluoData,
+            estado: 'completado'
+          };
+          
+          avaluos.unshift(newAppraisal);
+          localStorage.setItem('sistema_avaluos', JSON.stringify(avaluos));
+          return newAppraisal;
+        } catch (e) {
+          console.error('Error al guardar avalúo:', e);
+          return null;
+        }
+      },
+
+      getMyAppraisals: function() {
+        const userId = window.__session?.user?.id;
+        if (!userId) return [];
+        
+        const allAppraisals = this.getAllAppraisals();
+        return allAppraisals.filter(av => av.usuario_id === userId);
+      },
+
+      updateAppraisal: function(appraisalId, newData) {
+        try {
+          const avaluos = this.getAllAppraisals();
+          const index = avaluos.findIndex(av => av.id === appraisalId);
+          
+          if (index !== -1) {
+            avaluos[index].datos = { ...avaluos[index].datos, ...newData };
+            avaluos[index].fecha_actualizacion = new Date().toISOString();
+            localStorage.setItem('sistema_avaluos', JSON.stringify(avaluos));
+            return true;
+          }
+          return false;
+        } catch (e) {
+          console.error('Error al actualizar avalúo:', e);
+          return false;
+        }
+      },
+
+      deleteAppraisal: function(appraisalId) {
+        try {
+          const avaluos = this.getAllAppraisals();
+          const filtered = avaluos.filter(av => av.id !== appraisalId);
+          localStorage.setItem('sistema_avaluos', JSON.stringify(filtered));
+          return true;
+        } catch (e) {
+          console.error('Error al eliminar avalúo:', e);
+          return false;
+        }
+      }
+    };
+
+    // Funciones para mostrar los modales
+    function showAllAppraisals() {
+      const modal = document.getElementById('all-appraisals-modal');
+      const listContainer = document.getElementById('all-appraisals-list');
+      
+      const allAppraisals = window.avaluosStorage.getAllAppraisals();
+      
+      if (allAppraisals.length === 0) {
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h4>No hay avalúos registrados</h4>
+            <p>Los avalúos que se realicen aparecerán aquí</p>
+          </div>
+        `;
+      } else {
+        listContainer.innerHTML = allAppraisals.map(avaluo => `
+          <div class="appraisal-item">
+            <div class="appraisal-header">
+              <div class="appraisal-date">
+                <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada}
+              </div>
+              <div class="appraisal-actions">
+                <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
+                  <i class="fas fa-eye"></i> Ver
+                </button>
+              </div>
+            </div>
+            <div class="appraisal-details">
+              <div><strong>Asociado:</strong> ${avaluo.datos.associateName || 'No especificado'}</div>
+              <div><strong>Dirección:</strong> ${avaluo.datos.address || 'No especificado'}</div>
+              <div><strong>Valor Total:</strong> ${avaluo.datos.totalValue || 'Q0.00'}</div>
+              <div><strong>Usuario:</strong> ${avaluo.usuario_nombre}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      modal.classList.add('active');
+    }
+
+    function showMyAppraisals() {
+      if (!window.__session) {
+        alert('Debes iniciar sesión para ver tus avalúos');
+        document.getElementById('auth-overlay').style.display = 'flex';
+        return;
+      }
+      
+      const modal = document.getElementById('my-appraisals-modal');
+      const listContainer = document.getElementById('my-appraisals-list');
+      
+      const myAppraisals = window.avaluosStorage.getMyAppraisals();
+      
+      if (myAppraisals.length === 0) {
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-file-contract"></i>
+            <h4>No tienes avalúos guardados</h4>
+            <p>Los avalúos que realices aparecerán aquí</p>
+          </div>
+        `;
+      } else {
+        listContainer.innerHTML = myAppraisals.map(avaluo => `
+          <div class="appraisal-item">
+            <div class="appraisal-header">
+              <div class="appraisal-date">
+                <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada}
+              </div>
+              <div class="appraisal-actions">
+                <button class="btn-primary btn-small" onclick="editAppraisal('${avaluo.id}')">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
+                  <i class="fas fa-eye"></i> Ver
+                </button>
+                <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="deleteAppraisal('${avaluo.id}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <div class="appraisal-details">
+              <div><strong>Asociado:</strong> ${avaluo.datos.associateName || 'No especificado'}</div>
+              <div><strong>Dirección:</strong> ${avaluo.datos.address || 'No especificado'}</div>
+              <div><strong>Valor Total:</strong> ${avaluo.datos.totalValue || 'Q0.00'}</div>
+              <div><strong>Estado:</strong> <span style="color: var(--success);">${avaluo.estado}</span></div>
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      modal.classList.add('active');
+    }
+
+    function viewAppraisal(appraisalId) {
+      const avaluos = window.avaluosStorage.getAllAppraisals();
+      const avaluo = avaluos.find(av => av.id === appraisalId);
+      
+      if (avaluo) {
+        alert(`Detalles del Avalúo:\n\n` +
+              `Fecha: ${avaluo.fecha_formateada}\n` +
+              `Asociado: ${avaluo.datos.associateName || 'No especificado'}\n` +
+              `Dirección: ${avaluo.datos.address || 'No especificado'}\n` +
+              `Área Construida: ${avaluo.datos.constructionArea || '0'} m²\n` +
+              `Valor Total: ${avaluo.datos.totalValue || 'Q0.00'}\n` +
+              `Usuario: ${avaluo.usuario_nombre}`);
+      }
+    }
+
+    function editAppraisal(appraisalId) {
+      const avaluos = window.avaluosStorage.getAllAppraisals();
+      const avaluo = avaluos.find(av => av.id === appraisalId);
+      
+      if (avaluo) {
+        document.getElementById('associate-name').value = avaluo.datos.associateName || '';
+        document.getElementById('address').value = avaluo.datos.address || '';
+        document.getElementById('construction-area').value = avaluo.datos.constructionArea || '';
+        document.getElementById('land-area').value = avaluo.datos.landArea || '';
+        
+        closeModal('my-appraisals-modal');
+        window.formWizard.goToStep(1);
+        
+        alert('Avalúo cargado para edición. Modifica los datos y guarda los cambios.');
+      }
+    }
+
+    function deleteAppraisal(appraisalId) {
+      if (confirm('¿Estás seguro de que quieres eliminar este avalúo? Esta acción no se puede deshacer.')) {
+        if (window.avaluosStorage.deleteAppraisal(appraisalId)) {
+          alert('Avalúo eliminado correctamente');
+          showMyAppraisals();
+        } else {
+          alert('Error al eliminar el avalúo');
+        }
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    function saveCurrentAppraisal() {
+      if (!window.__session) {
+        alert('Debes iniciar sesión para guardar avalúos');
+        return;
+      }
+      
+      const appraisalData = {
+        associateName: document.getElementById('associate-name').value,
+        address: document.getElementById('address').value,
+        constructionArea: document.getElementById('construction-area').value,
+        landArea: document.getElementById('land-area').value,
+        totalValue: document.getElementById('resultTotal').textContent,
+        ownerName: document.getElementById('owner-name').value,
+      };
+      
+      const savedAppraisal = window.avaluosStorage.saveAppraisal(appraisalData);
+      
+      if (savedAppraisal) {
+        console.log('Avalúo guardado:', savedAppraisal);
+      } else {
+        alert('Error al guardar el avalúo');
+      }
+    }
+
+    // Botones flotantes
+    document.getElementById('all-appraisals-btn').addEventListener('click', showAllAppraisals);
+    document.getElementById('my-appraisals-btn').addEventListener('click', showMyAppraisals);
+
+    // Cerrar modales al hacer click fuera
+    document.getElementById('all-appraisals-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('all-appraisals-modal');
+    });
+    document.getElementById('my-appraisals-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('my-appraisals-modal');
+    });
+
     const __FALLBACK_TIPOLOGIAS=[
       {id:"baja-A",category:"Baja",type:"A",title:"Categoría Baja — A",img:"https://images.unsplash.com/photo-1501183638710-841dd1904471?auto=format&fit=crop&w=800&q=80",priceRange:"Q250–Q650/m²",pricePerM2:450,bullets:["Materiales básicos","Cubiertas simples","Servicios esenciales"]},
       {id:"baja-B",category:"Baja",type:"B",title:"Categoría Baja — B",img:"https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80",priceRange:"Q650–Q850/m²",pricePerM2:750,bullets:["Mampostería básica","Acabados sencillos","Instalaciones normales"]},
@@ -644,14 +985,6 @@
       __closeTypology();
     }
     window.__openTypology=__openTypology; window.__closeTypology=__closeTypology;
-
-    // Funcionalidad botones flotantes
-    document.getElementById('all-appraisals-btn')?.addEventListener('click', function() {
-      alert('Función: Lista de Avalúos\n\nAquí se mostrarán todos los avalúos realizados con sus fechas.');
-    });
-    document.getElementById('my-appraisals-btn')?.addEventListener('click', function() {
-      alert('Función: Mis Avalúos\n\nAquí se mostrarán tus avalúos con opción de editar.');
-    });
   </script>
 
   <script>
@@ -1137,7 +1470,10 @@
     }
     document.addEventListener('DOMContentLoaded',function(){
       window.formWizard=new FormWizard();
-      document.getElementById('save-btn').addEventListener('click',function(){ alert('Datos guardados exitosamente'); });
+      document.getElementById('save-btn').addEventListener('click',function(){ 
+        saveCurrentAppraisal();
+        alert('Datos guardados exitosamente'); 
+      });
       document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
       document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
       document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
