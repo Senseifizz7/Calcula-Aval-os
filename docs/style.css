@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#5B7B7A" />
+  <title>Sistema de Avalúos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- El resto del contenido HTML permanece exactamente igual -->
+  <div class="app-container">
+    <header class="app-header">
+      <h1><i class="fas fa-home"></i> Sistema de Avalúos</h1>
+    </header>
+
+    <div class="floating-actions">
+      <button class="floating-btn" id="all-appraisals-btn" title="Lista de Avalúos">
+        <i class="fas fa-list"></i>
+      </button>
+      <button class="floating-btn" id="my-appraisals-btn" title="Mis Avalúos">
+        <i class="fas fa-user"></i>
+      </button>
+    </div>
+
+    <!-- Modal para username después de Google SignIn -->
+    <div class="catalog-modal" id="username-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-user-plus"></i> Completa tu perfil</h3>
+        </div>
+        <div class="modal-body" style="padding: 24px;">
+          <div class="form-group">
+            <label for="google-username" class="required">Elige un nombre de usuario</label>
+            <input type="text" id="google-username" placeholder="Ingresa tu username" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius);" />
+            <div class="form-help">Este nombre se mostrará en tus avalúos</div>
+          </div>
+          <button class="btn-primary" id="save-google-username" style="width: 100%; margin-top: 16px;">
+            <i class="fas fa-check"></i> Guardar y continuar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Lista de Avalúos -->
+    <div class="catalog-modal" id="all-appraisals-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-list"></i> Lista de Avalúos</h3>
+          <button class="modal-close" onclick="closeModal('all-appraisals-modal')">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <div class="form-group">
+            <input type="text" id="search-appraisals" placeholder="Buscar avalúos..." style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius);">
+          </div>
+          <div id="all-appraisals-list" style="max-height: 400px; overflow-y: auto;">
+            <!-- Los avalúos se cargarán aquí -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Mis Avalúos -->
+    <div class="catalog-modal" id="my-appraisals-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-user"></i> Mis Avalúos</h3>
+          <button class="modal-close" onclick="closeModal('my-appraisals-modal')">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <div id="my-appraisals-list" style="max-height: 400px; overflow-y: auto;">
+            <!-- Mis avalúos se cargarán aquí -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- El resto del HTML permanece exactamente igual -->
+    <!-- ... -->
