@@ -539,7 +539,7 @@
               <img id="selectedImage" class="selected-image" src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=200&q=60" alt="Tipología" />
               <div class="selected-text">
                 <div id="selectedType" class="selected-type">Catálogo</div>
-                <div id="selectedTitle" class="selected-title">Pulsa para elegir del catálogo (A, B o C)</div>
+                <div id="selectedTitle" class="selected-title">Pulsa para elegir del catálogo</div>
                 <div id="selectedPrice" class="selected-price">—</div>
               </div>
             </div>
@@ -944,60 +944,210 @@
       if (e.target === this) closeModal('my-appraisals-modal');
     });
 
-    // Precios máximos por categoría y tipología
-    const PRECIOS_MAXIMOS = {
+    // Precios por categoría y tipología (rangos completos)
+    const RANGOS_PRECIO = {
         'Baja': {
-            'Baja 1': 400,    // Q400.00/m²
-            'Baja 2': 500,    // Q500.00/m²
-            'Media 1': 750,   // Q750.00/m²
-            'Media 2': 850,   // Q850.00/m²
-            'Alta 1': 950,    // Q950.00/m²
-            'Alta 2': 1000    // Q1,000.00/m²
+            'Baja 1': { min: 250, max: 400 },
+            'Baja 2': { min: 250, max: 500 },
+            'Media 1': { min: 650, max: 750 },
+            'Media 2': { min: 650, max: 850 },
+            'Alta 1': { min: 850, max: 950 },
+            'Alta 2': { min: 850, max: 1000 }
         },
         'Media': {
-            'Baja 1': 1100,   // Q1,100.00/m²
-            'Baja 2': 1100,   // Q1,100.00/m²
-            'Media 1': 1200,  // Q1,200.00/m²
-            'Media 2': 1300,  // Q1,300.00/m²
-            'Alta 1': 1700,   // Q1,700.00/m²
-            'Alta 2': 1800    // Q1,800.00/m²
+            'Baja 1': { min: 800, max: 1100 },
+            'Baja 2': { min: 800, max: 1100 },
+            'Media 1': { min: 900, max: 1200 },
+            'Media 2': { min: 1000, max: 1300 },
+            'Alta 1': { min: 1300, max: 1700 },
+            'Alta 2': { min: 1400, max: 1800 }
         },
         'Alta': {
-            'Baja 1': 1700,   // Q1,700.00/m²
-            'Baja 2': 1800,   // Q1,800.00/m²
-            'Media 1': 2100,  // Q2,100.00/m²
-            'Media 2': 2200   // Q2,200.00/m²
+            'Baja 1': { min: 1400, max: 1700 },
+            'Baja 2': { min: 1500, max: 1800 },
+            'Media 1': { min: 1800, max: 2100 },
+            'Media 2': { min: 1900, max: 2200 }
         }
     };
 
-    const __FALLBACK_TIPOLOGIAS=[
-      {id:"baja-baja-1",category:"Baja",type:"Baja 1",title:"Categoría Baja — Baja 1",img:"https://images.unsplash.com/photo-1593634579753-0b12bb7d6b5a?auto=format&fit=crop&w=1200&q=80",priceRange:"Q250–Q400/m²",pricePerM2:400,bullets:["Estructura de adobe y madera","Paredes con nylon","Techo de teja de barro sin cielo falso","Piso de tierra con cemento","Ventanas y puertas de madera sin tratar"]},
-      {id:"baja-baja-2",category:"Baja",type:"Baja 2",title:"Categoría Baja — Baja 2",img:"https://images.unsplash.com/photo-1582575517273-8cf6a05f6b6f?auto=format&fit=crop&w=1200&q=80",priceRange:"Q250–Q500/m²",pricePerM2:500,bullets:["Estructura de adobe con columnas de madera","Paredes de adobe, madera sin tratar y cartón","Techo de teja de barro y lámina de zinc","Piso de tierra con cemento","Fachada sin mantenimiento"]},
-      {id:"baja-media-1",category:"Baja",type:"Media 1",title:"Categoría Baja — Media 1",img:"https://images.unsplash.com/photo-1596455591869-8e0c4978d3ff?auto=format&fit=crop&w=1200&q=80",priceRange:"Q650–Q750/m²",pricePerM2:750,bullets:["Estructura de adobe y block con pines fundidos","Paredes con repello","Techo de lámina de zinc con cielo falso de machimbre","Piso de cemento líquido y cerámico","Fachada tipo corredor"]},
-      {id:"baja-media-2",category:"Baja",type:"Media 2",title:"Categoría Baja — Media 2",img:"https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1200&q=80",priceRange:"Q650–Q850/m²",pricePerM2:850,bullets:["Estructura de mampostería con columnas","Paredes de block de cantera","Techo de lámina de zinc","Piso de cemento líquido","Fachada sin diseño con ventanas y materiales expuestos"]},
-      {id:"baja-alta-1",category:"Baja",type:"Alta 1",title:"Categoría Baja — Alta 1",img:"https://images.unsplash.com/photo-1599423300746-b62533397364?auto=format&fit=crop&w=1200&q=80",priceRange:"Q850–Q950/m²",pricePerM2:950,bullets:["Estructura de mampostería con pines fundidos a 0.60 m","Paredes de block de cantera con pintura","Techo de lámina troquelada","Piso de cemento líquido","Ventanas y puertas de metal o madera sin tratar","Instalaciones ocultas"]},
-      {id:"baja-alta-2",category:"Baja",type:"Alta 2",title:"Categoría Baja — Alta 2",img:"https://images.unsplash.com/photo-1621020563627-c5d3b9c832ca?auto=format&fit=crop&w=1200&q=80",priceRange:"Q850–Q1,000/m²",pricePerM2:1000,bullets:["Estructura de adobe y mampostería reforzada","Paredes de adobe con repello, cernido y block normado","Techo de teja de barro y lámina de zinc con cielo falso de madera","Piso de granito y cemento líquido","Instalaciones ocultas o expuestas"]},
-      {id:"media-baja-1",category:"Media",type:"Baja 1",title:"Categoría Media — Baja 1",img:"https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=1200&q=80",priceRange:"Q800–Q1,100/m²",pricePerM2:1100,bullets:["Estructura de mampostería con block y pines fundidos","Paredes de block con repello y cernido","Techo de lámina de zinc sin cielo falso","Piso de cemento líquido","Fachada tipo corredor"]},
-      {id:"media-baja-2",category:"Media",type:"Baja 2",title:"Categoría Media — Baja 2",img:"https://images.unsplash.com/photo-1600607687920-4e2a90b3cbbd?auto=format&fit=crop&w=1200&q=80",priceRange:"Q800–Q1,100/m²",pricePerM2:1100,bullets:["Estructura de mampostería con columnas para un nivel","Paredes de block sizado visto con repello y pintura parcial","Techo de tejas de barro y lámina de zinc con cielo falso de madera","Piso de cemento líquido","Fachada sin diseño arquitectónico"]},
-      {id:"media-media-1",category:"Media",type:"Media 1",title:"Categoría Media — Media 1",img:"https://images.unsplash.com/photo-1600607687962-6b5fb24b3e9e?auto=format&fit=crop&w=1200&q=80",priceRange:"Q900–Q1,200/m²",pricePerM2:1200,bullets:["Estructura de mampostería reforzada para un nivel","Paredes de block con repello y cernido","Techo metálico con lámina troquelada","Piso de cemento líquido","Fachada tipo corredor interno","Instalaciones semi ocultas"]},
-      {id:"media-media-2",category:"Media",type:"Media 2",title:"Categoría Media — Media 2",img:"https://images.unsplash.com/photo-1617104678098-73a0098b3094?auto=format&fit=crop&w=1200&q=80",priceRange:"Q1,000–Q1,300/m²",pricePerM2:1300,bullets:["Estructura de mampostería reforzada","Paredes de block normado con repello, cernido y pintura","Techo de madera con lámina de zinc","Piso de granito y cemento líquido","Fachada tradicional sin diseño arquitectónico","Instalaciones ocultas o semi ocultas"]},
-      {id:"media-alta-1",category:"Media",type:"Alta 1",title:"Categoría Media — Alta 1",img:"https://images.unsplash.com/photo-1628744448844-4f5ce99a7a30?auto=format&fit=crop&w=1200&q=80",priceRange:"Q1,300–Q1,700/m²",pricePerM2:1700,bullets:["Estructura de mampostería reforzada con columnas para dos niveles","Paredes de ladrillo sisado visto con pintura","Techo de losa de concreto armado","Piso de granito","Fachada de casas de ladrillo","Instalaciones ocultas"]},
-      {id:"media-alta-2",category:"Media",type:"Alta 2",title:"Categoría Media — Alta 2",img:"https://images.unsplash.com/photo-1613977257361-19733e4c7c8a?auto=format&fit=crop&w=1200&q=80",priceRange:"Q1,400–Q1,800/m²",pricePerM2:1800,bullets:["Estructura de mampostería reforzada con pines","Paredes de block normado con repello, alisado y pintura","Techo metálico con lámina de zinc","Piso cerámico","Fachada tipo colonial con balcones","Instalaciones ocultas"]},
-      {id:"alta-baja-1",category:"Alta",type:"Baja 1",title:"Categoría Alta — Baja 1",img:"https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=1200&q=80",priceRange:"Q1,400–Q1,700/m²",pricePerM2:1700,bullets:["Columnas y paredes de carga","Repello, alisado y pintura","Losa de concreto o prefabricada","Piso cerámico, granito o porcelanato","Ventanas de aluminio o PVC","Puertas de madera, metal o prefabricadas","Fachada tipo corredor","Instalaciones ocultas"]},
-      {id:"alta-baja-2",category:"Alta",type:"Baja 2",title:"Categoría Alta — Baja 2",img:"https://images.unsplash.com/photo-1613977257361-19733e4c7c8a?auto=format&fit=crop&w=1200&q=80",priceRange:"Q1,500–Q1,800/m²",pricePerM2:1800,bullets:["Columnas y paredes de carga","Repello, alisado y pintura","Losa de concreto o prefabricada","Piso cerámico, granito o porcelanato","Ventanas de aluminio o PVC","Puertas de madera, metal o prefabricadas","Fachada con acabados y pintura","Instalaciones ocultas"]},
-      {id:"alta-media-1",category:"Alta",type:"Media 1",title:"Categoría Alta — Media 1",img:"https://images.unsplash.com/photo-1600585154600-22393f14ce29?auto=format&fit=crop&w=1200&q=80",priceRange:"Q1,800–Q2,100/m²",pricePerM2:2100,bullets:["Mampostería reforzada con columnas para dos niveles","Paredes de block normado con repello, alisado y pintura","Losa de concreto o prefabricada","Piso cerámico, granito o porcelanato","Ventanas de aluminio y uPVC","Fachada con detalles arquitectónicos","Instalaciones ocultas"]},
-      {id:"alta-media-2",category:"Alta",type:"Media 2",title:"Categoría Alta — Media 2",img:"https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1200&q=80",priceRange:"Q1,900–Q2,200/m²",pricePerM2:2200,bullets:["Mampostería reforzada con columnas","Paredes de block normado con repello, alisado y pintura","Losa de concreto o prefabricada","Piso cerámico, granito o porcelanato","Ventanas de aluminio y uPVC","Fachada con diseño arquitectónico","Instalaciones ocultas"]}
+    const __FALLBACK_TIPOLOGIAS = [
+      // CATEGORÍA BAJA
+      {
+        id: "baja-baja-1",
+        category: "Baja", 
+        type: "Baja 1",
+        title: "Categoría Baja — Baja 1",
+        img: "https://images.unsplash.com/photo-1595426720387-6d6e28c37a3a?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q250–Q400/m²",
+        pricePerM2: 400,
+        bullets: ["Estructura de adobe y madera", "Paredes con nylon", "Techo de teja de barro sin cielo falso", "Piso de tierra con cemento", "Ventanas y puertas de madera sin tratar"]
+      },
+      {
+        id: "baja-baja-2",
+        category: "Baja",
+        type: "Baja 2", 
+        title: "Categoría Baja — Baja 2",
+        img: "https://images.unsplash.com/photo-1580041065738-e2c10e5b4c31?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q250–Q500/m²",
+        pricePerM2: 500,
+        bullets: ["Estructura de adobe con columnas de madera", "Paredes de adobe, madera sin tratar y cartón", "Techo de teja de barro y lámina de zinc", "Piso de tierra con cemento", "Fachada sin mantenimiento"]
+      },
+      {
+        id: "baja-media-1",
+        category: "Baja",
+        type: "Media 1",
+        title: "Categoría Baja — Media 1", 
+        img: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q650–Q750/m²",
+        pricePerM2: 750,
+        bullets: ["Estructura de adobe y block con pines fundidos", "Paredes con repello", "Techo de lámina de zinc con cielo falso de machimbre", "Piso de cemento líquido y cerámico", "Fachada tipo corredor"]
+      },
+      {
+        id: "baja-media-2",
+        category: "Baja",
+        type: "Media 2",
+        title: "Categoría Baja — Media 2",
+        img: "https://images.unsplash.com/photo-1596455591869-8e0c4978d3ff?auto=format&fit=crop&w=800&q=80", 
+        priceRange: "Q650–Q850/m²",
+        pricePerM2: 850,
+        bullets: ["Estructura de mampostería con columnas", "Paredes de block de cantera", "Techo de lámina de zinc", "Piso de cemento líquido", "Fachada sin diseño con ventanas y materiales expuestos"]
+      },
+      {
+        id: "baja-alta-1",
+        category: "Baja",
+        type: "Alta 1",
+        title: "Categoría Baja — Alta 1",
+        img: "https://images.unsplash.com/photo-1599423300746-b62533397364?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q850–Q950/m²",
+        pricePerM2: 950,
+        bullets: ["Estructura de mampostería con pines fundidos a 0.60 m", "Paredes de block de cantera con pintura", "Techo de lámina troquelada", "Piso de cemento líquido", "Ventanas y puertas de metal o madera sin tratar", "Instalaciones ocultas"]
+      },
+      {
+        id: "baja-alta-2",
+        category: "Baja", 
+        type: "Alta 2",
+        title: "Categoría Baja — Alta 2",
+        img: "https://images.unsplash.com/photo-1621020563627-c5d3b9c832ca?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q850–Q1,000/m²",
+        pricePerM2: 1000,
+        bullets: ["Estructura de adobe y mampostería reforzada", "Paredes de adobe con repello, cernido y block normado", "Techo de teja de barro y lámina de zinc con cielo falso de madera", "Piso de granito y cemento líquido", "Instalaciones ocultas o expuestas"]
+      },
+
+      // CATEGORÍA MEDIA
+      {
+        id: "media-baja-1",
+        category: "Media",
+        type: "Baja 1", 
+        title: "Categoría Media — Baja 1",
+        img: "https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q800–Q1,100/m²",
+        pricePerM2: 1100,
+        bullets: ["Estructura de mampostería con block y pines fundidos", "Paredes de block con repello y cernido", "Techo de lámina de zinc sin cielo falso", "Piso de cemento líquido", "Fachada tipo corredor"]
+      },
+      {
+        id: "media-baja-2",
+        category: "Media",
+        type: "Baja 2",
+        title: "Categoría Media — Baja 2",
+        img: "https://images.unsplash.com/photo-1600607687920-4e2a90b3cbbd?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q800–Q1,100/m²", 
+        pricePerM2: 1100,
+        bullets: ["Estructura de mampostería con columnas para un nivel", "Paredes de block sizado visto con repello y pintura parcial", "Techo de tejas de barro y lámina de zinc con cielo falso de madera", "Piso de cemento líquido", "Fachada sin diseño arquitectónico"]
+      },
+      {
+        id: "media-media-1",
+        category: "Media",
+        type: "Media 1",
+        title: "Categoría Media — Media 1",
+        img: "https://images.unsplash.com/photo-1600607687962-6b5fb24b3e9e?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q900–Q1,200/m²",
+        pricePerM2: 1200,
+        bullets: ["Estructura de mampostería reforzada para un nivel", "Paredes de block con repello y cernido", "Techo metálico con lámina troquelada", "Piso de cemento líquido", "Fachada tipo corredor interno", "Instalaciones semi ocultas"]
+      },
+      {
+        id: "media-media-2",
+        category: "Media",
+        type: "Media 2",
+        title: "Categoría Media — Media 2", 
+        img: "https://images.unsplash.com/photo-1617104678098-73a0098b3094?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q1,000–Q1,300/m²",
+        pricePerM2: 1300,
+        bullets: ["Estructura de mampostería reforzada", "Paredes de block normado con repello, cernido y pintura", "Techo de madera con lámina de zinc", "Piso de granito y cemento líquido", "Fachada tradicional sin diseño arquitectónico", "Instalaciones ocultas o semi ocultas"]
+      },
+      {
+        id: "media-alta-1",
+        category: "Media",
+        type: "Alta 1",
+        title: "Categoría Media — Alta 1",
+        img: "https://images.unsplash.com/photo-1628744448844-4f5ce99a7a30?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q1,300–Q1,700/m²", 
+        pricePerM2: 1700,
+        bullets: ["Estructura de mampostería reforzada con columnas para dos niveles", "Paredes de ladrillo sisado visto con pintura", "Techo de losa de concreto armado", "Piso de granito", "Fachada de casas de ladrillo", "Instalaciones ocultas"]
+      },
+      {
+        id: "media-alta-2",
+        category: "Media",
+        type: "Alta 2",
+        title: "Categoría Media — Alta 2",
+        img: "https://images.unsplash.com/photo-1613977257361-19733e4c7c8a?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q1,400–Q1,800/m²",
+        pricePerM2: 1800,
+        bullets: ["Estructura de mampostería reforzada con pines", "Paredes de block normado con repello, alisado y pintura", "Techo metálico con lámina de zinc", "Piso cerámico", "Fachada tipo colonial con balcones", "Instalaciones ocultas"]
+      },
+
+      // CATEGORÍA ALTA
+      {
+        id: "alta-baja-1",
+        category: "Alta", 
+        type: "Baja 1",
+        title: "Categoría Alta — Baja 1",
+        img: "https://images.unsplash.com/photo-1523217582562-09d0def993a6?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q1,400–Q1,700/m²",
+        pricePerM2: 1700,
+        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada tipo corredor", "Instalaciones ocultas"]
+      },
+      {
+        id: "alta-baja-2",
+        category: "Alta",
+        type: "Baja 2",
+        title: "Categoría Alta — Baja 2", 
+        img: "https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q1,500–Q1,800/m²",
+        pricePerM2: 1800,
+        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada con acabados y pintura", "Instalaciones ocultas"]
+      },
+      {
+        id: "alta-media-1",
+        category: "Alta",
+        type: "Media 1",
+        title: "Categoría Alta — Media 1",
+        img: "https://images.unsplash.com/photo-1600585154600-22393f14ce29?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q1,800–Q2,100/m²",
+        pricePerM2: 2100,
+        bullets: ["Mampostería reforzada con columnas para dos niveles", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con detalles arquitectónicos", "Instalaciones ocultas"]
+      },
+      {
+        id: "alta-media-2",
+        category: "Alta",
+        type: "Media 2", 
+        title: "Categoría Alta — Media 2",
+        img: "https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=800&q=80",
+        priceRange: "Q1,900–Q2,200/m²",
+        pricePerM2: 2200,
+        bullets: ["Mampostería reforzada con columnas", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con diseño arquitectónico", "Instalaciones ocultas"]
+      }
     ];
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-    // Modificar la función __selectTipo para precio máximo editable
+    // Modificar la función __selectTipo para mostrar rango completo
     function __selectTipo(id) {
       const s = __getTipos().find(z => z.id === id);
       if (!s) return;
       
-      // Obtener precio máximo predefinido
-      const precioMaximo = PRECIOS_MAXIMOS[s.category]?.[s.type] || 1000;
+      // Obtener rango completo
+      const rango = RANGOS_PRECIO[s.category]?.[s.type] || { min: 500, max: 1000 };
+      const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}.00/m² a Q${rango.max.toLocaleString('es-GT')}.00/m²`;
       
       const img = document.getElementById('selectedImage');
       const tp = document.getElementById('selectedType');
@@ -1008,10 +1158,10 @@
       if (img) img.src = s.img;
       if (tp) tp.textContent = `Categoría ${s.category} — ${s.type}`;
       if (ti) ti.textContent = s.title;
-      if (pr) pr.textContent = `Q${precioMaximo.toLocaleString('es-GT')}.00/m² (editable)`;
+      if (pr) pr.textContent = rangoTexto; // Mostrar rango completo
       if (hd) hd.value = s.id;
       
-      // Crear campo de precio editable
+      // Crear campo de precio editable normal (sin abrir modal)
       let precioEditableContainer = document.getElementById('precio-editable-container');
       if (!precioEditableContainer) {
           precioEditableContainer = document.createElement('div');
@@ -1021,19 +1171,18 @@
               <div class="form-group">
                   <label for="precio-editable-input" class="required">Precio por m² (Q)</label>
                   <input type="number" id="precio-editable-input" 
-                         value="${precioMaximo}" 
+                         value="${rango.max}" 
                          min="1" step="0.01" 
                          style="padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); width: 100%;" />
-                  <div class="form-help">Precio máximo sugerido: Q${precioMaximo}.00/m² - Puede modificarlo</div>
+                  <div class="form-help">Rango sugerido: ${rangoTexto} - Puede modificarlo manualmente</div>
               </div>
           `;
           pr.parentNode.appendChild(precioEditableContainer);
           
-          // Event listener para el input de precio editable
+          // Event listener normal para el input (sin abrir modal)
           document.getElementById('precio-editable-input').addEventListener('input', function() {
               const precio = parseFloat(this.value) || 0;
               if (precio > 0) {
-                  pr.textContent = `Q${precio.toLocaleString('es-GT')}.00/m²`;
                   // Actualizar el precio en el objeto para cálculos
                   s.pricePerM2 = precio;
                   
@@ -1043,22 +1192,23 @@
                   }
               }
           });
+          
       } else {
-          // Actualizar el campo con el nuevo precio máximo
+          // Actualizar el campo con el nuevo rango
           const precioInput = document.getElementById('precio-editable-input');
           const helpText = precioEditableContainer.querySelector('.form-help');
           if (precioInput) {
-              precioInput.value = precioMaximo;
-              pr.textContent = `Q${precioMaximo.toLocaleString('es-GT')}.00/m² (editable)`;
+              precioInput.value = rango.max;
+              pr.textContent = rangoTexto;
           }
           if (helpText) {
-              helpText.textContent = `Precio máximo sugerido: Q${precioMaximo}.00/m² - Puede modificarlo`;
+              helpText.textContent = `Rango sugerido: ${rangoTexto} - Puede modificarlo manualmente`;
           }
           precioEditableContainer.style.display = 'block';
       }
       
       // Usar el precio máximo como valor inicial para cálculos
-      s.pricePerM2 = precioMaximo;
+      s.pricePerM2 = rango.max;
       
       if (document.getElementById('resultSection').classList.contains('active')) {
           calculateRealAppraisal();
@@ -1072,12 +1222,13 @@
       const d=document.getElementById('modalCatalogContent');if(!d) return;let h='';
       for(const c of ['Baja','Media','Alta']){
         if(!b[c])continue;
-        h+=`<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología (Precio editable)</div></div></div></div>`;
+        h+=`<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología - Ver rangos de precio</div></div></div></div>`;
         for(const it of b[c]){
-          // Obtener precio máximo para cada item
-          const precioMaximo = PRECIOS_MAXIMOS[it.category]?.[it.type] || 1000;
+          // Obtener rango completo para cada item
+          const rango = RANGOS_PRECIO[it.category]?.[it.type] || { min: 500, max: 1000 };
+          const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}.00/m² a Q${rango.max.toLocaleString('es-GT')}.00/m²`;
           
-          h+=`<div class="catalog-item-modal" data-id="${it.id}"><div class="catalog-item-content"><img class="catalog-image-modal" src="${it.img}" alt="${it.title}"><div class="catalog-text-modal"><div class="catalog-type-modal">${it.type}</div><div class="catalog-title-modal">${it.title}</div><div class="catalog-price-modal">Precio máximo: Q${precioMaximo.toLocaleString('es-GT')}.00/m²</div><div class="catalog-description-modal"><ul class="catalog-features-modal">${(it.bullets||[]).map(m=>`<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul></div><button class="select-button" data-select="${it.id}"><i class="fas fa-edit"></i> Seleccionar y editar precio</button></div></div></div>`;
+          h+=`<div class="catalog-item-modal" data-id="${it.id}"><div class="catalog-item-content"><img class="catalog-image-modal" src="${it.img}" alt="${it.title}"><div class="catalog-text-modal"><div class="catalog-type-modal">${it.type}</div><div class="catalog-title-modal">${it.title}</div><div class="catalog-price-modal" style="color: var(--primary); font-weight: 600;">${rangoTexto}</div><div class="catalog-description-modal"><ul class="catalog-features-modal">${(it.bullets||[]).map(m=>`<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul></div><button class="select-button" data-select="${it.id}"><i class="fas fa-hand-pointer"></i> Seleccionar esta tipología</button></div></div></div>`;
         }
       }
       d.innerHTML=h;
