@@ -289,6 +289,271 @@
       margin-bottom: 16px;
       opacity: 0.5;
     }
+
+    /* CORRECCIONES DE RESPONSIVIDAD PARA MÓVIL - AGREGADAS */
+    @media (max-width: 768px){
+      .catalog-modal .modal-content {
+        max-width: 95vw;
+        max-height: 90vh;
+        margin: 20px 10px;
+      }
+      
+      .catalog-item-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .catalog-image-modal {
+        width: 100%;
+        height: 150px;
+        margin-bottom: 12px;
+      }
+      
+      .catalog-text-modal {
+        width: 100%;
+      }
+      
+      .catalog-features-modal {
+        text-align: left;
+        max-height: 120px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+        padding: 0 10px;
+      }
+
+      .table-ui {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        font-size: 0.8rem;
+      }
+      
+      .table-ui th,
+      .table-ui td {
+        padding: 12px 8px;
+        min-width: 80px;
+      }
+      
+      #tablaTerreno th,
+      #tablaTerreno td {
+        min-width: 70px;
+        font-size: 0.75rem;
+      }
+      
+      #tablaTerreno th:nth-child(1),
+      #tablaTerreno td:nth-child(1) {
+        min-width: 100px;
+      }
+      
+      #tablaTerreno th:nth-child(9),
+      #tablaTerreno td:nth-child(9),
+      #tablaTerreno th:nth-child(10),
+      #tablaTerreno td:nth-child(10) {
+        min-width: 90px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+      }
+      
+      .characteristics-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        padding: 12px;
+        font-size: 16px;
+      }
+      
+      .card {
+        padding: var(--space-md);
+        margin: var(--space-sm) 0;
+      }
+      
+      .card h2 {
+        font-size: 1.3rem;
+        margin-bottom: var(--space-md);
+      }
+
+      .form-navigation {
+        flex-direction: column;
+        gap: 12px;
+      }
+      
+      .form-navigation button {
+        width: 100%;
+        padding: 14px 20px;
+      }
+      
+      .floating-actions {
+        top: 80px;
+        right: 12px;
+      }
+      
+      .floating-btn {
+        width: 48px;
+        height: 48px;
+        font-size: 1rem;
+      }
+      
+      #save-btn, #pdf-btn {
+        right: 12px;
+        bottom: 70px;
+        padding: 12px 16px;
+        font-size: 0.8rem;
+      }
+      
+      #pdf-btn {
+        bottom: 130px;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      
+      .result-item {
+        padding: 16px 12px;
+      }
+      
+      .result-total {
+        padding: 24px 16px;
+      }
+      
+      .result-total .value {
+        font-size: 1.5rem;
+      }
+      
+      .appraisal-item {
+        padding: 12px;
+      }
+      
+      .appraisal-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      
+      .appraisal-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .typology-trigger {
+        padding: 16px;
+      }
+      
+      .selected-image {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .selected-text {
+        min-width: 0;
+      }
+      
+      .selected-type {
+        font-size: 0.9rem;
+      }
+      
+      .selected-title {
+        font-size: 0.8rem;
+      }
+      
+      .selected-price {
+        font-size: 0.75rem;
+      }
+      
+      #precio-editable-container {
+        margin-top: 8px;
+      }
+
+      .auth-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .auth-panel {
+        margin: 10px;
+      }
+      
+      .auth-overlay {
+        padding: 10px;
+      }
+
+      .form-steps {
+        flex-direction: column;
+        gap: var(--space-sm);
+        padding: 0;
+      }
+      
+      .form-steps::before {
+        display: none;
+      }
+      
+      .step {
+        flex-direction: row;
+        gap: var(--space-sm);
+        width: 100%;
+        padding: 8px 0;
+      }
+      
+      .step-number {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 0;
+      }
+      
+      .step-label {
+        text-align: left;
+        flex: 1;
+      }
+
+      .app-header h1 {
+        font-size: 1.4rem;
+      }
+      
+      .app-header h1 i {
+        width: 40px;
+        height: 40px;
+      }
+      
+      .form-section-title {
+        font-size: 1.1rem;
+      }
+      
+      .form-section-title i {
+        width: 32px;
+        height: 32px;
+      }
+
+      #gmap {
+        height: 300px;
+      }
+
+      .btn-primary, .btn-secondary {
+        padding: 14px 20px;
+        font-size: 0.9rem;
+      }
+      
+      .btn-small {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+      }
+
+      .modal-body {
+        max-height: 60vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      #all-appraisals-list,
+      #my-appraisals-list {
+        max-height: 50vh;
+      }
+    }
   </style>
 </head>
 
@@ -970,8 +1235,9 @@
         }
     };
 
+    // ACTUALIZACIÓN DE IMÁGENES PARA EL CATÁLOGO DE TIPOLOGÍAS - AGREGADAS
     const __FALLBACK_TIPOLOGIAS = [
-      // CATEGORÍA BAJA
+      // CATEGORÍA BAJA - Viviendas económicas, materiales básicos
       {
         id: "baja-baja-1",
         category: "Baja", 
@@ -1033,7 +1299,7 @@
         bullets: ["Estructura de adobe y mampostería reforzada", "Paredes de adobe con repello, cernido y block normado", "Techo de teja de barro y lámina de zinc con cielo falso de madera", "Piso de granito y cemento líquido", "Instalaciones ocultas o expuestas"]
       },
 
-      // CATEGORÍA MEDIA
+      // CATEGORÍA MEDIA - Viviendas estándar, materiales convencionales
       {
         id: "media-baja-1",
         category: "Media",
@@ -1095,7 +1361,7 @@
         bullets: ["Estructura de mampostería reforzada con pines", "Paredes de block normado con repello, alisado y pintura", "Techo metálico con lámina de zinc", "Piso cerámico", "Fachada tipo colonial con balcones", "Instalaciones ocultas"]
       },
 
-      // CATEGORÍA ALTA
+      // CATEGORÍA ALTA - Viviendas premium, materiales de alta calidad
       {
         id: "alta-baja-1",
         category: "Alta", 
@@ -1140,14 +1406,14 @@
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-    // Modificar la función __selectTipo para mostrar rango completo
+    // MODIFICACIÓN: Función __selectTipo actualizada para mostrar rango completo y evitar abrir modal al editar precio
     function __selectTipo(id) {
       const s = __getTipos().find(z => z.id === id);
       if (!s) return;
       
       // Obtener rango completo
       const rango = RANGOS_PRECIO[s.category]?.[s.type] || { min: 500, max: 1000 };
-      const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}.00/m² a Q${rango.max.toLocaleString('es-GT')}.00/m²`;
+      const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
       
       const img = document.getElementById('selectedImage');
       const tp = document.getElementById('selectedType');
@@ -1216,6 +1482,7 @@
       __closeTypology();
     }
 
+    // MODIFICACIÓN: Función __renderTipos actualizada para mostrar rangos completos
     function __renderTipos(){
       const t=__getTipos();
       const b=t.reduce((a,x)=>{((a[x.category]??=[]).push(x));return a;},{});for(const k in b) b[k].sort((a,c)=>a.type.localeCompare(c.type));
@@ -1226,7 +1493,7 @@
         for(const it of b[c]){
           // Obtener rango completo para cada item
           const rango = RANGOS_PRECIO[it.category]?.[it.type] || { min: 500, max: 1000 };
-          const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}.00/m² a Q${rango.max.toLocaleString('es-GT')}.00/m²`;
+          const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
           
           h+=`<div class="catalog-item-modal" data-id="${it.id}"><div class="catalog-item-content"><img class="catalog-image-modal" src="${it.img}" alt="${it.title}"><div class="catalog-text-modal"><div class="catalog-type-modal">${it.type}</div><div class="catalog-title-modal">${it.title}</div><div class="catalog-price-modal" style="color: var(--primary); font-weight: 600;">${rangoTexto}</div><div class="catalog-description-modal"><ul class="catalog-features-modal">${(it.bullets||[]).map(m=>`<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul></div><button class="select-button" data-select="${it.id}"><i class="fas fa-hand-pointer"></i> Seleccionar esta tipología</button></div></div></div>`;
         }
