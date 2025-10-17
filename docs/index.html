@@ -248,7 +248,7 @@
 
     .appraisal-header {
       display: flex;
-      justify-content: between;
+      justify-content: space-between;
       align-items: center;
       margin-bottom: 8px;
     }
@@ -731,11 +731,12 @@
       </div>
     </div>
 
+    <!-- QUITAR "DATOS DE LA PROPIEDAD" DE TODAS LAS PESTAÑAS -->
     <div class="card">
-      <h2><i class="fas fa-edit"></i> Datos de la Propiedad</h2>
+      <!-- Se quita el título general "Datos de la Propiedad" -->
 
       <div class="form-section active" data-step="1">
-        <div class="form-section-title"><i class="fas fa-info-circle"></i> Información General</div>
+        <h2><i class="fas fa-info-circle"></i> Información General</h2>
         <div class="form-grid">
           <div class="form-group">
             <label for="associate-name" class="required">Nombre del Asociado</label>
@@ -778,6 +779,8 @@
       </div>
 
       <div class="form-section" data-step="2">
+        <h2><i class="fas fa-home"></i> Características de la Propiedad</h2>
+        
         <div class="form-section-title"><i class="fas fa-file-contract"></i> Datos Registrales</div>
         <div class="form-grid">
           <div class="form-group"><label for="owner-name">Nombre del Propietario</label><input type="text" id="owner-name" placeholder="Ingrese el nombre del propietario" /></div>
@@ -845,9 +848,14 @@
           <input type="hidden" id="typology" value="">
           <div class="form-help">Toca el recuadro para abrir el catálogo de tipologías</div>
         </div>
+        
+        <!-- CONTENEDOR PARA EL PRECIO EDITABLE - SE CREA DINÁMICAMENTE -->
+        <div id="precio-editable-container" style="display: none;"></div>
       </div>
 
       <div class="form-section" data-step="3">
+        <h2><i class="fas fa-calculator"></i> Cálculos</h2>
+        
         <div class="form-section-title"><i class="fas fa-mountain"></i> Cálculo del Valor del Terreno</div>
         <table class="table-ui" id="tablaTerreno">
           <thead>
@@ -950,7 +958,7 @@
 
     <div class="result-section" id="resultSection">
       <div class="card">
-        <h2><i class="fas fa-calculator"></i> Cálculos y Resultados</h2>
+        <h2><i class="fas fa-chart-bar"></i> Cálculo Final</h2>
         <div class="result-grid">
           <div class="result-item"><div class="label">Área Construida</div><div class="value" id="resultArea">0 m²</div></div>
           <div class="result-item"><div class="label">Tipología</div><div class="value" id="resultTypology">-</div></div>
@@ -1435,7 +1443,7 @@
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-    // FUNCIÓN CORREGIDA - Campo de precio aparece SOLO después de seleccionar tipología
+    // FUNCIÓN CORREGIDA - Campo de precio editable FUNCIONAL
     function __selectTipo(id) {
       const s = __getTipos().find(z => z.id === id);
       if (!s) return;
@@ -1456,7 +1464,7 @@
       if (pr) pr.textContent = rangoTexto;
       if (hd) hd.value = s.id;
       
-      // CREAR O ACTUALIZAR CAMPO DE PRECIO EDITABLE - SOLO cuando se selecciona tipología
+      // CREAR O ACTUALIZAR CAMPO DE PRECIO EDITABLE
       let precioEditableContainer = document.getElementById('precio-editable-container');
       if (!precioEditableContainer) {
           precioEditableContainer = document.createElement('div');
@@ -1477,12 +1485,8 @@
           const typologySelector = document.querySelector('.typology-selector');
           typologySelector.parentNode.insertBefore(precioEditableContainer, typologySelector.nextSibling);
           
-          // Prevenir que el click en el input abra el catálogo
+          // Configurar evento para el input de precio
           const precioInput = document.getElementById('precio-editable-input');
-          precioInput.addEventListener('click', function(e) {
-              e.stopPropagation();
-          });
-          
           precioInput.addEventListener('input', function() {
               const precio = parseFloat(this.value) || 0;
               const minPrecio = rango.min;
@@ -1529,33 +1533,6 @@
       __closeTypology();
     }
 
-    // FUNCIÓN PARA OBTENER EL PRECIO ACTUAL - usar en los cálculos
-    function obtenerPrecioActual() {
-        const tipologiaId = document.getElementById('typology').value;
-        if (!tipologiaId) return 0;
-        
-        const s = __getTipos().find(z => z.id === tipologiaId);
-        if (!s) return 0;
-        
-        // Si hay campo de precio editable, usar ese valor
-        const precioInput = document.getElementById('precio-editable-input');
-        if (precioInput && precioInput.value) {
-            return parseFloat(precioInput.value) || s.pricePerM2;
-        }
-        
-        return s.pricePerM2;
-    }
-
-    // CORRECCIÓN ADICIONAL: Prevenir que el campo de precio herede el evento click del contenedor
-    document.addEventListener('DOMContentLoaded', function() {
-      // Agregar protección adicional para el campo de precio
-      document.addEventListener('click', function(e) {
-          if (e.target.id === 'precio-editable-input') {
-              e.stopPropagation();
-          }
-      });
-    });
-
     // MODIFICACIÓN: Función __renderTipos actualizada para mostrar rangos completos
     function __renderTipos(){
       const t=__getTipos();
@@ -1586,6 +1563,7 @@
     window.__openTypology=__openTypology; window.__closeTypology=__closeTypology;
   </script>
 
+  <!-- EL RESTO DEL CÓDIGO JAVASCRIPT PERMANECE IGUAL -->
   <script>
     function formatMoneyGTQ(v){
       return new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(Number(v||0));
