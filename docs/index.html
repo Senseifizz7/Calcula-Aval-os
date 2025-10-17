@@ -854,7 +854,7 @@
       </div>
 
       <div class="form-section" data-step="3">
-        <h2><i class="fas fa-calculator"></i> Cálculos</h2>
+        <h2><i class="fas fa-calculator"></i> Datos de propiedad</h2>
         
         <div class="form-section-title"><i class="fas fa-mountain"></i> Cálculo del Valor del Terreno</div>
         <table class="table-ui" id="tablaTerreno">
@@ -958,7 +958,7 @@
 
     <div class="result-section" id="resultSection">
       <div class="card">
-        <h2><i class="fas fa-chart-bar"></i> Cálculo Final</h2>
+        <h2><i class="fas fa-chart-bar"></i> Calculo final</h2>
         <div class="result-grid">
           <div class="result-item"><div class="label">Área Construida</div><div class="value" id="resultArea">0 m²</div></div>
           <div class="result-item"><div class="label">Tipología</div><div class="value" id="resultTypology">-</div></div>
@@ -997,6 +997,67 @@
   <button id="pdf-btn" type="button"><i class="fas fa-file-pdf"></i> PDF</button>
 
   <script>
+    // Función para modificar precios de tipologías - AGREGADA
+    function modificarPrecioTipologia(tipologiaId, nuevoPrecio) {
+        // Obtener todas las tipologías
+        const tipologias = __getTipos();
+        
+        // Buscar la tipología específica
+        const tipologia = tipologias.find(t => t.id === tipologiaId);
+        
+        if (!tipologia) {
+            console.error('Tipología no encontrada:', tipologiaId);
+            return false;
+        }
+        
+        // Obtener el rango de precios para esta tipología
+        const rango = RANGOS_PRECIO[tipologia.category]?.[tipologia.type];
+        
+        if (!rango) {
+            console.error('Rango de precios no encontrado para:', tipologia.category, tipologia.type);
+            return false;
+        }
+        
+        // Validar que el nuevo precio no supere el máximo permitido
+        const precioMaximo = rango.max;
+        
+        if (nuevoPrecio > precioMaximo) {
+            console.warn(`El precio no puede superar Q${precioMaximo}. Se establecerá en el máximo permitido.`);
+            nuevoPrecio = precioMaximo;
+        }
+        
+        if (nuevoPrecio < rango.min) {
+            console.warn(`El precio no puede ser menor a Q${rango.min}. Se establecerá en el mínimo permitido.`);
+            nuevoPrecio = rango.min;
+        }
+        
+        // Actualizar el precio de la tipología
+        tipologia.pricePerM2 = nuevoPrecio;
+        
+        // Si esta tipología está actualmente seleccionada, actualizar el campo editable
+        const tipologiaActual = document.getElementById('typology').value;
+        if (tipologiaActual === tipologiaId) {
+            const precioInput = document.getElementById('precio-editable-input');
+            if (precioInput) {
+                precioInput.value = nuevoPrecio;
+                
+                // Actualizar también la visualización del precio
+                const pr = document.getElementById('selectedPrice');
+                if (pr) {
+                    pr.textContent = `Q${nuevoPrecio.toLocaleString('es-GT')}/m²`;
+                }
+                
+                // Recalcular si estamos en resultados
+                if (document.getElementById('resultSection').classList.contains('active')) {
+                    calculateRealAppraisal();
+                }
+            }
+        }
+        
+        console.log(`Precio de ${tipologia.title} actualizado a: Q${nuevoPrecio}/m²`);
+        return true;
+    }
+
     // Sistema de almacenamiento de avalúos
     window.avaluosStorage = {
       getAllAppraisals: function() {
