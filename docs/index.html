@@ -248,7 +248,7 @@
 
     .appraisal-header {
       display: flex;
-      justify-content: space-between;
+      justify-content: between;
       align-items: center;
       margin-bottom: 8px;
     }
@@ -732,7 +732,7 @@
     </div>
 
     <div class="card">
-      <h2><i class="fas fa-calculator"></i> Cálculos y Resultados</h2>
+      <h2><i class="fas fa-edit"></i> Datos de la Propiedad</h2>
 
       <div class="form-section active" data-step="1">
         <div class="form-section-title"><i class="fas fa-info-circle"></i> Información General</div>
@@ -950,7 +950,7 @@
 
     <div class="result-section" id="resultSection">
       <div class="card">
-        <h2><i class="fas fa-chart-bar"></i> Resumen del Avalúo</h2>
+        <h2><i class="fas fa-calculator"></i> Cálculos y Resultados</h2>
         <div class="result-grid">
           <div class="result-item"><div class="label">Área Construida</div><div class="value" id="resultArea">0 m²</div></div>
           <div class="result-item"><div class="label">Tipología</div><div class="value" id="resultTypology">-</div></div>
@@ -1435,7 +1435,7 @@
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-    // CORRECCIÓN 2: FUNCIÓN MODIFICADA PARA EVITAR QUE SE ABRA EL CATÁLOGO AL EDITAR PRECIO
+    // FUNCIÓN CORREGIDA - Campo de precio aparece SOLO después de seleccionar tipología
     function __selectTipo(id) {
       const s = __getTipos().find(z => z.id === id);
       if (!s) return;
@@ -1456,7 +1456,7 @@
       if (pr) pr.textContent = rangoTexto;
       if (hd) hd.value = s.id;
       
-      // CORRECCIÓN: Crear o actualizar campo de precio SIN que abra el catálogo
+      // CREAR O ACTUALIZAR CAMPO DE PRECIO EDITABLE - SOLO cuando se selecciona tipología
       let precioEditableContainer = document.getElementById('precio-editable-container');
       if (!precioEditableContainer) {
           precioEditableContainer = document.createElement('div');
@@ -1469,14 +1469,18 @@
                          value="${rango.max}" 
                          min="${rango.min}" max="${rango.max * 2}" step="0.01" 
                          style="padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); width: 100%;" />
-                  <div class="form-help">Rango sugerido: ${rangoTexto} - Puede modificarlo manualmente</div>
+                  <div class="form-help">Rango sugerido: ${rangoTexto} - Puede modificar el precio manualmente</div>
               </div>
           `;
           
-          // CORRECCIÓN CRÍTICA: Prevenir que el click en el input abra el catálogo
+          // Insertar después del typology-selector
+          const typologySelector = document.querySelector('.typology-selector');
+          typologySelector.parentNode.insertBefore(precioEditableContainer, typologySelector.nextSibling);
+          
+          // Prevenir que el click en el input abra el catálogo
           const precioInput = document.getElementById('precio-editable-input');
           precioInput.addEventListener('click', function(e) {
-              e.stopPropagation(); // Esto evita que el evento se propague y abra el catálogo
+              e.stopPropagation();
           });
           
           precioInput.addEventListener('input', function() {
@@ -1494,14 +1498,14 @@
               
               if (precio > 0) {
                   s.pricePerM2 = precio;
+                  // Recalcular si estamos en la sección de resultados
                   if (document.getElementById('resultSection').classList.contains('active')) {
                       calculateRealAppraisal();
                   }
               }
           });
-          
-          pr.parentNode.appendChild(precioEditableContainer);
       } else {
+          // Actualizar el campo existente
           const precioInput = document.getElementById('precio-editable-input');
           const helpText = precioEditableContainer.querySelector('.form-help');
           if (precioInput) {
@@ -1510,17 +1514,36 @@
               precioInput.max = rango.max * 2;
           }
           if (helpText) {
-              helpText.textContent = `Rango sugerido: ${rangoTexto} - Puede modificarlo manualmente`;
+              helpText.textContent = `Rango sugerido: ${rangoTexto} - Puede modificar el precio manualmente`;
           }
           precioEditableContainer.style.display = 'block';
       }
       
       s.pricePerM2 = rango.max;
       
+      // Recalcular si estamos en resultados
       if (document.getElementById('resultSection').classList.contains('active')) {
           calculateRealAppraisal();
       }
+      
       __closeTypology();
+    }
+
+    // FUNCIÓN PARA OBTENER EL PRECIO ACTUAL - usar en los cálculos
+    function obtenerPrecioActual() {
+        const tipologiaId = document.getElementById('typology').value;
+        if (!tipologiaId) return 0;
+        
+        const s = __getTipos().find(z => z.id === tipologiaId);
+        if (!s) return 0;
+        
+        // Si hay campo de precio editable, usar ese valor
+        const precioInput = document.getElementById('precio-editable-input');
+        if (precioInput && precioInput.value) {
+            return parseFloat(precioInput.value) || s.pricePerM2;
+        }
+        
+        return s.pricePerM2;
     }
 
     // CORRECCIÓN ADICIONAL: Prevenir que el campo de precio herede el evento click del contenedor
