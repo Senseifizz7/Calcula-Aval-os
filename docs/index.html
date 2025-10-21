@@ -2199,13 +2199,19 @@
       }
     };
 
-    // FUNCIÓN CORREGIDA PARA GOOGLE OAUTH
+    // CORRECCIÓN ESPECÍFICA PARA GOOGLE OAUTH - REEMPLAZANDO SOLO ESTA FUNCIÓN
     window.__signInWithGoogle = async () => {
       try {
+        // Obtener la URL actual de GitHub Pages correctamente
+        const currentUrl = window.location.origin + window.location.pathname;
+        const redirectUrl = currentUrl.endsWith('/') ? currentUrl : currentUrl + '/';
+        
+        console.log("Iniciando Google OAuth con redirect:", redirectUrl);
+        
         const { data, error } = await window.supabase.auth.signInWithOAuth({
           provider: "google",
           options: { 
-            redirectTo: window.location.origin,
+            redirectTo: redirectUrl,
             queryParams: {
               access_type: 'offline',
               prompt: 'consent'
@@ -2216,21 +2222,39 @@
         if (error) {
           console.error("Error Google OAuth:", error);
           
-          // Si falla OAuth, mostrar instrucciones alternativas
-          if (error.message?.includes('provider')) {
-            alert("Google OAuth no está configurado. Contacte al administrador para configurar Google OAuth en Supabase.\n\nMientras tanto, puede usar registro con email.");
+          // Si falla OAuth, mostrar instrucciones de configuración detalladas
+          if (error.message?.includes('provider') || error.message?.includes('configuration') || error.message?.includes('disabled')) {
+            const configSteps = `
+CONFIGURACIÓN REQUERIDA EN SUPABASE:
+
+1. Supabase Dashboard → Authentication → Settings
+2. En 'Site URL' poner: ${redirectUrl}
+3. En 'Redirect URLs' añadir: ${redirectUrl}
+4. Google Provider → Configurar Client ID y Secret
+
+CONFIGURACIÓN EN GOOGLE CLOUD:
+1. Google Cloud Console → APIs & Services → Credentials
+2. Crear OAuth 2.0 Client ID para Web Application
+3. En 'Authorized JavaScript origins' añadir: ${window.location.origin}
+4. En 'Authorized redirect URIs' añadir: 
+   https://csinbmcauuyljjqshawi.supabase.co/auth/v1/callback
+   ${redirectUrl}
+
+Mientras tanto, puede usar registro con email.`;
+            
+            alert("Google OAuth requiere configuración:\n" + configSteps);
           } else {
-            alert("Error con Google: " + error.message);
+            alert("Error con Google OAuth: " + error.message);
           }
           return;
         }
         
-        // Éxito - la redirección se maneja automáticamente
-        console.log("Google OAuth iniciado correctamente");
+        // Si llegamos aquí, la redirección debería funcionar
+        console.log("Google OAuth iniciado correctamente, redirigiendo...");
         
       } catch (e) {
         console.error("Error completo Google OAuth:", e);
-        alert("Error al conectar con Google. Intente con otro método o contacte al administrador.");
+        alert("Error al conectar con Google: " + (e.message || e));
       }
     };
 
