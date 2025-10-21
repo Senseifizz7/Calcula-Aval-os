@@ -849,8 +849,20 @@
           <div class="form-help">Toca el recuadro para abrir el catálogo de tipologías</div>
         </div>
         
-        <!-- CONTENEDOR PARA EL PRECIO EDITABLE - SE CREA DINÁMICAMENTE -->
-        <div id="precio-editable-container" style="display: none;"></div>
+        <!-- CONTENEDOR PARA MODIFICAR PRECIO - AGREGADO -->
+        <div class="form-group" id="precio-editable-container" style="display: none; margin-top: 16px; padding: 16px; background: var(--bg-hover); border-radius: var(--radius); border: 1px solid var(--border);">
+          <label for="precio-editable-input" class="required">Modificar Precio por m² (Q)</label>
+          <input type="number" id="precio-editable-input" 
+                 value="0" 
+                 min="0" step="0.01" 
+                 style="padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); width: 100%; margin-bottom: 8px;" />
+          <div class="form-help" id="precio-help-text">Seleccione una tipología primero</div>
+          
+          <!-- BOTÓN PARA APLICAR CAMBIOS -->
+          <button class="btn-primary btn-small" type="button" onclick="aplicarCambioPrecio()" style="margin-top: 8px; width: 100%;">
+            <i class="fas fa-sync-alt"></i> Aplicar nuevo precio
+          </button>
+        </div>
       </div>
 
       <div class="form-section" data-step="3">
@@ -997,7 +1009,7 @@
   <button id="pdf-btn" type="button"><i class="fas fa-file-pdf"></i> PDF</button>
 
   <script>
-    // Función para modificar precios de tipologías - AGREGADA
+    // FUNCIÓN PARA MODIFICAR PRECIOS DE TIPOLOGÍAS - AGREGADA
     function modificarPrecioTipologia(tipologiaId, nuevoPrecio) {
         // Obtener todas las tipologías
         const tipologias = __getTipos();
@@ -1056,6 +1068,34 @@
         
         console.log(`Precio de ${tipologia.title} actualizado a: Q${nuevoPrecio}/m²`);
         return true;
+    }
+
+    // FUNCIÓN PARA APLICAR CAMBIO DE PRECIO - AGREGADA
+    function aplicarCambioPrecio() {
+        const tipologiaId = document.getElementById('typology').value;
+        const nuevoPrecio = parseFloat(document.getElementById('precio-editable-input').value);
+        
+        if (!tipologiaId) {
+            alert('Primero seleccione una tipología');
+            return;
+        }
+        
+        if (isNaN(nuevoPrecio) || nuevoPrecio <= 0) {
+            alert('Ingrese un precio válido mayor a 0');
+            return;
+        }
+        
+        // Usar la función que ya existe
+        if (modificarPrecioTipologia(tipologiaId, nuevoPrecio)) {
+            alert(`Precio actualizado exitosamente a Q${nuevoPrecio}/m²`);
+            
+            // Recalcular si estamos en resultados
+            if (document.getElementById('resultSection').classList.contains('active')) {
+                calculateRealAppraisal();
+            }
+        } else {
+            alert('Error al actualizar el precio');
+        }
     }
 
     // Sistema de almacenamiento de avalúos
@@ -1525,66 +1565,24 @@
       if (pr) pr.textContent = rangoTexto;
       if (hd) hd.value = s.id;
       
-      // CREAR O ACTUALIZAR CAMPO DE PRECIO EDITABLE
-      let precioEditableContainer = document.getElementById('precio-editable-container');
-      if (!precioEditableContainer) {
-          precioEditableContainer = document.createElement('div');
-          precioEditableContainer.id = 'precio-editable-container';
-          precioEditableContainer.style.marginTop = '12px';
-          precioEditableContainer.innerHTML = `
-              <div class="form-group">
-                  <label for="precio-editable-input" class="required">Precio por m² (Q)</label>
-                  <input type="number" id="precio-editable-input" 
-                         value="${rango.max}" 
-                         min="${rango.min}" max="${rango.max * 2}" step="0.01" 
-                         style="padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); width: 100%;" />
-                  <div class="form-help">Rango sugerido: ${rangoTexto} - Puede modificar el precio manualmente</div>
-              </div>
-          `;
-          
-          // Insertar después del typology-selector
-          const typologySelector = document.querySelector('.typology-selector');
-          typologySelector.parentNode.insertBefore(precioEditableContainer, typologySelector.nextSibling);
-          
-          // Configurar evento para el input de precio
-          const precioInput = document.getElementById('precio-editable-input');
-          precioInput.addEventListener('input', function() {
-              const precio = parseFloat(this.value) || 0;
-              const minPrecio = rango.min;
-              const maxPrecio = rango.max * 2;
-              
-              if (precio < minPrecio) {
-                  this.value = minPrecio;
-                  alert(`El precio mínimo sugerido es Q${minPrecio}`);
-              } else if (precio > maxPrecio) {
-                  this.value = maxPrecio;
-                  alert(`El precio máximo permitido es Q${maxPrecio}`);
-              }
-              
-              if (precio > 0) {
-                  s.pricePerM2 = precio;
-                  // Recalcular si estamos en la sección de resultados
-                  if (document.getElementById('resultSection').classList.contains('active')) {
-                      calculateRealAppraisal();
-                  }
-              }
-          });
-      } else {
-          // Actualizar el campo existente
-          const precioInput = document.getElementById('precio-editable-input');
-          const helpText = precioEditableContainer.querySelector('.form-help');
+      // MOSTRAR Y CONFIGURAR EL CAMPO DE PRECIO EDITABLE
+      const precioContainer = document.getElementById('precio-editable-container');
+      const precioInput = document.getElementById('precio-editable-input');
+      const helpText = document.getElementById('precio-help-text');
+      
+      if (precioContainer) {
+          precioContainer.style.display = 'block';
           if (precioInput) {
-              precioInput.value = rango.max;
+              precioInput.value = s.pricePerM2 || rango.max;
               precioInput.min = rango.min;
               precioInput.max = rango.max * 2;
           }
           if (helpText) {
               helpText.textContent = `Rango sugerido: ${rangoTexto} - Puede modificar el precio manualmente`;
           }
-          precioEditableContainer.style.display = 'block';
       }
       
-      s.pricePerM2 = rango.max;
+      s.pricePerM2 = s.pricePerM2 || rango.max;
       
       // Recalcular si estamos en resultados
       if (document.getElementById('resultSection').classList.contains('active')) {
@@ -2295,7 +2293,7 @@
           showUsernameModal(session.user.id);
         }, 1500);
       }
-    });
+    };
 
     window.__resendVerification = async (email) => {
       try {
