@@ -1952,816 +1952,418 @@
       });
       const areaConstruccion = sumaArea>0 ? sumaArea : (parseFloat(document.getElementById('construction-area').value)||0);
 
-      const estado=document.getElementById('estadoble').value||-inmueble').value||'No especificado';
-      const'No especificado';
-      const anioConst anioConstruccionruccion=parseInt(document.getElementById=parseInt(document.getElementById('anio-('anio-construccion').construccion').value)value)||0||0;
-      const antigued;
-      const antiguedad=anad=anioConstruioConstruccion? new Dateccion? new Date().getFull().getFullYear()-Year()-anioConstruccionanioConstruccion :  : 0;
+      const estado=document.getElementById('estado-inmueble').value||'No especificado';
+      const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
+      const antiguedad=anioConstruccion? new Date().getFullYear()-anioConstruccion : 0;
 
-      const0;
-
-      const tipologiaId=document tipologiaId=document.getElementById('.getElementById('typologytypology').value;
-      let').value;
-      let tipText='No tipText='No seleccion seleccionadaada';
+      const tipologiaId=document.getElementById('typology').value;
+      let tipText='No seleccionada';
       try{
-        const t=(Array.isArray';
-      try{
-        const t=(Array.isArray(window(window.TIPOLOG.TIPOLOGIAS)&&window.TIPIAS)&&window.TIPOLOGIAS.length?OLOGIAS.length?window.Twindow.TIPOLOGIPOLOGIAS:__FALLBACKIAS:__FALLBACK_TIPOLOGIAS).find_TIPOLOGIAS).find(x=>x.id===tip(x=>x.id===tipologiaId);
-        if(t) tipologiaId);
-        if(t)Text=` tipText=`${t.category}-${t.category}-${t.type}`${t.type}`;
-     ;
+        const t=(Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipologiaId);
+        if(t) tipText=`${t.category}-${t.type}`;
       }catch{}
 
-      const formatCurrency=(v }catch{}
+      const formatCurrency=(v)=> new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(v);
 
-      const formatCurrency=(v)=> new)=> new Intl.Number Intl.NumberFormat('Format('es-Ges-GT',{style:'currencyT',{style:'currency',currency',currency:'GTQ',:'GTQ',minimumFractionminimumFractionDigits:2}).Digits:2}).format(v);
+      document.getElementById('resultArea').textContent=`${areaConstruccion.toFixed(2)} m²`;
+      document.getElementById('resultTypology').textContent=tipText;
+      document.getElementById('resultCondition').textContent=estado;
+      document.getElementById('resultAge').textContent=`${antiguedad} años`;
 
-      document.getElementById('format(v);
+      const terreno = parseFloat(document.getElementById('totalTerreno')?.value) || 0;
+      document.getElementById('resultLandValue').textContent=formatCurrency(terreno);
+      document.getElementById('resultLandAppraisal').textContent=formatCurrency(terreno);
 
-      document.getElementById('resultArea').resultArea').textContent=`${textContent=`${areaConstruccion.toFixedareaConstruccion.toFixed(2)} m²`;
-      document(2)} m²`;
-      document.getElementById('.getElementById('resultTypology').resultTypology').textContent=tipText;
-textContent=tipText;
-      document      document.getElementById('resultCondition').text.getElementById('resultCondition').textContent=Content=estado;
-     estado;
-      document.getElementById('resultAge'). document.getElementById('resultAge').textContenttextContent=`${antiguedad} años=`${antiguedad`;
-
-     } años`;
-
-      const terreno = const terreno = parseFloat(document parseFloat(document.getElementById('totalTer.getElementById('totalTerrenoreno')?.value) ||')?.value) || 0;
-      0;
-      document.getElementById('result document.getElementById('resultLandValueLandValue').textContent=').textContent=formatCurrency(formatCurrency(terreno);
-      document.getElementById('resultLandterreno);
-      document.getElementById('resultLandAppraisal').textContent=formatCurrencyAppraisal').textContent=formatCurrency(terreno);
-
-     (terreno);
-
-      document document.getElementById('.getElementById('resultBuildValue').textContentresultBuildValue').textContent=formatCurrency(total=formatCurrency(totalConstruConstruccion);
-      document.getElementById('ccion);
-      document.getElementById('resultGrandTotalresultGrandTotal').textContent=format').textContent=formatCurrency(terrenoCurrency(terreno + total + totalConstruccion);
-     Construccion);
-      document.getElementById(' document.getElementById('resultTotal').textContent=resultTotal').textContent=formatCurrencyformatCurrency(terreno +(terreno + totalConstruccion totalConstruccion);
+      document.getElementById('resultBuildValue').textContent=formatCurrency(totalConstruccion);
+      document.getElementById('resultGrandTotal').textContent=formatCurrency(terreno + totalConstruccion);
+      document.getElementById('resultTotal').textContent=formatCurrency(terreno + totalConstruccion);
     }
 
-   );
-    }
-
-    async function generateReport async function generateReport(){
-      const loading(){
-      const loadingOverlay=documentOverlay=document.getElementById('loadingOverlay');.getElementById('loadingOverlay'); loading loadingOverlay.style.display='flex';
-Overlay.style.display='flex';
-      try      try{
-        if(typeof window{
-        if(typeof window.jspdf==.jspdf==='undefined'){ await loadScript('https='undefined'){ await loadScript('https://://cdnjs.cloudcdnjs.cloudflare.com/ajaxflare.com/ajax/libs/jspdf/2.5.1/libs/jspdf/2.5.1/jspdf/jspdf.umd..min.js'); }
-        if(typeofumd.min.js'); }
-        if(typeof window.jspdf window.jspdfAutoTableAutoTable==='undefined'){ await load==='undefined'){ awaitScript('https://cdnjs.cloudflare.com loadScript('https://cdnjs.cloudflare.com/ajax/libs/j/ajax/libs/jspdf-autspdf-autototable/3.5able/3.5.28/jspdf.plugin.autotable.min.js'); }
-       .28/jspdf.plugin.autotable.min.js'); }
- const { jsPDF }=        const { jsPDF }=windowwindow.jspdf; const.jspdf; const doc=new js doc=new jsPDF(); constPDF(); const pageWidth=doc pageWidth=doc.internal.pageSize.getWidth();.internal.pageSize.getWidth(); const margin= const margin=20; const20; const contentWidth=pageWidth-( contentWidth=pageWidth-(margin*2);
-        doc.setFillmargin*2);
-        doc.setFillColor(Color(91,123,12291,123,122); doc.); doc.rect(0,rect(0,0,pageWidth0,pageWidth,60,60,'F');
-       ,'F');
-        doc.setTextColor doc.setTextColor(255,255,(255,255,255);255); doc.setFontSize(20 doc.setFontSize(20);); doc doc.setFont('helvetica','.setFont('helvetica','bold'); doc.text('REbold'); doc.text('REPORTE DE AVALÚPORTE DE AVALÚO',margin,30);
-        doc.setFontO',margin,30);
-        docSize(.setFontSize(10); doc10); doc.setFont.setFont('hel('helvetica','normal'); docvetica','normal'); doc.text(`Generado.text(`Generado: ${new Date: ${new Date().to().toLocaleDateString('es-GLocaleDateString('es-GT')}`,T')}`,margin,45);margin,45); doc.text('Sistema doc.text('Sistema de de Avalúos Profesional Avalúos Profesional', page', pageWidth - margin - 80Width - margin - 80, , 45);
-
-       45);
+    async function generateReport(){
+      const loadingOverlay=document.getElementById('loadingOverlay'); loadingOverlay.style.display='flex';
+      try{
+        if(typeof window.jspdf==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); }
+        if(typeof window.jspdfAutoTable==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js'); }
+        const { jsPDF }=window.jspdf; const doc=new jsPDF(); const pageWidth=doc.internal.pageSize.getWidth(); const margin=20; const contentWidth=pageWidth-(margin*2);
+        doc.setFillColor(91,123,122); doc.rect(0,0,pageWidth,60,'F');
+        doc.setTextColor(255,255,255); doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.text('REPORTE DE AVALÚO',margin,30);
+        doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')}`,margin,45); doc.text('Sistema de Avalúos Profesional', pageWidth - margin - 80, 45);
 
         let y=80;
-        doc.setFill let y=80;
-        doc.setFillColor(240,240,Color(240,240,240); doc.240); doc.rect(margin,yrect(margin,y-10,contentWidth,-10,contentWidth,15,'F'); doc.setTextColor(15,'F'); doc.setText91,123,Color(91,123,122);122); doc.setFontSize doc.setFontSize(14(14); doc); doc.setFont('helvetica.setFont('helvetica','bold'); doc.text','bold'); doc.text('IN('INFORMACIÓNFORMACIÓN DE LA PROPI DE LA PROPIEDADEDAD',margin,y',margin,y); y+=20;
-       ); y+=20;
-        const basicData const basicData=[
-=[
-          ['Asociado:',          ['Asociado:',document.getElementById('associate-name').value||document.getElementById('associate-name').value||'No espec'No especificado'],
-          ['Direcciónificado'],
-          ['Dirección:',:',document.getElementByIddocument.getElementById('address').value||'No especificado'],
-          ['('address').value||'No especificado'],
-          ['PropietPropietario:',document.getElementById('owner-name').value||ario:',document.getElementById('owner-name').value||'No especificado'],
-          ['Á'No especificado'],
-          ['Área Construida:',document.getElementById('rea Construida:',document.getElementById('resultArea').textresultArea').textContent||'NoContent||'No especificado'],
-          especificado'],
-          ['Área Terreno ['Área Terreno:',:',document.getElementById('land-area').valuedocument.getElementById('land-area').value??document.getElementById('landdocument.getElementById('land-area').value+' m²':'No especificado-area').value+' m²':'No espec']
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN DE LA PROPIEDAD',margin,y); y+=20;
+        const basicData=[
+          ['Asociado:',document.getElementById('associate-name').value||'No especificado'],
+          ['Dirección:',document.getElementById('address').value||'No especificado'],
+          ['Propietario:',document.getElementById('owner-name').value||'No especificado'],
+          ['Área Construida:',document.getElementById('resultArea').textContent||'No especificado'],
+          ['Área Terreno:',document.getElementById('land-area').value?document.getElementById('land-area').value+' m²':'No especificado']
         ];
-        doc.setTextificado']
+        doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','normal');
+        basicData.forEach(([l,v])=>{doc.setFont('helvetica','bold'); doc.text(l,margin,y); doc.setFont('helvetica','normal'); doc.text(v,margin+45,y); y+=8;}); y+=10;
+
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('RESULTADOS DEL AVALÚO',margin,y); y+=20;
+        const resultsData=[
+          ['Tipología',document.getElementById('resultTypology').textContent],
+          ['Estado',document.getElementById('resultCondition').textContent],
+          ['Antigüedad',document.getElementById('resultAge').textContent],
+          ['Valor Terreno',document.getElementById('resultLandValue').textContent],
+          ['Valor Construcción',document.getElementById('resultBuildValue').textContent],
+          ['TOTAL',document.getElementById('resultTotal').textContent]
         ];
-        doc.setTextColor(Color(0,0,0); doc.setFont0,0,0); doc.setFontSize(10); doc.setFont('Size(10); doc.setFont('helvetica','normal');
-        basichelvetica','normal');
-        basicData.forEach((Data.forEach(([l,v])=[l,v])=>{doc.setFont('hel>{doc.setFont('helvetica','bold');vetica','bold'); doc.text(l,margin,y); doc.setFont(' doc.text(l,margin,y); doc.setFonthelvetica','normal'); doc.text('helvetica','normal');(v,margin doc.text(v,margin+45,y+45,y); y+=8;}); y+=); y+=8;});10 y+=10;
+        doc.autoTable({startY:y, head:[['Concepto','Valor']], body:resultsData, theme:'grid', headStyles:{fillColor:[91,123,122], textColor:255, fontStyle:'bold'}, styles:{fontSize:10, cellPadding:5}, columnStyles:{0:{fontStyle:'bold', cellWidth:100},1:{cellWidth:80}}, margin:{left:margin,right:margin}});
+        y=doc.lastAutoTable.finalY+15;
 
-        doc.set;
+        doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15); doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
 
-        doc.setFillColor(240,240FillColor(240,240,,240); doc.rect(m240); doc.rect(margin,y-10,contentWidth,argin,y-10,contentWidth,15,'F15,''); doc.setTextColorF'); doc.setTextColor(91,123,122(91,123,122); doc.set); doc.setFontSize(14FontSize(14); doc.setFont('hel); doc.setFont('helvetica','bold'); doc.text('RESULTADvetica','bold'); doc.text('OS DEL AVALRESULTADOS DEL AVALÚO',margin,y); yÚO',margin,y+=20;
-       ); y+=20;
-        const resultsData const resultsData=[
-          ['Tipología=[
-          ['Tipología',',document.getElementById('resultTypology').textdocument.getElementById('resultTypology').Content],
-          ['textContent],
-          ['Estado',Estado',document.getElementById('resultCondition').document.getElementById('resultCondition').textContent],
-          ['Antigüedad',textContent],
-          ['Antigdocument.getElementByIdüedad',document.getElementById('resultAge').textContent('resultAge').textContent],
-         ],
-          ['Valor Terreno',document ['Valor Terreno',.getElementByIddocument.getElementById('('resultLandValue').textContent],
-resultLandValue').textContent],
-          ['Val          ['Valor Construcción',document.getElementByIdor Construcción',document.getElementById('resultBuildValue('resultBuildValue').textContent').textContent],
-          ['TOTAL],
-          ['TOTAL',document',document.getElementById('.getElementById('resultTotal').textContent]
-        ];
-resultTotal').textContent]
-        ];
-        doc.auto        doc.autoTable({startY:yTable({startY:y, head:[['Concepto','Val, head:[['Concepto','or']], bodyValor']], body:results:resultsData, theme:'grid', headStylesData, theme:'grid', headStyles:{fillColor:{fillColor:[91,123,:[91,123,122],122], textColor:255, textColor:255, fontStyle:'bold' fontStyle:'bold'},}, styles:{fontSize:10, styles:{fontSize:10, cellPadding:5 cellPadding:5}, column}, columnStyles:{0:{fontStyleStyles:{0:{fontStyle:'bold:'bold', cellWidth:100},1:{', cellWidth:100},1cellWidth:{cellWidth:80}}, margin:80}}, margin:{left:margin:{left:margin,right,right:margin:margin}});
-        y=}});
-        y=doc.lastAutodoc.lastAutoTable.finalTable.finalY+15;
+        if(y>240){ doc.addPage(); y=20; }
 
-       Y+15;
-
-        doc.set doc.setFillColorFillColor(91,123,(91,123,122); doc.rect122); doc.rect(margin(margin,y,contentWidth,25,y,contentWidth,25,'F');,'F'); doc.setTextColor(255 doc.setTextColor(255,255,255);,255,255); doc doc.setFontSize(16);.setFontSize(16); doc.setFont('helvetica','bold'); doc doc.setFont('helvetica','bold.text(''); doc.text('VALORVALOR TOTAL ESTIMADO',margin TOTAL ESTIMADO',margin+10,y+15+10,y+15); doc.set); doc.setFontSize(20); docFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
-
-        if15); y+=40;
-
-        if(y>240){ doc.addPage();(y>240){ doc.add y=20; }
-
-        doc.setFillColor(240Page(); y=20; }
-
-        doc.setFillColor(,240,240,240,240240); doc); doc.rect(margin,y-10.rect(margin,y-10,contentWidth,contentWidth,15,'F,15,'F'); doc.setTextColor'); doc.setTextColor(91,(91,123,122);123,122); doc.setFont doc.setFontSize(Size(14); doc.set14); doc.setFont('helvetica','Font('helvetica','bold'); docbold'); doc.text('COLIND.text('COLINDANCIANCIAS',margin,y); y+=20AS',margin,y); y+=20;
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
         const colData=[
-          ['Norte',;
-        const colData=[
-          ['Norte',document.getElementById('norte-propdocument.getElementById('norte-propietario').value||'',(ietario').value||'',(document.getElementById('norte-metros').value||'')+' m'],
-document.getElementById('norte-metros').value||'')+' m'],
-          ['Sur          ['Sur',document.getElementById('',document.getElementById('sur-propsur-propietarioietario').value||'',(document').value||'',(document.getElementById('sur-met.getElementById('sur-metros').ros').value||'')+'value||'')+' m'],
- m'],
-          ['Oriente',document.getElementById('or          ['Oriente',document.getElementById('oriente-propietiente-propietario').value||'',(documentario').value||'',(document.getElementById('oriente.getElementById('oriente-metros-metros').value||'')+' m'],
-').value||'')+' m'],
-          ['Poniente',document.getElementById          ['Poniente',('pondocument.getElementById('poniente-propietarioiente-propietario').value||'',').value||'',(document(document.getElementById('pon.getElementById('poniente-metrosiente-metros').value||'')').value||'')+' m']
-+' m']
+          ['Norte',document.getElementById('norte-propietario').value||'',(document.getElementById('norte-metros').value||'')+' m'],
+          ['Sur',document.getElementById('sur-propietario').value||'',(document.getElementById('sur-metros').value||'')+' m'],
+          ['Oriente',document.getElementById('oriente-propietario').value||'',(document.getElementById('oriente-metros').value||'')+' m'],
+          ['Poniente',document.getElementById('poniente-propietario').value||'',(document.getElementById('poniente-metros').value||'')+' m']
         ];
-        doc.        ];
-        doc.autoautoTable({startY:y, head:[Table({startY:y, head:[['Dirección','['Dirección','Propietario','MetPropietario','Metros']ros']], body:col], body:colData,Data, theme:'grid', headStyles theme:'grid', headStyles:{fill:{fillColor:[91,123,122Color:[91,123,],textColor122],textColor:255,font:255,fontStyle:'Style:'bold'}, stylesbold'}, styles:{font:{fontSize:9,Size:9, cellPadding:4}, cellPadding:4}, margin:{left margin:{left:margin,right::margin,right:marginmargin}});
+        doc.autoTable({startY:y, head:[['Dirección','Propietario','Metros']], body:colData, theme:'grid', headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'}, styles:{fontSize:9, cellPadding:4}, margin:{left:margin,right:margin}});
 
-       }});
-
-        const totalPages= const totalPages=doc.internal.getNumberOfPagesdoc.internal.getNumberOfPages();
-       ();
-        for(let i=1;i for(let i=1;i<=totalPages;i<=totalPages;i++){
-          doc.set++){
-          doc.setPage(iPage(i); doc.setFontSize(8); doc.setTextColor(); doc.setFontSize(8); doc.setText128,128,128);
-          doc.text(`Color(128,128,128);
-P          doc.text(`Páginaágina ${i} de ${totalPages} - Sistema ${i} de ${total de AvalúosPages} - Sistema de Avalúos`, pageWidth/2, doc.internal`, pageWidth/2,.pageSize.getHeight()-10, {align doc.internal.pageSize.getHeight()-10:'center'});
-, {align:'center'        }
-        const fileName=`Avaluo});
+        const totalPages=doc.internal.getNumberOfPages();
+        for(let i=1;i<=totalPages;i++){
+          doc.setPage(i); doc.setFontSize(8); doc.setTextColor(128,128,128);
+          doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos`, pageWidth/2, doc.internal.pageSize.getHeight()-10, {align:'center'});
         }
-        const fileName_${document.getElementById('associate-name=`Avaluo_${document.getElementById('associate-name').value').value||'||'Propiedad'}_${Propiedad'}_${new Date().new Date().toISOString().toISOString().slice(slice(0,0,10)}.pdf10)}.pdf`;
-        doc.save(fileName`;
+        const fileName=`Avaluo_${document.getElementById('associate-name').value||'Propiedad'}_${new Date().toISOString().slice(0,10)}.pdf`;
         doc.save(fileName);
-);
-      }catch(error      }catch(error){
-        console.error){
-        console.error('Error generando PDF:',error('Error generando PDF:',error); alert('Error al generar el PDF:); alert('Error al generar el PDF: '+error '+error.message);
+      }catch(error){
+        console.error('Error generando PDF:',error); alert('Error al generar el PDF: '+error.message);
       }
       finally{ loadingOverlay.style.display='none'; }
-   .message);
-      }
-      finally{ loadingOverlay.style.display=' }
-    function loadScript(src){none'; }
     }
-    function loadScript(src){return new Promisereturn new Promise((resolve,((resolve,reject)=reject)=>{const s=document.createElement('script');s>{const s=document.createElement('script');s.src=.src=src; s.onload=resolve; s.onsrc; s.onload=resolve; s.onerror=reject; documenterror=reject; document.head.head.appendChild(s);});}
+    function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);});}
 
-.appendChild(s);});}
-
-    class    class FormW FormWizard{
-      constructor(){this.currentStep=1; this.totalStepsizard{
-      constructor(){this.currentStep=1; this=4; this.totalSteps=4; this.init();}
-      init(){.init();}
-      init(){this.bindEvents();this.bindEvents(); this.updateUI(); this.updateUI();}
-     }
+    class FormWizard{
+      constructor(){this.currentStep=1; this.totalSteps=4; this.init();}
+      init(){this.bindEvents(); this.updateUI();}
       bindEvents(){
-        bindEvents(){
-        document document.getElementById('next-step').add.getElementById('next-step').addEventListener('clickEventListener('click',()=>this',()=>this.next());
-.next());
-        document.getElementById('        document.getElementById('prev-stepprev-step').addEventListener('click',').addEventListener('click',()=>this()=>this.previous());
-.previous());
-        document.querySelectorAll        document.querySelectorAll('.step('.step').forEach').forEach(step=>{
-          step(step=>{
-          step.addEventListener('click',.addEventListener('click',(e(e)=>{
-            const n=parseInt)=>{
-            const n=parseInt(e.currentTarget.dat(e.currentTarget.dataset.stepaset.step);
-            if(n<this);
-            if(n<this.currentStep){this.goToStep(n.currentStep){this.goToStep);}
+        document.getElementById('next-step').addEventListener('click',()=>this.next());
+        document.getElementById('prev-step').addEventListener('click',()=>this.previous());
+        document.querySelectorAll('.step').forEach(step=>{
+          step.addEventListener('click',(e)=>{
+            const n=parseInt(e.currentTarget.dataset.step);
+            if(n<this.currentStep){this.goToStep(n);}
           });
-(n);}
-          });
-        });
         });
       }
       validateStep(step){
-      }
-      validateStep(step        const req=document.querySelectorAll){
-        const req=(`[data-step="${document.querySelectorAll(`[data-step="${step}"] [required]`);
-       step}"] [required]`);
-        let ok=true; req.forEach(f=> let ok=true; req.forEach{if(f=>{if(!f.value(!f.value.trim()){f.style.border.trim()){f.style.bColor='var(--error)orderColor='var(--error)'; ok=false;} else{f'; ok=false;} else{f.style.b.style.borderColor='';}});
-       orderColor='';}} if(!ok){alert('Por favor completa);
-        if(!ok){alert('Por todos los campos requeridos favor completa todos los campos requer marcados con *');}
+        const req=document.querySelectorAll(`[data-step="${step}"] [required]`);
+        let ok=true; req.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--error)'; ok=false;} else{f.style.borderColor='';}});
+        if(!ok){alert('Por favor completa todos los campos requeridos marcados con *');}
         return ok;
-idos marcados con *');}
-             }
+      }
       next(){
-        if return ok;
-      }
-     (this.currentStep next(){
         if(this.currentStep<this.totalSteps){
-          if(this.validate<this.totalSteps){
-          ifStep(this.currentStep)){ this.currentStep++;(this.validateStep(this.currentStep this.update)){ this.currentStep++; this.updateUI(); }
-        } else { this.calculateUI(); }
-        } elseAppraisal { this.calculateAppraisal(); }
-(); }
+          if(this.validateStep(this.currentStep)){ this.currentStep++; this.updateUI(); }
+        } else { this.calculateAppraisal(); }
       }
-           }
-      previous(){ if(this.currentStep>1){ this previous(){ if(this.currentStep>1){ this.currentStep--.currentStep--; this.updateUI; this.updateUI(); } }
-      go(); } }
-      goToToStep(Step(step){ ifstep){ if(step>=1&&(step>=1&&step<=this.totalSteps){ this.currentStep=step<=this.totalSteps){ this.currentStep=stepstep; this.updateUI();; this.updateUI(); } }
+      previous(){ if(this.currentStep>1){ this.currentStep--; this.updateUI(); } }
+      goToStep(step){ if(step>=1&&step<=this.totalSteps){ this.currentStep=step; this.updateUI(); } }
       updateUI(){
- } }
-      updateUI(){
-        document.querySelectorAll        document.querySelectorAll('.step').('.step').forEach(s=>{
-forEach(s=>{
-          const n          const n=parseInt(s.dat=parseInt(s.datasetaset.step);
+        document.querySelectorAll('.step').forEach(s=>{
+          const n=parseInt(s.dataset.step);
           s.classList.remove('active','completed');
-          if.step);
-          s.classList.remove('active','completed');
-          if(n===this.currentStep){s(n===this.currentStep){s.classList.add('.classList.add('active');}
-active');}
-          else if(n          else if(n<this.current<this.currentStep){s.classList.addStep){s.classList.add('completed('completed');}
+          if(n===this.currentStep){s.classList.add('active');}
+          else if(n<this.currentStep){s.classList.add('completed');}
         });
-        document');}
+        document.querySelectorAll('.form-section').forEach(sec=>{
+          sec.classList.remove('active'); if(parseInt(sec.dataset.step)===this.currentStep){sec.classList.add('active');}
         });
-        document.querySelector.querySelectorAll('.form-section').forEach(All('.form-section').forEachsec=>{
-          sec.classList.remove(sec=>{
-          sec.classList.remove('('active'); if(parseactive'); if(parseInt(sec.dataset.stepInt(sec.dataset.step)===this.current)===this.currentStep){sec.classList.addStep){sec.classList.add('active('active');}
-        });
-');}
-        });
-        const prevBtn=        const prevBtn=documentdocument.getElementById('prev-step');
-        const nextBtn=document.getElementById('prev-step');
+        const prevBtn=document.getElementById('prev-step');
         const nextBtn=document.getElementById('next-step');
-        prevBtn.style.display=.getElementById('next-step');
         prevBtn.style.display=this.currentStep>1?'flex':'none';
-        nextthis.currentStep>1?'flex':'Btnnone';
-        nextBtn.innerHTML=this.innerHTML=this.currentStep===this.currentStep===this.totalSteps?'<i class="fas.totalSteps?'<i class="fas fa fa-calculator"></i> Cal-calculator"></i> Calcular Avalúo':'Sigucular Avalúo':'Siente <iguiente <i class="i class="fas fa-arrow-right"></ifas fa-arrow-right"></i>';
->';
+        nextBtn.innerHTML=this.currentStep===this.totalSteps?'<i class="fas fa-calculator"></i> Calcular Avalúo':'Siguiente <i class="fas fa-arrow-right"></i>';
       }
-      calculateAppraisal      }
       calculateAppraisal(){
-        if(this.validateStep(){
-        if(this.validateStep(this(this.currentStep)){
-          const nextBtn.currentStep)){
+        if(this.validateStep(this.currentStep)){
           const nextBtn=document.getElementById('next-step');
-          const=document.getElementById('next-step');
- original=nextBtn          const original=nextBtn.innerHTML.innerHTML;
-          nextBtn.innerHTML='<i;
-          nextBtn.innerHTML=' class="fas fa<i class="fas fa-sp-spinner fa-spin"></i>inner fa-spin"></i> Calculando...'; nextBtn.disabled=true Calculando...'; nextBtn.dis;
-          setTimeout(()abled=true;
-          setTimeout(()=>=>{
+          const original=nextBtn.innerHTML;
+          nextBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Calculando...'; nextBtn.disabled=true;
+          setTimeout(()=>{
             calculateRealAppraisal();
-           {
-            calculateRealAppraisal document.getElementById('resultSection').classList();
-            document.getElementById('resultSection')..add('classList.add('active');
-            document.getElementById('active');
-save-btn').style.display='flex';
-            document.getElementById('pdf-btn            document.getElementById('save-btn').style.display='flex';
-            document').style.getElementById('pdf-btn').style.display='flex';
-            nextBtn.innerHTML=original.display='flex';
-            nextBtn.innerHTML; nextBtn.disabled=false;
-          },800=original; nextBtn.disabled=false;
+            document.getElementById('resultSection').classList.add('active');
+            document.getElementById('save-btn').style.display='flex';
+            document.getElementById('pdf-btn').style.display='flex';
+            nextBtn.innerHTML=original; nextBtn.disabled=false;
           },800);
         }
-);
-        }
       }
     }
-         }
-    }
     function newAppraisal(){
-      document.getElementById('result function newAppraisal(){
-      document.getElementById('resultSection').classListSection').classList.remove('active');
-.remove('active');
-      document.getElementById('      document.getElementById('save-btnsave-btn').style').style.display='none';
-      document.display='none';
-      document.getElementById('pdf.getElementById('pdf-btn').style-btn').style.display='none';
-      window.form.display='none';
-      window.formWizard.goWizard.goToStep(1);
+      document.getElementById('resultSection').classList.remove('active');
+      document.getElementById('save-btn').style.display='none';
+      document.getElementById('pdf-btn').style.display='none';
+      window.formWizard.goToStep(1);
     }
-    document.addEventListenerToStep(1);
-    }
-    document.addEventListener('('DOMContentLoaded',function(){
-     DOMContentLoaded',function(){
-      window.formWizard window.formWizard=new Form=new FormWizard();
-      document.getElementById('saveWizard();
-      document.getElementById('save-btn').addEventListener('click',function-btn').addEventListener('click(){ 
+    document.addEventListener('DOMContentLoaded',function(){
+      window.formWizard=new FormWizard();
+      document.getElementById('save-btn').addEventListener('click',function(){ 
         saveCurrentAppraisal();
-        alert',function(){ 
-        save('DCurrentAppraisal();
         alert('Datos guardados exitosamente'); 
-atos guardados exitosamente      });
-'); 
       });
-      document.getElementById('pdf-btn').addEventListener('click',      document.getElementById('pdf-btn').addEventListener('function(){ generateReportclick',function(){ generateReport();(); });
-      document.getElementById(' });
-      document.getElementById('catalogModal').addEventListener('catalogModal').addEventListener('click',click',function(e){ if(e.target===function(e){ if(e.target===thisthis){ __closeTypology){ __closeTypology(); }(); } });
-      document.getElementById(' });
-      document.getElementById('closeModal').closeModal').addEventListener('clickaddEventListener('click',function(){ __closeTypology(); });
-    });
-',function(){ __closeTyp ology(); });
+      document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
+      document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
+      document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
     });
   </script>
 
-  <script type=" </script>
-
   <script type="module">
-module">
-    import { create    import { createClient } from "https://Client } from "https://esesm.sh/@m.sh/@supabasesupabase/supabase-js@2";
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-/supabase-js@2";
+    const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
 
-       const SUPABASE_URL = " const SUPABASE_URL = "https://csinbmcauhttps://csinbmcauuyljjqshawiuyljjqshawi.supabase.co";
-    const SUPABASE.supabase.co";
-    const SUPABASE_AN_ANON_KEY = "ON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCIeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey6IkpXVCJ9.eyJJpc3MiOiJzdXBhpc3MiOiJzdYmFzZSIsInXBhYmFzZSIsJlInJlZiI6ImNzaW5ibZiI6ImNzaW5ibWNhdXV5bGpqcWNhdXV5bGpqcXNoXNoYXdpIiwicmYXdpIiwicm9sZ9sZSI6ImSI6ImFub24iFub24iLCJpYXLCJpYXQQiOjE3NTiOjE3NTk1MjMyk1MjMyNTcsImV4cCI6MjA3NTA5NTcsImV4cCI6MjA3NTA5OTI1NOTI1N30._0c30._0cV_TgcHMV_TgcHMjkixjkixigFEMcigFEMcS34MGbtS34MGbtz7pcz7pcupog5-LuupKoPA";
+    let PUBLIC_APP_URL = window.location.origin + window.location.pathname;
+    if (!PUBLIC_APP_URL.endsWith("/")) PUBLIC_APP_URL += "/";
 
-    let PUBLICog5-LuKoPA";
+    window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let PUBLIC_APP_URL = window.location.origin +_APP_URL = window.location.origin + window.location window.location.pathname;
-    if.pathname;
-    if (!PUBLIC_ (!PUBLIC_APP_URLAPP_URL.ends.endsWith("/")) PUBLICWith("/")) PUBLIC_APP_URL += "/";
-
-_APP_URL += "/";
-
-    window    window.supabase = createClient(SUP.supabase = createClient(ABASE_URL, SUPSUPABASE_URL, SUPABASE_ANON_KEY);
-
-ABASE_ANON_KEY);
-
-    function __update    function __updateAuthUI(isLogged){
-     AuthUI(isLogged){
-      const overlay = document const overlay = document.getElementById('.getElementById('authauth-overlay');
-      const-overlay');
-      const userBox = document.getElementById(' userBox = document.getElementById('user-box');
-      if(overlayuser-box');
-      if(overlay) overlay.style.display) overlay.style.display = isLogged ? = isLogged ? 'none' : 'flex';
-      'none' : 'flex if(userBox){
-';
+    // FUNCIÓN CORREGIDA - SOLO ESTA PARTE SE MODIFICÓ
+    function __updateAuthUI(isLogged){
+      const overlay = document.getElementById('auth-overlay');
+      const userBox = document.getElementById('user-box');
+      
+      if(overlay) overlay.style.display = isLogged ? 'none' : 'flex';
+      
       if(userBox){
-        userBox.style.display = isLogged ?        userBox.style.display = isLogged 'flex' : 'none';
-        if(isLogged ? 'flex' : 'none';
-        if(isLogged){
-         ){
-          const email const email = window.__session?.user?.email || "";
- = window.__session?.user?.email || "";
-                   const username = window.__session?.user?. const username = window.__session?.user?.user_metadata?.user_metadata?.username ||username || "";
-          userBox.querySelector('[data-user- "";
-          userBox.querySelector('[data-user-email]').textContent = emailemail]').textContent = email;
-         ;
-          userBox.querySelector('[data-user-name] userBox.querySelector('[data-user-name]').textContent = username || "(sin username)').textContent =";
- username || "(sin username)        }
-      }
-      const nextBtn = document.getElementById('next";
+        userBox.style.display = isLogged ? 'flex' : 'none';
+        if(isLogged && window.__session?.user){
+          const email = window.__session.user.email || "";
+          const username = window.__session.user.user_metadata?.username || "";
+          const userNameElement = userBox.querySelector('[data-user-name]');
+          const userEmailElement = userBox.querySelector('[data-user-email]');
+          
+          if(userNameElement) userNameElement.textContent = username || "(sin username)";
+          if(userEmailElement) userEmailElement.textContent = email;
         }
       }
-      const nextBtn =-step');
- document.getElementById('next-step');
-      if(nextBtn      if(nextBtn) nextBtn.disabled = !) nextBtn.disabled = !isLogged;
-isLogged;
+      
+      const nextBtn = document.getElementById('next-step');
+      if(nextBtn) nextBtn.disabled = !isLogged;
     }
 
     (async () => {
-    }
-
-    (async ()      const => {
-      const { data: { { data: { session} session} } } = await window = await window.supabase.auth.getSession();
-      window.supabase.auth.getSession();
-      window.__session.__session = session || null;
-      = session || null;
+      const { data: { session} } = await window.supabase.auth.getSession();
+      window.__session = session || null;
       __updateAuthUI(!!session);
- __updateAuthUI(!!session);
     })();
 
-    window.supabase.auth.onAuthState    })();
-
-    window.supabase.auth.onAuthStateChange((Change((_event, session) => {
-      window.__session_event, session) => {
-      window.__ = session || null;
-     session = session || null;
+    window.supabase.auth.onAuthStateChange((_event, session) => {
+      window.__session = session || null;
       __updateAuthUI(!!session);
-    __updateAuthUI(!!session);
     });
 
-    window });
-
-    window.__signUpWithEmail = async (email,.__signUpWithEmail = async ( password, username) => {
+    window.__signUpWithEmail = async (email, password, username) => {
       try {
-       email, password, username) const { => {
-      try {
-        const { data, error } = await window.supabase.auth.signUp data, error }({
-          = await window.supabase.auth.signUp({
+        const { data, error } = await window.supabase.auth.signUp({
           email,
           password,
-          email,
-          password,
-          options: { data options: { data:: { username }, emailRedirectTo: PUBLIC_APP_URL { username }, emailRedirectTo: PUBLIC }
+          options: { data: { username }, emailRedirectTo: PUBLIC_APP_URL }
         });
-       _APP_URL }
-        });
-        if (error) if (error) {
-          if ( {
-          if (String(error.message || '').String(error.message || '').toLowerCase().includes('alreadytoLowerCase().includes('already'))')) {
-            const {
-            const { error: e { error: e2 } = await window.supabase.auth2 } = await window.sup.signInWithPassword({ email, passwordabase.auth.signInWithPassword({ });
-            if (e2 email, password });
+        if (error) {
+          if (String(error.message || '').toLowerCase().includes('already')) {
+            const { error: e2 } = await window.supabase.auth.signInWithPassword({ email, password });
             if (e2) throw e2;
-) throw e2;
-                       return;
+            return;
           }
           throw error;
         }
-        if return;
-          }
-          throw error;
-        }
-        if (!data?.session (!data?.session) {
-) {
-          alert("Te enviamos un          alert("Te enviamos un correo correo de confirmación. de confirmación. Revisa spam/promoc Revisa spam/promocionesiones.\nDespués de confirmar, vuelve.\nDespués de confirm a estaar, vuelve a esta página página.");
+        if (!data?.session) {
+          alert("Te enviamos un correo de confirmación. Revisa spam/promociones.\nDespués de confirmar, vuelve a esta página.");
         }
       } catch (e) {
-       .");
-        }
-      } catch ( console.error("signUp error:", e);
-       e) {
         console.error("signUp error:", e);
- alert("Error al crear cuenta: " + (        alert("Error al creare?. cuenta: " + (e?.message || e));
+        alert("Error al crear cuenta: " + (e?.message || e));
       }
     };
 
-    window.__signmessage || e));
-      }
-InWithEmail    };
-
-    window.__signInWith = async (email, password) => {
-Email = async (email, password)      try {
-        const { error } = await => {
+    window.__signInWithEmail = async (email, password) => {
       try {
-        const { error } = await window.supabase.auth.sign window.supabase.auth.signInWithPasswordInWithPassword({ email, password });
-       ({ email, password });
-        if if (error) throw error;
-      } catch (error) throw error;
-      (e) {
-        } catch (e) {
- const msg = String(e?.message        const msg = String(e || '').toLowerCase();
-        if (msg.includes('?.message || '').toLowerCase();
-        if (msg.includes('emailemail')') && msg.includes('confirm')) && msg.includes('confirm')) {
-          alert {
-          alert("Tu correo aún no está confirm("Tu correo aún no estáado. Revisa tu email y confirma la cuenta confirmado. Revisa tu email y confirma la cuenta.");
+        const { error } = await window.supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      } catch (e) {
+        const msg = String(e?.message || '').toLowerCase();
+        if (msg.includes('email') && msg.includes('confirm')) {
+          alert("Tu correo aún no está confirmado. Revisa tu email y confirma la cuenta.");
         } else {
-          alert("Error al.");
-        } else {
-          alert("Error al iniciar sesión iniciar sesión: " + (e?.message || e));
-       : " + (e?.message || e));
+          alert("Error al iniciar sesión: " + (e?.message || e));
         }
-        console.error }
-        console.error("signIn error("signIn error:", e);
-      }
-   :", e);
+        console.error("signIn error:", e);
       }
     };
 
-    // FUNCIÓN CORREGIDA PARA };
-
-    // FUNCIÓN CORREG GOOGLE OAIDA PARA GOOGLE OAUTH
-    window.__signInWithGoogle =UTH
-    window.__sign async () => {
+    // FUNCIÓN CORREGIDA PARA GOOGLE OAUTH
+    window.__signInWithGoogle = async () => {
       try {
-        const {InWithGoogle = async () => {
-      try {
-        const { data, error } data, error } = await window = await window.supabase.auth.signInWithO.supabase.auth.signInWithOAuthAuth({
+        const { data, error } = await window.supabase.auth.signInWithOAuth({
           provider: "google",
-          options({
-          provider: "google",
-: { 
-                     options: { 
+          options: { 
             redirectTo: window.location.origin,
-            query redirectTo: window.location.origin,
-Params: {
-              access_type: 'offline            queryParams: {
+            queryParams: {
               access_type: 'offline',
-             ',
-              prompt: prompt: 'consent'
- 'consent'
-            }
-          }
-        });
+              prompt: 'consent'
             }
           }
         });
         
         if (error) {
-                 
-        if (error) {
-          console.error("Error Google O console.error("Error Google OAuth:", error);
+          console.error("Error Google OAuth:", error);
           
-          // Si fallaAuth:", error);
-          
-          // OAuth, mostrar instrucciones alternativas
-          Si falla OAuth, mostrar instrucciones alternativas
-          if if (error.message?.includes (error.message?.includes('provider')) {
-            alert("Google('provider')) {
-            alert("Google OAuth no está configurado. Contacte OAuth no está configu al administrador pararado. Contacte al administrador para configurar Google OAuth en configurar Google OAuth en Supabase Supabase.\n\nMientras tanto, puede usar registro con email.\n\nMientras tanto, puede usar registro con email.");
-          }.");
+          // Si falla OAuth, mostrar instrucciones alternativas
+          if (error.message?.includes('provider')) {
+            alert("Google OAuth no está configurado. Contacte al administrador para configurar Google OAuth en Supabase.\n\nMientras tanto, puede usar registro con email.");
           } else {
-            else {
-            alert("Error con Google: alert("Error con Google: " + " + error.message);
- error.message);
+            alert("Error con Google: " + error.message);
           }
-                   }
           return;
         }
         
-        return;
-        }
-        
- // Éxito - la        // Éxito - redirección se la redirección se mane maneja automáticamente
-        consoleja automáticamente
-       .log("Google OAuth inici console.log("Google OAuth iniciado correctamenteado correctamente");
+        // Éxito - la redirección se maneja automáticamente
+        console.log("Google OAuth iniciado correctamente");
         
       } catch (e) {
-        console.error");
-        
-      } catch (e) {
-        console("Error completo Google OAuth:", e);
-        alert("Error al.error("Error completo Google OAuth:", e);
-        conectar con alert("Error al conectar con Google. Intente con otro método o Google. Intente con otro método o contacte al administrador.");
-      contacte al administrador.");
+        console.error("Error completo Google OAuth:", e);
+        alert("Error al conectar con Google. Intente con otro método o contacte al administrador.");
       }
     };
 
-    function showUsernameModal(userId }
-    };
-
-    function showUsernameModal(userId)) {
-      {
+    function showUsernameModal(userId) {
       const modal = document.getElementById('username-modal');
-      const usernameInput const modal = document.getElementById('username-modal');
-      const username = document.getElementById('google-Input = document.getElementById('google-username');
-      constusername');
-      const saveButton = document.getElementById('save saveButton = document.getElementById('save--google-username');
-google-username');
+      const usernameInput = document.getElementById('google-username');
+      const saveButton = document.getElementById('save-google-username');
       
-      if (!modal || !username      
-      if (!modal || !usernameInputInput || !saveButton) || !saveButton) return;
+      if (!modal || !usernameInput || !saveButton) return;
       
-      modal return;
+      modal.classList.add('active');
       
-      modal.classList.add.classList.add('active');
-('active');
+      saveButton.replaceWith(saveButton.cloneNode(true));
+      const newSaveButton = document.getElementById('save-google-username');
       
-      saveButton      
-      saveButton.replaceWith(saveButton.clone.replaceWith(saveButton.cloneNode(true));
-      const newSaveButton = document.getElementById('Node(true));
-      const newsave-googleSaveButton = document.getElementById('save-google-username');
-      
-     -username');
-      
-      newSaveButton.addEventListener('click newSaveButton.addEventListener('click', async () => {
-        const username = usernameInput.value.trim', async () => {
-        const username();
+      newSaveButton.addEventListener('click', async () => {
+        const username = usernameInput.value.trim();
         
         if (!username) {
-          alert('Por favor = usernameInput.value.trim();
-        
-        if (!username) {
-          ingresa un nombre de usuario');
-          return;
- alert('Por favor ingresa un nombre de usuario');
+          alert('Por favor ingresa un nombre de usuario');
           return;
         }
-        }
-        
         
         if (username.length < 3) {
-                 if (username.length < 3) {
-          alert(' alert('El username debe tener al menos 3 caracteres');
-El username debe tener al menos 3 caracteres');
-          return          return;
-        }
-        
-       ;
+          alert('El username debe tener al menos 3 caracteres');
+          return;
         }
         
         try {
-          new try {
-          newSaveButtonSaveButton.innerHTML =.innerHTML = '<i class=" '<i class="fas fa-spinner fa-spin"></fas fa-spinner fa-spin"></i> Guardando...';
-          newSaveButton.disabledi> Guardando...';
-          = true;
+          newSaveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+          newSaveButton.disabled = true;
           
- newSaveButton.disabled = true;
-          
-          const { error          const { error } = await window.sup } = await window.supabase.authabase.auth.updateUser({
-            data: { username:.updateUser({
-            data: { username }
-          });
- username: username }
+          const { error } = await window.supabase.auth.updateUser({
+            data: { username: username }
           });
           
-          if (error) throw error          
           if (error) throw error;
           
-;
+          modal.classList.remove('active');
+          usernameInput.value = '';
           
-          modal          modal.classList.remove('active');
-         .classList.remove('active');
-          usernameInput usernameInput.value = '';
-          
-.value = '';
-          
-          const { data          const { data: { session } } =: { session } } = await await window.supabase.auth.getSession();
-          window.__session window.supabase.auth.getSession = session;
-         ();
+          const { data: { session } } = await window.supabase.auth.getSession();
           window.__session = session;
-          __update __updateAuthUI(!!session);
+          __updateAuthUI(!!session);
           
-         AuthUI(!!session);
+          alert(`¡Bienvenido ${username}! Tu perfil ha sido actualizado.`);
           
-          alert(` alert(`¡Bienvenido ${username}! Tu per¡Bienvenido ${fil ha sido actualusername}! Tu perfil ha sido actualizado.`);
-          
-        }izado.`);
-          
-        } catch ( catch (error) {
-         error) {
+        } catch (error) {
           console.error('Error updating username:', error);
-          console.error('Error updating username:', error alert('Error al);
-          alert('Error al guardar username: guardar username: ' + (error.message || error));
-          ' + (error.message || error));
-          newSaveButton newSaveButton.innerHTML.innerHTML = '<i class="fas fa-check"></i = '<i class="fas fa-check"></> Guardar y continuar';
+          alert('Error al guardar username: ' + (error.message || error));
+          newSaveButton.innerHTML = '<i class="fas fa-check"></i> Guardar y continuar';
           newSaveButton.disabled = false;
         }
       });
       
       modal.addEventListener('click', function(e) {
-       i> Guardar y continuar';
-          newSaveButton.disabled = false;
-        }
-      });
-      
-      modal.addEventListener('click', function if (e.target === modal)(e) {
         if (e.target === modal) {
-          {
           modal.classList.remove('active');
         }
       });
- modal.classList.remove('active');
       
-             }
-      });
-      
-      usernameInput.addEventListener('keypress', function usernameInput.addEventListener('keypress', function(e) {
-       (e) {
+      usernameInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
-          if (e.key === 'Enter') {
-          newSave newSaveButton.clickButton.click();
+          newSaveButton.click();
         }
       });
       
-      setTimeout();
-        }
-      });
-      
-      setTimeout(()(() => usernameInput.focus => usernameInput.focus(), (), 300);
+      setTimeout(() => usernameInput.focus(), 300);
     }
 
-    document.addEventListener('300);
-    }
-
-    documentDOMContentLoaded', async () => {
-      const.addEventListener('DOMContentLoaded', async () { data: { => {
-      const { data: { session } } = await session } } = await window.supabase.auth.get window.supabase.auth.getSessionSession();
-      if (session?.user && !session.user.user_();
-      if (session?.usermetadata?.username) {
-        setTimeout(() => {
-          showUsernameModal(session.user.id);
-        }, 1500);
-      && !session.user.user_metadata?.username) {
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { data: { session } } = await window.supabase.auth.getSession();
+      if (session?.user && !session.user.user_metadata?.username) {
         setTimeout(() => {
           showUsernameModal(session.user.id);
         }, 1500);
       }
-    }
     });
-
-    window.__resendVerification = async (email) => });
 
     window.__resendVerification = async (email) => {
       try {
- {
-      try {
-        if        if (!email) return (!email) return alert("E alert("Escribe tu correo primero.");
-scribe tu correo primero.");
-               const { data, error } = await window.sup const { data, error }abase.auth.resend = await window.supabase.auth.resend({ type: 'signup({ type: 'signup', email });
-       ', email });
-        if (error if (error) throw) throw error;
-        error;
-        alert("Listo, alert("Listo, te reenv te reenviamos el correoiamos el correo. Revis. Revisa bandeja y spam.");
+        if (!email) return alert("Escribe tu correo primero.");
+        const { data, error } = await window.supabase.auth.resend({ type: 'signup', email });
+        if (error) throw error;
+        alert("Listo, te reenviamos el correo. Revisa bandeja y spam.");
       } catch (e) {
-a bandeja y spam.");
-      } catch (e)        console.error("resend {
         console.error("resend error:", e);
-        alert("No error:", e);
-        alert(" se pudo reenviar: "No se pudo reenvi + (e?.message || e));
-     ar: " + (e }
+        alert("No se pudo reenviar: " + (e?.message || e));
+      }
     };
 
-    window.__?.message || e));
-      }
-signOut    };
+    window.__signOut = async () => { await window.supabase.auth.signOut(); };
+    window.__canUseApp = () => !!window.__session;
 
-    window.__sign = async () => { await window.supabase.auth.signOut(); };
-    windowOut = async () => { await window.supabase.auth.signOut(); };
-    window.__canUseApp.__canUseApp = () => !! = () => !!window.__session;
-
-    document.addEventListener('DOMContentwindow.__session;
-
-    document.addEventListener('DOMContentLoaded', ()Loaded', () => => {
-      const next {
-      const nextBtnBtn = document.getElementById('next-step');
-      if(nextBtn){
- = document.getElementById('next-step');
+    document.addEventListener('DOMContentLoaded', () => {
+      const nextBtn = document.getElementById('next-step');
       if(nextBtn){
         nextBtn.addEventListener('click', (e) => {
-          if(!window        nextBtn.addEventListener('click', (e) => {
           if(!window.__canUseApp()){
-           .__canUseApp()){
             e.stopImmediatePropagation();
- e.stopImmediatePropagation();
             e.preventDefault();
-            document            e.preventDefault();
-            document.getElementById('auth.getElementById('auth-overlay').style.display='flex-overlay').style.display='flex';
-           ';
-            alert("Inicia ses alert("Inicia sesiónión para continuar.");
- para continuar.");
+            document.getElementById('auth-overlay').style.display='flex';
+            alert("Inicia sesión para continuar.");
           }
-                 }
         }, true);
-      }
-    }, true);
       }
     });
 
-    const });
-
-    const _origCalculate = window.calculateRealAppraisal _origCalculate = window.calculateRealAppraisal;
-    if(_;
+    const _origCalculate = window.calculateRealAppraisal;
     if(_origCalculate){
-      window.calculateorigCalculate){
-      window.calculateRealAppraisalRealAppraisal = function(){
-        if(!window.__canUseApp = function(){
-        if(!()){
-          documentwindow.__canUseApp()){
-          document.getElementById('auth-overlay')..getElementById('auth-overlay').style.displaystyle.display='='flex';
-          alert("Inicia sesión para calcular el avflex';
-          alert("Inicia sesión para calcularalúo.");
-          return el avalúo.");
-;
-        }
-        return _origCalculate          return;
+      window.calculateRealAppraisal = function(){
+        if(!window.__canUseApp()){
+          document.getElementById('auth-overlay').style.display='flex';
+          alert("Inicia sesión para calcular el avalúo.");
+          return;
         }
         return _origCalculate.apply(this, arguments);
       };
     }
-  </.apply(this, arguments);
-      };
-    }
   </script>
-
-  <scriptscript>
 
   <script>
     (function () {
->
-    (function ()      const url = new URL(window.location {
       const url = new URL(window.location.href);
-      const hashStr =.href);
-      const hashStr = url.hash url.hash.startsWith('#').startsWith('#') ? url.hash.slice(1 ? url.hash.slice(1)) : url.hash : url.hash;
-      const hash;
-      const hash = new URLSearchParams(hashStr = new URLSearchParams(hash);
-      const qs = new URLSearchParamsStr);
-      const qs = new URLSearchParams(url.search(url.search);
-      const);
-      const msg = hash.get msg = hash.get("error_description") || hash.get("error_description") || hash.get("error") || q("error") || qs.get("s.get("error_description") || qserror_description") || qs.get("error.get("error");
-      if");
+      const hashStr = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+      const hash = new URLSearchParams(hashStr);
+      const qs = new URLSearchParams(url.search);
+      const msg = hash.get("error_description") || hash.get("error") || qs.get("error_description") || qs.get("error");
       if (msg) {
- (msg) {
-        console.error        console.error("Auth callback error:", msg);
-        alert("Auth callback error:", msg("Autenticación: " + msg);
-);
+        console.error("Auth callback error:", msg);
         alert("Autenticación: " + msg);
       }
-      }
-    })    })();
-  </script();
+    })();
   </script>
 </body>
 </html>
