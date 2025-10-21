@@ -2114,7 +2114,6 @@
     });
   </script>
 
-  <!-- CÓDIGO CORREGIDO PARA GOOGLE LOGIN - AGREGADO AL FINAL -->
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -2397,6 +2396,138 @@
         alert("Autenticación: " + msg);
       }
     })();
+  </script>
+
+  <!-- CORRECCIÓN ESPECÍFICA PARA GITHUB PAGES -->
+  <script>
+    // CORRECCIÓN PARA GITHUB PAGES - CONFIGURACIÓN ESPECÍFICA
+    (function() {
+        // Detectar si estamos en GitHub Pages
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        
+        if (isGitHubPages) {
+            console.log('Ejecutando en GitHub Pages - Aplicando configuración especial');
+            
+            // Sobrescribir la función de Google Login para GitHub Pages
+            const originalGoogleLogin = window.__signInWithGoogle;
+            
+            window.__signInWithGoogle = async function() {
+                try {
+                    console.log("Iniciando login con Google en GitHub Pages...");
+                    
+                    // URL específica para GitHub Pages
+                    const currentUrl = window.location.href;
+                    const redirectUrl = currentUrl.split('?')[0].split('#')[0];
+                    
+                    console.log('URL de redirección:', redirectUrl);
+                    
+                    const { data, error } = await window.supabase.auth.signInWithOAuth({
+                        provider: "google",
+                        options: { 
+                            redirectTo: redirectUrl,
+                            skipBrowserRedirect: false,
+                            queryParams: {
+                                access_type: 'offline',
+                                prompt: 'consent'
+                            }
+                        }
+                    });
+                    
+                    if (error) {
+                        console.error("Error OAuth GitHub Pages:", error);
+                        
+                        if (error.message?.includes('provider')) {
+                            alert("ERROR: Google OAuth no configurado en Supabase.\n\nConfigura en Supabase:\n1. Authentication → Providers → Google\n2. Agrega Client ID y Secret de Google Cloud\n3. En 'Redirect URLs' agrega: " + redirectUrl);
+                        } else if (error.message?.includes('redirect_uri')) {
+                            alert("ERROR: URL de redirección no coincide.\n\nEn Supabase → Authentication → URL Configuration:\nSite URL: " + redirectUrl + "\nRedirect URLs: " + redirectUrl);
+                        } else {
+                            alert("Error Google: " + error.message);
+                        }
+                        return;
+                    }
+                    
+                    console.log("Login exitoso en GitHub Pages:", data);
+                    
+                } catch (e) {
+                    console.error("Error completo GitHub Pages:", e);
+                    alert("Error crítico: " + (e?.message || e));
+                }
+            };
+            
+            // Verificar autenticación mejorada para GitHub Pages
+            async function checkGitHubAuth() {
+                try {
+                    const { data: { session }, error } = await window.supabase.auth.getSession();
+                    
+                    if (error) {
+                        console.warn('Error verificando sesión:', error);
+                        return;
+                    }
+                    
+                    if (session?.user) {
+                        console.log('Usuario autenticado en GitHub Pages:', session.user.email);
+                        __updateAuthUI(true);
+                        
+                        // Verificar si necesita username
+                        if (!session.user.user_metadata?.username) {
+                            setTimeout(() => {
+                                showUsernameModal(session.user.id);
+                            }, 1000);
+                        }
+                    } else {
+                        console.log('No hay sesión activa en GitHub Pages');
+                        __updateAuthUI(false);
+                    }
+                } catch (error) {
+                    console.error('Error en checkGitHubAuth:', error);
+                }
+            }
+            
+            // Reemplazar la verificación original
+            setTimeout(checkGitHubAuth, 1000);
+            
+            // Manejar callback de OAuth
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            const errorDescription = urlParams.get('error_description');
+            
+            if (error) {
+                console.error('Error OAuth callback:', error, errorDescription);
+                alert('Error de autenticación: ' + (errorDescription || error));
+                
+                // Limpiar URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            console.log('Configuración GitHub Pages aplicada correctamente');
+        }
+    })();
+
+    // FUNCIÓN DE CONFIGURACIÓN MANUAL PARA SUPABASE
+    function configurarSupabaseManual() {
+        const configPanel = document.createElement('div');
+        configPanel.innerHTML = `
+            <div style="position: fixed; top: 10px; right: 10px; background: #f8f9fa; padding: 15px; border: 2px solid #dc3545; border-radius: 8px; z-index: 10000; max-width: 400px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <h4 style="margin: 0 0 10px 0; color: #dc3545;">⚠ Configuración Requerida</h4>
+                <p style="margin: 0 0 10px 0; font-size: 12px;">Para GitHub Pages, configura en Supabase:</p>
+                <ol style="margin: 0 0 10px 0; padding-left: 20px; font-size: 12px;">
+                    <li>Ve a <strong>Authentication → URL Configuration</strong></li>
+                    <li><strong>Site URL:</strong> ${window.location.origin}${window.location.pathname}</li>
+                    <li><strong>Redirect URLs:</strong> ${window.location.origin}${window.location.pathname}</li>
+                    <li>En <strong>Providers → Google</strong>, activa y configura credenciales</li>
+                </ol>
+                <button onclick="this.parentElement.remove()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Cerrar</button>
+            </div>
+        `;
+        document.body.appendChild(configPanel);
+    }
+
+    // Mostrar panel de configuración si hay errores
+    setTimeout(() => {
+        if (!window.__session && window.location.hostname.includes('github.io')) {
+            setTimeout(configurarSupabaseManual, 3000);
+        }
+    }, 2000);
   </script>
 </body>
 </html>
