@@ -1389,7 +1389,7 @@
       {
         id: "baja-baja-2",
         category: "Baja",
-        type: "Baja 2", 
+        type: "Baja 2",
         title: "Categoría Baja — Baja 2",
         img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80",
         priceRange: "Q250–Q500/m²",
@@ -2114,6 +2114,7 @@
     });
   </script>
 
+  <!-- CÓDIGO CORREGIDO PARA GOOGLE LOGIN - AGREGADO AL FINAL -->
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -2153,6 +2154,80 @@
       __updateAuthUI(!!session);
     });
 
+    // FUNCIÓN CORREGIDA PARA GOOGLE LOGIN
+    window.__signInWithGoogle = async () => {
+      try {
+        console.log("Iniciando login con Google...");
+        
+        // Verificar configuración básica
+        if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+          throw new Error("Configuración de Supabase faltante");
+        }
+
+        const { data, error } = await window.supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { 
+            redirectTo: window.location.origin, // Usar origen actual
+            skipBrowserRedirect: false,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent'
+            }
+          }
+        });
+        
+        if (error) {
+          console.error("Error de OAuth:", error);
+          
+          // Mensajes de error específicos
+          if (error.message?.includes('provider')) {
+            alert("ERROR: Google OAuth no está configurado en Supabase.\n\nPara solucionarlo:\n1. Ve a Supabase Dashboard → Authentication → Providers\n2. Activa Google OAuth\n3. Configura las credenciales de Google Cloud Console");
+          } else if (error.message?.includes('redirect')) {
+            alert("ERROR: URI de redirección no configurada.\n\nEn Supabase: Authentication → URL Configuration\nAgrega: " + window.location.origin);
+          } else {
+            alert("Error con Google: " + error.message);
+          }
+          return;
+        }
+        
+        console.log("Login con Google iniciado:", data);
+        
+      } catch (e) {
+        console.error("Error completo:", e);
+        alert("Error crítico: " + (e?.message || e));
+      }
+    };
+
+    // Función adicional para verificar estado de autenticación
+    async function checkAuthStatus() {
+      try {
+        const { data: { session }, error } = await window.supabase.auth.getSession();
+        if (error) throw error;
+        
+        if (session?.user) {
+          console.log("Usuario autenticado:", session.user);
+          __updateAuthUI(true);
+          
+          // Verificar si necesita username
+          if (!session.user.user_metadata?.username) {
+            setTimeout(() => {
+              showUsernameModal(session.user.id);
+            }, 1000);
+          }
+        } else {
+          console.log("No hay sesión activa");
+          __updateAuthUI(false);
+        }
+      } catch (error) {
+        console.error("Error verificando autenticación:", error);
+      }
+    }
+
+    // Verificar autenticación al cargar
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(checkAuthStatus, 500);
+    });
+
     window.__signUpWithEmail = async (email, password, username) => {
       try {
         const { data, error } = await window.supabase.auth.signUp({
@@ -2189,33 +2264,6 @@
           alert("Error al iniciar sesión: " + (e?.message || e));
         }
         console.error("signIn error:", e);
-      }
-    };
-
-    window.__signInWithGoogle = async () => {
-      try {
-        const { data, error } = await window.supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: { 
-            redirectTo: PUBLIC_APP_URL, 
-            queryParams: { prompt: "select_account" } 
-          }
-        });
-        
-        if (error) throw error;
-        
-        const { data: { session } } = await window.supabase.auth.getSession();
-        if (session?.user) {
-          const userMetadata = session.user.user_metadata;
-          if (!userMetadata?.username) {
-            setTimeout(() => {
-              showUsernameModal(session.user.id);
-            }, 1000);
-          }
-        }
-      } catch (e) {
-        console.error("google oauth error:", e);
-        alert("Error con Google: " + (e?.message || e));
       }
     };
 
@@ -2293,7 +2341,7 @@
           showUsernameModal(session.user.id);
         }, 1500);
       }
-    };
+    });
 
     window.__resendVerification = async (email) => {
       try {
