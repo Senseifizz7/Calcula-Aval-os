@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    /* TODOS LOS ESTILOS ORIGINALES PERMANECEN IGUAL */
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -598,7 +599,7 @@
 <body>
   <div class="app-container">
     <header class="app-header">
-      <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 145px; height: 64px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
+      <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 135px; height: 60px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
     </header>
 
     <div class="floating-actions">
@@ -1316,27 +1317,65 @@
       document.getElementById(modalId).classList.remove('active');
     }
 
-    function saveCurrentAppraisal() {
+    // FUNCIÓN ACTUALIZADA PARA GUARDAR EN SUPABASE
+    async function saveCurrentAppraisal() {
       if (!window.__session) {
         alert('Debes iniciar sesión para guardar avalúos');
-        return;
+        return false;
       }
       
-      const appraisalData = {
-        associateName: document.getElementById('associate-name').value,
-        address: document.getElementById('address').value,
-        constructionArea: document.getElementById('construction-area').value,
-        landArea: document.getElementById('land-area').value,
-        totalValue: document.getElementById('resultTotal').textContent,
-        ownerName: document.getElementById('owner-name').value,
-      };
+      console.log('🟡 Iniciando guardado en Supabase...');
       
-      const savedAppraisal = window.avaluosStorage.saveAppraisal(appraisalData);
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      if (loadingOverlay) loadingOverlay.style.display = 'flex';
       
-      if (savedAppraisal) {
-        console.log('Avalúo guardado:', savedAppraisal);
-      } else {
-        alert('Error al guardar el avalúo');
+      try {
+        // Preparar datos del avalúo - SIMPLIFICADO PARA PRUEBA
+        const appraisalData = {
+          associate_name: document.getElementById('associate-name').value || 'TEST',
+          address: document.getElementById('address').value || 'Dirección de prueba',
+          construction_area: parseFloat(document.getElementById('construction-area').value) || 100,
+          land_area: parseFloat(document.getElementById('land-area').value) || 200,
+          total_value: 50000, // Valor fijo para prueba
+          owner_name: document.getElementById('owner-name').value || 'Propietario prueba',
+          typology: document.getElementById('typology').value || 'baja-baja-1',
+          department: document.getElementById('department').value || 'Guatemala'
+        };
+
+        console.log('📦 Datos a guardar:', appraisalData);
+
+        // 1. GUARDAR EN SUPABASE
+        console.log('🔄 Enviando a Supabase...');
+        
+        const { data, error } = await window.supabase
+          .from('avaluos')
+          .insert([
+            {
+              usuario_id: window.__session.user.id,
+              usuario_email: window.__session.user.email,
+              usuario_nombre: window.__session.user.user_metadata?.username || 'Usuario',
+              ...appraisalData
+            }
+          ])
+          .select();
+
+        if (error) {
+          console.error('❌ Error Supabase:', error);
+          throw new Error(`Error de base de datos: ${error.message}`);
+        }
+
+        console.log('✅ Éxito - Datos guardados en Supabase:', data);
+        
+        alert('✅ Avalúo guardado EXITOSAMENTE en la base de datos\n\nVe a Supabase → Table Editor → avaluos para verlo.');
+        
+        return true;
+        
+      } catch (error) {
+        console.error('❌ Error completo al guardar:', error);
+        alert('❌ Error al guardar: ' + error.message + '\n\nRevisa la consola para más detalles.');
+        return false;
+      } finally {
+        if (loadingOverlay) loadingOverlay.style.display = 'none';
       }
     }
 
@@ -2107,11 +2146,13 @@
       document.getElementById('pdf-btn').style.display='none';
       window.formWizard.goToStep(1);
     }
+
+    // MODIFICACIÓN: Event listener actualizado para el botón Guardar
     document.addEventListener('DOMContentLoaded',function(){
       window.formWizard=new FormWizard();
-      document.getElementById('save-btn').addEventListener('click',function(){ 
-        saveCurrentAppraisal();
-        alert('Datos guardados exitosamente'); 
+      document.getElementById('save-btn').addEventListener('click',async function(){ 
+        await saveCurrentAppraisal();
+        // El alert ahora está dentro de saveCurrentAppraisal
       });
       document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
       document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
