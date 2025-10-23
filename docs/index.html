@@ -57,6 +57,11 @@
     .app-header h1 { font-size: 1.75rem; font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); color: var(--primary); }
     .app-header h1 i { background: rgba(91,123,122,.1); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 
+    /* Quitar fondo del logo sin afectar layout */
+    .app-header h1 img {
+        background: transparent !important;
+    }
+
     .floating-actions {
       position: fixed;
       top: 100px;
@@ -591,10 +596,11 @@
 </head>
 
 <body>
-   <header class="app-header">
-  <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 48px; height: 48px; border-radius: 12px; object-fit: contain; background: transparent; padding: 0;"> Sistema de Avalúos</h1>
-</header>
-  
+  <div class="app-container">
+    <header class="app-header">
+      <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 48px; height: 48px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
+    </header>
+
     <div class="floating-actions">
       <button class="floating-btn" id="all-appraisals-btn" title="Lista de Avalúos">
         <i class="fas fa-list"></i>
