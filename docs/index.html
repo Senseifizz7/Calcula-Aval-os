@@ -837,7 +837,7 @@
           <textarea id="otros-detalles" placeholder="Describa otros detalles como: Aire Acondicionado, Car-port, Garaje, Chimeneas, etc."></textarea>
         </div>
 
-        <div class="form-section-title" style="margin-top: var(--space-lg);"><i class="fas fa-list"></i> Seleccionar tipologías</div>
+        <div class="form-section-title" style="margin-top: var(--space-lg);"><i class="fas fa-list"></i> Catalogo de categorías y tipologías</div>
         <div class="form-group">
           <label>Tipología constructiva</label>
           <div class="typology-selector" onclick="__openTypology()">
@@ -864,7 +864,7 @@
           <div class="form-help" id="precio-help-text">Seleccione una tipología primero</div>
           
           
-          <button class="btn-primary btn-small" type="button" onclick="aplicarCambioPrecio()" style="margin-top: 8px; width: 100%;">
+          <button class="btn-primary btn-small" type="button" style="margin-top: 8px; width: 100%;">
             <i class="fas fa-sync-alt"></i> Aplicar nuevo precio
           </button>
         </div>
@@ -878,8 +878,6 @@
           <thead>
             <tr>
               <th style="width:140px">V/Base (Q/m²)</th>
-              <th style="width:120px">Frente</th>
-              <th style="width:120px">Fondo</th>
               <th style="width:140px">Área m²</th>
               <th style="width:120px">Fac. Fte.</th>
               <th style="width:120px">Fac. Fdo.</th>
@@ -892,8 +890,6 @@
           <tbody>
             <tr>
               <td><input type="number" min="0" step="0.01" class="t-vbase" placeholder="1500"></td>
-              <td><input type="number" min="0" step="0.01" class="t-frente" placeholder="0"></td>
-              <td><input type="number" min="0" step="0.01" class="t-fondo" placeholder="0"></td>
               <td><input type="number" min="0" step="0.01" class="t-area" id="t-area" placeholder="0"></td>
               <td><input type="number" min="0" step="0.01" class="t-ffte" placeholder="1" value="1"></td>
               <td><input type="number" min="0" step="0.01" class="t-ffdo" placeholder="1" value="1"></td>
@@ -905,23 +901,11 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="9" style="text-align:right; font-weight:600;">TOTAL TERRENO</td>
+              <td colspan="7" style="text-align:right; font-weight:600;">TOTAL TERRENO</td>
               <td><input type="text" id="totalTerreno" value="0.00" readonly></td>
             </tr>
           </tfoot>
         </table>
-
-        <div class="form-section-title"><i class="fas fa-layer-group"></i> Integración de Valores</div>
-        <div class="result-grid" id="integracionValores">
-          <div class="result-item">
-            <div class="label">Valor del Terreno</div>
-            <div class="value" id="ivTerreno">Q0.00</div>
-          </div>
-          <div class="result-item">
-            <div class="label">Total Avalúo</div>
-            <div class="value" id="ivTotal">Q0.00</div>
-          </div>
-        </div>
 
         <div class="form-section-title"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
         <table class="table-ui" id="tablaConstruccion">
@@ -964,6 +948,22 @@
 
         <div class="form-help" style="margin-top:8px;">
           El MONTO se calcula como: <strong>Área m² × V/Base × %</strong>. Todos los campos son manuales (editables), excepto MONTO.
+        </div>
+
+        <div class="form-section-title"><i class="fas fa-layer-group"></i> Integración de Valores</div>
+        <div class="result-grid" id="integracionValores">
+          <div class="result-item">
+            <div class="label">Valor del Terreno</div>
+            <div class="value" id="ivTerreno">Q0.00</div>
+          </div>
+          <div class="result-item">
+            <div class="label">Valor de Construcción</div>
+            <div class="value" id="ivConstruccion">Q0.00</div>
+          </div>
+          <div class="result-item">
+            <div class="label">Total Avalúo</div>
+            <div class="value" id="ivTotal">Q0.00</div>
+          </div>
         </div>
       </div>
 
@@ -1073,34 +1073,6 @@
         
         console.log(`Precio de ${tipologia.title} actualizado a: Q${nuevoPrecio}/m²`);
         return true;
-    }
-
-    
-    function aplicarCambioPrecio() {
-        const tipologiaId = document.getElementById('typology').value;
-        const nuevoPrecio = parseFloat(document.getElementById('precio-editable-input').value);
-        
-        if (!tipologiaId) {
-            alert('Primero seleccione una tipología');
-            return;
-        }
-        
-        if (isNaN(nuevoPrecio) || nuevoPrecio <= 0) {
-            alert('Ingrese un precio válido mayor a 0');
-            return;
-        }
-        
-        
-        if (modificarPrecioTipologia(tipologiaId, nuevoPrecio)) {
-            alert(`Precio actualizado exitosamente a Q${nuevoPrecio}/m²`);
-            
-            
-            if (document.getElementById('resultSection').classList.contains('active')) {
-                calculateRealAppraisal();
-            }
-        } else {
-            alert('Error al actualizar el precio');
-        }
     }
 
     
@@ -1811,17 +1783,6 @@
       };
 
       let area = num('.t-area');
-      const frente = num('.t-frente');
-      const fondo = num('.t-fondo');
-      
-      if ((area === 0 || isNaN(area)) && frente > 0 && fondo > 0) {
-        area = frente * fondo;
-        const tAreaEl = row.querySelector('.t-area');
-        if (tAreaEl) tAreaEl.value = area.toFixed(2);
-      }
-      else if (area > 0 && (frente === 0 || fondo === 0)) {
-        area = num('.t-area');
-      }
 
       const vbase = num('.t-vbase');
       const ffte  = fac('.t-ffte');
@@ -1855,8 +1816,10 @@
       const total = terreno + construccion;
 
       const ivT = document.getElementById('ivTerreno');
+      const ivConst = document.getElementById('ivConstruccion');
       const ivTot = document.getElementById('ivTotal');
       if (ivT) ivT.textContent = formatMoneyGTQ(terreno);
+      if (ivConst) ivConst.textContent = formatMoneyGTQ(construccion);
       if (ivTot) ivTot.textContent = formatMoneyGTQ(total);
 
       if (document.getElementById('resultSection').classList.contains('active')) {
