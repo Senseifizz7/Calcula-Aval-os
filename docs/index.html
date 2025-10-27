@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* TODOS LOS ESTILOS ORIGINALES PERMANECEN IGUAL */
+    
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -58,7 +58,7 @@
     .app-header h1 { font-size: 1.75rem; font-weight: 600; display: flex; align-items: center; gap: var(--space-sm); color: var(--primary); }
     .app-header h1 i { background: rgba(91,123,122,.1); width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
 
-    /* Quitar fondo del logo sin afectar layout */
+    
     .app-header h1 img {
         background: transparent !important;
     }
@@ -296,7 +296,7 @@
       opacity: 0.5;
     }
 
-    /* CORRECCIÓN: POSICIÓN DEL BOTÓN CERRAR SESIÓN */
+    
     #user-box {
       display: none;
       align-items: center;
@@ -329,7 +329,7 @@
       }
     }
 
-    /* CORRECCIONES DE RESPONSIVIDAD PARA MÓVIL - AGREGADAS */
+    
     @media (max-width: 768px){
       .catalog-modal .modal-content {
         max-width: 95vw;
@@ -599,7 +599,7 @@
 <body>
   <div class="app-container">
     <header class="app-header">
-      <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 135px; height: 60px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
+      <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 150px; height: 60px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
     </header>
 
     <div class="floating-actions">
@@ -611,7 +611,7 @@
       </button>
     </div>
 
-    <!-- Modal para username después de Google SignIn -->
+    
     <div class="catalog-modal" id="username-modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -630,7 +630,7 @@
       </div>
     </div>
 
-    <!-- Modal para Lista de Avalúos -->
+    
     <div class="catalog-modal" id="all-appraisals-modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -642,13 +642,13 @@
             <input type="text" id="search-appraisals" placeholder="Buscar avalúos..." style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius);">
           </div>
           <div id="all-appraisals-list" style="max-height: 400px; overflow-y: auto;">
-            <!-- Los avalúos se cargarán aquí -->
+            
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Modal para Mis Avalúos -->
+    
     <div class="catalog-modal" id="my-appraisals-modal">
       <div class="modal-content">
         <div class="modal-header">
@@ -657,7 +657,7 @@
         </div>
         <div class="modal-body" style="padding: 20px;">
           <div id="my-appraisals-list" style="max-height: 400px; overflow-y: auto;">
-            <!-- Mis avalúos se cargarán aquí -->
+            
           </div>
         </div>
       </div>
@@ -737,9 +737,8 @@
       </div>
     </div>
 
-    <!-- QUITAR "DATOS DE LA PROPIEDAD" DE TODAS LAS PESTAÑAS -->
     <div class="card">
-      <!-- Se quita el título general "Datos de la Propiedad" -->
+      
 
       <div class="form-section active" data-step="1">
         <h2><i class="fas fa-info-circle"></i> Información General</h2>
@@ -855,7 +854,7 @@
           <div class="form-help">Toca el recuadro para abrir el catálogo de tipologías</div>
         </div>
         
-        <!-- CONTENEDOR PARA MODIFICAR PRECIO - AGREGADO -->
+        
         <div class="form-group" id="precio-editable-container" style="display: none; margin-top: 16px; padding: 16px; background: var(--bg-hover); border-radius: var(--radius); border: 1px solid var(--border);">
           <label for="precio-editable-input" class="required">Modificar Precio por m² (Q)</label>
           <input type="number" id="precio-editable-input" 
@@ -864,7 +863,7 @@
                  style="padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); width: 100%; margin-bottom: 8px;" />
           <div class="form-help" id="precio-help-text">Seleccione una tipología primero</div>
           
-          <!-- BOTÓN PARA APLICAR CAMBIOS -->
+          
           <button class="btn-primary btn-small" type="button" onclick="aplicarCambioPrecio()" style="margin-top: 8px; width: 100%;">
             <i class="fas fa-sync-alt"></i> Aplicar nuevo precio
           </button>
@@ -1015,12 +1014,12 @@
   <button id="pdf-btn" type="button"><i class="fas fa-file-pdf"></i> PDF</button>
 
   <script>
-    // FUNCIÓN PARA MODIFICAR PRECIOS DE TIPOLOGÍAS - AGREGADA
+    
     function modificarPrecioTipologia(tipologiaId, nuevoPrecio) {
-        // Obtener todas las tipologías
+        
         const tipologias = __getTipos();
         
-        // Buscar la tipología específica
+        
         const tipologia = tipologias.find(t => t.id === tipologiaId);
         
         if (!tipologia) {
@@ -1028,7 +1027,7 @@
             return false;
         }
         
-        // Obtener el rango de precios para esta tipología
+        
         const rango = RANGOS_PRECIO[tipologia.category]?.[tipologia.type];
         
         if (!rango) {
@@ -1036,7 +1035,7 @@
             return false;
         }
         
-        // Validar que el nuevo precio no supere el máximo permitido
+        
         const precioMaximo = rango.max;
         
         if (nuevoPrecio > precioMaximo) {
@@ -1049,23 +1048,23 @@
             nuevoPrecio = rango.min;
         }
         
-        // Actualizar el precio de la tipología
+        
         tipologia.pricePerM2 = nuevoPrecio;
         
-        // Si esta tipología está actualmente seleccionada, actualizar el campo editable
+        
         const tipologiaActual = document.getElementById('typology').value;
         if (tipologiaActual === tipologiaId) {
             const precioInput = document.getElementById('precio-editable-input');
             if (precioInput) {
                 precioInput.value = nuevoPrecio;
                 
-                // Actualizar también la visualización del precio
+                
                 const pr = document.getElementById('selectedPrice');
                 if (pr) {
                     pr.textContent = `Q${nuevoPrecio.toLocaleString('es-GT')}/m²`;
                 }
                 
-                // Recalcular si estamos en resultados
+                
                 if (document.getElementById('resultSection').classList.contains('active')) {
                     calculateRealAppraisal();
                 }
@@ -1076,7 +1075,7 @@
         return true;
     }
 
-    // FUNCIÓN PARA APLICAR CAMBIO DE PRECIO - AGREGADA
+    
     function aplicarCambioPrecio() {
         const tipologiaId = document.getElementById('typology').value;
         const nuevoPrecio = parseFloat(document.getElementById('precio-editable-input').value);
@@ -1091,11 +1090,11 @@
             return;
         }
         
-        // Usar la función que ya existe
+        
         if (modificarPrecioTipologia(tipologiaId, nuevoPrecio)) {
             alert(`Precio actualizado exitosamente a Q${nuevoPrecio}/m²`);
             
-            // Recalcular si estamos en resultados
+            
             if (document.getElementById('resultSection').classList.contains('active')) {
                 calculateRealAppraisal();
             }
@@ -1104,7 +1103,7 @@
         }
     }
 
-    // Sistema de almacenamiento de avalúos
+    
     window.avaluosStorage = {
       getAllAppraisals: function() {
         try {
@@ -1177,7 +1176,7 @@
       }
     };
 
-    // Funciones para mostrar los modales
+    
     function showAllAppraisals() {
       const modal = document.getElementById('all-appraisals-modal');
       const listContainer = document.getElementById('all-appraisals-list');
@@ -1317,7 +1316,6 @@
       document.getElementById(modalId).classList.remove('active');
     }
 
-    // FUNCIÓN ACTUALIZADA PARA GUARDAR EN AMBOS SISTEMAS
     async function saveCurrentAppraisal() {
       if (!window.__session) {
         alert('Debes iniciar sesión para guardar avalúos');
@@ -1330,7 +1328,7 @@
       if (loadingOverlay) loadingOverlay.style.display = 'flex';
       
       try {
-        // 1. PREPARAR DATOS COMPLETOS DEL AVALÚO
+        
         const appraisalData = {
           associateName: document.getElementById('associate-name').value || 'No especificado',
           address: document.getElementById('address').value || 'No especificado',
@@ -1348,11 +1346,11 @@
 
         console.log('📦 Datos a guardar:', appraisalData);
 
-        // 2. GUARDAR EN LOCALSTORAGE (para la web - LISTA Y MIS AVALÚOS)
+        
         const savedInLocal = window.avaluosStorage.saveAppraisal(appraisalData);
         console.log('✅ Guardado en localStorage:', savedInLocal);
 
-        // 3. GUARDAR EN SUPABASE (para tu seguimiento)
+        
         console.log('🔄 Enviando a Supabase...');
         
         const { data, error } = await window.supabase
@@ -1388,10 +1386,10 @@
           console.log('✅ Éxito - Datos guardados en Supabase:', data);
         }
 
-        // 4. MOSTRAR CONFIRMACIÓN
+        
         alert('✅ Avalúo guardado EXITOSAMENTE\n\n• En la web: Disponible en "Lista de Avalúos"\n• En base de datos: Para tu seguimiento');
         
-        // 5. ACTUALIZAR LISTAS SI ESTÁN ABIERTAS
+        
         if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
           showAllAppraisals();
         }
@@ -1410,11 +1408,11 @@
       }
     }
 
-    // Botones flotantes
+    
     document.getElementById('all-appraisals-btn').addEventListener('click', showAllAppraisals);
     document.getElementById('my-appraisals-btn').addEventListener('click', showMyAppraisals);
 
-    // Cerrar modales al hacer click fuera
+    
     document.getElementById('all-appraisals-modal').addEventListener('click', function(e) {
       if (e.target === this) closeModal('all-appraisals-modal');
     });
@@ -1422,7 +1420,7 @@
       if (e.target === this) closeModal('my-appraisals-modal');
     });
 
-    // Precios por categoría y tipología (rangos completos)
+    
     const RANGOS_PRECIO = {
         'Baja': {
             'Baja 1': { min: 250, max: 400 },
@@ -1448,9 +1446,9 @@
         }
     };
 
-    // CORRECCIÓN 1: IMÁGENES FUNCIONALES Y PERMANENTES
+   
     const __FALLBACK_TIPOLOGIAS = [
-      // CATEGORÍA BAJA - Viviendas económicas, materiales básicos
+      
       {
         id: "baja-baja-1",
         category: "Baja", 
@@ -1512,7 +1510,7 @@
         bullets: ["Estructura de adobe y mampostería reforzada", "Paredes de adobe con repello, cernido y block normado", "Techo de teja de barro y lámina de zinc con cielo falso de madera", "Piso de granito y cemento líquido", "Instalaciones ocultas o expuestas"]
       },
 
-      // CATEGORÍA MEDIA - Viviendas estándar, materiales convencionales
+      
       {
         id: "media-baja-1",
         category: "Media",
@@ -1574,7 +1572,7 @@
         bullets: ["Estructura de mampostería reforzada con pines", "Paredes de block normado con repello, alisado y pintura", "Techo metálico con lámina de zinc", "Piso cerámico", "Fachada tipo colonial con balcones", "Instalaciones ocultas"]
       },
 
-      // CATEGORÍA ALTA - Viviendas premium, materiales de alta calidad
+      
       {
         id: "alta-baja-1",
         category: "Alta", 
@@ -1619,12 +1617,12 @@
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-    // FUNCIÓN CORREGIDA - Campo de precio editable FUNCIONAL
+    
     function __selectTipo(id) {
       const s = __getTipos().find(z => z.id === id);
       if (!s) return;
       
-      // Obtener rango completo
+      
       const rango = RANGOS_PRECIO[s.category]?.[s.type] || { min: 500, max: 1000 };
       const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
       
@@ -1640,7 +1638,7 @@
       if (pr) pr.textContent = rangoTexto;
       if (hd) hd.value = s.id;
       
-      // MOSTRAR Y CONFIGURAR EL CAMPO DE PRECIO EDITABLE
+      
       const precioContainer = document.getElementById('precio-editable-container');
       const precioInput = document.getElementById('precio-editable-input');
       const helpText = document.getElementById('precio-help-text');
@@ -1659,7 +1657,7 @@
       
       s.pricePerM2 = s.pricePerM2 || rango.max;
       
-      // Recalcular si estamos en resultados
+      
       if (document.getElementById('resultSection').classList.contains('active')) {
           calculateRealAppraisal();
       }
@@ -1667,7 +1665,7 @@
       __closeTypology();
     }
 
-    // MODIFICACIÓN: Función __renderTipos actualizada para mostrar rangos completos
+    
     function __renderTipos(){
       const t=__getTipos();
       const b=t.reduce((a,x)=>{((a[x.category]??=[]).push(x));return a;},{});for(const k in b) b[k].sort((a,c)=>a.type.localeCompare(c.type));
@@ -1676,7 +1674,7 @@
         if(!b[c])continue;
         h+=`<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología - Ver rangos de precio</div></div></div></div>`;
         for(const it of b[c]){
-          // Obtener rango completo para cada item
+          
           const rango = RANGOS_PRECIO[it.category]?.[it.type] || { min: 500, max: 1000 };
           const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
           
@@ -1697,7 +1695,7 @@
     window.__openTypology=__openTypology; window.__closeTypology=__closeTypology;
   </script>
 
-  <!-- EL RESTO DEL CÓDIGO JAVASCRIPT PERMANECE IGUAL -->
+  
   <script>
     function formatMoneyGTQ(v){
       return new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(Number(v||0));
@@ -2178,12 +2176,12 @@
       window.formWizard.goToStep(1);
     }
 
-    // MODIFICACIÓN: Event listener actualizado para el botón Guardar
+    
     document.addEventListener('DOMContentLoaded',function(){
       window.formWizard=new FormWizard();
       document.getElementById('save-btn').addEventListener('click',async function(){ 
         await saveCurrentAppraisal();
-        // El alert ahora está dentro de saveCurrentAppraisal
+        
       });
       document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
       document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
@@ -2202,7 +2200,7 @@
 
     window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // FUNCIÓN CORREGIDA - SOLO ESTA PARTE SE MODIFICÓ
+    
     function __updateAuthUI(isLogged){
       const overlay = document.getElementById('auth-overlay');
       const userBox = document.getElementById('user-box');
@@ -2276,10 +2274,10 @@
       }
     };
 
-    // CORRECCIÓN ESPECÍFICA PARA GOOGLE OAUTH - REEMPLAZANDO SOLO ESTA FUNCIÓN
+    
     window.__signInWithGoogle = async () => {
       try {
-        // Obtener la URL actual de GitHub Pages correctamente
+        
         const currentUrl = window.location.origin + window.location.pathname;
         const redirectUrl = currentUrl.endsWith('/') ? currentUrl : currentUrl + '/';
         
@@ -2299,7 +2297,7 @@
         if (error) {
           console.error("Error Google OAuth:", error);
           
-          // Si falla OAuth, mostrar instrucciones de configuración detalladas
+          
           if (error.message?.includes('provider') || error.message?.includes('configuration') || error.message?.includes('disabled')) {
             const configSteps = `
 CONFIGURACIÓN REQUERIDA EN SUPABASE:
@@ -2326,7 +2324,7 @@ Mientras tanto, puede usar registro con email.`;
           return;
         }
         
-        // Si llegamos aquí, la redirección debería funcionar
+        
         console.log("Google OAuth iniciado correctamente, redirigiendo...");
         
       } catch (e) {
