@@ -1133,7 +1133,7 @@
           <div class="result-item"><div class="label">Antigüedad</div><div class="value" id="resultAge">0 años</div></div>
           <div class="result-item"><div class="label">Valor Terreno (sin ajuste)</div><div class="value" id="resultLandValue">Q0.00</div></div>
           <div class="result-item"><div class="label">Avaluó Terreno (con ajuste)</div><div class="value" id="resultLandAppraisal">Q0.00</div></div>
-          <div class="result-item"><div class="label">Valor Construcción</div><div class="value" id="resultBuildValue">Q0.00</div></div>
+          <div class="result-item"><div class="label">Valor Construcción</div><div class="value</div>
           <div class="result-item"><div class="label">TOTAL Terreno + Construcción</div><div class="value" id="resultGrandTotal">Q0.00</div></div>
         </div>
         <div class="result-total"><div class="label">VALOR TOTAL ESTIMADO</div><div class="value" id="resultTotal">Q0.00</div></div>
@@ -1798,7 +1798,7 @@
               <img class="catalog-image-modal" 
                    src="${it.img}" 
                    alt="${it.title}" 
-                   onclick="openImageModal('${it.img}', '${it.title}')"
+                   onclick="event.stopPropagation(); openImageModal('${it.img}', '${it.title}')"
                    style="cursor: pointer;">
               <div class="catalog-text-modal">
                 <div class="catalog-type-modal">${it.type}</div>
