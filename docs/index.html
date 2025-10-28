@@ -725,6 +725,15 @@
       font-size: 0.75rem;
       color: var(--text-light);
     }
+
+    /* CORRECCIÓN ESPECÍFICA PARA EL VISOR DE IMÁGENES */
+    #image-viewer-modal {
+      z-index: 2000 !important;
+    }
+    
+    #image-viewer-modal .modal-content {
+      z-index: 2001 !important;
+    }
   </style>
 </head>
 
@@ -795,10 +804,10 @@
       </div>
     </div>
 
-    <!-- Modal para visualizar imagen grande -->
-    <div class="catalog-modal" id="image-viewer-modal">
-      <div class="modal-content" style="max-width: 90vw; max-height: 90vh; background: transparent; box-shadow: none;">
-        <button class="modal-close" onclick="closeImageViewer()" style="position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.7); color: white; z-index: 1001;">
+    <!-- Modal para visualizar imagen grande - CON Z-INDEX CORREGIDO -->
+    <div class="catalog-modal" id="image-viewer-modal" style="z-index: 2000;">
+      <div class="modal-content" style="max-width: 90vw; max-height: 90vh; background: transparent; box-shadow: none; z-index: 2001;">
+        <button class="modal-close" onclick="closeImageViewer()" style="position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.7); color: white; z-index: 2002;">
           &times;
         </button>
         <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
