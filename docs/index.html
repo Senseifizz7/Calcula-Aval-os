@@ -1133,7 +1133,7 @@
           <div class="result-item"><div class="label">Antigüedad</div><div class="value" id="resultAge">0 años</div></div>
           <div class="result-item"><div class="label">Valor Terreno (sin ajuste)</div><div class="value" id="resultLandValue">Q0.00</div></div>
           <div class="result-item"><div class="label">Avaluó Terreno (con ajuste)</div><div class="value" id="resultLandAppraisal">Q0.00</div></div>
-          <div class="result-item"><div class="label">Valor Construcción</div><div class="value</div>
+          <div class="result-item"><div class="label">Valor Construcción</div><div class="value" id="resultBuildValue">Q0.00</div></div>
           <div class="result-item"><div class="label">TOTAL Terreno + Construcción</div><div class="value" id="resultGrandTotal">Q0.00</div></div>
         </div>
         <div class="result-total"><div class="label">VALOR TOTAL ESTIMADO</div><div class="value" id="resultTotal">Q0.00</div></div>
@@ -2045,7 +2045,7 @@
       tr.innerHTML = `
         <td><input type="text" value="Nivel ${n}" class="planta-input"></td>
         <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
-        <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
+        <td><input type="number" min="0, step="0.01" class="vbase-input" placeholder="0"></td>
         <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
         <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
         <td><input type="text" class="monto-output" value="0.00" readonly></td>
