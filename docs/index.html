@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* TODO EL CSS ORIGINAL SE MANTIENE INTACTO */
+    
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -738,7 +738,6 @@
 </head>
 
 <body>
-  <!-- TODO EL HTML ORIGINAL SE MANTIENE INTACTO -->
   <div class="app-container">
     <header class="app-header">
       <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 200px; height: 60px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
@@ -1174,219 +1173,1575 @@
   <button id="pdf-btn" type="button"><i class="fas fa-file-pdf"></i> PDF</button>
 
   <script>
-    // SOLO SE REEMPLAZA LA SECCIÓN DE TIPOLOGÍAS - TODO LO DEMÁS PERMANECE IGUAL
-    window.__FALLBACK_TIPOLOGIAS = [
+    
+    function modificarPrecioTipologia(tipologiaId, nuevoPrecio) {
+        
+        const tipologias = __getTipos();
+        
+        
+        const tipologia = tipologias.find(t => t.id === tipologiaId);
+        
+        if (!tipologia) {
+            console.error('Tipología no encontrada:', tipologiaId);
+            return false;
+        }
+        
+        
+        const rango = RANGOS_PRECIO[tipologia.category]?.[tipologia.type];
+        
+        if (!rango) {
+            console.error('Rango de precios no encontrado para:', tipologia.category, tipologia.type);
+            return false;
+        }
+        
+        
+        const precioMaximo = rango.max;
+        
+        if (nuevoPrecio > precioMaximo) {
+            console.warn(`El precio no puede superar Q${precioMaximo}. Se establecerá en el máximo permitido.`);
+            nuevoPrecio = precioMaximo;
+        }
+        
+        if (nuevoPrecio < rango.min) {
+            console.warn(`El precio no puede ser menor a Q${rango.min}. Se establecerá en el mínimo permitido.`);
+            nuevoPrecio = rango.min;
+        }
+        
+        
+        tipologia.pricePerM2 = nuevoPrecio;
+        
+        
+        const tipologiaActual = document.getElementById('typology').value;
+        if (tipologiaActual === tipologiaId) {
+            const precioInput = document.getElementById('precio-editable-input');
+            if (precioInput) {
+                precioInput.value = nuevoPrecio;
+                
+                
+                const pr = document.getElementById('selectedPrice');
+                if (pr) {
+                    pr.textContent = `Q${nuevoPrecio.toLocaleString('es-GT')}/m²`;
+                }
+                
+                
+                if (document.getElementById('resultSection').classList.contains('active')) {
+                    calculateRealAppraisal();
+                }
+            }
+        }
+        
+        console.log(`Precio de ${tipologia.title} actualizado a: Q${nuevoPrecio}/m²`);
+        return true;
+    }
+
+    
+    window.avaluosStorage = {
+      getAllAppraisals: function() {
+        try {
+          const stored = localStorage.getItem('sistema_avaluos');
+          return stored ? JSON.parse(stored) : [];
+        } catch (e) {
+          console.error('Error al cargar avalúos:', e);
+          return [];
+        }
+      },
+
+      saveAppraisal: function(avaluoData) {
+        try {
+          const avaluos = this.getAllAppraisals();
+          const newAppraisal = {
+            id: 'av-' + Date.now(),
+            usuario_id: window.__session?.user?.id || 'anonimo',
+            usuario_nombre: window.__session?.user?.user_metadata?.username || 'Anónimo',
+            fecha_creacion: new Date().toISOString(),
+            fecha_formateada: new Date().toLocaleDateString('es-GT'),
+            datos: avaluoData,
+            estado: 'completado'
+          };
+          
+          avaluos.unshift(newAppraisal);
+          localStorage.setItem('sistema_avaluos', JSON.stringify(avaluos));
+          return newAppraisal;
+        } catch (e) {
+          console.error('Error al guardar avalúo:', e);
+          return null;
+        }
+      },
+
+      getMyAppraisals: function() {
+        const userId = window.__session?.user?.id;
+        if (!userId) return [];
+        
+        const allAppraisals = this.getAllAppraisals();
+        return allAppraisals.filter(av => av.usuario_id === userId);
+      },
+
+      updateAppraisal: function(appraisalId, newData) {
+        try {
+          const avaluos = this.getAllAppraisals();
+          const index = avaluos.findIndex(av => av.id === appraisalId);
+          
+          if (index !== -1) {
+            avaluos[index].datos = { ...avaluos[index].datos, ...newData };
+            avaluos[index].fecha_actualizacion = new Date().toISOString();
+            localStorage.setItem('sistema_avaluos', JSON.stringify(avaluos));
+            return true;
+          }
+          return false;
+        } catch (e) {
+          console.error('Error al actualizar avalúo:', e);
+          return false;
+        }
+      },
+
+      deleteAppraisal: function(appraisalId) {
+        try {
+          const avaluos = this.getAllAppraisals();
+          const filtered = avaluos.filter(av => av.id !== appraisalId);
+          localStorage.setItem('sistema_avaluos', JSON.stringify(filtered));
+          return true;
+        } catch (e) {
+          console.error('Error al eliminar avalúo:', e);
+          return false;
+        }
+      }
+    };
+
+    
+    function showAllAppraisals() {
+      const modal = document.getElementById('all-appraisals-modal');
+      const listContainer = document.getElementById('all-appraisals-list');
+      
+      const allAppraisals = window.avaluosStorage.getAllAppraisals();
+      
+      if (allAppraisals.length === 0) {
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h4>No hay avalúos registrados</h4>
+            <p>Los avalúos que se realicen aparecerán aquí</p>
+          </div>
+        `;
+      } else {
+        listContainer.innerHTML = allAppraisals.map(avaluo => `
+          <div class="appraisal-item">
+            <div class="appraisal-header">
+              <div class="appraisal-date">
+                <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada}
+              </div>
+              <div class="appraisal-actions">
+                <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
+                  <i class="fas fa-eye"></i> Ver
+                </button>
+              </div>
+            </div>
+            <div class="appraisal-details">
+              <div><strong>Asociado:</strong> ${avaluo.datos.associateName || 'No especificado'}</div>
+              <div><strong>Dirección:</strong> ${avaluo.datos.address || 'No especificado'}</div>
+              <div><strong>Valor Total:</strong> ${avaluo.datos.totalValue || 'Q0.00'}</div>
+              <div><strong>Usuario:</strong> ${avaluo.usuario_nombre}</div>
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      modal.classList.add('active');
+    }
+
+    function showMyAppraisals() {
+      if (!window.__session) {
+        alert('Debes iniciar sesión para ver tus avalúos');
+        document.getElementById('auth-overlay').style.display = 'flex';
+        return;
+      }
+      
+      const modal = document.getElementById('my-appraisals-modal');
+      const listContainer = document.getElementById('my-appraisals-list');
+      
+      const myAppraisals = window.avaluosStorage.getMyAppraisals();
+      
+      if (myAppraisals.length === 0) {
+        listContainer.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-file-contract"></i>
+            <h4>No tienes avalúos guardados</h4>
+            <p>Los avalúos que realices aparecerán aquí</p>
+          </div>
+        `;
+      } else {
+        listContainer.innerHTML = myAppraisals.map(avaluo => `
+          <div class="appraisal-item">
+            <div class="appraisal-header">
+              <div class="appraisal-date">
+                <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada}
+              </div>
+              <div class="appraisal-actions">
+                <button class="btn-primary btn-small" onclick="editAppraisal('${avaluo.id}')">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
+                  <i class="fas fa-eye"></i> Ver
+                </button>
+                <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="deleteAppraisal('${avaluo.id}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+            <div class="appraisal-details">
+              <div><strong>Asociado:</strong> ${avaluo.datos.associateName || 'No especificado'}</div>
+              <div><strong>Dirección:</strong> ${avaluo.datos.address || 'No especificado'}</div>
+              <div><strong>Valor Total:</strong> ${avaluo.datos.totalValue || 'Q0.00'}</div>
+              <div><strong>Estado:</strong> <span style="color: var(--success);">${avaluo.estado}</span></div>
+            </div>
+          </div>
+        `).join('');
+      }
+      
+      modal.classList.add('active');
+    }
+
+    function viewAppraisal(appraisalId) {
+      const avaluos = window.avaluosStorage.getAllAppraisals();
+      const avaluo = avaluos.find(av => av.id === appraisalId);
+      
+      if (avaluo) {
+        alert(`Detalles del Avalúo:\n\n` +
+              `Fecha: ${avaluo.fecha_formateada}\n` +
+              `Asociado: ${avaluo.datos.associateName || 'No especificado'}\n` +
+              `Dirección: ${avaluo.datos.address || 'No especificado'}\n` +
+              `Área Construida: ${avaluo.datos.constructionArea || '0'} m²\n` +
+              `Valor Total: ${avaluo.datos.totalValue || 'Q0.00'}\n` +
+              `Usuario: ${avaluo.usuario_nombre}`);
+      }
+    }
+
+    function editAppraisal(appraisalId) {
+      const avaluos = window.avaluosStorage.getAllAppraisals();
+      const avaluo = avaluos.find(av => av.id === appraisalId);
+      
+      if (avaluo) {
+        document.getElementById('associate-name').value = avaluo.datos.associateName || '';
+        document.getElementById('address').value = avaluo.datos.address || '';
+        document.getElementById('construction-area').value = avaluo.datos.constructionArea || '';
+        document.getElementById('land-area').value = avaluo.datos.landArea || '';
+        
+        closeModal('my-appraisals-modal');
+        window.formWizard.goToStep(1);
+        
+        alert('Avalúo cargado para edición. Modifica los datos y guarda los cambios.');
+      }
+    }
+
+    function deleteAppraisal(appraisalId) {
+      if (confirm('¿Estás seguro de que quieres eliminar este avalúo? Esta acción no se puede deshacer.')) {
+        if (window.avaluosStorage.deleteAppraisal(appraisalId)) {
+          alert('Avalúo eliminado correctamente');
+          showMyAppraisals();
+        } else {
+          alert('Error al eliminar el avalúo');
+        }
+      }
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    async function saveCurrentAppraisal() {
+      if (!window.__session) {
+        alert('Debes iniciar sesión para guardar avalúos');
+        return false;
+      }
+      
+      console.log('🟡 Iniciando guardado en ambos sistemas...');
+      
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      if (loadingOverlay) loadingOverlay.style.display = 'flex';
+      
+      try {
+        
+        const appraisalData = {
+          associateName: document.getElementById('associate-name').value || 'No especificado',
+          address: document.getElementById('address').value || 'No especificado',
+          constructionArea: parseFloat(document.getElementById('construction-area').value) || 0,
+          landArea: parseFloat(document.getElementById('land-area').value) || 0,
+          totalValue: document.getElementById('resultTotal').textContent || 'Q0.00',
+          ownerName: document.getElementById('owner-name').value || '',
+          typology: document.getElementById('typology').value || '',
+          department: document.getElementById('department').value || '',
+          estadoInmueble: document.getElementById('estado-inmueble').value || '',
+          anioConstruccion: document.getElementById('anio-construccion').value || '',
+          totalConstruccion: document.getElementById('totalConstruccion').value || '0',
+          totalTerreno: document.getElementById('totalTerreno').value || '0'
+        };
+
+        console.log('📦 Datos a guardar:', appraisalData);
+
+        
+        const savedInLocal = window.avaluosStorage.saveAppraisal(appraisalData);
+        console.log('✅ Guardado en localStorage:', savedInLocal);
+
+        
+        console.log('🔄 Enviando a Supabase...');
+        
+        const { data, error } = await window.supabase
+          .from('avaluos')
+          .insert([
+            {
+              usuario_id: window.__session.user.id,
+              usuario_email: window.__session.user.email,
+              usuario_nombre: window.__session.user.user_metadata?.username || 'Usuario',
+              fecha_creacion: new Date().toISOString(),
+              fecha_formateada: new Date().toLocaleDateString('es-GT'),
+              associate_name: appraisalData.associateName,
+              address: appraisalData.address,
+              construction_area: appraisalData.constructionArea,
+              land_area: appraisalData.landArea,
+              total_value: appraisalData.totalValue,
+              owner_name: appraisalData.ownerName,
+              typology: appraisalData.typology,
+              department: appraisalData.department,
+              estado_inmueble: appraisalData.estadoInmueble,
+              anio_construccion: appraisalData.anioConstruccion,
+              total_construccion: appraisalData.totalConstruccion,
+              total_terreno: appraisalData.totalTerreno,
+              datos_completos: appraisalData
+            }
+          ])
+          .select();
+
+        if (error) {
+          console.error('❌ Error Supabase:', error);
+          console.warn('Avalúo guardado en web pero no en base de datos');
+        } else {
+          console.log('✅ Éxito - Datos guardados en Supabase:', data);
+        }
+
+        
+        alert('✅ Avalúo guardado EXITOSAMENTE\n\n• En la web: Disponible en "Lista de Avalúos"\n• En base de datos: Para tu seguimiento');
+        
+        
+        if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
+          showAllAppraisals();
+        }
+        if (document.getElementById('my-appraisals-modal').classList.contains('active')) {
+          showMyAppraisals();
+        }
+        
+        return true;
+        
+      } catch (error) {
+        console.error('❌ Error completo al guardar:', error);
+        alert('❌ Error al guardar: ' + error.message + '\n\nEl avalúo se guardó en la web pero no en la base de datos.');
+        return false;
+      } finally {
+        if (loadingOverlay) loadingOverlay.style.display = 'none';
+      }
+    }
+
+    
+    document.getElementById('all-appraisals-btn').addEventListener('click', showAllAppraisals);
+    document.getElementById('my-appraisals-btn').addEventListener('click', showMyAppraisals);
+
+    
+    document.getElementById('all-appraisals-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('all-appraisals-modal');
+    });
+    document.getElementById('my-appraisals-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal('my-appraisals-modal');
+    });
+
+    
+    const RANGOS_PRECIO = {
+        'Baja': {
+            'Baja 1': { min: 250, max: 400 },
+            'Baja 2': { min: 250, max: 500 },
+            'Media 1': { min: 650, max: 750 },
+            'Media 2': { min: 650, max: 850 },
+            'Alta 1': { min: 850, max: 950 },
+            'Alta 2': { min: 850, max: 1000 }
+        },
+        'Media': {
+            'Baja 1': { min: 800, max: 1100 },
+            'Baja 2': { min: 800, max: 1100 },
+            'Media 1': { min: 900, max: 1200 },
+            'Media 2': { min: 1000, max: 1300 },
+            'Alta 1': { min: 1300, max: 1700 },
+            'Alta 2': { min: 1400, max: 1800 }
+        },
+        'Alta': {
+            'Baja 1': { min: 1400, max: 1700 },
+            'Baja 2': { min: 1500, max: 1800 },
+            'Media 1': { min: 1800, max: 2100 },
+            'Media 2': { min: 1900, max: 2200 }
+        }
+    };
+
+   
+    const __FALLBACK_TIPOLOGIAS = [
+      
       {
         id: "baja-baja-1",
-        category: "Baja",
+        category: "Baja", 
         type: "Baja 1",
         title: "Categoría Baja — Baja 1",
         img: "https://i.ibb.co/nMLmvDzW/Baja-1.png",
         priceRange: "Q250–Q400/m²",
         pricePerM2: 400,
-        bullets: [
-          "Sistema constructivo: estructura de madera, muro de block o adobe de 1.00 metro de alto con estructura de madera",
-          "Recubrimiento de paredes: adobe, block de cantera sin norma, madera sin tratar",
-          "Acabados: block sisado visto, adobe visto, madera sin tratar, blanqueado con cal hidratada",
-          "Cubierta: estructura de madera con lámina de zinc, estructura de metal con lámina de zinc, estructura de madera con teja de barro",
-          "Piso: tierra, cemento líquido",
-          "Puertas y ventanas: madera sencilla sin tratamiento, cortinas o cedazo, sin puertas o ventanas",
-          "Diseño arquitectónico: casas en un solo ambiente, dos ambientes, baño en el exterior (letrina o pozo ciego)",
-          "Servicios básicos: agua potable, energía eléctrica",
-          "Acceso: terracería (vehicular o vecinal)"
-        ]
+        bullets: ["Estructura de adobe y madera", "Paredes con nylon", "Techo de teja de barro sin cielo falso", "Piso de tierra con cemento", "Ventanas y puertas de madera sin tratar"]
       },
       {
         id: "baja-baja-2",
         category: "Baja",
-        type: "Baja 2",
+        type: "Baja 2", 
         title: "Categoría Baja — Baja 2",
         img: "https://i.ibb.co/WNBMdyjp/Baja-2.png",
         priceRange: "Q250–Q500/m²",
         pricePerM2: 500,
-        bullets: [
-          "Sistema constructivo: estructura de madera, muro de block o adobe de 1.00 metro de alto, mampostería con sistema pinedo, mampostería con columnas para un nivel",
-          "Recubrimiento de paredes: adobe, block de cantera sin norma",
-          "Acabados: block sisado visto, adobe visto, madera sin tratar, blanqueado con cal hidratada",
-          "Cubierta: estructura de madera con lámina de zinc, estructura de metal con lámina de zinc, estructura de madera con teja de barro, losa de concreto armado",
-          "Piso: tierra, cemento líquido, granito",
-          "Puertas y ventanas: madera sin tratar, metal, prefabricadas en MDF",
-          "Diseño arquitectónico: casas en dos ambientes, tres ambientes, baño en el exterior (letrina o pozo ciego)",
-          "Servicios básicos: agua potable, energía eléctrica, alumbrado público",
-          "Acceso: terracería, adoquín, carrileras de concreto"
-        ]
+        bullets: ["Estructura de adobe con columnas de madera", "Paredes de adobe, madera sin tratar y cartón", "Techo de teja de barro y lámina de zinc", "Piso de tierra con cemento", "Fachada sin mantenimiento"]
       },
       {
-        id: "baja-baja-3",
+        id: "baja-media-1",
         category: "Baja",
-        type: "Baja 3",
-        title: "Categoría Baja — Baja 3",
+        type: "Media 1",
+        title: "Categoría Baja — Media 1", 
+        img: "https://i.ibb.co/hzsFrgD/Media-1.png",
+        priceRange: "Q650–Q750/m²",
+        pricePerM2: 750,
+        bullets: ["Estructura de adobe y block con pines fundidos", "Paredes con repello", "Techo de lámina de zinc con cielo falso de machimbre", "Piso de cemento líquido y cerámico", "Fachada tipo corredor"]
+      },
+      {
+        id: "baja-media-2",
+        category: "Baja",
+        type: "Media 2",
+        title: "Categoría Baja — Media 2",
+        img: "https://i.ibb.co/pjD7yPwC/Media-2.png",
+        priceRange: "Q650–Q850/m²",
+        pricePerM2: 850,
+        bullets: ["Estructura de mampostería con columnas", "Paredes de block de cantera", "Techo de lámina de zinc", "Piso de cemento líquido", "Fachada sin diseño con ventanas y materiales expuestos"]
+      },
+      {
+        id: "baja-alta-1",
+        category: "Baja",
+        type: "Alta 1",
+        title: "Categoría Baja — Alta 1",
         img: "https://i.ibb.co/mrV6y2W7/Alta-1.png",
         priceRange: "Q850–Q950/m²",
         pricePerM2: 950,
-        bullets: [
-          "Sistema constructivo: estructura de madera, mampostería con sistema estructural pineado a 0.60 metros, mampostería con columnas para uno o dos niveles",
-          "Recubrimiento de paredes: adobe, block normado estructuralmente, block de cantera sin norma",
-          "Acabados: block sisado visto, blanqueado con cal hidratada, pintura sobre block visto, capa delgada de repello y cernido",
-          "Cubierta: estructura de madera con lámina de zinc, estructura de metal con lámina de zinc, estructura de madera con teja de barro, losa de concreto armado",
-          "Cielo falso: machimbré, plywood",
-          "Piso: granito, cemento líquido, cerámico",
-          "Puertas y ventanas: madera sin tratar, metal, uPVC",
-          "Diseño arquitectónico: casas en tres ambientes, cuatro ambientes, baño simples en interior",
-          "Servicios básicos: agua potable, energía eléctrica, alumbrado público, drenaje",
-          "Acceso: terracería, adoquín, carrileras de concreto, pavimento de concreto"
-        ]
+        bullets: ["Estructura de mampostería con pines fundidos a 0.60 m", "Paredes de block de cantera con pintura", "Techo de lámina troquelada", "Piso de cemento líquido", "Ventanas y puertas de metal o madera sin tratar", "Instalaciones ocultas"]
       },
+      {
+        id: "baja-alta-2",
+        category: "Baja", 
+        type: "Alta 2",
+        title: "Categoría Baja — Alta 2",
+        img: "https://i.ibb.co/B5cwkYTd/Alta-2.png",
+        priceRange: "Q850–Q1,000/m²",
+        pricePerM2: 1000,
+        bullets: ["Estructura de adobe y mampostería reforzada", "Paredes de adobe con repello, cernido y block normado", "Techo de teja de barro y lámina de zinc con cielo falso de madera", "Piso de granito y cemento líquido", "Instalaciones ocultas o expuestas"]
+      },
+
+      
       {
         id: "media-baja-1",
         category: "Media",
-        type: "Media 1",
-        title: "Categoría Media — Media 1",
+        type: "Baja 1", 
+        title: "Categoría Media — Baja 1",
         img: "https://i.ibb.co/YB1Z3htk/Media-baja-1.png",
         priceRange: "Q800–Q1,100/m²",
         pricePerM2: 1100,
-        bullets: [
-          "Sistema constructivo: mampostería reforzada, block pineado a 60 cm, algunas reforzadas para segundo nivel",
-          "Recubrimiento de paredes: block de cantera sin norma, block normado",
-          "Acabados: block sisado visto, pintura o blanqueado, repello y cernido con capa delgada",
-          "Cubierta: losa de concreto, estructura de metal con lámina de zinc o troquelada, estructura de madera con lámina de zinc",
-          "Piso: cerámico, granito",
-          "Puertas y ventanas: madera, metal, prefabricados, aluminio",
-          "Diseño arquitectónico: casas sin diseño arquitectónico, con jardín o patio, baño dentro de la vivienda",
-          "Servicios básicos: agua potable, energía eléctrica, drenajes",
-          "Acceso: adoquín, pavimento, asfalto"
-        ]
+        bullets: ["Estructura de mampostería con block y pines fundidos", "Paredes de block con repello y cernido", "Techo de lámina de zinc sin cielo falso", "Piso de cemento líquido", "Fachada tipo corredor"]
       },
       {
         id: "media-baja-2",
         category: "Media",
-        type: "Media 2",
-        title: "Categoría Media — Media 2",
+        type: "Baja 2",
+        title: "Categoría Media — Baja 2",
         img: "https://i.ibb.co/PzrjJL7L/Media-baja-2.png",
-        priceRange: "Q800–Q1,100/m²",
+        priceRange: "Q800–Q1,100/m²", 
         pricePerM2: 1100,
-        bullets: [
-          "Sistema constructivo: mampostería reforzada, block pineado a 60 cm, algunas reforzadas para segundo nivel",
-          "Recubrimiento de paredes: block de cantera sin norma, block normado",
-          "Acabados: block sisado visto, pintura o blanqueado, repello y cernido con capa delgada",
-          "Cubierta: losa de concreto, estructura de metal con lámina de zinc o troquelada, estructura de madera con lámina de zinc",
-          "Piso: cerámico, granito",
-          "Puertas y ventanas: madera, metal, prefabricados, aluminio",
-          "Diseño arquitectónico: casas sin diseño arquitectónico, con jardín o patio, baño dentro de la vivienda",
-          "Servicios básicos: agua potable, energía eléctrica, drenajes",
-          "Acceso: adoquín, pavimento, asfalto"
-        ]
+        bullets: ["Estructura de mampostería con columnas para un nivel", "Paredes de block sizado visto con repello y pintura parcial", "Techo de tejas de barro y lámina de zinc con cielo falso de madera", "Piso de cemento líquido", "Fachada sin diseño arquitectónico"]
       },
       {
-        id: "media-baja-3",
+        id: "media-media-1",
         category: "Media",
-        type: "Media 3",
-        title: "Categoría Media — Media 3",
+        type: "Media 1",
+        title: "Categoría Media — Media 1",
         img: "https://i.ibb.co/35PjQqbk/Media-media-1.png",
         priceRange: "Q900–Q1,200/m²",
         pricePerM2: 1200,
-        bullets: [
-          "Sistema constructivo: mampostería reforzada, combinación de columnas con vigas de carga, algunas reforzadas para segundo nivel",
-          "Recubrimiento de paredes: block de cantera sin norma, block normado",
-          "Acabados: pintura o blanqueado, repello y cernido",
-          "Cubierta: losa de concreto, estructura de metal con lámina de zinc o troquelada",
-          "Piso: cerámico, porcelanato, granito",
-          "Puertas y ventanas: madera, metal, prefabricadas, aluminio, uPVC",
-          "Diseño arquitectónico: casas sin diseño arquitectónico, con jardín o patio, baño dentro de la vivienda",
-          "Servicios básicos: agua potable, energía eléctrica, drenajes, internet, teléfono, cable de TV",
-          "Acceso: adoquín, pavimento, asfalto"
-        ]
+        bullets: ["Estructura de mampostería reforzada para un nivel", "Paredes de block con repello y cernido", "Techo metálico con lámina troquelada", "Piso de cemento líquido", "Fachada tipo corredor interno", "Instalaciones semi ocultas"]
       },
       {
-        id: "alta-baja-1",
-        category: "Alta",
+        id: "media-media-2",
+        category: "Media",
+        type: "Media 2",
+        title: "Categoría Media — Media 2", 
+        img: "https://i.ibb.co/W8cwVB6/Media-media-2.png",
+        priceRange: "Q1,000–Q1,300/m²",
+        pricePerM2: 1300,
+        bullets: ["Estructura de mampostería reforzada", "Paredes de block normado con repello, cernido y pintura", "Techo de madera con lámina de zinc", "Piso de granito y cemento líquido", "Fachada tradicional sin diseño arquitectónico", "Instalaciones ocultas o semi ocultas"]
+      },
+      {
+        id: "media-alta-1",
+        category: "Media",
         type: "Alta 1",
-        title: "Categoría Alta — Alta 1",
+        title: "Categoría Media — Alta 1",
+        img: "https://i.ibb.co/LXxCXPXh/Media-alta-1.png",
+        priceRange: "Q1,300–Q1,700/m²", 
+        pricePerM2: 1700,
+        bullets: ["Estructura de mampostería reforzada con columnas para dos niveles", "Paredes de ladrillo sisado visto con pintura", "Techo de losa de concreto armado", "Piso de granito", "Fachada de casas de ladrillo", "Instalaciones ocultas"]
+      },
+      {
+        id: "media-alta-2",
+        category: "Media",
+        type: "Alta 2",
+        title: "Categoría Media — Alta 2",
+        img: "https://i.ibb.co/XxFb5Jw8/Media-alta-2.png",
+        priceRange: "Q1,400–Q1,800/m²",
+        pricePerM2: 1800,
+        bullets: ["Estructura de mampostería reforzada con pines", "Paredes de block normado con repello, alisado y pintura", "Techo metálico con lámina de zinc", "Piso cerámico", "Fachada tipo colonial con balcones", "Instalaciones ocultas"]
+      },
+
+      
+      {
+        id: "alta-baja-1",
+        category: "Alta", 
+        type: "Baja 1",
+        title: "Categoría Alta — Baja 1",
         img: "https://i.ibb.co/B5TRtNJK/alta-baja-1.png",
         priceRange: "Q1,400–Q1,700/m²",
         pricePerM2: 1700,
-        bullets: [
-          "Sistema constructivo: mampostería reforzada, combinación columnas-vigas con muros de carga, columnas de concreto reforzado",
-          "Recubrimiento de paredes: block de cantera sin norma, block normado",
-          "Cubierta: losa de concreto, lámina en algunas áreas o segundo nivel",
-          "Piso: cerámico, granito, porcelanato, laminados",
-          "Puertas y ventanas: madera, metal, prefabricadas, aluminio, uPVC",
-          "Diseño arquitectónico: casas con estudio en diseño arquitectónico, con jardín o patio, baño dentro de la vivienda",
-          "Servicios básicos: agua potable, energía eléctrica, drenajes, teléfono, internet, cable de TV",
-          "Acceso: adoquín, pavimento, asfalto"
-        ]
+        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada tipo corredor", "Instalaciones ocultas"]
       },
       {
         id: "alta-baja-2",
         category: "Alta",
-        type: "Alta 2",
-        title: "Categoría Alta — Alta 2",
+        type: "Baja 2",
+        title: "Categoría Alta — Baja 2", 
         img: "https://i.ibb.co/v6M0W4hJ/alta-baja-2.png",
         priceRange: "Q1,500–Q1,800/m²",
         pricePerM2: 1800,
-        bullets: [
-          "Sistema constructivo: mampostería reforzada, combinación columnas-vigas con muros de carga, columnas de concreto reforzado",
-          "Recubrimiento de paredes: block de cantera sin norma, block normado",
-          "Cubierta: losa de concreto, lámina en algunas áreas o segundo nivel",
-          "Piso: cerámico, granito, porcelanato, laminado",
-          "Puertas y ventanas: madera, prefabricadas, metal, aluminio, uPVC",
-          "Diseño arquitectónico: casas con estudio en diseño arquitectónico, con jardín o patio, baño dentro de la vivienda",
-          "Servicios básicos: agua potable, energía eléctrica, drenajes, teléfono, internet, cable de TV",
-          "Acceso: calles de adoquín, pavimento, asfalto"
-        ]
+        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada con acabados y pintura", "Instalaciones ocultas"]
       },
       {
-        id: "alta-baja-3",
+        id: "alta-media-1",
         category: "Alta",
-        type: "Alta 3",
-        title: "Categoría Alta — Alta 3",
+        type: "Media 1",
+        title: "Categoría Alta — Media 1",
         img: "https://i.ibb.co/VcvD4kgQ/alta-media-1.png",
         priceRange: "Q1,800–Q2,100/m²",
         pricePerM2: 2100,
-        bullets: [
-          "Sistema constructivo: mampostería reforzada, combinación columnas-vigas con muros de carga, columnas de concreto reforzado",
-          "Recubrimiento de paredes: block de cantera sin norma, block normado",
-          "Cubierta: losa de concreto, lámina en algunas áreas o segundo nivel",
-          "Piso: cerámico, granito, porcelanato, laminados",
-          "Puertas y ventanas: madera, prefabricadas, metal, aluminio, uPVC",
-          "Diseño arquitectónico: casas con estudio en diseño arquitectónico, con jardín o patio, baño dentro de la vivienda",
-          "Servicios básicos: agua potable, energía eléctrica, drenajes, teléfono, internet, cable de TV",
-          "Acceso: adoquín, pavimento, asfalto"
-        ]
+        bullets: ["Mampostería reforzada con columnas para dos niveles", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con detalles arquitectónicos", "Instalaciones ocultas"]
+      },
+      {
+        id: "alta-media-2",
+        category: "Alta",
+        type: "Media 2", 
+        title: "Categoría Alta — Media 2",
+        img: "https://i.ibb.co/0VcrkTWQ/alta-media-2.png",
+        priceRange: "Q1,900–Q2,200/m²",
+        pricePerM2: 2200,
+        bullets: ["Mampostería reforzada con columnas", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con diseño arquitectónico", "Instalaciones ocultas"]
       }
     ];
 
-    // MANTENIENDO LOS RANGOS DE PRECIO ORIGINALES
-    const RANGOS_PRECIO = {
-      'Baja': {
-        'Baja 1': { min: 250, max: 400 },
-        'Baja 2': { min: 250, max: 500 },
-        'Baja 3': { min: 850, max: 950 }
-      },
-      'Media': {
-        'Media 1': { min: 800, max: 1100 },
-        'Media 2': { min: 800, max: 1100 },
-        'Media 3': { min: 900, max: 1200 }
-      },
-      'Alta': {
-        'Alta 1': { min: 1400, max: 1700 },
-        'Alta 2': { min: 1500, max: 1800 },
-        'Alta 3': { min: 1800, max: 2100 }
+    function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
+
+    
+    function __selectTipo(id) {
+      const s = __getTipos().find(z => z.id === id);
+      if (!s) return;
+      
+      
+      const rango = RANGOS_PRECIO[s.category]?.[s.type] || { min: 500, max: 1000 };
+      const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
+      
+      const img = document.getElementById('selectedImage');
+      const tp = document.getElementById('selectedType');
+      const ti = document.getElementById('selectedTitle');
+      const pr = document.getElementById('selectedPrice');
+      const hd = document.getElementById('typology');
+      
+      if (img) img.src = s.img;
+      if (tp) tp.textContent = `Categoría ${s.category} — ${s.type}`;
+      if (ti) ti.textContent = s.title;
+      if (pr) pr.textContent = rangoTexto;
+      if (hd) hd.value = s.id;
+      
+      s.pricePerM2 = s.pricePerM2 || rango.max;
+      
+      
+      if (document.getElementById('resultSection').classList.contains('active')) {
+          calculateRealAppraisal();
+      }
+      
+      __closeTypology();
+    }
+
+    
+    function __renderTipos(){
+      const t = __getTipos();
+      const b = t.reduce((a, x) => {
+        ((a[x.category] ??= []).push(x));
+        return a;
+      }, {});
+      
+      for(const k in b) b[k].sort((a, c) => a.type.localeCompare(c.type));
+      
+      const d = document.getElementById('modalCatalogContent');
+      if(!d) return;
+      
+      let h = '';
+      for(const c of ['Baja','Media','Alta']){
+        if(!b[c]) continue;
+        h += `<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología - Ver rangos de precio</div></div></div></div>`;
+        
+        for(const it of b[c]){
+          const rango = RANGOS_PRECIO[it.category]?.[it.type] || { min: 500, max: 1000 };
+          const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
+          
+          h += `
+          <div class="catalog-item-modal" data-id="${it.id}">
+            <div class="catalog-item-content">
+              <img class="catalog-image-modal" 
+                   src="${it.img}" 
+                   alt="${it.title}" 
+                   onclick="event.stopPropagation(); openImageModal('${it.img}', '${it.title}')"
+                   style="cursor: pointer;">
+              <div class="catalog-text-modal">
+                <div class="catalog-type-modal">${it.type}</div>
+                <div class="catalog-title-modal">${it.title}</div>
+                <div class="catalog-price-modal" style="color: var(--primary); font-weight: 600;">${rangoTexto}</div>
+                <div class="catalog-description-modal">
+                  <ul class="catalog-features-modal">${(it.bullets||[]).map(m => `<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul>
+                </div>
+                <button class="select-button" data-select="${it.id}">
+                  <i class="fas fa-hand-pointer"></i> Seleccionar esta tipología
+                </button>
+              </div>
+            </div>
+          </div>`;
+        }
+      }
+      
+      d.innerHTML = h;
+      
+      // Eventos existentes...
+      d.querySelectorAll('.catalog-item-modal').forEach(c => {
+        const id = c.getAttribute('data-id');
+        if(!id) return;
+        c.addEventListener('click', e => {
+          if(e.target.closest('button') || e.target.classList.contains('catalog-image-modal')) return;
+          __selectTipo(id);
+        });
+      });
+      
+      d.querySelectorAll('[data-select]').forEach(b => {
+        b.addEventListener('click', e => {
+          e.stopPropagation();
+          __selectTipo(b.getAttribute('data-select'));
+        });
+      });
+    }
+
+    function __openTypology(){
+      const m = document.getElementById('catalogModal');
+      const t = document.getElementById('typologyTrigger');
+      if(!m) return alert('No se encontró el modal (#catalogModal).');
+      m.classList.add('active');
+      t?.classList.add('active');
+      __renderTipos();
+      const hb = e => {
+        if(e.target === m){
+          __closeTypology();
+          m.removeEventListener('click', hb);
+        }
+      };
+      m.addEventListener('click', hb);
+      const x = document.getElementById('closeModal');
+      if(x) x.onclick = __closeTypology;
+    }
+
+    function __closeTypology(){
+      const m = document.getElementById('catalogModal');
+      const t = document.getElementById('typologyTrigger');
+      if(!m) return;
+      m.classList.remove('active');
+      t?.classList.remove('active');
+    }
+
+    window.__openTypology = __openTypology; 
+    window.__closeTypology = __closeTypology;
+
+    // Funciones para el visor de imágenes
+    function openImageModal(imageSrc, imageAlt) {
+      const modal = document.getElementById('image-viewer-modal');
+      const fullSizeImage = document.getElementById('full-size-image');
+      
+      if (modal && fullSizeImage) {
+        fullSizeImage.src = imageSrc;
+        fullSizeImage.alt = imageAlt || 'Imagen del catálogo';
+        modal.classList.add('active');
+        
+        // Prevenir scroll del body cuando el modal está abierto
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeImageViewer() {
+      const modal = document.getElementById('image-viewer-modal');
+      if (modal) {
+        modal.classList.remove('active');
+        // Restaurar scroll del body
+        document.body.style.overflow = '';
+      }
+    }
+
+    function initImageModalEvents() {
+      const modal = document.getElementById('image-viewer-modal');
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal || e.target.classList.contains('modal-close')) {
+            closeImageViewer();
+          }
+        });
+      }
+      
+      // Cerrar con tecla ESC
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeImageViewer();
+        }
+      });
+    }
+
+    // Funcionalidad para subir imágenes
+    function initImageUpload() {
+      const uploadArea = document.getElementById('upload-area');
+      const fileInput = document.getElementById('image-upload');
+      const previewContainer = document.getElementById('image-preview');
+
+      // Click en área de upload
+      uploadArea.addEventListener('click', () => fileInput.click());
+
+      // Drag and drop
+      uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+      });
+
+      uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+      });
+
+      uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        handleFiles(e.dataTransfer.files);
+      });
+
+      // Selección de archivos
+      fileInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+      });
+    }
+
+    function handleFiles(files) {
+      const previewContainer = document.getElementById('image-preview');
+      
+      Array.from(files).forEach(file => {
+        if (!file.type.startsWith('image/')) {
+          alert('Solo se permiten archivos de imagen');
+          return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+          alert('La imagen es demasiado grande. Máximo 5MB.');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const imageItem = document.createElement('div');
+          imageItem.className = 'image-preview-item';
+          imageItem.innerHTML = `
+            <img src="${e.target.result}" alt="Preview">
+            <button type="button" class="image-preview-remove" onclick="this.parentElement.remove()">
+              <i class="fas fa-times"></i>
+            </button>
+            <div class="image-preview-info">${file.name}</div>
+          `;
+          previewContainer.appendChild(imageItem);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
+
+  
+  <script>
+    function formatMoneyGTQ(v){
+      return new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(Number(v||0));
+    }
+
+    function recalcularFila(tr){
+      const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
+      const vbase = parseFloat(tr.querySelector('.vbase-input')?.value)||0;
+      const coef = parseFloat(tr.querySelector('.coef-input')?.value)||0;
+      const monto = area * vbase * coef;
+      const out = tr.querySelector('.monto-output');
+      if(out){ out.value = monto.toFixed(2); }
+      return monto;
+    }
+
+    function recalcularTablaConstruccion(){
+      const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
+      let total = 0, sumaArea = 0;
+      rows.forEach(tr=>{
+        total += recalcularFila(tr);
+        const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
+        sumaArea += area;
+      });
+      const totalEl = document.getElementById('totalConstruccion');
+      if(totalEl) totalEl.value = total.toFixed(2);
+
+      if(document.getElementById('resultSection').classList.contains('active')){
+        document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(total);
+        
+        const fallbackArea = parseFloat(document.getElementById('construction-area').value)||0;
+        const areaMostrar = (sumaArea>0? sumaArea : fallbackArea).toFixed(2);
+        document.getElementById('resultArea').textContent = `${areaMostrar} m²`;
+
+        const estado = document.getElementById('estado-inmueble').value || 'No especificado';
+        document.getElementById('resultCondition').textContent = estado;
+
+        const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
+        const antiguedad = anioConstruccion? (new Date().getFullYear()-anioConstruccion) : 0;
+        document.getElementById('resultAge').textContent = `${antiguedad} años`;
+
+        const tipId=document.getElementById('typology').value;
+        let tipText='No seleccionada';
+        try{
+          const t = (Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipId);
+          if(t) tipText = `${t.category}-${t.type}`;
+        }catch{}
+        document.getElementById('resultTypology').textContent = tipText;
+
+        const land=parseFloat(document.getElementById('totalTerreno')?.value)||0;
+        document.getElementById('resultLandValue').textContent = formatMoneyGTQ(land);
+        document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(land);
+        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(land + total);
+        document.getElementById('resultTotal').textContent = formatMoneyGTQ(land + total);
+      }
+    }
+
+    function bindRowEvents(tr){
+      ['input','change'].forEach(evt=>{
+        tr.addEventListener(evt, e=>{
+          if(e.target.matches('.area-input,.vbase-input,.coef-input')){
+            recalcularTablaConstruccion();
+            integrarValores(); 
+          }
+        });
+      });
+    }
+
+    function agregarFilaConstruccion(){
+      const tbody = document.getElementById('tbBodyConstruccion');
+      const n = tbody.querySelectorAll('tr').length + 1;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="text" value="Nivel ${n}" class="planta-input"></td>
+        <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
+        <td><input type="number" min="0, step="0.01" class="vbase-input" placeholder="0"></td>
+        <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
+        <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
+        <td><input type="text" class="monto-output" value="0.00" readonly></td>
+      `;
+      tbody.appendChild(tr);
+      bindRowEvents(tr);
+    }
+
+    function eliminarUltimaFilaConstruccion(){
+      const tbody = document.getElementById('tbBodyConstruccion');
+      const rows = tbody.querySelectorAll('tr');
+      if(rows.length>1){
+        tbody.removeChild(rows[rows.length-1]);
+        recalcularTablaConstruccion();
+        integrarValores(); 
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const firstRow = document.querySelector('#tbBodyConstruccion tr');
+      if(firstRow) bindRowEvents(firstRow);
+    });
+  </script>
+
+  <script>
+    function recalcularTerreno() {
+      const row = document.querySelector('#tablaTerreno tbody tr');
+      if (!row) return 0;
+
+      const num = (sel) => {
+        const value = row.querySelector(sel)?.value;
+        return value === '' ? 0 : parseFloat(value) || 0;
+      };
+
+      const fac = (sel) => {
+        const v = parseFloat(row.querySelector(sel)?.value);
+        return isNaN(v) || v <= 0 ? 1 : v;
+      };
+
+      let area = num('.t-area');
+
+      const vbase = num('.t-vbase');
+      const ffte  = fac('.t-ffte');
+      const ffdo  = fac('.t-ffdo');
+      const ffma  = fac('.t-ffma');
+      const fext  = fac('.t-fext');
+      const fotros= fac('.t-fotros');
+
+      const monto = area * vbase * ffte * ffdo * ffma * fext * fotros;
+
+      const out = document.getElementById('t-monto');
+      if (out) out.value = monto.toFixed(2);
+
+      const totalTerrenoEl = document.getElementById('totalTerreno');
+      if (totalTerrenoEl) totalTerrenoEl.value = monto.toFixed(2);
+
+      const ivTerrenoEl = document.getElementById('ivTerreno');
+      if (ivTerrenoEl) ivTerrenoEl.textContent = formatMoneyGTQ(monto);
+
+      if (document.getElementById('resultSection').classList.contains('active')) {
+        document.getElementById('resultLandValue').textContent = formatMoneyGTQ(monto);
+        document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(monto);
+      }
+
+      return monto;
+    }
+
+    function integrarValores() {
+      const terreno = parseFloat(document.getElementById('totalTerreno')?.value) || 0;
+      const construccion = parseFloat(document.getElementById('totalConstruccion')?.value) || 0;
+      const total = terreno + construccion;
+
+      const ivT = document.getElementById('ivTerreno');
+      const ivConst = document.getElementById('ivConstruccion');
+      const ivTot = document.getElementById('ivTotal');
+      if (ivT) ivT.textContent = formatMoneyGTQ(terreno);
+      if (ivConst) ivConst.textContent = formatMoneyGTQ(construccion);
+      if (ivTot) ivTot.textContent = formatMoneyGTQ(total);
+
+      if (document.getElementById('resultSection').classList.contains('active')) {
+        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(total);
+        document.getElementById('resultTotal').textContent = formatMoneyGTQ(total);
+        document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(construccion);
+      }
+    }
+
+    const __origCalculateRealAppraisal = window.calculateRealAppraisal;
+    window.calculateRealAppraisal = function() {
+      if (typeof __origCalculateRealAppraisal === 'function') {
+        __origCalculateRealAppraisal();
+      }
+      recalcularTerreno();
+      integrarValores();
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const row = document.querySelector('#tablaTerreno tbody tr');
+      if (row) {
+        row.querySelectorAll('input').forEach(inp => {
+          ['input','change'].forEach(evt => {
+            inp.addEventListener(evt, () => {
+              recalcularTerreno();
+              integrarValores();
+            });
+          });
+        });
+      }
+     
+      recalcularTerreno();
+      integrarValores();
+    });
+  </script>
+
+  <script>
+    let gMap=null,gMarker=null,gGeocoder=null,gAutocomplete=null;
+    
+    function setLatLngInputs(lat,lng){
+      const latEl=document.getElementById('geo-lat');
+      const lngEl=document.getElementById('geo-lng');
+      if(latEl) latEl.value=Number(lat).toFixed(6); 
+      if(lngEl) lngEl.value=Number(lng).toFixed(6);
+    }
+    
+    function setGMarker(lat,lng,center=true){
+      if(!gMap) return;
+      const pos={lat:Number(lat),lng:Number(lng)};
+      if(!gMarker){
+        gMarker=new google.maps.Marker({
+          position:pos,
+          map:gMap,
+          draggable:true,
+          animation:google.maps.Animation.DROP
+        });
+        gMarker.addListener('dragend',()=>{
+          const p=gMarker.getPosition();
+          const la=p.lat(),ln=p.lng();
+          setLatLngInputs(la,ln);
+          reverseGeocodeGoogle(la,ln);
+        });
+      }else{
+        gMarker.setPosition(pos);
+      }
+      if(center) gMap.setCenter(pos);
+    }
+    
+    async function reverseGeocodeGoogle(lat,lng){
+      if(!gGeocoder) gGeocoder=new google.maps.Geocoder();
+      const addressEl=document.getElementById('address');
+      try{
+        const {results}=await gGeocoder.geocode({location:{lat,lng}});
+        if(results&&results[0]&&addressEl){
+          addressEl.value=results[0].formatted_address;
+        }
+      }catch(e){
+        console.warn('Geocoder error:',e);
+      }
+    }
+    
+    function attachAutocomplete(){
+      const addressEl=document.getElementById('address');
+      if(!addressEl) return;
+      try{
+        gAutocomplete=new google.maps.places.Autocomplete(addressEl,{
+          fields:['geometry','formatted_address']
+        });
+        gAutocomplete.addListener('place_changed',()=>{
+          const place=gAutocomplete.getPlace();
+          if(!place?.geometry?.location) return;
+          const lat=place.geometry.location.lat();
+          const lng=place.geometry.location.lng();
+          setLatLngInputs(lat,lng);
+          setGMarker(lat,lng,true);
+        });
+      }catch(e){
+        console.warn('Places Autocomplete no disponible.',e);
+      }
+    }
+    
+    function locateMeOnce(){
+      if(!('geolocation'in navigator)){
+        alert('Geolocalización no disponible.');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(async pos=>{
+        const lat=pos.coords.latitude;
+        const lng=pos.coords.longitude;
+        setLatLngInputs(lat,lng);
+        if(gMap) setGMarker(lat,lng,true);
+        await reverseGeocodeGoogle(lat,lng);
+      },err=>{
+        const msgs={1:'Permiso denegado',2:'Posición no disponible',3:'Tiempo agotado'};
+        alert('No se pudo obtener la ubicación: '+(msgs[err.code]||err.message));
+      },{
+        enableHighAccuracy:true,
+        timeout:15000,
+        maximumAge:0
+      });
+    }
+    
+    function initGMap(){
+      const container=document.getElementById('gmap');
+      const start={
+        lat:Number(document.getElementById('geo-lat')?.value)||14.6349,
+        lng:Number(document.getElementById('geo-lng')?.value)||-90.5069
+      };
+      
+      gMap=new google.maps.Map(container,{
+        center:start,
+        zoom:14,
+        mapTypeControl:false,
+        streetViewControl:false,
+        fullscreenControl:true,
+        gestureHandling:'greedy'
+      });
+      
+      gMap.addListener('click', function(event) {
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        setGMarker(lat, lng, false);
+        setLatLngInputs(lat, lng);
+        reverseGeocodeGoogle(lat, lng);
+      });
+      
+      setGMarker(start.lat,start.lng,true);
+      attachAutocomplete();
+    }
+    
+    window.locateMeOnce=locateMeOnce;
+    window.initGMap=initGMap;
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsWVTI4PKDqGp-wJgWZnD2IbOvd0wKPhQ&libraries=places&callback=initGMap" async defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    function calculateRealAppraisal(){
+      const totalConstruccion = parseFloat(document.getElementById('totalConstruccion')?.value)||0;
+
+      let sumaArea = 0;
+      document.querySelectorAll('#tbBodyConstruccion .area-input').forEach(i=>{
+        sumaArea += parseFloat(i.value)||0;
+      });
+      const areaConstruccion = sumaArea>0 ? sumaArea : (parseFloat(document.getElementById('construction-area').value)||0);
+
+      const estado=document.getElementById('estado-inmueble').value||'No especificado';
+      const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
+      const antiguedad=anioConstruccion? new Date().getFullYear()-anioConstruccion : 0;
+
+      const tipologiaId=document.getElementById('typology').value;
+      let tipText='No seleccionada';
+      try{
+        const t=(Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipologiaId);
+        if(t) tipText=`${t.category}-${t.type}`;
+      }catch{}
+
+      const formatCurrency=(v)=> new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(v);
+
+      document.getElementById('resultArea').textContent=`${areaConstruccion.toFixed(2)} m²`;
+      document.getElementById('resultTypology').textContent=tipText;
+      document.getElementById('resultCondition').textContent=estado;
+      document.getElementById('resultAge').textContent=`${antiguedad} años`;
+
+      const terreno = parseFloat(document.getElementById('totalTerreno')?.value) || 0;
+      document.getElementById('resultLandValue').textContent=formatCurrency(terreno);
+      document.getElementById('resultLandAppraisal').textContent=formatCurrency(terreno);
+
+      document.getElementById('resultBuildValue').textContent=formatCurrency(totalConstruccion);
+      document.getElementById('resultGrandTotal').textContent=formatCurrency(terreno + totalConstruccion);
+      document.getElementById('resultTotal').textContent=formatCurrency(terreno + totalConstruccion);
+    }
+
+    async function generateReport(){
+      const loadingOverlay=document.getElementById('loadingOverlay'); loadingOverlay.style.display='flex';
+      try{
+        if(typeof window.jspdf==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); }
+        if(typeof window.jspdfAutoTable==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js'); }
+        const { jsPDF }=window.jspdf; const doc=new jsPDF(); const pageWidth=doc.internal.pageSize.getWidth(); const margin=20; const contentWidth=pageWidth-(margin*2);
+        doc.setFillColor(91,123,122); doc.rect(0,0,pageWidth,60,'F');
+        doc.setTextColor(255,255,255); doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.text('REPORTE DE AVALÚO',margin,30);
+        doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')}`,margin,45); doc.text('Sistema de Avalúos Profesional', pageWidth - margin - 80, 45);
+
+        let y=80;
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN DE LA PROPIEDAD',margin,y); y+=20;
+        const basicData=[
+          ['Asociado:',document.getElementById('associate-name').value||'No especificado'],
+          ['Dirección:',document.getElementById('address').value||'No especificado'],
+          ['Propietario:',document.getElementById('owner-name').value||'No especificado'],
+          ['Área Construida:',document.getElementById('resultArea').textContent||'No especificado'],
+          ['Área Terreno:',document.getElementById('land-area').value?document.getElementById('land-area').value+' m²':'No especificado']
+        ];
+        doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','normal');
+        basicData.forEach(([l,v])=>{doc.setFont('helvetica','bold'); doc.text(l,margin,y); doc.setFont('helvetica','normal'); doc.text(v,margin+45,y); y+=8;}); y+=10;
+
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('RESULTADOS DEL AVALÚO',margin,y); y+=20;
+        const resultsData=[
+          ['Tipología',document.getElementById('resultTypology').textContent],
+          ['Estado',document.getElementById('resultCondition').textContent],
+          ['Antigüedad',document.getElementById('resultAge').textContent],
+          ['Valor Terreno',document.getElementById('resultLandValue').textContent],
+          ['Valor Construcción',document.getElementById('resultBuildValue').textContent],
+          ['TOTAL',document.getElementById('resultTotal').textContent]
+        ];
+        doc.autoTable({startY:y, head:[['Concepto','Valor']], body:resultsData, theme:'grid', headStyles:{fillColor:[91,123,122], textColor:255, fontStyle:'bold'}, styles:{fontSize:10, cellPadding:5}, columnStyles:{0:{fontStyle:'bold', cellWidth:100},1:{cellWidth:80}}, margin:{left:margin,right:margin}});
+        y=doc.lastAutoTable.finalY+15;
+
+        doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15); doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
+
+        if(y>240){ doc.addPage(); y=20; }
+
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
+        const colData=[
+          ['Norte',document.getElementById('norte-propietario').value||'',(document.getElementById('norte-metros').value||'')+' m'],
+          ['Sur',document.getElementById('sur-propietario').value||'',(document.getElementById('sur-metros').value||'')+' m'],
+          ['Oriente',document.getElementById('oriente-propietario').value||'',(document.getElementById('oriente-metros').value||'')+' m'],
+          ['Poniente',document.getElementById('poniente-propietario').value||'',(document.getElementById('poniente-metros').value||'')+' m']
+        ];
+        doc.autoTable({startY:y, head:[['Dirección','Propietario','Metros']], body:colData, theme:'grid', headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'}, styles:{fontSize:9, cellPadding:4}, margin:{left:margin,right:margin}});
+
+        const totalPages=doc.internal.getNumberOfPages();
+        for(let i=1;i<=totalPages;i++){
+          doc.setPage(i); doc.setFontSize(8); doc.setTextColor(128,128,128);
+          doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos`, pageWidth/2, doc.internal.pageSize.getHeight()-10, {align:'center'});
+        }
+        const fileName=`Avaluo_${document.getElementById('associate-name').value||'Propiedad'}_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(fileName);
+      }catch(error){
+        console.error('Error generando PDF:',error); alert('Error al generar el PDF: '+error.message);
+      }
+      finally{ loadingOverlay.style.display='none'; }
+    }
+    function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);});}
+
+    class FormWizard{
+      constructor(){this.currentStep=1; this.totalSteps=4; this.init();}
+      init(){this.bindEvents(); this.updateUI();}
+      bindEvents(){
+        document.getElementById('next-step').addEventListener('click',()=>this.next());
+        document.getElementById('prev-step').addEventListener('click',()=>this.previous());
+        document.querySelectorAll('.step').forEach(step=>{
+          step.addEventListener('click',(e)=>{
+            const n=parseInt(e.currentTarget.dataset.step);
+            if(n<this.currentStep){this.goToStep(n);}
+          });
+        });
+      }
+      validateStep(step){
+        const req=document.querySelectorAll(`[data-step="${step}"] [required]`);
+        let ok=true; req.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--error)'; ok=false;} else{f.style.borderColor='';}});
+        if(!ok){alert('Por favor completa todos los campos requeridos marcados con *');}
+        return ok;
+      }
+      next(){
+        if(this.currentStep<this.totalSteps){
+          if(this.validateStep(this.currentStep)){ this.currentStep++; this.updateUI(); }
+        } else { this.calculateAppraisal(); }
+      }
+      previous(){ if(this.currentStep>1){ this.currentStep--; this.updateUI(); } }
+      goToStep(step){ if(step>=1&&step<=this.totalSteps){ this.currentStep=step; this.updateUI(); } }
+      updateUI(){
+        document.querySelectorAll('.step').forEach(s=>{
+          const n=parseInt(s.dataset.step);
+          s.classList.remove('active','completed');
+          if(n===this.currentStep){s.classList.add('active');}
+          else if(n<this.currentStep){s.classList.add('completed');}
+        });
+        document.querySelectorAll('.form-section').forEach(sec=>{
+          sec.classList.remove('active'); if(parseInt(sec.dataset.step)===this.currentStep){sec.classList.add('active');}
+        });
+        const prevBtn=document.getElementById('prev-step');
+        const nextBtn=document.getElementById('next-step');
+        prevBtn.style.display=this.currentStep>1?'flex':'none';
+        nextBtn.innerHTML=this.currentStep===this.totalSteps?'<i class="fas fa-calculator"></i> Calcular Avalúo':'Siguiente <i class="fas fa-arrow-right"></i>';
+      }
+      calculateAppraisal(){
+        if(this.validateStep(this.currentStep)){
+          const nextBtn=document.getElementById('next-step');
+          const original=nextBtn.innerHTML;
+          nextBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Calculando...'; nextBtn.disabled=true;
+          setTimeout(()=>{
+            calculateRealAppraisal();
+            document.getElementById('resultSection').classList.add('active');
+            document.getElementById('save-btn').style.display='flex';
+            document.getElementById('pdf-btn').style.display='flex';
+            nextBtn.innerHTML=original; nextBtn.disabled=false;
+          },800);
+        }
+      }
+    }
+    function newAppraisal(){
+      document.getElementById('resultSection').classList.remove('active');
+      document.getElementById('save-btn').style.display='none';
+      document.getElementById('pdf-btn').style.display='none';
+      window.formWizard.goToStep(1);
+    }
+
+    
+    document.addEventListener('DOMContentLoaded',function(){
+      window.formWizard=new FormWizard();
+      document.getElementById('save-btn').addEventListener('click',async function(){ 
+        await saveCurrentAppraisal();
+        
+      });
+      document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
+      document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
+      document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
+      
+      // Inicializar funcionalidades adicionales
+      initImageModalEvents();
+      initImageUpload();
+    });
+  </script>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
+
+    let PUBLIC_APP_URL = window.location.origin + window.location.pathname;
+    if (!PUBLIC_APP_URL.endsWith("/")) PUBLIC_APP_URL += "/";
+
+    window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    
+    function __updateAuthUI(isLogged){
+      const overlay = document.getElementById('auth-overlay');
+      const userBox = document.getElementById('user-box');
+      
+      if(overlay) overlay.style.display = isLogged ? 'none' : 'flex';
+      
+      if(userBox){
+        userBox.style.display = isLogged ? 'flex' : 'none';
+        if(isLogged && window.__session?.user){
+          const email = window.__session.user.email || "";
+          const username = window.__session.user.user_metadata?.username || "";
+          const userNameElement = userBox.querySelector('[data-user-name]');
+          const userEmailElement = userBox.querySelector('[data-user-email]');
+          
+          if(userNameElement) userNameElement.textContent = username || "(sin username)";
+          if(userEmailElement) userEmailElement.textContent = email;
+        }
+      }
+      
+      const nextBtn = document.getElementById('next-step');
+      if(nextBtn) nextBtn.disabled = !isLogged;
+    }
+
+    (async () => {
+      const { data: { session} } = await window.supabase.auth.getSession();
+      window.__session = session || null;
+      __updateAuthUI(!!session);
+    })();
+
+    window.supabase.auth.onAuthStateChange((_event, session) => {
+      window.__session = session || null;
+      __updateAuthUI(!!session);
+    });
+
+    window.__signUpWithEmail = async (email, password, username) => {
+      try {
+        const { data, error } = await window.supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { username }, emailRedirectTo: PUBLIC_APP_URL }
+        });
+        if (error) {
+          if (String(error.message || '').toLowerCase().includes('already')) {
+            const { error: e2 } = await window.supabase.auth.signInWithPassword({ email, password });
+            if (e2) throw e2;
+            return;
+          }
+          throw error;
+        }
+        if (!data?.session) {
+          alert("Te enviamos un correo de confirmación. Revisa spam/promociones.\nDespués de confirmar, vuelve a esta página.");
+        }
+      } catch (e) {
+        console.error("signUp error:", e);
+        alert("Error al crear cuenta: " + (e?.message || e));
       }
     };
 
-    // TODO EL RESTO DEL CÓDIGO JAVASCRIPT SE MANTIENE EXACTAMENTE IGUAL
-    // ... (código original completo)
+    window.__signInWithEmail = async (email, password) => {
+      try {
+        const { error } = await window.supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+      } catch (e) {
+        const msg = String(e?.message || '').toLowerCase();
+        if (msg.includes('email') && msg.includes('confirm')) {
+          alert("Tu correo aún no está confirmado. Revisa tu email y confirma la cuenta.");
+        } else {
+          alert("Error al iniciar sesión: " + (e?.message || e));
+        }
+        console.error("signIn error:", e);
+      }
+    };
 
+    
+    window.__signInWithGoogle = async () => {
+      try {
+        
+        const currentUrl = window.location.origin + window.location.pathname;
+        const redirectUrl = currentUrl.endsWith('/') ? currentUrl : currentUrl + '/';
+        
+        console.log("Iniciando Google OAuth con redirect:", redirectUrl);
+        
+        const { data, error } = await window.supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { 
+            redirectTo: redirectUrl,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent'
+            }
+          }
+        });
+        
+        if (error) {
+          console.error("Error Google OAuth:", error);
+          
+          
+          if (error.message?.includes('provider') || error.message?.includes('configuration') || error.message?.includes('disabled')) {
+            const configSteps = `
+CONFIGURACIÓN REQUERIDA EN SUPABASE:
+
+1. Supabase Dashboard → Authentication → Settings
+2. En 'Site URL' poner: ${redirectUrl}
+3. En 'Redirect URLs' añadir: ${redirectUrl}
+4. Google Provider → Configurar Client ID y Secret
+
+CONFIGURACIÓN EN GOOGLE CLOUD:
+1. Google Cloud Console → APIs & Services → Credentials
+2. Crear OAuth 2.0 Client ID para Web Application
+3. En 'Authorized JavaScript origins' añadir: ${window.location.origin}
+4. En 'Authorized redirect URIs' añadir: 
+   https://csinbmcauuyljjqshawi.supabase.co/auth/v1/callback
+   ${redirectUrl}
+
+Mientras tanto, puede usar registro con email.`;
+            
+            alert("Google OAuth requiere configuración:\n" + configSteps);
+          } else {
+            alert("Error con Google OAuth: " + error.message);
+          }
+          return;
+        }
+        
+        
+        console.log("Google OAuth iniciado correctamente, redirigiendo...");
+        
+      } catch (e) {
+        console.error("Error completo Google OAuth:", e);
+        alert("Error al conectar con Google: " + (e.message || e));
+      }
+    };
+
+    function showUsernameModal(userId) {
+      const modal = document.getElementById('username-modal');
+      const usernameInput = document.getElementById('google-username');
+      const saveButton = document.getElementById('save-google-username');
+      
+      if (!modal || !usernameInput || !saveButton) return;
+      
+      modal.classList.add('active');
+      
+      saveButton.replaceWith(saveButton.cloneNode(true));
+      const newSaveButton = document.getElementById('save-google-username');
+      
+      newSaveButton.addEventListener('click', async () => {
+        const username = usernameInput.value.trim();
+        
+        if (!username) {
+          alert('Por favor ingresa un nombre de usuario');
+          return;
+        }
+        
+        if (username.length < 3) {
+          alert('El username debe tener al menos 3 caracteres');
+          return;
+        }
+        
+        try {
+          newSaveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+          newSaveButton.disabled = true;
+          
+          const { error } = await window.supabase.auth.updateUser({
+            data: { username: username }
+          });
+          
+          if (error) throw error;
+          
+          modal.classList.remove('active');
+          usernameInput.value = '';
+          
+          const { data: { session } } = await window.supabase.auth.getSession();
+          window.__session = session;
+          __updateAuthUI(!!session);
+          
+          alert(`¡Bienvenido ${username}! Tu perfil ha sido actualizado.`);
+          
+        } catch (error) {
+          console.error('Error updating username:', error);
+          alert('Error al guardar username: ' + (error.message || error));
+          newSaveButton.innerHTML = '<i class="fas fa-check"></i> Guardar y continuar';
+          newSaveButton.disabled = false;
+        }
+      });
+      
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+      
+      usernameInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          newSaveButton.click();
+        }
+      });
+      
+      setTimeout(() => usernameInput.focus(), 300);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { data: { session } } = await window.supabase.auth.getSession();
+      if (session?.user && !session.user.user_metadata?.username) {
+        setTimeout(() => {
+          showUsernameModal(session.user.id);
+        }, 1500);
+      }
+    });
+
+    window.__resendVerification = async (email) => {
+      try {
+        if (!email) return alert("Escribe tu correo primero.");
+        const { data, error } = await window.supabase.auth.resend({ type: 'signup', email });
+        if (error) throw error;
+        alert("Listo, te reenviamos el correo. Revisa bandeja y spam.");
+      } catch (e) {
+        console.error("resend error:", e);
+        alert("No se pudo reenviar: " + (e?.message || e));
+      }
+    };
+
+    window.__signOut = async () => { await window.supabase.auth.signOut(); };
+    window.__canUseApp = () => !!window.__session;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const nextBtn = document.getElementById('next-step');
+      if(nextBtn){
+        nextBtn.addEventListener('click', (e) => {
+          if(!window.__canUseApp()){
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            document.getElementById('auth-overlay').style.display='flex';
+            alert("Inicia sesión para continuar.");
+          }
+        }, true);
+      }
+    });
+
+    const _origCalculate = window.calculateRealAppraisal;
+    if(_origCalculate){
+      window.calculateRealAppraisal = function(){
+        if(!window.__canUseApp()){
+          document.getElementById('auth-overlay').style.display='flex';
+          alert("Inicia sesión para calcular el avalúo.");
+          return;
+        }
+        return _origCalculate.apply(this, arguments);
+      };
+    }
   </script>
 
-  <!-- TODO EL RESTO DEL CÓDIGO ORIGINAL SE MANTIENE -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsWVTI4PKDqGp-wJgWZnD2IbOvd0wKPhQ&libraries=places&callback=initGMap" async defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-  
-  <script type="module">
-    // TODO EL CÓDIGO DE SUPABASE Y AUTENTICACIÓN ORIGINAL
+  <script>
+    (function () {
+      const url = new URL(window.location.href);
+      const hashStr = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+      const hash = new URLSearchParams(hashStr);
+      const qs = new URLSearchParams(url.search);
+      const msg = hash.get("error_description") || hash.get("error") || qs.get("error_description") || qs.get("error");
+      if (msg) {
+        console.error("Auth callback error:", msg);
+        alert("Autenticación: " + msg);
+      }
+    })();
   </script>
 </body>
 </html>
