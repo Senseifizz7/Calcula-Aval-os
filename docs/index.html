@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    
+    /* ESTILOS ORIGINALES (COMPLETOS) */
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -734,10 +734,229 @@
     #image-viewer-modal .modal-content {
       z-index: 2001 !important;
     }
+
+    /* NUEVOS ESTILOS PARA PESTAÑAS Y ACORDEONES */
+    .typology-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .typology-tab {
+      flex: 1;
+      padding: 16px;
+      text-align: center;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    .typology-tab.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: rgba(91, 123, 122, 0.05);
+    }
+
+    .typology-tab:hover:not(.active) {
+      background: var(--bg-hover);
+      color: var(--text);
+    }
+
+    .typology-tab-content {
+      display: none;
+      padding: 20px;
+    }
+
+    .typology-tab-content.active {
+      display: block;
+    }
+
+    .typology-accordion {
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .typology-accordion-header {
+      padding: 16px 20px;
+      background: var(--bg-hover);
+      border: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--text);
+      transition: all 0.3s ease;
+    }
+
+    .typology-accordion-header:hover {
+      background: rgba(91, 123, 122, 0.1);
+    }
+
+    .typology-accordion-header.active {
+      background: rgba(91, 123, 122, 0.15);
+      color: var(--primary);
+    }
+
+    .typology-accordion-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .typology-accordion-header.active .typology-accordion-icon {
+      transform: rotate(180deg);
+    }
+
+    .typology-accordion-content {
+      display: none;
+      padding: 0;
+      background: var(--bg-card);
+    }
+
+    .typology-accordion-content.active {
+      display: block;
+    }
+
+    .typology-variants {
+      display: grid;
+      gap: 0;
+    }
+
+    .typology-variant {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-light);
+      transition: all 0.3s ease;
+    }
+
+    .typology-variant:last-child {
+      border-bottom: none;
+    }
+
+    .typology-variant:hover {
+      background: rgba(91, 123, 122, 0.03);
+    }
+
+    .variant-content {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .variant-images {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .variant-image {
+      width: 100px;
+      height: 80px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      border: 1px solid var(--border);
+    }
+
+    .variant-image:hover {
+      transform: scale(1.05);
+      border-color: var(--primary);
+    }
+
+    .variant-details {
+      flex: 1;
+    }
+
+    .variant-title {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .variant-price {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--success);
+      margin-bottom: 12px;
+    }
+
+    .variant-features {
+      list-style: none;
+      margin-bottom: 12px;
+    }
+
+    .variant-features li {
+      padding: 4px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    .variant-features li i {
+      color: var(--primary);
+      font-size: 0.8rem;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .variant-description {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      line-height: 1.5;
+      margin-bottom: 12px;
+      padding: 12px;
+      background: rgba(91, 123, 122, 0.03);
+      border-radius: var(--radius-sm);
+    }
+
+    @media (max-width: 768px) {
+      .typology-tabs {
+        flex-direction: column;
+      }
+      
+      .typology-tab {
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
+        border-left: 3px solid transparent;
+      }
+      
+      .typology-tab.active {
+        border-left-color: var(--primary);
+        border-bottom-color: var(--border);
+      }
+      
+      .variant-content {
+        flex-direction: column;
+      }
+      
+      .variant-images {
+        justify-content: center;
+      }
+      
+      .variant-image {
+        width: 120px;
+        height: 90px;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <!-- TODO EL HTML ORIGINAL SE MANTIENE INTACTO -->
   <div class="app-container">
     <header class="app-header">
       <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 200px; height: 60px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
@@ -1159,7 +1378,26 @@
           <h3><i class="fas fa-home"></i> Seleccionar Tipología Constructiva</h3>
           <button class="modal-close" id="closeModal" type="button">&times;</button>
         </div>
-        <div class="modal-body" id="modalCatalogContent"></div>
+        <div class="modal-body" style="padding: 0;">
+          <!-- NUEVA ESTRUCTURA CON PESTAÑAS Y ACORDEONES -->
+          <div class="typology-tabs">
+            <button class="typology-tab active" data-tab="baja">Categoría Baja</button>
+            <button class="typology-tab" data-tab="media">Categoría Media</button>
+            <button class="typology-tab" data-tab="alta">Categoría Alta</button>
+          </div>
+          
+          <div class="typology-tab-content active" id="tab-baja">
+            <!-- Contenido se llena dinámicamente -->
+          </div>
+          
+          <div class="typology-tab-content" id="tab-media">
+            <!-- Contenido se llena dinámicamente -->
+          </div>
+          
+          <div class="typology-tab-content" id="tab-alta">
+            <!-- Contenido se llena dinámicamente -->
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1173,12 +1411,9 @@
   <button id="pdf-btn" type="button"><i class="fas fa-file-pdf"></i> PDF</button>
 
   <script>
-    
+    // FUNCIONES ORIGINALES MANTENIDAS
     function modificarPrecioTipologia(tipologiaId, nuevoPrecio) {
-        
         const tipologias = __getTipos();
-        
-        
         const tipologia = tipologias.find(t => t.id === tipologiaId);
         
         if (!tipologia) {
@@ -1186,14 +1421,12 @@
             return false;
         }
         
-        
         const rango = RANGOS_PRECIO[tipologia.category]?.[tipologia.type];
         
         if (!rango) {
             console.error('Rango de precios no encontrado para:', tipologia.category, tipologia.type);
             return false;
         }
-        
         
         const precioMaximo = rango.max;
         
@@ -1207,9 +1440,7 @@
             nuevoPrecio = rango.min;
         }
         
-        
         tipologia.pricePerM2 = nuevoPrecio;
-        
         
         const tipologiaActual = document.getElementById('typology').value;
         if (tipologiaActual === tipologiaId) {
@@ -1217,12 +1448,10 @@
             if (precioInput) {
                 precioInput.value = nuevoPrecio;
                 
-                
                 const pr = document.getElementById('selectedPrice');
                 if (pr) {
                     pr.textContent = `Q${nuevoPrecio.toLocaleString('es-GT')}/m²`;
                 }
-                
                 
                 if (document.getElementById('resultSection').classList.contains('active')) {
                     calculateRealAppraisal();
@@ -1234,7 +1463,7 @@
         return true;
     }
 
-    
+    // Storage functions manteniendo las originales
     window.avaluosStorage = {
       getAllAppraisals: function() {
         try {
@@ -1307,7 +1536,7 @@
       }
     };
 
-    
+    // Funciones de modal manteniendo las originales
     function showAllAppraisals() {
       const modal = document.getElementById('all-appraisals-modal');
       const listContainer = document.getElementById('all-appraisals-list');
@@ -1459,7 +1688,6 @@
       if (loadingOverlay) loadingOverlay.style.display = 'flex';
       
       try {
-        
         const appraisalData = {
           associateName: document.getElementById('associate-name').value || 'No especificado',
           address: document.getElementById('address').value || 'No especificado',
@@ -1477,11 +1705,9 @@
 
         console.log('📦 Datos a guardar:', appraisalData);
 
-        
         const savedInLocal = window.avaluosStorage.saveAppraisal(appraisalData);
         console.log('✅ Guardado en localStorage:', savedInLocal);
 
-        
         console.log('🔄 Enviando a Supabase...');
         
         const { data, error } = await window.supabase
@@ -1517,9 +1743,7 @@
           console.log('✅ Éxito - Datos guardados en Supabase:', data);
         }
 
-        
         alert('✅ Avalúo guardado EXITOSAMENTE\n\n• En la web: Disponible en "Lista de Avalúos"\n• En base de datos: Para tu seguimiento');
-        
         
         if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
           showAllAppraisals();
@@ -1539,11 +1763,9 @@
       }
     }
 
-    
     document.getElementById('all-appraisals-btn').addEventListener('click', showAllAppraisals);
     document.getElementById('my-appraisals-btn').addEventListener('click', showMyAppraisals);
 
-    
     document.getElementById('all-appraisals-modal').addEventListener('click', function(e) {
       if (e.target === this) closeModal('all-appraisals-modal');
     });
@@ -1551,208 +1773,712 @@
       if (e.target === this) closeModal('my-appraisals-modal');
     });
 
-    
+    // NUEVAS TIPOLOGÍAS COMPLETAS
     const RANGOS_PRECIO = {
         'Baja': {
-            'Baja 1': { min: 250, max: 400 },
-            'Baja 2': { min: 250, max: 500 },
-            'Media 1': { min: 650, max: 750 },
-            'Media 2': { min: 650, max: 850 },
-            'Alta 1': { min: 850, max: 950 },
-            'Alta 2': { min: 850, max: 1000 }
+            'Baja': { min: 250, max: 500 },
+            'Media': { min: 650, max: 850 },
+            'Alta': { min: 850, max: 1000 }
         },
         'Media': {
-            'Baja 1': { min: 800, max: 1100 },
-            'Baja 2': { min: 800, max: 1100 },
-            'Media 1': { min: 900, max: 1200 },
-            'Media 2': { min: 1000, max: 1300 },
-            'Alta 1': { min: 1300, max: 1700 },
-            'Alta 2': { min: 1400, max: 1800 }
+            'Baja': { min: 800, max: 1100 },
+            'Media': { min: 900, max: 1300 },
+            'Alta': { min: 1300, max: 1800 }
         },
         'Alta': {
-            'Baja 1': { min: 1400, max: 1700 },
-            'Baja 2': { min: 1500, max: 1800 },
-            'Media 1': { min: 1800, max: 2100 },
-            'Media 2': { min: 1900, max: 2200 }
+            'Baja': { min: 1400, max: 1800 },
+            'Media': { min: 1800, max: 2200 },
+            'Alta': { min: 2300, max: 2900 }
         }
     };
 
-   
     const __FALLBACK_TIPOLOGIAS = [
-      
+      // CATEGORÍA BAJA - TIPOLOGÍA BAJA
       {
         id: "baja-baja-1",
-        category: "Baja", 
-        type: "Baja 1",
-        title: "Categoría Baja — Baja 1",
-        img: "https://i.ibb.co/nMLmvDzW/Baja-1.png",
-        priceRange: "Q250–Q400/m²",
+        category: "Baja",
+        type: "Baja",
+        title: "Tipología Baja - Variante 1",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20baja.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja.png",
         pricePerM2: 400,
-        bullets: ["Estructura de adobe y madera", "Paredes con nylon", "Techo de teja de barro sin cielo falso", "Piso de tierra con cemento", "Ventanas y puertas de madera sin tratar"]
+        description: "Como sistema constructivo encontramos: estructura de madera, muro de block o adobe de 1.00 metro de alto con estructura de madera",
+        bullets: [
+          "Estructura: sistema de adobe, madera",
+          "Paredes: adobe recubierto con nylon",
+          "Techos: teja de barro sin cielo falso",
+          "Piso: tierra con cemento",
+          "Ventanas: madera sin tratar",
+          "Puertas: madera sin tratar",
+          "Servicios: luz, alumbrado público",
+          "Exterior: fachada con material expuesto",
+          "Instalaciones: expuestas"
+        ],
+        sistemasConstructivos: ["estructura de madera", "muro de block o adobe de 1.00 metro de alto con estructura de madera"],
+        recubrimientos: ["adobe", "block de cantera sin norma de construcción", "madera sin tratar"],
+        acabados: ["block sisado visto", "adobe visto", "madera sin tratar", "blanqueado con cal hidratada"],
+        cubiertas: ["estructura de madera con cubierta de lámina de zinc", "estructura de costaneras de metal con cubierta de lámina de zinc", "estructura de madera cubierta con teja de barro"],
+        pisos: ["tierra", "cemento líquido"],
+        puertasVentanas: ["madera sencilla sin tratamiento", "cortinas o cedazo", "sin puertas o ventanas"],
+        diseno: ["casas diseñadas en un solo ambiente", "casas diseñadas en dos ambientes", "baño en el exterior de la vivienda (letrina o pozo ciego)"],
+        servicios: ["agua potable", "energía eléctrica"],
+        acceso: ["terracería (vehicular o vecinal)"]
       },
       {
         id: "baja-baja-2",
         category: "Baja",
-        type: "Baja 2", 
-        title: "Categoría Baja — Baja 2",
-        img: "https://i.ibb.co/WNBMdyjp/Baja-2.png",
-        priceRange: "Q250–Q500/m²",
+        type: "Baja",
+        title: "Tipología Baja - Variante 2",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20baja%202.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja%202.png",
         pricePerM2: 500,
-        bullets: ["Estructura de adobe con columnas de madera", "Paredes de adobe, madera sin tratar y cartón", "Techo de teja de barro y lámina de zinc", "Piso de tierra con cemento", "Fachada sin mantenimiento"]
+        description: "Como sistema constructivo encontramos: estructura de adobe, columnas de madera",
+        bullets: [
+          "Estructura: sistema de adobe, columnas de madera",
+          "Paredes: adobe, madera sin tratar, cartón",
+          "Techos: teja de barro, lámina de zinc sin cielo falso",
+          "Piso: tierra con cemento",
+          "Ventanas: madera sin tratar",
+          "Puertas: madera sin tratar",
+          "Servicios: luz, alumbrado público",
+          "Exterior: fachada sin mantenimiento",
+          "Instalaciones: expuestas"
+        ],
+        sistemasConstructivos: ["estructura de madera", "muro de block o adobe de 1.00 metro de alto, resto estructura de madera"],
+        recubrimientos: ["adobe", "block de cantera sin norma de construcción"],
+        acabados: ["block sisado visto", "adobe visto", "madera sin tratar", "blanqueado con cal hidratada"],
+        cubiertas: ["estructura de madera con cubierta de lámina de zinc", "estructura de costaneras de metal con cubierta de lámina de zinc", "estructura de madera cubierta con teja de barro"],
+        pisos: ["tierra", "cemento líquido"],
+        puertasVentanas: ["madera sin tratar", "metal", "prefabricadas en MDF"],
+        diseno: ["casas diseñadas en dos ambientes", "casas diseñadas en tres ambientes", "baño en el exterior de la vivienda (letrina o pozo ciego)"],
+        servicios: ["agua potable", "energía eléctrica", "alumbrado público"],
+        acceso: ["terracería (vehicular o vecinal)", "adoquín", "carrileras de concreto (vehicular o vecinal)"]
       },
+
+      // CATEGORÍA BAJA - TIPOLOGÍA MEDIA
       {
         id: "baja-media-1",
         category: "Baja",
-        type: "Media 1",
-        title: "Categoría Baja — Media 1", 
-        img: "https://i.ibb.co/hzsFrgD/Media-1.png",
-        priceRange: "Q650–Q750/m²",
+        type: "Media",
+        title: "Tipología Media - Variante 1",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20media.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20media.png",
         pricePerM2: 750,
-        bullets: ["Estructura de adobe y block con pines fundidos", "Paredes con repello", "Techo de lámina de zinc con cielo falso de machimbre", "Piso de cemento líquido y cerámico", "Fachada tipo corredor"]
+        description: "Como sistema constructivo encontramos: sistema de adobe, block con pines fundidos",
+        bullets: [
+          "Estructura: sistema de adobe, block con pines fundidos",
+          "Paredes: adobe con repello",
+          "Techos: lámina de zinc con cielo falso de machimbre",
+          "Piso: torta de cemento líquido, cerámico",
+          "Ventanas: madera sin tratar",
+          "Puertas: madera sin tratar",
+          "Servicios: agua, luz, alumbrado público",
+          "Exterior: fachada tipo corredor",
+          "Instalaciones: expuestas"
+        ],
+        sistemasConstructivos: ["estructura de madera", "muro de block o adobe de 1.00 metro de alto, resto estructura de madera", "mampostería con sistema pinedo", "mampostería con columnas para un nivel"],
+        recubrimientos: ["adobe", "block de cantera sin norma de construcción"],
+        acabados: ["block sisado visto", "adobe visto", "madera sin tratar", "blanqueado con cal hidratada"],
+        cubiertas: ["estructura de madera con cubierta de lámina de zinc", "estructura de costaneras de metal con cubierta de lámina de zinc", "estructura de madera cubierta con teja de barro", "losa de concreto armado"],
+        pisos: ["tierra", "cemento líquido", "granito"],
+        puertasVentanas: ["madera sin tratar", "metal", "prefabricadas en MDF"],
+        diseno: ["casas diseñadas en dos ambientes", "casas diseñadas en tres ambientes", "baño en el exterior de la vivienda (letrina o pozo ciego)"],
+        servicios: ["agua potable", "energía eléctrica", "alumbrado público"],
+        acceso: ["terracería (vehicular o vecinal)", "adoquín", "carrileras de concreto (vehicular o vecinal)"]
       },
       {
         id: "baja-media-2",
         category: "Baja",
-        type: "Media 2",
-        title: "Categoría Baja — Media 2",
-        img: "https://i.ibb.co/pjD7yPwC/Media-2.png",
-        priceRange: "Q650–Q850/m²",
+        type: "Media",
+        title: "Tipología Media - Variante 2",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20media%202.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20media%202.png",
         pricePerM2: 850,
-        bullets: ["Estructura de mampostería con columnas", "Paredes de block de cantera", "Techo de lámina de zinc", "Piso de cemento líquido", "Fachada sin diseño con ventanas y materiales expuestos"]
+        description: "Como sistema constructivo encontramos: mampostería con columnas",
+        bullets: [
+          "Estructura: mampostería con columnas",
+          "Paredes: block de cantera",
+          "Techos: lámina de zinc",
+          "Piso: torta de cemento líquido",
+          "Ventanas: madera sin tratar",
+          "Puertas: metal y madera sin tratar",
+          "Servicios: agua, luz, drenajes",
+          "Exterior: fachada sin ventanas ni diseño",
+          "Instalaciones: expuestas"
+        ],
+        sistemasConstructivos: ["mampostería con columnas para un nivel"],
+        recubrimientos: ["block de cantera"],
+        acabados: ["block sisado visto"],
+        cubiertas: ["lámina de zinc"],
+        pisos: ["cemento líquido"],
+        puertasVentanas: ["madera sin tratar", "metal"],
+        diseno: ["fachada sin diseño arquitectónico"],
+        servicios: ["agua", "luz", "drenajes"],
+        acceso: ["terracería"]
       },
+
+      // CATEGORÍA BAJA - TIPOLOGÍA ALTA
       {
         id: "baja-alta-1",
         category: "Baja",
-        type: "Alta 1",
-        title: "Categoría Baja — Alta 1",
-        img: "https://i.ibb.co/mrV6y2W7/Alta-1.png",
-        priceRange: "Q850–Q950/m²",
+        type: "Alta",
+        title: "Tipología Alta - Variante 1",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20alta.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta.png",
         pricePerM2: 950,
-        bullets: ["Estructura de mampostería con pines fundidos a 0.60 m", "Paredes de block de cantera con pintura", "Techo de lámina troquelada", "Piso de cemento líquido", "Ventanas y puertas de metal o madera sin tratar", "Instalaciones ocultas"]
+        description: "Como sistema constructivo encontramos: mampostería con pines fundidos a 0.60 metros",
+        bullets: [
+          "Estructura: mampostería con pines fundidos a 0.60 metros",
+          "Paredes: block de cantera con pintura",
+          "Techos: lámina troquelada",
+          "Piso: torta de cemento líquido",
+          "Ventanas: metal, madera sin tratar",
+          "Puertas: metal, madera sin tratar",
+          "Servicios: agua, luz, drenajes",
+          "Exterior: fachada a dos aguas",
+          "Instalaciones: ocultas"
+        ],
+        sistemasConstructivos: ["mampostería con sistema estructural pineado a cada 0.60 metros"],
+        recubrimientos: ["block de cantera sin norma de construcción"],
+        acabados: ["pintura sobre el block visto"],
+        cubiertas: ["lámina troquelada"],
+        pisos: ["cemento líquido"],
+        puertasVentanas: ["metal", "madera sin tratar"],
+        diseno: ["fachada a dos aguas"],
+        servicios: ["agua", "luz", "drenajes"],
+        acceso: ["terracería"]
       },
       {
         id: "baja-alta-2",
-        category: "Baja", 
-        type: "Alta 2",
-        title: "Categoría Baja — Alta 2",
-        img: "https://i.ibb.co/B5cwkYTd/Alta-2.png",
-        priceRange: "Q850–Q1,000/m²",
+        category: "Baja",
+        type: "Alta",
+        title: "Tipología Alta - Variante 2",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20alta%202.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta.png",
         pricePerM2: 1000,
-        bullets: ["Estructura de adobe y mampostería reforzada", "Paredes de adobe con repello, cernido y block normado", "Techo de teja de barro y lámina de zinc con cielo falso de madera", "Piso de granito y cemento líquido", "Instalaciones ocultas o expuestas"]
+        description: "Como sistema constructivo encontramos: sistema de adobe, mampostería reforzada",
+        bullets: [
+          "Estructura: sistema de adobe, mampostería reforzada",
+          "Paredes: adobe con repello y cernido, block normado",
+          "Techos: teja de barro, lámina de zinc, cielo falso de madera",
+          "Piso: torta de cemento líquido, granito",
+          "Ventanas: madera sin tratar, metal, uPVC",
+          "Puertas: madera sin tratar, metal",
+          "Servicios: agua, luz, drenajes",
+          "Exterior: fachada tipo corredor",
+          "Instalaciones: ocultas, expuestas"
+        ],
+        sistemasConstructivos: ["sistema de adobe", "mampostería reforzada"],
+        recubrimientos: ["adobe", "block normado estructuralmente para la construcción"],
+        acabados: ["repello y cernido"],
+        cubiertas: ["teja de barro", "lámina de zinc"],
+        cielosFalsos: ["machimbré"],
+        pisos: ["cemento líquido", "granito"],
+        puertasVentanas: ["madera sin tratar", "metal", "uPVC"],
+        diseno: ["fachada tipo corredor"],
+        servicios: ["agua", "luz", "drenajes"],
+        acceso: ["terracería", "adoquín"]
       },
 
-      
+      // CATEGORÍA MEDIA - TIPOLOGÍA BAJA
       {
         id: "media-baja-1",
         category: "Media",
-        type: "Baja 1", 
-        title: "Categoría Media — Baja 1",
-        img: "https://i.ibb.co/YB1Z3htk/Media-baja-1.png",
-        priceRange: "Q800–Q1,100/m²",
+        type: "Baja",
+        title: "Tipología Baja - Variante 1",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20baja.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20baja.png",
         pricePerM2: 1100,
-        bullets: ["Estructura de mampostería con block y pines fundidos", "Paredes de block con repello y cernido", "Techo de lámina de zinc sin cielo falso", "Piso de cemento líquido", "Fachada tipo corredor"]
+        description: "Como sistema constructivo encontramos: mampostería con block con pines fundidos",
+        bullets: [
+          "Estructura: mampostería con block con pines fundidos",
+          "Paredes: block con repello y cernido",
+          "Techo: lámina de zinc sin cielo falso",
+          "Piso: torta de cemento líquido",
+          "Ventanas: madera tratada",
+          "Puertas: madera tratada, metal",
+          "Servicios: agua, luz, drenajes",
+          "Exterior: fachada tipo corredor",
+          "Instalaciones: sobrepuestas"
+        ],
+        sistemasConstructivos: ["sistema de mampostería reforzada", "sistema de block pineado a cada 60 centímetros", "algunas reforzadas para segundo nivel"],
+        recubrimientos: ["block de cantera fabricado sin norma", "block normado"],
+        acabados: ["block sisado visto", "pintura o blanqueado", "repello y cernido con capa delgada"],
+        cubiertas: ["techo de losa de concreto", "estructura de metal cubierta con lámina de zinc o lámina troquelada", "estructura de madera cubierta con lámina de zinc"],
+        pisos: ["cerámico", "granito"],
+        puertasVentanas: ["madera", "metal", "prefabricados", "aluminio"],
+        diseno: ["casas sin presencia de diseño arquitectónico", "casas con jardín o patio", "casas con el baño dentro de la vivienda"],
+        servicios: ["agua potable", "energía eléctrica", "drenajes"],
+        acceso: ["adoquín", "pavimento", "asfalto"]
       },
       {
         id: "media-baja-2",
         category: "Media",
-        type: "Baja 2",
-        title: "Categoría Media — Baja 2",
-        img: "https://i.ibb.co/PzrjJL7L/Media-baja-2.png",
-        priceRange: "Q800–Q1,100/m²", 
+        type: "Baja",
+        title: "Tipología Baja - Variante 2",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20baja%202.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20baja%202.png",
         pricePerM2: 1100,
-        bullets: ["Estructura de mampostería con columnas para un nivel", "Paredes de block sizado visto con repello y pintura parcial", "Techo de tejas de barro y lámina de zinc con cielo falso de madera", "Piso de cemento líquido", "Fachada sin diseño arquitectónico"]
+        description: "Como sistema constructivo encontramos: mampostería con columnas para un nivel",
+        bullets: [
+          "Estructura: mampostería con columnas para un nivel",
+          "Paredes: block sisado visto, partes con repello y pintura",
+          "Techo: tejas de barro, lámina de zinc con cielo falso de madera",
+          "Piso: torta de cemento líquido",
+          "Ventanas: metal, madera tratada",
+          "Puertas: metal, madera tratada",
+          "Servicios: agua, luz, drenajes",
+          "Exterior: fachada sin diseño arquitectónico",
+          "Instalaciones: sobrepuestas"
+        ],
+        sistemasConstructivos: ["mampostería con columnas para un nivel"],
+        recubrimientos: ["block sisado visto"],
+        acabados: ["repello y pintura parcial"],
+        cubiertas: ["tejas de barro", "lámina de zinc"],
+        cielosFalsos: ["madera"],
+        pisos: ["cemento líquido"],
+        puertasVentanas: ["metal", "madera tratada"],
+        diseno: ["fachada sin diseño arquitectónico"],
+        servicios: ["agua", "luz", "drenajes"],
+        acceso: ["adoquín", "pavimento"]
       },
+
+      // CATEGORÍA MEDIA - TIPOLOGÍA MEDIA
       {
         id: "media-media-1",
         category: "Media",
-        type: "Media 1",
-        title: "Categoría Media — Media 1",
-        img: "https://i.ibb.co/35PjQqbk/Media-media-1.png",
-        priceRange: "Q900–Q1,200/m²",
+        type: "Media",
+        title: "Tipología Media - Variante 1",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20media.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20media.png",
         pricePerM2: 1200,
-        bullets: ["Estructura de mampostería reforzada para un nivel", "Paredes de block con repello y cernido", "Techo metálico con lámina troquelada", "Piso de cemento líquido", "Fachada tipo corredor interno", "Instalaciones semi ocultas"]
+        description: "Como sistema constructivo encontramos: mampostería reforzada para un nivel",
+        bullets: [
+          "Estructura: mampostería reforzada para un nivel",
+          "Paredes: block con repello y cernido",
+          "Techo: estructura de metal con lámina troquelada",
+          "Piso: torta de cemento líquido",
+          "Ventanas: metal",
+          "Puertas: metal",
+          "Servicios: agua, luz, drenajes",
+          "Exterior: fachada tipo corredor interno",
+          "Instalaciones: sobrepuestas o semi ocultas"
+        ],
+        sistemasConstructivos: ["mampostería reforzada para un nivel"],
+        recubrimientos: ["block con repello y cernido"],
+        cubiertas: ["estructura de metal con lámina troquelada"],
+        pisos: ["cemento líquido"],
+        puertasVentanas: ["metal"],
+        diseno: ["fachada tipo corredor interno"],
+        servicios: ["agua", "luz", "drenajes"],
+        acceso: ["adoquín", "pavimento"]
       },
       {
         id: "media-media-2",
         category: "Media",
-        type: "Media 2",
-        title: "Categoría Media — Media 2", 
-        img: "https://i.ibb.co/W8cwVB6/Media-media-2.png",
-        priceRange: "Q1,000–Q1,300/m²",
+        type: "Media",
+        title: "Tipología Media - Variante 2",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20media%202.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20media%202.png",
         pricePerM2: 1300,
-        bullets: ["Estructura de mampostería reforzada", "Paredes de block normado con repello, cernido y pintura", "Techo de madera con lámina de zinc", "Piso de granito y cemento líquido", "Fachada tradicional sin diseño arquitectónico", "Instalaciones ocultas o semi ocultas"]
+        description: "Como sistema constructivo encontramos: mampostería reforzada para un nivel",
+        bullets: [
+          "Estructura: mampostería reforzada para un nivel",
+          "Paredes: block normado con repello y cernido, pintura",
+          "Techo: madera con lámina de zinc sin cielo falso",
+          "Piso: granito, torta de cemento líquido",
+          "Ventanas: metal con balcones",
+          "Puertas: metal",
+          "Servicios: agua, luz, drenajes, cable de TV",
+          "Exterior: fachada tradicional sin diseño arquitectónico",
+          "Instalaciones: ocultas, semi-ocultas"
+        ],
+        sistemasConstructivos: ["mampostería reforzada para un nivel"],
+        recubrimientos: ["block normado con repello y cernido, pintura"],
+        cubiertas: ["madera con lámina de zinc"],
+        pisos: ["granito", "cemento líquido"],
+        puertasVentanas: ["metal con balcones"],
+        servicios: ["agua", "luz", "drenajes", "cable de TV"],
+        diseno: ["fachada tradicional sin diseño arquitectónico"],
+        acceso: ["adoquín", "pavimento"]
       },
+
+      // CATEGORÍA MEDIA - TIPOLOGÍA ALTA
       {
         id: "media-alta-1",
         category: "Media",
-        type: "Alta 1",
-        title: "Categoría Media — Alta 1",
-        img: "https://i.ibb.co/LXxCXPXh/Media-alta-1.png",
-        priceRange: "Q1,300–Q1,700/m²", 
+        type: "Alta",
+        title: "Tipología Alta - Variante 1",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20alta.png",
+        imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20alta.png",
         pricePerM2: 1700,
-        bullets: ["Estructura de mampostería reforzada con columnas para dos niveles", "Paredes de ladrillo sisado visto con pintura", "Techo de losa de concreto armado", "Piso de granito", "Fachada de casas de ladrillo", "Instalaciones ocultas"]
+        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para 2 niveles",
+        bullets: [
+          "Estructura: mampostería reforzada con columnas para 2 niveles",
+          "Paredes: ladrillo sisado visto, pintura",
+          "Techo: losa de concreto armado",
+          "Piso: granito",
+          "Ventanas: metal, madera tratada",
+          "Puertas: madera tratada, metal",
+          "Servicios: agua, luz, drenajes, cable de TV",
+          "Exterior: fachada típica de casas de ladrillo",
+          "Instalaciones: ocultas"
+        ],
+        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
+        recubrimientos: ["ladrillo sisado visto"],
+        acabados: ["pintura"],
+        cubiertas: ["losa de concreto armado"],
+        pisos: ["granito"],
+        puertasVentanas: ["metal", "madera tratada"],
+        servicios: ["agua", "luz", "drenajes", "cable de TV"],
+        diseno: ["fachada típica de casas de ladrillo"],
+        acceso: ["adoquín", "pavimento"]
       },
       {
         id: "media-alta-2",
         category: "Media",
-        type: "Alta 2",
-        title: "Categoría Media — Alta 2",
-        img: "https://i.ibb.co/XxFb5Jw8/Media-alta-2.png",
-        priceRange: "Q1,400–Q1,800/m²",
+        type: "Alta",
+        title: "Tipología Alta - Variante 2",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20alta%202.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20alta%202.png",
         pricePerM2: 1800,
-        bullets: ["Estructura de mampostería reforzada con pines", "Paredes de block normado con repello, alisado y pintura", "Techo metálico con lámina de zinc", "Piso cerámico", "Fachada tipo colonial con balcones", "Instalaciones ocultas"]
+        description: "Como sistema constructivo encontramos: mampostería reforzada con pines para un nivel",
+        bullets: [
+          "Estructura: mampostería reforzada con pines para un nivel",
+          "Paredes: block normado con repello, alisado, pintura",
+          "Techo: costaneras de metal con lámina de zinc, sin cielo falso",
+          "Piso: cerámico",
+          "Ventanas: metal con balcones",
+          "Puertas: metal y madera tratada",
+          "Servicios: luz, agua, drenaje, cable de TV",
+          "Exterior: fachada con diseño tipo colonial",
+          "Instalaciones: ocultas"
+        ],
+        sistemasConstructivos: ["mampostería reforzada con pines para un nivel"],
+        recubrimientos: ["block normado con repello, alisado, pintura"],
+        cubiertas: ["costaneras de metal con lámina de zinc"],
+        pisos: ["cerámico"],
+        puertasVentanas: ["metal con balcones", "madera tratada"],
+        servicios: ["luz", "agua", "drenaje", "cable de TV"],
+        diseno: ["fachada con diseño tipo colonial"],
+        acceso: ["adoquín", "pavimento"]
       },
 
-      
+      // CATEGORÍA ALTA - TIPOLOGÍA BAJA
       {
         id: "alta-baja-1",
-        category: "Alta", 
-        type: "Baja 1",
-        title: "Categoría Alta — Baja 1",
-        img: "https://i.ibb.co/B5TRtNJK/alta-baja-1.png",
-        priceRange: "Q1,400–Q1,700/m²",
+        category: "Alta",
+        type: "Baja",
+        title: "Tipología Baja - Variante 1",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20baja.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipolog%C3%ADa%20baja.png",
         pricePerM2: 1700,
-        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada tipo corredor", "Instalaciones ocultas"]
+        description: "Como sistema constructivo encontramos: columnas y paredes de carga",
+        bullets: [
+          "Estructura: columnas y paredes de carga",
+          "Paredes: repello, alisado, pintura",
+          "Techo: losa de concreto o losa prefabricada",
+          "Piso: cerámico, granito o porcelanato",
+          "Ventanas: ventanas de aluminio o PVC",
+          "Puertas: madera, metal y prefabricadas",
+          "Servicios: agua, luz, drenajes, cable de TV",
+          "Exterior: fachada tipo corredor, pintura",
+          "Instalaciones: ocultas"
+        ],
+        sistemasConstructivos: ["sistema de mampostería reforzada", "combinación de columnas-vigas con sistema de muros de carga", "columnas de concreto reforzado"],
+        recubrimientos: ["block de cantera fabricado sin norma", "block normado"],
+        acabados: ["repello, alisado, pintura"],
+        cubiertas: ["losa de concreto", "lámina en algunas áreas o segundo nivel"],
+        pisos: ["cerámico", "granito", "porcelanato", "laminados"],
+        puertasVentanas: ["madera", "metal", "prefabricadas", "aluminio", "uPVC"],
+        diseno: ["casas con un estudio en su diseño arquitectónico", "casas con jardín o patio", "casas con el baño dentro de la vivienda"],
+        servicios: ["agua potable", "energía eléctrica", "drenajes", "teléfono", "internet", "cable de TV"],
+        acceso: ["adoquín", "pavimento", "asfalto"]
       },
       {
         id: "alta-baja-2",
         category: "Alta",
-        type: "Baja 2",
-        title: "Categoría Alta — Baja 2", 
-        img: "https://i.ibb.co/v6M0W4hJ/alta-baja-2.png",
-        priceRange: "Q1,500–Q1,800/m²",
+        type: "Baja",
+        title: "Tipología Baja - Variante 2",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20baja%202.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20baja%202.png",
         pricePerM2: 1800,
-        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada con acabados y pintura", "Instalaciones ocultas"]
+        description: "Como sistema constructivo encontramos: columnas y paredes de carga",
+        bullets: [
+          "Estructura: columnas y paredes de carga",
+          "Paredes: repello, alisado, pintura",
+          "Techo: losa de concreto o losa prefabricada",
+          "Piso: cerámico, granito o porcelanato",
+          "Ventanas: ventanas de aluminio o PVC",
+          "Puertas: madera, metal y prefabricadas",
+          "Exterior: fachada con acabados y pintura",
+          "Instalaciones: ocultas"
+        ],
+        sistemasConstructivos: ["columnas y paredes de carga"],
+        acabados: ["repello, alisado, pintura"],
+        cubiertas: ["losa de concreto o losa prefabricada"],
+        pisos: ["cerámico, granito o porcelanato"],
+        puertasVentanas: ["aluminio o PVC", "madera, metal y prefabricadas"],
+        diseno: ["fachada con acabados y pintura"],
+        servicios: ["agua", "luz", "drenajes"],
+        acceso: ["adoquín", "pavimento"]
       },
+
+      // CATEGORÍA ALTA - TIPOLOGÍA MEDIA
       {
         id: "alta-media-1",
         category: "Alta",
-        type: "Media 1",
-        title: "Categoría Alta — Media 1",
-        img: "https://i.ibb.co/VcvD4kgQ/alta-media-1.png",
-        priceRange: "Q1,800–Q2,100/m²",
+        type: "Media",
+        title: "Tipología Media - Variante 1",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20media.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20media.png",
         pricePerM2: 2100,
-        bullets: ["Mampostería reforzada con columnas para dos niveles", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con detalles arquitectónicos", "Instalaciones ocultas"]
+        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para dos niveles",
+        bullets: [
+          "Estructura: mampostería reforzada con columnas para dos niveles",
+          "Paredes: block normado con repello, alisado, pintura",
+          "Techo: losa de concreto, losa prefabricada",
+          "Piso: cerámico, granito, porcelanato",
+          "Ventanas: aluminio, uPVC",
+          "Puertas: madera tratada, metal, prefabricadas",
+          "Servicios: agua, luz, drenajes, cable de TV, internet",
+          "Exterior: fachada con detalles arquitectónicos",
+          "Instalaciones: ocultas"
+        ],
+        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
+        recubrimientos: ["block normado con repello, alisado, pintura"],
+        cubiertas: ["losa de concreto", "losa prefabricada"],
+        pisos: ["cerámico", "granito", "porcelanato"],
+        puertasVentanas: ["aluminio", "uPVC", "madera tratada", "metal", "prefabricadas"],
+        servicios: ["agua", "luz", "drenajes", "cable de TV", "internet"],
+        diseno: ["fachada con detalles arquitectónicos"],
+        acceso: ["adoquín", "pavimento"]
       },
       {
         id: "alta-media-2",
         category: "Alta",
-        type: "Media 2", 
-        title: "Categoría Alta — Media 2",
-        img: "https://i.ibb.co/0VcrkTWQ/alta-media-2.png",
-        priceRange: "Q1,900–Q2,200/m²",
+        type: "Media",
+        title: "Tipología Media - Variante 2",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20media%202.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20media%202.png",
         pricePerM2: 2200,
-        bullets: ["Mampostería reforzada con columnas", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con diseño arquitectónico", "Instalaciones ocultas"]
+        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para dos niveles",
+        bullets: [
+          "Estructura: mampostería reforzada con columnas para dos niveles",
+          "Paredes: block normado con repello, alisado, pintura",
+          "Techo: losa de concreto, losa prefabricada",
+          "Piso: cerámico, granito, porcelanato",
+          "Ventanas: aluminio, uPVC",
+          "Puertas: madera tratada, metal, prefabricadas",
+          "Servicios: agua, luz, drenajes, cable de TV, internet",
+          "Exterior: fachada con diseño arquitectónico",
+          "Instalaciones: ocultas"
+        ],
+        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
+        recubrimientos: ["block normado con repello, alisado, pintura"],
+        cubiertas: ["losa de concreto", "losa prefabricada"],
+        pisos: ["cerámico", "granito", "porcelanato"],
+        puertasVentanas: ["aluminio", "uPVC", "madera tratada", "metal", "prefabricadas"],
+        servicios: ["agua", "luz", "drenajes", "cable de TV", "internet"],
+        diseno: ["fachada con diseño arquitectónico"],
+        acceso: ["adoquín", "pavimento"]
+      },
+
+      // CATEGORÍA ALTA - TIPOLOGÍA ALTA
+      {
+        id: "alta-alta-1",
+        category: "Alta",
+        type: "Alta",
+        title: "Tipología Alta - Variante 1",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20alta.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20alta.png",
+        pricePerM2: 2800,
+        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para dos niveles",
+        bullets: [
+          "Estructura: mampostería reforzada con columnas para dos niveles",
+          "Paredes: block normado con repello, alisado, pintura",
+          "Techo: losa de concreto, losa prefabricada, losas inclinadas",
+          "Piso: cerámico, porcelanato",
+          "Ventanas: uPVC, aluminio",
+          "Puertas: madera tratada, metal, prefabricadas",
+          "Servicios: agua, luz, drenajes, cable de TV, internet",
+          "Exterior: fachada con diseño arquitectónico",
+          "Instalaciones: ocultas"
+        ],
+        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
+        recubrimientos: ["block normado con repello, alisado, pintura"],
+        cubiertas: ["losa de concreto", "losa prefabricada", "losas inclinadas"],
+        pisos: ["cerámico", "porcelanato"],
+        puertasVentanas: ["uPVC", "aluminio", "madera tratada", "metal", "prefabricadas"],
+        servicios: ["agua", "luz", "drenajes", "cable de TV", "internet"],
+        diseno: ["fachada con diseño arquitectónico"],
+        acceso: ["adoquín", "pavimento"]
+      },
+      {
+        id: "alta-alta-2",
+        category: "Alta",
+        type: "Alta",
+        title: "Tipología Alta - Variante 2",
+        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20alta%202.png",
+        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20alta%202.png",
+        pricePerM2: 2900,
+        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para dos niveles",
+        bullets: [
+          "Estructura: mampostería reforzada con columnas para dos niveles",
+          "Paredes: block normado con repello, alisado, pintura",
+          "Techo: losa de concreto, losa prefabricada, losas inclinadas",
+          "Piso: cerámico, porcelanato",
+          "Ventanas: uPVC, aluminio",
+          "Puertas: madera tratada, metal, prefabricadas",
+          "Servicios: agua, luz, drenajes, cable de TV, internet",
+          "Exterior: fachada con diseño arquitectónico",
+          "Instalaciones: ocultas"
+        ],
+        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
+        recubrimientos: ["block normado con repello, alisado, pintura"],
+        cubiertas: ["losa de concreto", "losa prefabricada", "losas inclinadas"],
+        pisos: ["cerámico", "porcelanato"],
+        puertasVentanas: ["uPVC", "aluminio", "madera tratada", "metal", "prefabricadas"],
+        servicios: ["agua", "luz", "drenajes", "cable de TV", "internet"],
+        diseno: ["fachada con diseño arquitectónico"],
+        acceso: ["adoquín", "pavimento"]
       }
     ];
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-    
+    // NUEVA FUNCIÓN PARA RENDERIZAR CON PESTAÑAS Y ACORDEONES
+    function __renderTipos(){
+      const tipologias = __getTipos();
+      
+      // Agrupar por categoría y tipo
+      const grouped = tipologias.reduce((acc, tipologia) => {
+        if (!acc[tipologia.category]) {
+          acc[tipologia.category] = {};
+        }
+        if (!acc[tipologia.category][tipologia.type]) {
+          acc[tipologia.category][tipologia.type] = [];
+        }
+        acc[tipologia.category][tipologia.type].push(tipologia);
+        return acc;
+      }, {});
+
+      // Renderizar cada pestaña
+      ['baja', 'media', 'alta'].forEach(categoria => {
+        const tabContent = document.getElementById(`tab-${categoria}`);
+        if (!tabContent) return;
+
+        let html = '';
+        const tipos = grouped[categoria.charAt(0).toUpperCase() + categoria.slice(1)];
+        
+        if (!tipos) {
+          html = '<div style="padding: 40px; text-align: center; color: var(--text-light);"><i class="fas fa-home" style="font-size: 3rem; margin-bottom: 16px;"></i><p>No hay tipologías disponibles para esta categoría</p></div>';
+        } else {
+          // Ordenar tipos: Baja, Media, Alta
+          const tipoOrder = ['Baja', 'Media', 'Alta'];
+          tipoOrder.forEach(tipo => {
+            if (tipos[tipo]) {
+              const rango = RANGOS_PRECIO[categoria.charAt(0).toUpperCase() + categoria.slice(1)]?.[tipo] || { min: 0, max: 0 };
+              const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
+              
+              html += `
+                <div class="typology-accordion">
+                  <button class="typology-accordion-header">
+                    <span>Tipología ${tipo} - ${rangoTexto}</span>
+                    <i class="fas fa-chevron-down typology-accordion-icon"></i>
+                  </button>
+                  <div class="typology-accordion-content">
+                    <div class="typology-variants">
+              `;
+              
+              tipos[tipo].forEach((tipologia, index) => {
+                html += `
+                  <div class="typology-variant" data-id="${tipologia.id}">
+                    <div class="variant-images">
+                      <img class="variant-image" src="${tipologia.img}" alt="${tipologia.title}" onclick="event.stopPropagation(); openImageModal('${tipologia.img}', '${tipologia.title}')">
+                      ${tipologia.imgInterior ? `<img class="variant-image" src="${tipologia.imgInterior}" alt="Interior ${tipologia.title}" onclick="event.stopPropagation(); openImageModal('${tipologia.imgInterior}', 'Interior ${tipologia.title}')">` : ''}
+                    </div>
+                    <div class="variant-content">
+                      <div class="variant-details">
+                        <div class="variant-title">${tipologia.title}</div>
+                        <div class="variant-price">Q${tipologia.pricePerM2.toLocaleString('es-GT')}/m²</div>
+                        
+                        <ul class="variant-features">
+                          ${tipologia.bullets.map(bullet => `<li><i class="fas fa-check"></i>${bullet}</li>`).join('')}
+                        </ul>
+                        
+                        ${tipologia.description ? `
+                          <div class="variant-description">
+                            <strong>Descripción:</strong> ${tipologia.description}
+                          </div>
+                        ` : ''}
+                        
+                        <button class="select-button" onclick="event.stopPropagation(); __selectTipo('${tipologia.id}')">
+                          <i class="fas fa-hand-pointer"></i> Seleccionar esta tipología
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              });
+              
+              html += `
+                    </div>
+                  </div>
+                </div>
+              `;
+            }
+          });
+        }
+        
+        tabContent.innerHTML = html;
+      });
+
+      // Inicializar acordeones
+      initAccordions();
+    }
+
+    function initAccordions() {
+      document.querySelectorAll('.typology-accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+          const accordion = header.parentElement;
+          const content = header.nextElementSibling;
+          
+          // Cerrar otros acordeones en el mismo tab
+          const tab = accordion.closest('.typology-tab-content');
+          tab.querySelectorAll('.typology-accordion').forEach(acc => {
+            if (acc !== accordion) {
+              acc.querySelector('.typology-accordion-header').classList.remove('active');
+              acc.querySelector('.typology-accordion-content').classList.remove('active');
+            }
+          });
+          
+          // Toggle actual
+          header.classList.toggle('active');
+          content.classList.toggle('active');
+        });
+      });
+    }
+
+    function initTabs() {
+      document.querySelectorAll('.typology-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const tabName = tab.getAttribute('data-tab');
+          
+          // Remover active de todas las pestañas y contenidos
+          document.querySelectorAll('.typology-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.typology-tab-content').forEach(c => c.classList.remove('active'));
+          
+          // Activar pestaña y contenido actual
+          tab.classList.add('active');
+          document.getElementById(`tab-${tabName}`).classList.add('active');
+        });
+      });
+    }
+
     function __selectTipo(id) {
       const s = __getTipos().find(z => z.id === id);
       if (!s) return;
-      
       
       const rango = RANGOS_PRECIO[s.category]?.[s.type] || { min: 500, max: 1000 };
       const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
@@ -1771,78 +2497,11 @@
       
       s.pricePerM2 = s.pricePerM2 || rango.max;
       
-      
       if (document.getElementById('resultSection').classList.contains('active')) {
           calculateRealAppraisal();
       }
       
       __closeTypology();
-    }
-
-    
-    function __renderTipos(){
-      const t = __getTipos();
-      const b = t.reduce((a, x) => {
-        ((a[x.category] ??= []).push(x));
-        return a;
-      }, {});
-      
-      for(const k in b) b[k].sort((a, c) => a.type.localeCompare(c.type));
-      
-      const d = document.getElementById('modalCatalogContent');
-      if(!d) return;
-      
-      let h = '';
-      for(const c of ['Baja','Media','Alta']){
-        if(!b[c]) continue;
-        h += `<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología - Ver rangos de precio</div></div></div></div>`;
-        
-        for(const it of b[c]){
-          const rango = RANGOS_PRECIO[it.category]?.[it.type] || { min: 500, max: 1000 };
-          const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
-          
-          h += `
-          <div class="catalog-item-modal" data-id="${it.id}">
-            <div class="catalog-item-content">
-              <img class="catalog-image-modal" 
-                   src="${it.img}" 
-                   alt="${it.title}" 
-                   onclick="event.stopPropagation(); openImageModal('${it.img}', '${it.title}')"
-                   style="cursor: pointer;">
-              <div class="catalog-text-modal">
-                <div class="catalog-type-modal">${it.type}</div>
-                <div class="catalog-title-modal">${it.title}</div>
-                <div class="catalog-price-modal" style="color: var(--primary); font-weight: 600;">${rangoTexto}</div>
-                <div class="catalog-description-modal">
-                  <ul class="catalog-features-modal">${(it.bullets||[]).map(m => `<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul>
-                </div>
-                <button class="select-button" data-select="${it.id}">
-                  <i class="fas fa-hand-pointer"></i> Seleccionar esta tipología
-                </button>
-              </div>
-            </div>
-          </div>`;
-        }
-      }
-      
-      d.innerHTML = h;
-      
-      // Eventos existentes...
-      d.querySelectorAll('.catalog-item-modal').forEach(c => {
-        const id = c.getAttribute('data-id');
-        if(!id) return;
-        c.addEventListener('click', e => {
-          if(e.target.closest('button') || e.target.classList.contains('catalog-image-modal')) return;
-          __selectTipo(id);
-        });
-      });
-      
-      d.querySelectorAll('[data-select]').forEach(b => {
-        b.addEventListener('click', e => {
-          e.stopPropagation();
-          __selectTipo(b.getAttribute('data-select'));
-        });
-      });
     }
 
     function __openTypology(){
@@ -1852,6 +2511,8 @@
       m.classList.add('active');
       t?.classList.add('active');
       __renderTipos();
+      initTabs();
+      
       const hb = e => {
         if(e.target === m){
           __closeTypology();
@@ -1874,7 +2535,7 @@
     window.__openTypology = __openTypology; 
     window.__closeTypology = __closeTypology;
 
-    // Funciones para el visor de imágenes
+    // Funciones para el visor de imágenes (mantenidas)
     function openImageModal(imageSrc, imageAlt) {
       const modal = document.getElementById('image-viewer-modal');
       const fullSizeImage = document.getElementById('full-size-image');
@@ -1883,8 +2544,6 @@
         fullSizeImage.src = imageSrc;
         fullSizeImage.alt = imageAlt || 'Imagen del catálogo';
         modal.classList.add('active');
-        
-        // Prevenir scroll del body cuando el modal está abierto
         document.body.style.overflow = 'hidden';
       }
     }
@@ -1893,7 +2552,6 @@
       const modal = document.getElementById('image-viewer-modal');
       if (modal) {
         modal.classList.remove('active');
-        // Restaurar scroll del body
         document.body.style.overflow = '';
       }
     }
@@ -1908,7 +2566,6 @@
         });
       }
       
-      // Cerrar con tecla ESC
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
           closeImageViewer();
@@ -1916,16 +2573,14 @@
       });
     }
 
-    // Funcionalidad para subir imágenes
+    // Funcionalidad para subir imágenes (mantenida)
     function initImageUpload() {
       const uploadArea = document.getElementById('upload-area');
       const fileInput = document.getElementById('image-upload');
       const previewContainer = document.getElementById('image-preview');
 
-      // Click en área de upload
       uploadArea.addEventListener('click', () => fileInput.click());
 
-      // Drag and drop
       uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.classList.add('dragover');
@@ -1941,7 +2596,6 @@
         handleFiles(e.dataTransfer.files);
       });
 
-      // Selección de archivos
       fileInput.addEventListener('change', (e) => {
         handleFiles(e.target.files);
       });
@@ -1977,9 +2631,12 @@
         reader.readAsDataURL(file);
       });
     }
+
+    // EL RESTO DEL CÓDIGO JAVASCRIPT ORIGINAL SE MANTIENE INTACTO
+    // [Todo el resto del código JavaScript original permanece igual...]
   </script>
 
-  
+  <!-- EL RESTO DEL CÓDIGO ORIGINAL SE MANTIENE COMPLETAMENTE -->
   <script>
     function formatMoneyGTQ(v){
       return new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(Number(v||0));
