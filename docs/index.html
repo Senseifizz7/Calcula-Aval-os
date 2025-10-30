@@ -1573,377 +1573,176 @@
             'Baja 1': { min: 1400, max: 1700 },
             'Baja 2': { min: 1500, max: 1800 },
             'Media 1': { min: 1800, max: 2100 },
-            'Media 2': { min: 1900, max: 2200 },
-            'Alta 1': { min: 2300, max: 2800 },
-            'Alta 2': { min: 2500, max: 2900 }
+            'Media 2': { min: 1900, max: 2200 }
         }
     };
 
    
     const __FALLBACK_TIPOLOGIAS = [
-      // ========== CATEGORÍA BAJA ==========
+      
       {
         id: "baja-baja-1",
-        category: "Baja",
+        category: "Baja", 
         type: "Baja 1",
         title: "Categoría Baja — Baja 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20baja.png",
+        img: "https://i.ibb.co/nMLmvDzW/Baja-1.png",
         priceRange: "Q250–Q400/m²",
         pricePerM2: 400,
-        bullets: [
-          "Estructura: sistema de adobe, madera",
-          "Paredes: adobe recubierto con nylon", 
-          "Techos: teja de barro sin cielo falso",
-          "Piso: tierra con cemento",
-          "Ventanas: madera sin tratar",
-          "Puertas: madera sin tratar",
-          "Servicios: luz, alumbrado público",
-          "Exterior: fachada con material expuesto",
-          "Instalaciones: expuestas"
-        ]
+        bullets: ["Estructura de adobe y madera", "Paredes con nylon", "Techo de teja de barro sin cielo falso", "Piso de tierra con cemento", "Ventanas y puertas de madera sin tratar"]
       },
       {
         id: "baja-baja-2",
         category: "Baja",
         type: "Baja 2", 
         title: "Categoría Baja — Baja 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20baja%202.png",
+        img: "https://i.ibb.co/WNBMdyjp/Baja-2.png",
         priceRange: "Q250–Q500/m²",
         pricePerM2: 500,
-        bullets: [
-          "Estructura: sistema de adobe, columnas de madera",
-          "Paredes: adobe, madera sin tratar, cartón",
-          "Techos: teja de barro, lámina de zinc sin cielo falso",
-          "Piso: tierra con cemento",
-          "Ventanas: madera sin tratar",
-          "Puertas: madera sin tratar",
-          "Servicios: luz, alumbrado público",
-          "Exterior: fachada sin mantenimiento",
-          "Instalaciones: expuestas"
-        ]
+        bullets: ["Estructura de adobe con columnas de madera", "Paredes de adobe, madera sin tratar y cartón", "Techo de teja de barro y lámina de zinc", "Piso de tierra con cemento", "Fachada sin mantenimiento"]
       },
       {
         id: "baja-media-1",
         category: "Baja",
         type: "Media 1",
         title: "Categoría Baja — Media 1", 
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20media.png",
+        img: "https://i.ibb.co/hzsFrgD/Media-1.png",
         priceRange: "Q650–Q750/m²",
         pricePerM2: 750,
-        bullets: [
-          "Estructura: sistema de adobe, block con pines fundidos",
-          "Paredes: adobe con repello",
-          "Techos: lámina de zinc con cielo falso de machimbre",
-          "Piso: torta de cemento líquido, cerámico",
-          "Ventanas: madera sin tratar",
-          "Puertas: madera sin tratar",
-          "Servicios: agua, luz, alumbrado público",
-          "Exterior: fachada tipo corredor",
-          "Instalaciones: expuestas"
-        ]
+        bullets: ["Estructura de adobe y block con pines fundidos", "Paredes con repello", "Techo de lámina de zinc con cielo falso de machimbre", "Piso de cemento líquido y cerámico", "Fachada tipo corredor"]
       },
       {
         id: "baja-media-2",
         category: "Baja",
         type: "Media 2",
         title: "Categoría Baja — Media 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20media%202.png",
+        img: "https://i.ibb.co/pjD7yPwC/Media-2.png",
         priceRange: "Q650–Q850/m²",
         pricePerM2: 850,
-        bullets: [
-          "Estructura: mampostería con columnas",
-          "Paredes: block de cantera",
-          "Techos: lámina de zinc",
-          "Piso: torta de cemento líquido",
-          "Ventanas: madera sin tratar",
-          "Puertas: metal y madera sin tratar",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada sin ventanas ni diseño",
-          "Instalaciones: expuestas"
-        ]
+        bullets: ["Estructura de mampostería con columnas", "Paredes de block de cantera", "Techo de lámina de zinc", "Piso de cemento líquido", "Fachada sin diseño con ventanas y materiales expuestos"]
       },
       {
         id: "baja-alta-1",
         category: "Baja",
         type: "Alta 1",
         title: "Categoría Baja — Alta 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20alta.png",
+        img: "https://i.ibb.co/mrV6y2W7/Alta-1.png",
         priceRange: "Q850–Q950/m²",
         pricePerM2: 950,
-        bullets: [
-          "Estructura: mampostería con pines fundidos a 0.60 metros",
-          "Paredes: block de cantera con pintura",
-          "Techos: lámina troquelada",
-          "Piso: torta de cemento líquido",
-          "Ventanas: metal, madera sin tratar",
-          "Puertas: metal, madera sin tratar",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada a dos aguas",
-          "Instalaciones: ocultas"
-        ]
+        bullets: ["Estructura de mampostería con pines fundidos a 0.60 m", "Paredes de block de cantera con pintura", "Techo de lámina troquelada", "Piso de cemento líquido", "Ventanas y puertas de metal o madera sin tratar", "Instalaciones ocultas"]
       },
       {
         id: "baja-alta-2",
         category: "Baja", 
         type: "Alta 2",
         title: "Categoría Baja — Alta 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20alta%202.png",
+        img: "https://i.ibb.co/B5cwkYTd/Alta-2.png",
         priceRange: "Q850–Q1,000/m²",
         pricePerM2: 1000,
-        bullets: [
-          "Estructura: sistema de adobe, mampostería reforzada",
-          "Paredes: adobe con repello y cernido, block normado",
-          "Techos: teja de barro, lámina de zinc, cielo falso de madera",
-          "Piso: torta de cemento líquido, granito",
-          "Ventanas: madera sin tratar, metal, uPVC",
-          "Puertas: madera sin tratar, metal",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada tipo corredor",
-          "Instalaciones: ocultas, expuestas"
-        ]
+        bullets: ["Estructura de adobe y mampostería reforzada", "Paredes de adobe con repello, cernido y block normado", "Techo de teja de barro y lámina de zinc con cielo falso de madera", "Piso de granito y cemento líquido", "Instalaciones ocultas o expuestas"]
       },
 
-      // ========== CATEGORÍA MEDIA ==========
+      
       {
         id: "media-baja-1",
         category: "Media",
         type: "Baja 1", 
         title: "Categoría Media — Baja 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20baja.png",
+        img: "https://i.ibb.co/YB1Z3htk/Media-baja-1.png",
         priceRange: "Q800–Q1,100/m²",
         pricePerM2: 1100,
-        bullets: [
-          "Estructura: mampostería con block con pines fundidos",
-          "Paredes: block con repello y cernido",
-          "Techo: lámina de zinc sin cielo falso",
-          "Piso: torta de cemento líquido",
-          "Ventanas: madera tratada",
-          "Puertas: madera tratada, metal",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada tipo corredor",
-          "Instalaciones: sobrepuestas"
-        ]
+        bullets: ["Estructura de mampostería con block y pines fundidos", "Paredes de block con repello y cernido", "Techo de lámina de zinc sin cielo falso", "Piso de cemento líquido", "Fachada tipo corredor"]
       },
       {
         id: "media-baja-2",
         category: "Media",
         type: "Baja 2",
         title: "Categoría Media — Baja 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20baja%202.png",
+        img: "https://i.ibb.co/PzrjJL7L/Media-baja-2.png",
         priceRange: "Q800–Q1,100/m²", 
         pricePerM2: 1100,
-        bullets: [
-          "Estructura: mampostería con columnas para un nivel",
-          "Paredes: block sisado visto, partes con repello y pintura",
-          "Techo: tejas de barro, lámina de zinc con cielo falso de madera",
-          "Piso: torta de cemento líquido",
-          "Ventanas: metal, madera tratada",
-          "Puertas: metal, madera tratada",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada sin diseño arquitectónico",
-          "Instalaciones: sobrepuestas"
-        ]
+        bullets: ["Estructura de mampostería con columnas para un nivel", "Paredes de block sizado visto con repello y pintura parcial", "Techo de tejas de barro y lámina de zinc con cielo falso de madera", "Piso de cemento líquido", "Fachada sin diseño arquitectónico"]
       },
       {
         id: "media-media-1",
         category: "Media",
         type: "Media 1",
         title: "Categoría Media — Media 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20media.png",
+        img: "https://i.ibb.co/35PjQqbk/Media-media-1.png",
         priceRange: "Q900–Q1,200/m²",
         pricePerM2: 1200,
-        bullets: [
-          "Estructura: mampostería reforzada para un nivel",
-          "Paredes: block con repello y cernido",
-          "Techo: estructura de metal con lámina troquelada",
-          "Piso: torta de cemento líquido",
-          "Ventanas: metal",
-          "Puertas: metal",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada tipo corredor interno",
-          "Instalaciones: sobrepuestas o semi ocultas"
-        ]
+        bullets: ["Estructura de mampostería reforzada para un nivel", "Paredes de block con repello y cernido", "Techo metálico con lámina troquelada", "Piso de cemento líquido", "Fachada tipo corredor interno", "Instalaciones semi ocultas"]
       },
       {
         id: "media-media-2",
         category: "Media",
         type: "Media 2",
         title: "Categoría Media — Media 2", 
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20media%202.png",
+        img: "https://i.ibb.co/W8cwVB6/Media-media-2.png",
         priceRange: "Q1,000–Q1,300/m²",
         pricePerM2: 1300,
-        bullets: [
-          "Estructura: mampostería reforzada para un nivel",
-          "Paredes: block normado con repello y cernido, pintura",
-          "Techo: madera con lámina de zinc sin cielo falso",
-          "Piso: granito, torta de cemento líquido",
-          "Ventanas: metal con balcones",
-          "Puertas: metal",
-          "Servicios: agua, luz, drenajes, cable de TV",
-          "Exterior: fachada tradicional sin diseño arquitectónico",
-          "Instalaciones: ocultas, semi-ocultas"
-        ]
+        bullets: ["Estructura de mampostería reforzada", "Paredes de block normado con repello, cernido y pintura", "Techo de madera con lámina de zinc", "Piso de granito y cemento líquido", "Fachada tradicional sin diseño arquitectónico", "Instalaciones ocultas o semi ocultas"]
       },
       {
         id: "media-alta-1",
         category: "Media",
         type: "Alta 1",
         title: "Categoría Media — Alta 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20alta.png",
+        img: "https://i.ibb.co/LXxCXPXh/Media-alta-1.png",
         priceRange: "Q1,300–Q1,700/m²", 
         pricePerM2: 1700,
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para dos niveles",
-          "Paredes: ladrillo sisado visto, pintura",
-          "Techo: losa de concreto armado",
-          "Piso: granito",
-          "Ventanas: metal, madera tratada",
-          "Puertas: madera tratada, metal",
-          "Servicios: agua, luz, drenajes, cable de TV",
-          "Exterior: fachada típica de casas de ladrillo",
-          "Instalaciones: ocultas"
-        ]
+        bullets: ["Estructura de mampostería reforzada con columnas para dos niveles", "Paredes de ladrillo sisado visto con pintura", "Techo de losa de concreto armado", "Piso de granito", "Fachada de casas de ladrillo", "Instalaciones ocultas"]
       },
       {
         id: "media-alta-2",
         category: "Media",
         type: "Alta 2",
         title: "Categoría Media — Alta 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20alta%202.png",
+        img: "https://i.ibb.co/XxFb5Jw8/Media-alta-2.png",
         priceRange: "Q1,400–Q1,800/m²",
         pricePerM2: 1800,
-        bullets: [
-          "Estructura: mampostería reforzada con pines para un nivel",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: costaneras de metal con lámina de zinc, sin cielo falso",
-          "Piso: cerámico",
-          "Ventanas: metal con balcones",
-          "Puertas: metal y madera tratada",
-          "Servicios: luz, agua, drenaje, cable de TV",
-          "Exterior: fachada con diseño tipo colonial",
-          "Instalaciones: ocultas"
-        ]
+        bullets: ["Estructura de mampostería reforzada con pines", "Paredes de block normado con repello, alisado y pintura", "Techo metálico con lámina de zinc", "Piso cerámico", "Fachada tipo colonial con balcones", "Instalaciones ocultas"]
       },
 
-      // ========== CATEGORÍA ALTA ==========
+      
       {
         id: "alta-baja-1",
         category: "Alta", 
         type: "Baja 1",
         title: "Categoría Alta — Baja 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20baja.png",
+        img: "https://i.ibb.co/B5TRtNJK/alta-baja-1.png",
         priceRange: "Q1,400–Q1,700/m²",
         pricePerM2: 1700,
-        bullets: [
-          "Estructura: columnas y paredes de carga",
-          "Paredes: repello, alisado, pintura",
-          "Techo: losa de concreto o losa prefabricada",
-          "Piso: cerámico, granito o porcelanato",
-          "Ventanas: ventanas de aluminio o PVC",
-          "Puertas: madera, metal y prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV",
-          "Exterior: fachada tipo corredor, pintura",
-          "Instalaciones: ocultas"
-        ]
+        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada tipo corredor", "Instalaciones ocultas"]
       },
       {
         id: "alta-baja-2",
         category: "Alta",
         type: "Baja 2",
         title: "Categoría Alta — Baja 2", 
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20baja%202.png",
+        img: "https://i.ibb.co/v6M0W4hJ/alta-baja-2.png",
         priceRange: "Q1,500–Q1,800/m²",
         pricePerM2: 1800,
-        bullets: [
-          "Estructura: columnas y paredes de carga",
-          "Paredes: repello, alisado, pintura",
-          "Techo: losa de concreto o losa prefabricada",
-          "Piso: cerámico, granito o porcelanato",
-          "Ventanas: ventanas de aluminio o PVC",
-          "Puertas: madera, metal y prefabricadas",
-          "Exterior: fachada con acabados y pintura",
-          "Instalaciones: ocultas"
-        ]
+        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada con acabados y pintura", "Instalaciones ocultas"]
       },
       {
         id: "alta-media-1",
         category: "Alta",
         type: "Media 1",
         title: "Categoría Alta — Media 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20media.png",
+        img: "https://i.ibb.co/VcvD4kgQ/alta-media-1.png",
         priceRange: "Q1,800–Q2,100/m²",
         pricePerM2: 2100,
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para dos niveles",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: losa de concreto, losa prefabricada",
-          "Piso: cerámico, granito, porcelanato",
-          "Ventanas: aluminio, uPVC",
-          "Puertas: madera tratada, metal, prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV, internet",
-          "Exterior: fachada con detalles arquitectónicos",
-          "Instalaciones: ocultas"
-        ]
+        bullets: ["Mampostería reforzada con columnas para dos niveles", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con detalles arquitectónicos", "Instalaciones ocultas"]
       },
       {
         id: "alta-media-2",
         category: "Alta",
         type: "Media 2", 
         title: "Categoría Alta — Media 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20media%202.png",
+        img: "https://i.ibb.co/0VcrkTWQ/alta-media-2.png",
         priceRange: "Q1,900–Q2,200/m²",
         pricePerM2: 2200,
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para dos niveles",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: losa de concreto, losa prefabricada",
-          "Piso: cerámico, granito, porcelanato",
-          "Ventanas: aluminio, uPVC",
-          "Puertas: madera tratada, metal, prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV, internet",
-          "Exterior: fachada con diseño arquitectónico",
-          "Instalaciones: ocultas"
-        ]
-      },
-      {
-        id: "alta-alta-1",
-        category: "Alta",
-        type: "Alta 1",
-        title: "Categoría Alta — Alta 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20alta.png",
-        priceRange: "Q2,300–Q2,800/m²",
-        pricePerM2: 2800,
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para dos niveles",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: losa de concreto, losa prefabricada, losas inclinadas",
-          "Piso: cerámico, porcelanato",
-          "Ventanas: uPVC, aluminio",
-          "Puertas: madera tratada, metal, prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV, internet",
-          "Exterior: fachada con diseño arquitectónico",
-          "Instalaciones: ocultas"
-        ]
-      },
-      {
-        id: "alta-alta-2",
-        category: "Alta",
-        type: "Alta 2",
-        title: "Categoría Alta — Alta 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20alta%202.png",
-        priceRange: "Q2,500–Q2,900/m²",
-        pricePerM2: 2900,
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para dos niveles",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: losa de concreto, losa prefabricada, losas inclinadas",
-          "Piso: cerámico, porcelanato",
-          "Ventanas: uPVC, aluminio",
-          "Puertas: madera tratada, metal, prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV, internet",
-          "Exterior: fachada con diseño arquitectónico",
-          "Instalaciones: ocultas"
-        ]
+        bullets: ["Mampostería reforzada con columnas", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con diseño arquitectónico", "Instalaciones ocultas"]
       }
     ];
 
