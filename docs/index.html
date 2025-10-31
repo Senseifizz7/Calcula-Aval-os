@@ -1773,7 +1773,7 @@
       if (e.target === this) closeModal('my-appraisals-modal');
     });
 
-    // NUEVAS TIPOLOGÍAS COMPLETAS
+    // NUEVAS TIPOLOGÍAS COMPLETAS - ACTUALIZADAS CON LA INFORMACIÓN PROPORCIONADA
     const RANGOS_PRECIO = {
         'Baja': {
             'Baja': { min: 250, max: 500 },
@@ -1793,7 +1793,7 @@
     };
 
     const __FALLBACK_TIPOLOGIAS = [
-      // CATEGORÍA BAJA - TIPOLOGÍA BAJA
+      // CATEGORÍA BAJA - TIPOLOGÍA BAJA - VARIANTE 1
       {
         id: "baja-baja-1",
         category: "Baja",
@@ -1812,7 +1812,8 @@
           "Puertas: madera sin tratar",
           "Servicios: luz, alumbrado público",
           "Exterior: fachada con material expuesto",
-          "Instalaciones: expuestas"
+          "Instalaciones: expuestas",
+          "Rango de precios: Q250.00/m² a Q400.00/m²"
         ],
         sistemasConstructivos: ["estructura de madera", "muro de block o adobe de 1.00 metro de alto con estructura de madera"],
         recubrimientos: ["adobe", "block de cantera sin norma de construcción", "madera sin tratar"],
@@ -1824,6 +1825,7 @@
         servicios: ["agua potable", "energía eléctrica"],
         acceso: ["terracería (vehicular o vecinal)"]
       },
+      // CATEGORÍA BAJA - TIPOLOGÍA BAJA - VARIANTE 2
       {
         id: "baja-baja-2",
         category: "Baja",
@@ -1832,7 +1834,7 @@
         img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20baja%202.png",
         imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja%202.png",
         pricePerM2: 500,
-        description: "Como sistema constructivo encontramos: estructura de adobe, columnas de madera",
+        description: "Como sistema constructivo encontramos: sistema de adobe, columnas de madera",
         bullets: [
           "Estructura: sistema de adobe, columnas de madera",
           "Paredes: adobe, madera sin tratar, cartón",
@@ -1842,7 +1844,8 @@
           "Puertas: madera sin tratar",
           "Servicios: luz, alumbrado público",
           "Exterior: fachada sin mantenimiento",
-          "Instalaciones: expuestas"
+          "Instalaciones: expuestas",
+          "Rango de precios: Q250.00/m² a Q500.00/m²"
         ],
         sistemasConstructivos: ["estructura de madera", "muro de block o adobe de 1.00 metro de alto, resto estructura de madera"],
         recubrimientos: ["adobe", "block de cantera sin norma de construcción"],
@@ -1855,7 +1858,7 @@
         acceso: ["terracería (vehicular o vecinal)", "adoquín", "carrileras de concreto (vehicular o vecinal)"]
       },
 
-      // CATEGORÍA BAJA - TIPOLOGÍA MEDIA
+      // CATEGORÍA BAJA - TIPOLOGÍA MEDIA - VARIANTE 1
       {
         id: "baja-media-1",
         category: "Baja",
@@ -1874,7 +1877,8 @@
           "Puertas: madera sin tratar",
           "Servicios: agua, luz, alumbrado público",
           "Exterior: fachada tipo corredor",
-          "Instalaciones: expuestas"
+          "Instalaciones: expuestas",
+          "Rango de precios: Q650.00/m² a Q750.00/m²"
         ],
         sistemasConstructivos: ["estructura de madera", "muro de block o adobe de 1.00 metro de alto, resto estructura de madera", "mampostería con sistema pinedo", "mampostería con columnas para un nivel"],
         recubrimientos: ["adobe", "block de cantera sin norma de construcción"],
@@ -1886,6 +1890,7 @@
         servicios: ["agua potable", "energía eléctrica", "alumbrado público"],
         acceso: ["terracería (vehicular o vecinal)", "adoquín", "carrileras de concreto (vehicular o vecinal)"]
       },
+      // CATEGORÍA BAJA - TIPOLOGÍA MEDIA - VARIANTE 2
       {
         id: "baja-media-2",
         category: "Baja",
@@ -1904,7 +1909,8 @@
           "Puertas: metal y madera sin tratar",
           "Servicios: agua, luz, drenajes",
           "Exterior: fachada sin ventanas ni diseño",
-          "Instalaciones: expuestas"
+          "Instalaciones: expuestas",
+          "Rango de precios: Q650.00/m² a Q850.00/m²"
         ],
         sistemasConstructivos: ["mampostería con columnas para un nivel"],
         recubrimientos: ["block de cantera"],
@@ -1917,7 +1923,7 @@
         acceso: ["terracería"]
       },
 
-      // CATEGORÍA BAJA - TIPOLOGÍA ALTA
+      // CATEGORÍA BAJA - TIPOLOGÍA ALTA - VARIANTE 1
       {
         id: "baja-alta-1",
         category: "Baja",
@@ -1936,7 +1942,8 @@
           "Puertas: metal, madera sin tratar",
           "Servicios: agua, luz, drenajes",
           "Exterior: fachada a dos aguas",
-          "Instalaciones: ocultas"
+          "Instalaciones: ocultas",
+          "Rango de precios: Q850.00/m² a Q950.00/m²"
         ],
         sistemasConstructivos: ["mampostería con sistema estructural pineado a cada 0.60 metros"],
         recubrimientos: ["block de cantera sin norma de construcción"],
@@ -1948,6 +1955,7 @@
         servicios: ["agua", "luz", "drenajes"],
         acceso: ["terracería"]
       },
+      // CATEGORÍA BAJA - TIPOLOGÍA ALTA - VARIANTE 2
       {
         id: "baja-alta-2",
         category: "Baja",
@@ -1966,7 +1974,8 @@
           "Puertas: madera sin tratar, metal",
           "Servicios: agua, luz, drenajes",
           "Exterior: fachada tipo corredor",
-          "Instalaciones: ocultas, expuestas"
+          "Instalaciones: ocultas, expuestas",
+          "Rango de precios: Q850.00/m² a Q1,000.00/m²"
         ],
         sistemasConstructivos: ["sistema de adobe", "mampostería reforzada"],
         recubrimientos: ["adobe", "block normado estructuralmente para la construcción"],
@@ -1980,7 +1989,7 @@
         acceso: ["terracería", "adoquín"]
       },
 
-      // CATEGORÍA MEDIA - TIPOLOGÍA BAJA
+      // CATEGORÍA MEDIA - TIPOLOGÍA BAJA - VARIANTE 1
       {
         id: "media-baja-1",
         category: "Media",
@@ -1999,7 +2008,8 @@
           "Puertas: madera tratada, metal",
           "Servicios: agua, luz, drenajes",
           "Exterior: fachada tipo corredor",
-          "Instalaciones: sobrepuestas"
+          "Instalaciones: sobrepuestas",
+          "Rango de precios: Q800.00/m² a Q1,100.00/m²"
         ],
         sistemasConstructivos: ["sistema de mampostería reforzada", "sistema de block pineado a cada 60 centímetros", "algunas reforzadas para segundo nivel"],
         recubrimientos: ["block de cantera fabricado sin norma", "block normado"],
@@ -2011,6 +2021,7 @@
         servicios: ["agua potable", "energía eléctrica", "drenajes"],
         acceso: ["adoquín", "pavimento", "asfalto"]
       },
+      // CATEGORÍA MEDIA - TIPOLOGÍA BAJA - VARIANTE 2
       {
         id: "media-baja-2",
         category: "Media",
@@ -2029,7 +2040,8 @@
           "Puertas: metal, madera tratada",
           "Servicios: agua, luz, drenajes",
           "Exterior: fachada sin diseño arquitectónico",
-          "Instalaciones: sobrepuestas"
+          "Instalaciones: sobrepuestas",
+          "Rango de precios: Q800.00/m² a Q1,100.00/m²"
         ],
         sistemasConstructivos: ["mampostería con columnas para un nivel"],
         recubrimientos: ["block sisado visto"],
@@ -2043,7 +2055,7 @@
         acceso: ["adoquín", "pavimento"]
       },
 
-      // CATEGORÍA MEDIA - TIPOLOGÍA MEDIA
+      // CATEGORÍA MEDIA - TIPOLOGÍA MEDIA - VARIANTE 1
       {
         id: "media-media-1",
         category: "Media",
@@ -2062,7 +2074,8 @@
           "Puertas: metal",
           "Servicios: agua, luz, drenajes",
           "Exterior: fachada tipo corredor interno",
-          "Instalaciones: sobrepuestas o semi ocultas"
+          "Instalaciones: sobrepuestas o semi ocultas",
+          "Rango de precios: Q900.00/m² a Q1,200.00/m²"
         ],
         sistemasConstructivos: ["mampostería reforzada para un nivel"],
         recubrimientos: ["block con repello y cernido"],
@@ -2073,6 +2086,7 @@
         servicios: ["agua", "luz", "drenajes"],
         acceso: ["adoquín", "pavimento"]
       },
+      // CATEGORÍA MEDIA - TIPOLOGÍA MEDIA - VARIANTE 2
       {
         id: "media-media-2",
         category: "Media",
@@ -2091,7 +2105,8 @@
           "Puertas: metal",
           "Servicios: agua, luz, drenajes, cable de TV",
           "Exterior: fachada tradicional sin diseño arquitectónico",
-          "Instalaciones: ocultas, semi-ocultas"
+          "Instalaciones: ocultas, semi-ocultas",
+          "Rango de precios: Q1,000.00/m² a Q1,300.00/m²"
         ],
         sistemasConstructivos: ["mampostería reforzada para un nivel"],
         recubrimientos: ["block normado con repello y cernido, pintura"],
@@ -2103,7 +2118,7 @@
         acceso: ["adoquín", "pavimento"]
       },
 
-      // CATEGORÍA MEDIA - TIPOLOGÍA ALTA
+      // CATEGORÍA MEDIA - TIPOLOGÍA ALTA - VARIANTE 1
       {
         id: "media-alta-1",
         category: "Media",
@@ -2122,7 +2137,8 @@
           "Puertas: madera tratada, metal",
           "Servicios: agua, luz, drenajes, cable de TV",
           "Exterior: fachada típica de casas de ladrillo",
-          "Instalaciones: ocultas"
+          "Instalaciones: ocultas",
+          "Rango de precios: Q1,300.00/m² a Q1,700.00/m²"
         ],
         sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
         recubrimientos: ["ladrillo sisado visto"],
@@ -2134,6 +2150,7 @@
         diseno: ["fachada típica de casas de ladrillo"],
         acceso: ["adoquín", "pavimento"]
       },
+      // CATEGORÍA MEDIA - TIPOLOGÍA ALTA - VARIANTE 2
       {
         id: "media-alta-2",
         category: "Media",
@@ -2152,7 +2169,8 @@
           "Puertas: metal y madera tratada",
           "Servicios: luz, agua, drenaje, cable de TV",
           "Exterior: fachada con diseño tipo colonial",
-          "Instalaciones: ocultas"
+          "Instalaciones: ocultas",
+          "Rango de precios: Q1,400.00/m² a Q1,800.00/m²"
         ],
         sistemasConstructivos: ["mampostería reforzada con pines para un nivel"],
         recubrimientos: ["block normado con repello, alisado, pintura"],
@@ -2164,7 +2182,7 @@
         acceso: ["adoquín", "pavimento"]
       },
 
-      // CATEGORÍA ALTA - TIPOLOGÍA BAJA
+      // CATEGORÍA ALTA - TIPOLOGÍA BAJA - VARIANTE 1
       {
         id: "alta-baja-1",
         category: "Alta",
@@ -2183,7 +2201,8 @@
           "Puertas: madera, metal y prefabricadas",
           "Servicios: agua, luz, drenajes, cable de TV",
           "Exterior: fachada tipo corredor, pintura",
-          "Instalaciones: ocultas"
+          "Instalaciones: ocultas",
+          "Rango de precios: Q1,400.00/m² a Q1,700.00/m²"
         ],
         sistemasConstructivos: ["sistema de mampostería reforzada", "combinación de columnas-vigas con sistema de muros de carga", "columnas de concreto reforzado"],
         recubrimientos: ["block de cantera fabricado sin norma", "block normado"],
@@ -2195,6 +2214,7 @@
         servicios: ["agua potable", "energía eléctrica", "drenajes", "teléfono", "internet", "cable de TV"],
         acceso: ["adoquín", "pavimento", "asfalto"]
       },
+      // CATEGORÍA ALTA - TIPOLOGÍA BAJA - VARIANTE 2
       {
         id: "alta-baja-2",
         category: "Alta",
@@ -2212,7 +2232,8 @@
           "Ventanas: ventanas de aluminio o PVC",
           "Puertas: madera, metal y prefabricadas",
           "Exterior: fachada con acabados y pintura",
-          "Instalaciones: ocultas"
+          "Instalaciones: ocultas",
+          "Rango de precios: Q1,500.00/m² a Q1,800.00/m²"
         ],
         sistemasConstructivos: ["columnas y paredes de carga"],
         acabados: ["repello, alisado, pintura"],
@@ -2224,7 +2245,7 @@
         acceso: ["adoquín", "pavimento"]
       },
 
-      // CATEGORÍA ALTA - TIPOLOGÍA MEDIA
+      // CATEGORÍA ALTA - TIPOLOGÍA MEDIA - VARIANTE 1
       {
         id: "alta-media-1",
         category: "Alta",
@@ -2243,7 +2264,8 @@
           "Puertas: madera tratada, metal, prefabricadas",
           "Servicios: agua, luz, drenajes, cable de TV, internet",
           "Exterior: fachada con detalles arquitectónicos",
-          "Instalaciones: ocultas"
+          "Instalaciones: ocultas",
+          "Rango de precios: Q1,800.00/m² a Q2,100.00/m²"
         ],
         sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
         recubrimientos: ["block normado con repello, alisado, pintura"],
@@ -2254,6 +2276,7 @@
         diseno: ["fachada con detalles arquitectónicos"],
         acceso: ["adoquín", "pavimento"]
       },
+      // CATEGORÍA ALTA - TIPOLOGÍA MEDIA - VARIANTE 2
       {
         id: "alta-media-2",
         category: "Alta",
@@ -2272,7 +2295,8 @@
           "Puertas: madera tratada, metal, prefabricadas",
           "Servicios: agua, luz, drenajes, cable de TV, internet",
           "Exterior: fachada con diseño arquitectónico",
-          "Instalaciones: ocultas"
+          "Instalaciones: ocultas",
+          "Rango de precios: Q1,900.00/m² a Q2,200.00/m²"
         ],
         sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
         recubrimientos: ["block normado con repello, alisado, pintura"],
@@ -2284,7 +2308,7 @@
         acceso: ["adoquín", "pavimento"]
       },
 
-      // CATEGORÍA ALTA - TIPOLOGÍA ALTA
+      // CATEGORÍA ALTA - TIPOLOGÍA ALTA - VARIANTE 1
       {
         id: "alta-alta-1",
         category: "Alta",
@@ -2303,7 +2327,8 @@
           "Puertas: madera tratada, metal, prefabricadas",
           "Servicios: agua, luz, drenajes, cable de TV, internet",
           "Exterior: fachada con diseño arquitectónico",
-          "Instalaciones: ocultas"
+          "Instalaciones: ocultas",
+          "Rango de precios: Q2,300.00/m² a Q2,800.00/m²"
         ],
         sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
         recubrimientos: ["block normado con repello, alisado, pintura"],
@@ -2314,6 +2339,7 @@
         diseno: ["fachada con diseño arquitectónico"],
         acceso: ["adoquín", "pavimento"]
       },
+      // CATEGORÍA ALTA - TIPOLOGÍA ALTA - VARIANTE 2
       {
         id: "alta-alta-2",
         category: "Alta",
@@ -2332,7 +2358,8 @@
           "Puertas: madera tratada, metal, prefabricadas",
           "Servicios: agua, luz, drenajes, cable de TV, internet",
           "Exterior: fachada con diseño arquitectónico",
-          "Instalaciones: ocultas"
+          "Instalaciones: ocultas",
+          "Rango de precios: Q2,500.00/m² a Q2,900.00/m²"
         ],
         sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
         recubrimientos: ["block normado con repello, alisado, pintura"],
