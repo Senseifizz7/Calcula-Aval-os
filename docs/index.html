@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* ESTILOS ORIGINALES (COMPLETOS) - SIN MODIFICACIONES */
+    
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -590,7 +590,7 @@
       }
     }
 
-    /* Estilos para el visor de imágenes */
+    
     #image-viewer-modal .modal-content {
       background: transparent !important;
       box-shadow: none !important;
@@ -630,7 +630,7 @@
       border-color: var(--primary);
     }
 
-    /* Efecto de overlay en hover para las imágenes */
+    
     .catalog-item-content {
       position: relative;
     }
@@ -660,7 +660,7 @@
       opacity: 1;
     }
 
-    /* Estilos para subida de imágenes */
+   
     .image-upload-container {
       margin-top: 12px;
     }
@@ -726,7 +726,7 @@
       color: var(--text-light);
     }
 
-    /* CORRECCIÓN ESPECÍFICA PARA EL VISOR DE IMÁGENES */
+   /
     #image-viewer-modal {
       z-index: 2000 !important;
     }
@@ -735,7 +735,7 @@
       z-index: 2001 !important;
     }
 
-    /* NUEVOS ESTILOS PARA PESTAÑAS Y ACORDEONES */
+    
     .typology-tabs {
       display: flex;
       border-bottom: 1px solid var(--border);
@@ -956,7 +956,7 @@
 </head>
 
 <body>
-  <!-- TODO EL HTML ORIGINAL SE MANTIENE INTACTO -->
+  
   <div class="app-container">
     <header class="app-header">
       <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 200px; height: 60px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
@@ -1023,7 +1023,7 @@
       </div>
     </div>
 
-    <!-- Modal para visualizar imagen grande - CON Z-INDEX CORREGIDO -->
+    
     <div class="catalog-modal" id="image-viewer-modal" style="z-index: 2000;">
       <div class="modal-content" style="max-width: 90vw; max-height: 90vh; background: transparent; box-shadow: none; z-index: 2001;">
         <button class="modal-close" onclick="closeImageViewer()" style="position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.7); color: white; z-index: 2002;">
@@ -1536,7 +1536,7 @@
       }
     };
 
-    // Funciones de modal manteniendo las originales
+    
     function showAllAppraisals() {
       const modal = document.getElementById('all-appraisals-modal');
       const listContainer = document.getElementById('all-appraisals-list');
@@ -1773,7 +1773,7 @@
       if (e.target === this) closeModal('my-appraisals-modal');
     });
 
-    // NUEVA ESTRUCTURA DE TIPOLOGÍAS CON DESCRIPCIÓN GENERAL
+    
     const RANGOS_PRECIO = {
         'Baja': {
             'Baja': { min: 250, max: 500 },
@@ -1792,12 +1792,12 @@
         }
     };
 
-    // NUEVA ESTRUCTURA CON DESCRIPCIÓN GENERAL POR TIPOLOGÍA
+    
     const __FALLBACK_TIPOLOGIAS = [
       {
         category: "Baja",
         type: "Baja",
-        generalDescription: `Categoria baja - tipología baja
+        generalDescription: 
 
 Como sistema constructivo encontramos:
 – estructura de madera
@@ -1883,7 +1883,7 @@ Como acceso a este tipo de construcción encontramos:
       {
         category: "Baja",
         type: "Media",
-        generalDescription: `Cateogoria baja - tipología media
+        generalDescription: 
 
 Como sistema constructivo encontramos:
 – estructura de madera
@@ -1975,7 +1975,7 @@ Como acceso encontramos:
       {
         category: "Baja",
         type: "Alta",
-        generalDescription: `Categoria baja - tipología alta
+        generalDescription: 
 
 Como sistema constructivo encontramos:
 – estructura de madera
@@ -2074,7 +2074,7 @@ Como acceso encontramos:
       {
         category: "Media",
         type: "Baja",
-        generalDescription: `Categoria media - tipología baja
+        generalDescription: 
 
 Como sistema constructivo encontramos:
 – sistema de mampostería reforzada
@@ -2163,7 +2163,7 @@ Como acceso encontramos:
       {
         category: "Media",
         type: "Media",
-        generalDescription: `Categoria media - tipología media
+        generalDescription: 
 
 Como sistema constructivo encontramos:
 – sistema de mampostería reforzada
@@ -2252,7 +2252,7 @@ Como acceso encontramos:
       {
         category: "Media",
         type: "Alta",
-        generalDescription: `Categoria media - tipología alta
+        generalDescription: 
 
 Como sistema constructivo encontramos:
 – sistema de mampostería reforzada
@@ -2344,7 +2344,7 @@ Como acceso encontramos:
       {
         category: "Alta",
         type: "Baja",
-        generalDescription: `Categoria alta - tipología baja
+        generalDescription:
 
 Como sistema constructivo encontramos:
 – sistema de mampostería reforzada
@@ -2432,7 +2432,7 @@ Como acceso encontramos:
       {
         category: "Alta",
         type: "Media",
-        generalDescription: `Categoria alta - tipología media
+        generalDescription: 
 Como sistema constructivo encontramos:
 – sistema de mampostería reforzada
 – combinación de columnas–vigas con sistema de muros de carga
@@ -2520,7 +2520,7 @@ Como acceso encontramos:
       {
         category: "Alta",
         type: "Alta",
-        generalDescription: `categoría alta - tipología alta
+        generalDescription:
 Como sistema constructivo encontramos:
 – sistema de mampostería reforzada
 – combinación de columnas–vigas con sistema de muros de carga
