@@ -9,7 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* ESTILOS ORIGINALES (COMPLETOS) */
+    /* ESTILOS ORIGINALES (COMPLETOS) - SIN MODIFICACIONES */
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -1773,7 +1773,7 @@
       if (e.target === this) closeModal('my-appraisals-modal');
     });
 
-    // NUEVAS TIPOLOGÍAS COMPLETAS - ACTUALIZADAS CON LA INFORMACIÓN PROPORCIONADA
+    // NUEVA ESTRUCTURA DE TIPOLOGÍAS CON DESCRIPCIÓN GENERAL
     const RANGOS_PRECIO = {
         'Baja': {
             'Baja': { min: 250, max: 500 },
@@ -1792,589 +1792,824 @@
         }
     };
 
+    // NUEVA ESTRUCTURA CON DESCRIPCIÓN GENERAL POR TIPOLOGÍA
     const __FALLBACK_TIPOLOGIAS = [
-      // CATEGORÍA BAJA - TIPOLOGÍA BAJA - VARIANTE 1
       {
-        id: "baja-baja-1",
         category: "Baja",
         type: "Baja",
-        title: "Tipología Baja - Variante 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20baja.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja.png",
-        pricePerM2: 400,
-        description: "Como sistema constructivo encontramos: estructura de madera, muro de block o adobe de 1.00 metro de alto con estructura de madera",
-        bullets: [
-          "Estructura: sistema de adobe, madera",
-          "Paredes: adobe recubierto con nylon",
-          "Techos: teja de barro sin cielo falso",
-          "Piso: tierra con cemento",
-          "Ventanas: madera sin tratar",
-          "Puertas: madera sin tratar",
-          "Servicios: luz, alumbrado público",
-          "Exterior: fachada con material expuesto",
-          "Instalaciones: expuestas",
-          "Rango de precios: Q250.00/m² a Q400.00/m²"
-        ],
-        sistemasConstructivos: ["estructura de madera", "muro de block o adobe de 1.00 metro de alto con estructura de madera"],
-        recubrimientos: ["adobe", "block de cantera sin norma de construcción", "madera sin tratar"],
-        acabados: ["block sisado visto", "adobe visto", "madera sin tratar", "blanqueado con cal hidratada"],
-        cubiertas: ["estructura de madera con cubierta de lámina de zinc", "estructura de costaneras de metal con cubierta de lámina de zinc", "estructura de madera cubierta con teja de barro"],
-        pisos: ["tierra", "cemento líquido"],
-        puertasVentanas: ["madera sencilla sin tratamiento", "cortinas o cedazo", "sin puertas o ventanas"],
-        diseno: ["casas diseñadas en un solo ambiente", "casas diseñadas en dos ambientes", "baño en el exterior de la vivienda (letrina o pozo ciego)"],
-        servicios: ["agua potable", "energía eléctrica"],
-        acceso: ["terracería (vehicular o vecinal)"]
-      },
-      // CATEGORÍA BAJA - TIPOLOGÍA BAJA - VARIANTE 2
-      {
-        id: "baja-baja-2",
-        category: "Baja",
-        type: "Baja",
-        title: "Tipología Baja - Variante 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20baja%202.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja%202.png",
-        pricePerM2: 500,
-        description: "Como sistema constructivo encontramos: sistema de adobe, columnas de madera",
-        bullets: [
-          "Estructura: sistema de adobe, columnas de madera",
-          "Paredes: adobe, madera sin tratar, cartón",
-          "Techos: teja de barro, lámina de zinc sin cielo falso",
-          "Piso: tierra con cemento",
-          "Ventanas: madera sin tratar",
-          "Puertas: madera sin tratar",
-          "Servicios: luz, alumbrado público",
-          "Exterior: fachada sin mantenimiento",
-          "Instalaciones: expuestas",
-          "Rango de precios: Q250.00/m² a Q500.00/m²"
-        ],
-        sistemasConstructivos: ["estructura de madera", "muro de block o adobe de 1.00 metro de alto, resto estructura de madera"],
-        recubrimientos: ["adobe", "block de cantera sin norma de construcción"],
-        acabados: ["block sisado visto", "adobe visto", "madera sin tratar", "blanqueado con cal hidratada"],
-        cubiertas: ["estructura de madera con cubierta de lámina de zinc", "estructura de costaneras de metal con cubierta de lámina de zinc", "estructura de madera cubierta con teja de barro"],
-        pisos: ["tierra", "cemento líquido"],
-        puertasVentanas: ["madera sin tratar", "metal", "prefabricadas en MDF"],
-        diseno: ["casas diseñadas en dos ambientes", "casas diseñadas en tres ambientes", "baño en el exterior de la vivienda (letrina o pozo ciego)"],
-        servicios: ["agua potable", "energía eléctrica", "alumbrado público"],
-        acceso: ["terracería (vehicular o vecinal)", "adoquín", "carrileras de concreto (vehicular o vecinal)"]
-      },
+        generalDescription: `Categoria baja - tipología baja
 
-      // CATEGORÍA BAJA - TIPOLOGÍA MEDIA - VARIANTE 1
-      {
-        id: "baja-media-1",
-        category: "Baja",
-        type: "Media",
-        title: "Tipología Media - Variante 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20media.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20media.png",
-        pricePerM2: 750,
-        description: "Como sistema constructivo encontramos: sistema de adobe, block con pines fundidos",
-        bullets: [
-          "Estructura: sistema de adobe, block con pines fundidos",
-          "Paredes: adobe con repello",
-          "Techos: lámina de zinc con cielo falso de machimbre",
-          "Piso: torta de cemento líquido, cerámico",
-          "Ventanas: madera sin tratar",
-          "Puertas: madera sin tratar",
-          "Servicios: agua, luz, alumbrado público",
-          "Exterior: fachada tipo corredor",
-          "Instalaciones: expuestas",
-          "Rango de precios: Q650.00/m² a Q750.00/m²"
-        ],
-        sistemasConstructivos: ["estructura de madera", "muro de block o adobe de 1.00 metro de alto, resto estructura de madera", "mampostería con sistema pinedo", "mampostería con columnas para un nivel"],
-        recubrimientos: ["adobe", "block de cantera sin norma de construcción"],
-        acabados: ["block sisado visto", "adobe visto", "madera sin tratar", "blanqueado con cal hidratada"],
-        cubiertas: ["estructura de madera con cubierta de lámina de zinc", "estructura de costaneras de metal con cubierta de lámina de zinc", "estructura de madera cubierta con teja de barro", "losa de concreto armado"],
-        pisos: ["tierra", "cemento líquido", "granito"],
-        puertasVentanas: ["madera sin tratar", "metal", "prefabricadas en MDF"],
-        diseno: ["casas diseñadas en dos ambientes", "casas diseñadas en tres ambientes", "baño en el exterior de la vivienda (letrina o pozo ciego)"],
-        servicios: ["agua potable", "energía eléctrica", "alumbrado público"],
-        acceso: ["terracería (vehicular o vecinal)", "adoquín", "carrileras de concreto (vehicular o vecinal)"]
+Como sistema constructivo encontramos:
+– estructura de madera
+– muro de block o adobe de 1.00 metro de alto con estructura de madera
+
+Como recubrimiento de paredes encontramos:
+– adobe
+– block de cantera sin norma de construcción
+– madera sin tratar
+
+Como acabados interiores y exteriores:
+– block sisado visto
+– adobe visto
+– madera sin tratar
+– blanqueado con cal hidratada
+
+Como cubierta encontramos:
+– estructura de madera con cubierta de lámina de zinc
+– estructura de costaneras de metal con cubierta de lámina de zinc
+– estructura de madera cubierta con teja de barro
+
+Como piso encontramos:
+– tierra
+– cemento líquido
+
+Como puertas y ventanas encontramos:
+– madera sencilla sin tratamiento
+– cortinas o cedazo
+– sin puertas o ventanas
+
+Como diseño arquitectónico encontramos:
+– casas diseñadas en un solo ambiente
+– casas diseñadas en dos ambientes
+– baño en el exterior de la vivienda (letrina o pozo ciego)
+
+Como servicios básicos encontramos:
+– agua potable
+– energía eléctrica
+
+Como acceso a este tipo de construcción encontramos:
+– terracería (vehicular o vecinal)`,
+        variants: [
+          {
+            id: "baja-baja-1",
+            title: "Tipología Baja - Variante 1",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20baja.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja.png",
+            pricePerM2: 400,
+            bullets: [
+              "Estructura: sistema de adobe, madera",
+              "Paredes: adobe recubierto con nylon",
+              "Techos: teja de barro sin cielo falso",
+              "Piso: tierra con cemento",
+              "Ventanas: madera sin tratar",
+              "Puertas: madera sin tratar",
+              "Servicios: luz, alumbrado público",
+              "Exterior: fachada con material expuesto",
+              "Instalaciones: expuestas",
+              "Rango de precios: Q250.00/m² a Q400.00/m²"
+            ]
+          },
+          {
+            id: "baja-baja-2",
+            title: "Tipología Baja - Variante 2",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20baja%202.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja%202.png",
+            pricePerM2: 500,
+            bullets: [
+              "Estructura: sistema de adobe, columnas de madera",
+              "Paredes: adobe, madera sin tratar, cartón",
+              "Techos: teja de barro, lámina de zinc sin cielo falso",
+              "Piso: tierra con cemento",
+              "Ventanas: madera sin tratar",
+              "Puertas: madera sin tratar",
+              "Servicios: luz, alumbrado público",
+              "Exterior: fachada sin mantenimiento",
+              "Instalaciones: expuestas",
+              "Rango de precios: Q250.00/m² a Q500.00/m²"
+            ]
+          }
+        ]
       },
-      // CATEGORÍA BAJA - TIPOLOGÍA MEDIA - VARIANTE 2
       {
-        id: "baja-media-2",
         category: "Baja",
         type: "Media",
-        title: "Tipología Media - Variante 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20media%202.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20media%202.png",
-        pricePerM2: 850,
-        description: "Como sistema constructivo encontramos: mampostería con columnas",
-        bullets: [
-          "Estructura: mampostería con columnas",
-          "Paredes: block de cantera",
-          "Techos: lámina de zinc",
-          "Piso: torta de cemento líquido",
-          "Ventanas: madera sin tratar",
-          "Puertas: metal y madera sin tratar",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada sin ventanas ni diseño",
-          "Instalaciones: expuestas",
-          "Rango de precios: Q650.00/m² a Q850.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería con columnas para un nivel"],
-        recubrimientos: ["block de cantera"],
-        acabados: ["block sisado visto"],
-        cubiertas: ["lámina de zinc"],
-        pisos: ["cemento líquido"],
-        puertasVentanas: ["madera sin tratar", "metal"],
-        diseno: ["fachada sin diseño arquitectónico"],
-        servicios: ["agua", "luz", "drenajes"],
-        acceso: ["terracería"]
-      },
+        generalDescription: `Cateogoria baja - tipología media
 
-      // CATEGORÍA BAJA - TIPOLOGÍA ALTA - VARIANTE 1
+Como sistema constructivo encontramos:
+– estructura de madera
+– muro de block o adobe de 1.00 metro de alto, resto estructura de madera
+– mampostería con sistema pinedo
+– mampostería con columnas para un nivel
+
+Como recubrimiento de paredes encontramos:
+– adobe
+– block de cantera sin norma de construcción
+
+Como acabados interiores y exteriores:
+– block sisado visto
+– adobe visto
+– madera sin tratar
+– blanqueado con cal hidratada
+
+Como cubierta encontramos:
+– estructura de madera con cubierta de lámina de zinc
+– estructura de costaneras de metal con cubierta de lámina de zinc
+– estructura de madera cubierta con teja de barro
+– losa de concreto armado
+
+Como piso encontramos:
+– tierra
+– cemento líquido
+– granito
+
+Como puertas y ventanas encontramos:
+– madera sin tratar
+– metal
+– prefabricadas en MDF
+
+Como diseño arquitectónico encontramos:
+– casas diseñadas en dos ambientes
+– casas diseñadas en tres ambientes
+– baño en el exterior de la vivienda (letrina o pozo ciego)
+
+Como servicios básicos encontramos:
+– agua potable
+– energía eléctrica
+– alumbrado público
+
+Como acceso encontramos:
+– terracería (vehicular o vecinal)
+– adoquín
+– carrileras de concreto (vehicular o vecinal)`,
+        variants: [
+          {
+            id: "baja-media-1",
+            title: "Tipología Media - Variante 1",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20media.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20media.png",
+            pricePerM2: 750,
+            bullets: [
+              "Estructura: sistema de adobe, block con pines fundidos",
+              "Paredes: adobe con repello",
+              "Techos: lámina de zinc con cielo falso de machimbre",
+              "Piso: torta de cemento líquido, cerámico",
+              "Ventanas: madera sin tratar",
+              "Puertas: madera sin tratar",
+              "Servicios: agua, luz, alumbrado público",
+              "Exterior: fachada tipo corredor",
+              "Instalaciones: expuestas",
+              "Rango de precios: Q650.00/m² a Q750.00/m²"
+            ]
+          },
+          {
+            id: "baja-media-2",
+            title: "Tipología Media - Variante 2",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20media%202.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20media%202.png",
+            pricePerM2: 850,
+            bullets: [
+              "Estructura: mampostería con columnas",
+              "Paredes: block de cantera",
+              "Techos: lámina de zinc",
+              "Piso: torta de cemento líquido",
+              "Ventanas: madera sin tratar",
+              "Puertas: metal y madera sin tratar",
+              "Servicios: agua, luz, drenajes",
+              "Exterior: fachada sin ventanas ni diseño",
+              "Instalaciones: expuestas",
+              "Rango de precios: Q650.00/m² a Q850.00/m²"
+            ]
+          }
+        ]
+      },
       {
-        id: "baja-alta-1",
         category: "Baja",
         type: "Alta",
-        title: "Tipología Alta - Variante 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20alta.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta.png",
-        pricePerM2: 950,
-        description: "Como sistema constructivo encontramos: mampostería con pines fundidos a 0.60 metros",
-        bullets: [
-          "Estructura: mampostería con pines fundidos a 0.60 metros",
-          "Paredes: block de cantera con pintura",
-          "Techos: lámina troquelada",
-          "Piso: torta de cemento líquido",
-          "Ventanas: metal, madera sin tratar",
-          "Puertas: metal, madera sin tratar",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada a dos aguas",
-          "Instalaciones: ocultas",
-          "Rango de precios: Q850.00/m² a Q950.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería con sistema estructural pineado a cada 0.60 metros"],
-        recubrimientos: ["block de cantera sin norma de construcción"],
-        acabados: ["pintura sobre el block visto"],
-        cubiertas: ["lámina troquelada"],
-        pisos: ["cemento líquido"],
-        puertasVentanas: ["metal", "madera sin tratar"],
-        diseno: ["fachada a dos aguas"],
-        servicios: ["agua", "luz", "drenajes"],
-        acceso: ["terracería"]
-      },
-      // CATEGORÍA BAJA - TIPOLOGÍA ALTA - VARIANTE 2
-      {
-        id: "baja-alta-2",
-        category: "Baja",
-        type: "Alta",
-        title: "Tipología Alta - Variante 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20alta%202.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta.png",
-        pricePerM2: 1000,
-        description: "Como sistema constructivo encontramos: sistema de adobe, mampostería reforzada",
-        bullets: [
-          "Estructura: sistema de adobe, mampostería reforzada",
-          "Paredes: adobe con repello y cernido, block normado",
-          "Techos: teja de barro, lámina de zinc, cielo falso de madera",
-          "Piso: torta de cemento líquido, granito",
-          "Ventanas: madera sin tratar, metal, uPVC",
-          "Puertas: madera sin tratar, metal",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada tipo corredor",
-          "Instalaciones: ocultas, expuestas",
-          "Rango de precios: Q850.00/m² a Q1,000.00/m²"
-        ],
-        sistemasConstructivos: ["sistema de adobe", "mampostería reforzada"],
-        recubrimientos: ["adobe", "block normado estructuralmente para la construcción"],
-        acabados: ["repello y cernido"],
-        cubiertas: ["teja de barro", "lámina de zinc"],
-        cielosFalsos: ["machimbré"],
-        pisos: ["cemento líquido", "granito"],
-        puertasVentanas: ["madera sin tratar", "metal", "uPVC"],
-        diseno: ["fachada tipo corredor"],
-        servicios: ["agua", "luz", "drenajes"],
-        acceso: ["terracería", "adoquín"]
-      },
+        generalDescription: `Categoria baja - tipología alta
 
-      // CATEGORÍA MEDIA - TIPOLOGÍA BAJA - VARIANTE 1
+Como sistema constructivo encontramos:
+– estructura de madera
+– mampostería con sistema estructural pineado a cada 0.60 metros
+– mampostería con columnas para un nivel
+– mampostería con columnas para dos niveles (sin diseño estructural específico)
+
+Como recubrimiento de paredes encontramos:
+– adobe
+– block normado estructuralmente para la construcción
+– block de cantera sin norma de construcción
+
+Como acabados interiores y exteriores:
+– block sisado visto
+– blanqueado con cal hidratada
+– pintura sobre el block visto
+– capa delgada de repello y cernido
+
+Como cubierta encontramos:
+– estructura de madera con cubierta de lámina de zinc
+– estructura de costaneras de metal con cubierta de lámina de zinc
+– estructura de madera cubierta con teja de barro
+– losa de concreto armado
+
+Como cielo falso encontramos:
+– machimbré
+– plywood
+
+Como piso encontramos:
+– granito
+– cemento líquido
+– cerámico
+
+Como puertas y ventanas encontramos:
+– madera sin tratar
+– metal
+– uPVC
+
+Como diseño arquitectónico encontramos:
+– casas diseñadas en tres ambientes
+– casas diseñadas en cuatro ambientes
+– baño simples en interior de la vivienda
+
+Como servicios básicos encontramos:
+– agua potable
+– energía eléctrica
+– alumbrado público
+– drenaje
+
+Como acceso encontramos:
+– terracería
+– adoquín
+– carrileras de concreto
+– pavimento de concreto`,
+        variants: [
+          {
+            id: "baja-alta-1",
+            title: "Tipología Alta - Variante 1",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20alta.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta.png",
+            pricePerM2: 950,
+            bullets: [
+              "Estructura: mampostería con pines fundidos a 0.60 metros",
+              "Paredes: block de cantera con pintura",
+              "Techos: lámina troquelada",
+              "Piso: torta de cemento líquido",
+              "Ventanas: metal, madera sin tratar",
+              "Puertas: metal, madera sin tratar",
+              "Servicios: agua, luz, drenajes",
+              "Exterior: fachada a dos aguas",
+              "Instalaciones: ocultas",
+              "Rango de precios: Q850.00/m² a Q950.00/m²"
+            ]
+          },
+          {
+            id: "baja-alta-2",
+            title: "Tipología Alta - Variante 2",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/tipolog%C3%ADa%20alta%202.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta.png",
+            pricePerM2: 1000,
+            bullets: [
+              "Estructura: sistema de adobe, mampostería reforzada",
+              "Paredes: adobe con repello y cernido, block normado",
+              "Techos: teja de barro, lámina de zinc, cielo falso de madera",
+              "Piso: torta de cemento líquido, granito",
+              "Ventanas: madera sin tratar, metal, uPVC",
+              "Puertas: madera sin tratar, metal",
+              "Servicios: agua, luz, drenajes",
+              "Exterior: fachada tipo corredor",
+              "Instalaciones: ocultas, expuestas",
+              "Rango de precios: Q850.00/m² a Q1,000.00/m²"
+            ]
+          }
+        ]
+      },
       {
-        id: "media-baja-1",
         category: "Media",
         type: "Baja",
-        title: "Tipología Baja - Variante 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20baja.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20baja.png",
-        pricePerM2: 1100,
-        description: "Como sistema constructivo encontramos: mampostería con block con pines fundidos",
-        bullets: [
-          "Estructura: mampostería con block con pines fundidos",
-          "Paredes: block con repello y cernido",
-          "Techo: lámina de zinc sin cielo falso",
-          "Piso: torta de cemento líquido",
-          "Ventanas: madera tratada",
-          "Puertas: madera tratada, metal",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada tipo corredor",
-          "Instalaciones: sobrepuestas",
-          "Rango de precios: Q800.00/m² a Q1,100.00/m²"
-        ],
-        sistemasConstructivos: ["sistema de mampostería reforzada", "sistema de block pineado a cada 60 centímetros", "algunas reforzadas para segundo nivel"],
-        recubrimientos: ["block de cantera fabricado sin norma", "block normado"],
-        acabados: ["block sisado visto", "pintura o blanqueado", "repello y cernido con capa delgada"],
-        cubiertas: ["techo de losa de concreto", "estructura de metal cubierta con lámina de zinc o lámina troquelada", "estructura de madera cubierta con lámina de zinc"],
-        pisos: ["cerámico", "granito"],
-        puertasVentanas: ["madera", "metal", "prefabricados", "aluminio"],
-        diseno: ["casas sin presencia de diseño arquitectónico", "casas con jardín o patio", "casas con el baño dentro de la vivienda"],
-        servicios: ["agua potable", "energía eléctrica", "drenajes"],
-        acceso: ["adoquín", "pavimento", "asfalto"]
+        generalDescription: `Categoria media - tipología baja
+
+Como sistema constructivo encontramos:
+– sistema de mampostería reforzada
+– sistema de block pineado a cada 60 centímetros
+– algunas reforzadas para segundo nivel
+
+Como recubrimiento de paredes encontramos:
+– block de cantera fabricado sin norma
+– block normado
+
+Como acabados interiores y exteriores:
+– block sisado visto
+– pintura o blanqueado
+– repello y cernido con capa delgada
+
+Como cubierta encontramos:
+– techo de losa de concreto
+– estructura de metal cubierta con lámina de zinc o lámina troquelada
+– estructura de madera cubierta con lámina de zinc
+
+Como piso encontramos:
+– cerámico
+– granito
+
+Como puertas y ventanas encontramos:
+– madera
+– metal
+– prefabricados
+– aluminio
+
+Como diseño arquitectónico encontramos:
+– casas sin presencia de diseño arquitectónico
+– casas con jardín o patio
+– casas con el baño dentro de la vivienda
+
+Como servicios básicos encontramos:
+– agua potable
+– energía eléctrica
+– drenajes
+
+Como acceso encontramos:
+– adoquín
+– pavimento
+– asfalto`,
+        variants: [
+          {
+            id: "media-baja-1",
+            title: "Tipología Baja - Variante 1",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20baja.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20baja.png",
+            pricePerM2: 1100,
+            bullets: [
+              "Estructura: mampostería con block con pines fundidos",
+              "Paredes: block con repello y cernido",
+              "Techo: lámina de zinc sin cielo falso",
+              "Piso: torta de cemento líquido",
+              "Ventanas: madera tratada",
+              "Puertas: madera tratada, metal",
+              "Servicios: agua, luz, drenajes",
+              "Exterior: fachada tipo corredor",
+              "Instalaciones: sobrepuestas",
+              "Rango de precios: Q800.00/m² a Q1,100.00/m²"
+            ]
+          },
+          {
+            id: "media-baja-2",
+            title: "Tipología Baja - Variante 2",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20baja%202.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20baja%202.png",
+            pricePerM2: 1100,
+            bullets: [
+              "Estructura: mampostería con columnas para un nivel",
+              "Paredes: block sisado visto, partes con repello y pintura",
+              "Techo: tejas de barro, lámina de zinc con cielo falso de madera",
+              "Piso: torta de cemento líquido",
+              "Ventanas: metal, madera tratada",
+              "Puertas: metal, madera tratada",
+              "Servicios: agua, luz, drenajes",
+              "Exterior: fachada sin diseño arquitectónico",
+              "Instalaciones: sobrepuestas",
+              "Rango de precios: Q800.00/m² a Q1,100.00/m²"
+            ]
+          }
+        ]
       },
-      // CATEGORÍA MEDIA - TIPOLOGÍA BAJA - VARIANTE 2
       {
-        id: "media-baja-2",
         category: "Media",
+        type: "Media",
+        generalDescription: `Categoria media - tipología media
+
+Como sistema constructivo encontramos:
+– sistema de mampostería reforzada
+– sistema de block pineado a cada 60 centímetros
+– algunas reforzadas para segundo nivel
+
+Como recubrimiento de paredes encontramos:
+– block de cantera fabricado sin norma
+– block normado
+
+Como acabados interiores y exteriores:
+– block sisado visto
+– pintura o blanqueado
+– repello y cernido con capa delgada
+
+Como cubierta encontramos:
+– techo de losa de concreto
+– estructura de metal cubierta con lámina de zinc o lámina troquelada
+– estructura de madera cubierta con lámina de zinc
+
+Como piso encontramos:
+– cerámico
+– granito
+
+Como puertas y ventanas encontramos:
+– madera
+– metal
+– prefabricados
+– aluminio
+
+Como diseño arquitectónico encontramos:
+– casas sin presencia de diseño arquitectónico
+– casas con jardín o patio
+– casas con el baño dentro de la vivienda
+
+Como servicios básicos encontramos:
+– agua potable
+– energía eléctrica
+– drenajes
+
+Como acceso encontramos:
+– adoquín
+– pavimento
+– asfalto`,
+        variants: [
+          {
+            id: "media-media-1",
+            title: "Tipología Media - Variante 1",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20media.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20media.png",
+            pricePerM2: 1200,
+            bullets: [
+              "Estructura: mampostería reforzada para un nivel",
+              "Paredes: block con repello y cernido",
+              "Techo: estructura de metal con lámina troquelada",
+              "Piso: torta de cemento líquido",
+              "Ventanas: metal",
+              "Puertas: metal",
+              "Servicios: agua, luz, drenajes",
+              "Exterior: fachada tipo corredor interno",
+              "Instalaciones: sobrepuestas o semi ocultas",
+              "Rango de precios: Q900.00/m² a Q1,200.00/m²"
+            ]
+          },
+          {
+            id: "media-media-2",
+            title: "Tipología Media - Variante 2",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20media%202.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20media%202.png",
+            pricePerM2: 1300,
+            bullets: [
+              "Estructura: mampostería reforzada para un nivel",
+              "Paredes: block normado con repello y cernido, pintura",
+              "Techo: madera con lámina de zinc sin cielo falso",
+              "Piso: granito, torta de cemento líquido",
+              "Ventanas: metal con balcones",
+              "Puertas: metal",
+              "Servicios: agua, luz, drenajes, cable de TV",
+              "Exterior: fachada tradicional sin diseño arquitectónico",
+              "Instalaciones: ocultas, semi-ocultas",
+              "Rango de precios: Q1,000.00/m² a Q1,300.00/m²"
+            ]
+          }
+        ]
+      },
+      {
+        category: "Media",
+        type: "Alta",
+        generalDescription: `Categoria media - tipología alta
+
+Como sistema constructivo encontramos:
+– sistema de mampostería reforzada
+– sistema de combinación de columnas con vigas de carga
+– algunas reforzadas para segundo nivel
+
+Como recubrimiento de paredes encontramos:
+– block de cantera fabricado sin norma
+– block normado
+
+Como acabados interiores y exteriores:
+– pintura o blanqueado
+– repello y cernido
+
+Como cubierta encontramos:
+– techo de losa de concreto
+– estructura de metal cubierta con lámina de zinc o lámina troquelada
+
+Como piso encontramos:
+– cerámico
+– porcelanato
+– granito
+
+Como puertas y ventanas encontramos:
+– madera
+– metal
+– prefabricadas
+– aluminio
+– uPVC
+
+Como diseño arquitectónico encontramos:
+– casas sin presencia de diseño arquitectónico
+– casas con jardín o patio
+– casas con el baño dentro de la vivienda
+
+Como servicios básicos encontramos:
+– agua potable
+– energía eléctrica
+– drenajes
+– internet
+– teléfono
+– cable de TV
+
+Como acceso encontramos:
+– adoquín
+– pavimento
+– asfalto`,
+        variants: [
+          {
+            id: "media-alta-1",
+            title: "Tipología Alta - Variante 1",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20alta.png",
+            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20alta.png",
+            pricePerM2: 1700,
+            bullets: [
+              "Estructura: mampostería reforzada con columnas para dos niveles",
+              "Paredes: ladrillo sisado visto, pintura",
+              "Techo: losa de concreto armado",
+              "Piso: granito",
+              "Ventanas: metal, madera tratada",
+              "Puertas: madera tratada, metal",
+              "Servicios: agua, luz, drenajes, cable de TV",
+              "Exterior: fachada típica de casas de ladrillo",
+              "Instalaciones: ocultas",
+              "Rango de precios: Q1,300.00/m² a Q1,700.00/m²"
+            ]
+          },
+          {
+            id: "media-alta-2",
+            title: "Tipología Alta - Variante 2",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20alta%202.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20alta%202.png",
+            pricePerM2: 1800,
+            bullets: [
+              "Estructura: mampostería reforzada con pines para un nivel",
+              "Paredes: block normado con repello, alisado, pintura",
+              "Techo: costaneras de metal con lámina de zinc, sin cielo falso",
+              "Piso: cerámico",
+              "Ventanas: metal con balcones",
+              "Puertas: metal y madera tratada",
+              "Servicios: luz, agua, drenaje, cable de TV",
+              "Exterior: fachada con diseño tipo colonial",
+              "Instalaciones: ocultas",
+              "Rango de precios: Q1,400.00/m² a Q1,800.00/m²"
+            ]
+          }
+        ]
+      },
+      {
+        category: "Alta",
         type: "Baja",
-        title: "Tipología Baja - Variante 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20baja%202.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20baja%202.png",
-        pricePerM2: 1100,
-        description: "Como sistema constructivo encontramos: mampostería con columnas para un nivel",
-        bullets: [
-          "Estructura: mampostería con columnas para un nivel",
-          "Paredes: block sisado visto, partes con repello y pintura",
-          "Techo: tejas de barro, lámina de zinc con cielo falso de madera",
-          "Piso: torta de cemento líquido",
-          "Ventanas: metal, madera tratada",
-          "Puertas: metal, madera tratada",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada sin diseño arquitectónico",
-          "Instalaciones: sobrepuestas",
-          "Rango de precios: Q800.00/m² a Q1,100.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería con columnas para un nivel"],
-        recubrimientos: ["block sisado visto"],
-        acabados: ["repello y pintura parcial"],
-        cubiertas: ["tejas de barro", "lámina de zinc"],
-        cielosFalsos: ["madera"],
-        pisos: ["cemento líquido"],
-        puertasVentanas: ["metal", "madera tratada"],
-        diseno: ["fachada sin diseño arquitectónico"],
-        servicios: ["agua", "luz", "drenajes"],
-        acceso: ["adoquín", "pavimento"]
-      },
+        generalDescription: `Categoria alta - tipología baja
 
-      // CATEGORÍA MEDIA - TIPOLOGÍA MEDIA - VARIANTE 1
-      {
-        id: "media-media-1",
-        category: "Media",
-        type: "Media",
-        title: "Tipología Media - Variante 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20media.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20media.png",
-        pricePerM2: 1200,
-        description: "Como sistema constructivo encontramos: mampostería reforzada para un nivel",
-        bullets: [
-          "Estructura: mampostería reforzada para un nivel",
-          "Paredes: block con repello y cernido",
-          "Techo: estructura de metal con lámina troquelada",
-          "Piso: torta de cemento líquido",
-          "Ventanas: metal",
-          "Puertas: metal",
-          "Servicios: agua, luz, drenajes",
-          "Exterior: fachada tipo corredor interno",
-          "Instalaciones: sobrepuestas o semi ocultas",
-          "Rango de precios: Q900.00/m² a Q1,200.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería reforzada para un nivel"],
-        recubrimientos: ["block con repello y cernido"],
-        cubiertas: ["estructura de metal con lámina troquelada"],
-        pisos: ["cemento líquido"],
-        puertasVentanas: ["metal"],
-        diseno: ["fachada tipo corredor interno"],
-        servicios: ["agua", "luz", "drenajes"],
-        acceso: ["adoquín", "pavimento"]
-      },
-      // CATEGORÍA MEDIA - TIPOLOGÍA MEDIA - VARIANTE 2
-      {
-        id: "media-media-2",
-        category: "Media",
-        type: "Media",
-        title: "Tipología Media - Variante 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20media%202.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20media%202.png",
-        pricePerM2: 1300,
-        description: "Como sistema constructivo encontramos: mampostería reforzada para un nivel",
-        bullets: [
-          "Estructura: mampostería reforzada para un nivel",
-          "Paredes: block normado con repello y cernido, pintura",
-          "Techo: madera con lámina de zinc sin cielo falso",
-          "Piso: granito, torta de cemento líquido",
-          "Ventanas: metal con balcones",
-          "Puertas: metal",
-          "Servicios: agua, luz, drenajes, cable de TV",
-          "Exterior: fachada tradicional sin diseño arquitectónico",
-          "Instalaciones: ocultas, semi-ocultas",
-          "Rango de precios: Q1,000.00/m² a Q1,300.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería reforzada para un nivel"],
-        recubrimientos: ["block normado con repello y cernido, pintura"],
-        cubiertas: ["madera con lámina de zinc"],
-        pisos: ["granito", "cemento líquido"],
-        puertasVentanas: ["metal con balcones"],
-        servicios: ["agua", "luz", "drenajes", "cable de TV"],
-        diseno: ["fachada tradicional sin diseño arquitectónico"],
-        acceso: ["adoquín", "pavimento"]
-      },
+Como sistema constructivo encontramos:
+– sistema de mampostería reforzada
+– combinación de columnas–vigas con sistema de muros de carga
+– columnas de concreto reforzado
 
-      // CATEGORÍA MEDIA - TIPOLOGÍA ALTA - VARIANTE 1
-      {
-        id: "media-alta-1",
-        category: "Media",
-        type: "Alta",
-        title: "Tipología Alta - Variante 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20alta.png",
-        imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20alta.png",
-        pricePerM2: 1700,
-        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para 2 niveles",
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para 2 niveles",
-          "Paredes: ladrillo sisado visto, pintura",
-          "Techo: losa de concreto armado",
-          "Piso: granito",
-          "Ventanas: metal, madera tratada",
-          "Puertas: madera tratada, metal",
-          "Servicios: agua, luz, drenajes, cable de TV",
-          "Exterior: fachada típica de casas de ladrillo",
-          "Instalaciones: ocultas",
-          "Rango de precios: Q1,300.00/m² a Q1,700.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
-        recubrimientos: ["ladrillo sisado visto"],
-        acabados: ["pintura"],
-        cubiertas: ["losa de concreto armado"],
-        pisos: ["granito"],
-        puertasVentanas: ["metal", "madera tratada"],
-        servicios: ["agua", "luz", "drenajes", "cable de TV"],
-        diseno: ["fachada típica de casas de ladrillo"],
-        acceso: ["adoquín", "pavimento"]
-      },
-      // CATEGORÍA MEDIA - TIPOLOGÍA ALTA - VARIANTE 2
-      {
-        id: "media-alta-2",
-        category: "Media",
-        type: "Alta",
-        title: "Tipología Alta - Variante 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/tipolog%C3%ADa%20alta%202.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20media/interior%20tipolog%C3%ADa%20alta%202.png",
-        pricePerM2: 1800,
-        description: "Como sistema constructivo encontramos: mampostería reforzada con pines para un nivel",
-        bullets: [
-          "Estructura: mampostería reforzada con pines para un nivel",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: costaneras de metal con lámina de zinc, sin cielo falso",
-          "Piso: cerámico",
-          "Ventanas: metal con balcones",
-          "Puertas: metal y madera tratada",
-          "Servicios: luz, agua, drenaje, cable de TV",
-          "Exterior: fachada con diseño tipo colonial",
-          "Instalaciones: ocultas",
-          "Rango de precios: Q1,400.00/m² a Q1,800.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería reforzada con pines para un nivel"],
-        recubrimientos: ["block normado con repello, alisado, pintura"],
-        cubiertas: ["costaneras de metal con lámina de zinc"],
-        pisos: ["cerámico"],
-        puertasVentanas: ["metal con balcones", "madera tratada"],
-        servicios: ["luz", "agua", "drenaje", "cable de TV"],
-        diseno: ["fachada con diseño tipo colonial"],
-        acceso: ["adoquín", "pavimento"]
-      },
+Como recubrimiento de paredes encontramos:
+– block de cantera fabricado sin norma
+– block normado
 
-      // CATEGORÍA ALTA - TIPOLOGÍA BAJA - VARIANTE 1
-      {
-        id: "alta-baja-1",
-        category: "Alta",
-        type: "Baja",
-        title: "Tipología Baja - Variante 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20baja.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipolog%C3%ADa%20baja.png",
-        pricePerM2: 1700,
-        description: "Como sistema constructivo encontramos: columnas y paredes de carga",
-        bullets: [
-          "Estructura: columnas y paredes de carga",
-          "Paredes: repello, alisado, pintura",
-          "Techo: losa de concreto o losa prefabricada",
-          "Piso: cerámico, granito o porcelanato",
-          "Ventanas: ventanas de aluminio o PVC",
-          "Puertas: madera, metal y prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV",
-          "Exterior: fachada tipo corredor, pintura",
-          "Instalaciones: ocultas",
-          "Rango de precios: Q1,400.00/m² a Q1,700.00/m²"
-        ],
-        sistemasConstructivos: ["sistema de mampostería reforzada", "combinación de columnas-vigas con sistema de muros de carga", "columnas de concreto reforzado"],
-        recubrimientos: ["block de cantera fabricado sin norma", "block normado"],
-        acabados: ["repello, alisado, pintura"],
-        cubiertas: ["losa de concreto", "lámina en algunas áreas o segundo nivel"],
-        pisos: ["cerámico", "granito", "porcelanato", "laminados"],
-        puertasVentanas: ["madera", "metal", "prefabricadas", "aluminio", "uPVC"],
-        diseno: ["casas con un estudio en su diseño arquitectónico", "casas con jardín o patio", "casas con el baño dentro de la vivienda"],
-        servicios: ["agua potable", "energía eléctrica", "drenajes", "teléfono", "internet", "cable de TV"],
-        acceso: ["adoquín", "pavimento", "asfalto"]
-      },
-      // CATEGORÍA ALTA - TIPOLOGÍA BAJA - VARIANTE 2
-      {
-        id: "alta-baja-2",
-        category: "Alta",
-        type: "Baja",
-        title: "Tipología Baja - Variante 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20baja%202.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20baja%202.png",
-        pricePerM2: 1800,
-        description: "Como sistema constructivo encontramos: columnas y paredes de carga",
-        bullets: [
-          "Estructura: columnas y paredes de carga",
-          "Paredes: repello, alisado, pintura",
-          "Techo: losa de concreto o losa prefabricada",
-          "Piso: cerámico, granito o porcelanato",
-          "Ventanas: ventanas de aluminio o PVC",
-          "Puertas: madera, metal y prefabricadas",
-          "Exterior: fachada con acabados y pintura",
-          "Instalaciones: ocultas",
-          "Rango de precios: Q1,500.00/m² a Q1,800.00/m²"
-        ],
-        sistemasConstructivos: ["columnas y paredes de carga"],
-        acabados: ["repello, alisado, pintura"],
-        cubiertas: ["losa de concreto o losa prefabricada"],
-        pisos: ["cerámico, granito o porcelanato"],
-        puertasVentanas: ["aluminio o PVC", "madera, metal y prefabricadas"],
-        diseno: ["fachada con acabados y pintura"],
-        servicios: ["agua", "luz", "drenajes"],
-        acceso: ["adoquín", "pavimento"]
-      },
+Como cubierta encontramos:
+– losa de concreto
+– lámina en algunas áreas o segundo nivel
 
-      // CATEGORÍA ALTA - TIPOLOGÍA MEDIA - VARIANTE 1
+Como piso encontramos:
+– cerámico
+– granito
+– porcelanato
+– laminados
+
+Como puertas y ventanas encontramos:
+– madera
+– metal
+– prefabricadas
+– aluminio
+– uPVC
+
+Como diseño arquitectónico encontramos:
+– casas con un estudio en su diseño arquitectónico
+– casas con jardín o patio
+– casas con el baño dentro de la vivienda
+
+Como servicios básicos encontramos:
+– agua potable
+– energía eléctrica
+– drenajes
+– teléfono
+– internet
+– cable de TV
+
+Como acceso encontramos:
+– adoquín
+– pavimento
+– asfalto`,
+        variants: [
+          {
+            id: "alta-baja-1",
+            title: "Tipología Baja - Variante 1",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20baja.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipolog%C3%ADa%20baja.png",
+            pricePerM2: 1700,
+            bullets: [
+              "Estructura: columnas y paredes de carga",
+              "Paredes: repello, alisado, pintura",
+              "Techo: losa de concreto o losa prefabricada",
+              "Piso: cerámico, granito o porcelanato",
+              "Ventanas: ventanas de aluminio o PVC",
+              "Puertas: madera, metal y prefabricadas",
+              "Servicios: agua, luz, drenajes, cable de TV",
+              "Exterior: fachada tipo corredor, pintura",
+              "Instalaciones: ocultas",
+              "Rango de precios: Q1,400.00/m² a Q1,700.00/m²"
+            ]
+          },
+          {
+            id: "alta-baja-2",
+            title: "Tipología Baja - Variante 2",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20baja%202.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20baja%202.png",
+            pricePerM2: 1800,
+            bullets: [
+              "Estructura: columnas y paredes de carga",
+              "Paredes: repello, alisado, pintura",
+              "Techo: losa de concreto o losa prefabricada",
+              "Piso: cerámico, granito o porcelanato",
+              "Ventanas: ventanas de aluminio o PVC",
+              "Puertas: madera, metal y prefabricadas",
+              "Exterior: fachada con acabados y pintura",
+              "Instalaciones: ocultas",
+              "Rango de precios: Q1,500.00/m² a Q1,800.00/m²"
+            ]
+          }
+        ]
+      },
       {
-        id: "alta-media-1",
         category: "Alta",
         type: "Media",
-        title: "Tipología Media - Variante 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20media.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20media.png",
-        pricePerM2: 2100,
-        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para dos niveles",
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para dos niveles",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: losa de concreto, losa prefabricada",
-          "Piso: cerámico, granito, porcelanato",
-          "Ventanas: aluminio, uPVC",
-          "Puertas: madera tratada, metal, prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV, internet",
-          "Exterior: fachada con detalles arquitectónicos",
-          "Instalaciones: ocultas",
-          "Rango de precios: Q1,800.00/m² a Q2,100.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
-        recubrimientos: ["block normado con repello, alisado, pintura"],
-        cubiertas: ["losa de concreto", "losa prefabricada"],
-        pisos: ["cerámico", "granito", "porcelanato"],
-        puertasVentanas: ["aluminio", "uPVC", "madera tratada", "metal", "prefabricadas"],
-        servicios: ["agua", "luz", "drenajes", "cable de TV", "internet"],
-        diseno: ["fachada con detalles arquitectónicos"],
-        acceso: ["adoquín", "pavimento"]
-      },
-      // CATEGORÍA ALTA - TIPOLOGÍA MEDIA - VARIANTE 2
-      {
-        id: "alta-media-2",
-        category: "Alta",
-        type: "Media",
-        title: "Tipología Media - Variante 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20media%202.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20media%202.png",
-        pricePerM2: 2200,
-        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para dos niveles",
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para dos niveles",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: losa de concreto, losa prefabricada",
-          "Piso: cerámico, granito, porcelanato",
-          "Ventanas: aluminio, uPVC",
-          "Puertas: madera tratada, metal, prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV, internet",
-          "Exterior: fachada con diseño arquitectónico",
-          "Instalaciones: ocultas",
-          "Rango de precios: Q1,900.00/m² a Q2,200.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
-        recubrimientos: ["block normado con repello, alisado, pintura"],
-        cubiertas: ["losa de concreto", "losa prefabricada"],
-        pisos: ["cerámico", "granito", "porcelanato"],
-        puertasVentanas: ["aluminio", "uPVC", "madera tratada", "metal", "prefabricadas"],
-        servicios: ["agua", "luz", "drenajes", "cable de TV", "internet"],
-        diseno: ["fachada con diseño arquitectónico"],
-        acceso: ["adoquín", "pavimento"]
-      },
+        generalDescription: `Categoria alta - tipología media
+Como sistema constructivo encontramos:
+– sistema de mampostería reforzada
+– combinación de columnas–vigas con sistema de muros de carga
+– columnas de concreto reforzado
 
-      // CATEGORÍA ALTA - TIPOLOGÍA ALTA - VARIANTE 1
-      {
-        id: "alta-alta-1",
-        category: "Alta",
-        type: "Alta",
-        title: "Tipología Alta - Variante 1",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20alta.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20alta.png",
-        pricePerM2: 2800,
-        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para dos niveles",
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para dos niveles",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: losa de concreto, losa prefabricada, losas inclinadas",
-          "Piso: cerámico, porcelanato",
-          "Ventanas: uPVC, aluminio",
-          "Puertas: madera tratada, metal, prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV, internet",
-          "Exterior: fachada con diseño arquitectónico",
-          "Instalaciones: ocultas",
-          "Rango de precios: Q2,300.00/m² a Q2,800.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
-        recubrimientos: ["block normado con repello, alisado, pintura"],
-        cubiertas: ["losa de concreto", "losa prefabricada", "losas inclinadas"],
-        pisos: ["cerámico", "porcelanato"],
-        puertasVentanas: ["uPVC", "aluminio", "madera tratada", "metal", "prefabricadas"],
-        servicios: ["agua", "luz", "drenajes", "cable de TV", "internet"],
-        diseno: ["fachada con diseño arquitectónico"],
-        acceso: ["adoquín", "pavimento"]
+Como recubrimiento de paredes encontramos:
+– block de cantera fabricado sin norma
+– block normado
+
+Como cubierta encontramos:
+– techo de losa de concreto
+– techo de lámina en algunas áreas o segundo nivel
+
+Como piso en este tipo de construcción encontramos:
+– cerámico
+– granito
+– porcelanato
+– laminado
+
+Como puertas y ventanas encontramos:
+– madera
+– prefabricadas
+– metal
+– aluminio
+– uPVC
+
+Como diseño arquitectónico encontramos:
+– casas con un estudio en su diseño arquitectónico
+– casas con jardín o patio
+– casas con el baño dentro de la vivienda
+
+Como servicios básicos encontramos:
+– agua potable
+– energía eléctrica
+– drenajes
+– teléfono
+– internet
+– cable de TV
+
+Como acceso encontramos:
+– calles de adoquín
+– pavimento
+– asfalto`,
+        variants: [
+          {
+            id: "alta-media-1",
+            title: "Tipología Media - Variante 1",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20media.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20media.png",
+            pricePerM2: 2100,
+            bullets: [
+              "Estructura: mampostería reforzada con columnas para dos niveles",
+              "Paredes: block normado con repello, alisado, pintura",
+              "Techo: losa de concreto, losa prefabricada",
+              "Piso: cerámico, granito, porcelanato",
+              "Ventanas: aluminio, uPVC",
+              "Puertas: madera tratada, metal, prefabricadas",
+              "Servicios: agua, luz, drenajes, cable de TV, internet",
+              "Exterior: fachada con detalles arquitectónicos",
+              "Instalaciones: ocultas",
+              "Rango de precios: Q1,800.00/m² a Q2,100.00/m²"
+            ]
+          },
+          {
+            id: "alta-media-2",
+            title: "Tipología Media - Variante 2",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20media%202.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20media%202.png",
+            pricePerM2: 2200,
+            bullets: [
+              "Estructura: mampostería reforzada con columnas para dos niveles",
+              "Paredes: block normado con repello, alisado, pintura",
+              "Techo: losa de concreto, losa prefabricada",
+              "Piso: cerámico, granito, porcelanato",
+              "Ventanas: aluminio, uPVC",
+              "Puertas: madera tratada, metal, prefabricadas",
+              "Servicios: agua, luz, drenajes, cable de TV, internet",
+              "Exterior: fachada con diseño arquitectónico",
+              "Instalaciones: ocultas",
+              "Rango de precios: Q1,900.00/m² a Q2,200.00/m²"
+            ]
+          }
+        ]
       },
-      // CATEGORÍA ALTA - TIPOLOGÍA ALTA - VARIANTE 2
       {
-        id: "alta-alta-2",
         category: "Alta",
         type: "Alta",
-        title: "Tipología Alta - Variante 2",
-        img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20alta%202.png",
-        imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20alta%202.png",
-        pricePerM2: 2900,
-        description: "Como sistema constructivo encontramos: mampostería reforzada con columnas para dos niveles",
-        bullets: [
-          "Estructura: mampostería reforzada con columnas para dos niveles",
-          "Paredes: block normado con repello, alisado, pintura",
-          "Techo: losa de concreto, losa prefabricada, losas inclinadas",
-          "Piso: cerámico, porcelanato",
-          "Ventanas: uPVC, aluminio",
-          "Puertas: madera tratada, metal, prefabricadas",
-          "Servicios: agua, luz, drenajes, cable de TV, internet",
-          "Exterior: fachada con diseño arquitectónico",
-          "Instalaciones: ocultas",
-          "Rango de precios: Q2,500.00/m² a Q2,900.00/m²"
-        ],
-        sistemasConstructivos: ["mampostería reforzada con columnas para dos niveles"],
-        recubrimientos: ["block normado con repello, alisado, pintura"],
-        cubiertas: ["losa de concreto", "losa prefabricada", "losas inclinadas"],
-        pisos: ["cerámico", "porcelanato"],
-        puertasVentanas: ["uPVC", "aluminio", "madera tratada", "metal", "prefabricadas"],
-        servicios: ["agua", "luz", "drenajes", "cable de TV", "internet"],
-        diseno: ["fachada con diseño arquitectónico"],
-        acceso: ["adoquín", "pavimento"]
+        generalDescription: `categoría alta - tipología alta
+Como sistema constructivo encontramos:
+– sistema de mampostería reforzada
+– combinación de columnas–vigas con sistema de muros de carga
+– columnas de concreto reforzado
+
+Como recubrimiento de paredes encontramos:
+– block de cantera fabricado sin norma
+– block normado
+
+Como cubierta encontramos:
+– techo de losa de concreto
+– techo de lámina en algunas áreas o segundo nivel
+
+Como piso en este tipo de construcción encontramos:
+– cerámico
+– granito
+– porcelanato
+– laminados
+
+Como puertas y ventanas encontramos:
+– madera
+– prefabricadas
+– metal
+– aluminio
+– uPVC
+
+Como diseño arquitectónico encontramos:
+– casas con un estudio en su diseño arquitectónico
+– casas con jardín o patio
+– casas con el baño dentro de la vivienda
+
+Como servicios básicos encontramos:
+– agua potable
+– energía eléctrica
+– drenajes
+– teléfono
+– internet
+– cable de TV
+
+Como acceso encontramos:
+– adoquín
+– pavimento
+– asfalto`,
+        variants: [
+          {
+            id: "alta-alta-1",
+            title: "Tipología Alta - Variante 1",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipolog%C3%ADa%20alta.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20alta.png",
+            pricePerM2: 2800,
+            bullets: [
+              "Estructura: mampostería reforzada con columnas para dos niveles",
+              "Paredes: block normado con repello, alisado, pintura",
+              "Techo: losa de concreto, losa prefabricada, losas inclinadas",
+              "Piso: cerámico, porcelanato",
+              "Ventanas: uPVC, aluminio",
+              "Puertas: madera tratada, metal, prefabricadas",
+              "Servicios: agua, luz, drenajes, cable de TV, internet",
+              "Exterior: fachada con diseño arquitectónico",
+              "Instalaciones: ocultas",
+              "Rango de precios: Q2,300.00/m² a Q2,800.00/m²"
+            ]
+          },
+          {
+            id: "alta-alta-2",
+            title: "Tipología Alta - Variante 2",
+            img: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/tipologia%20alta%202.png",
+            imgInterior: "https://cdn.jsdelivr.net/gh/Senseifizz7/Calcula-Aval-os/main/categoria%20alta/interior%20tipologia%20alta%202.png",
+            pricePerM2: 2900,
+            bullets: [
+              "Estructura: mampostería reforzada con columnas para dos niveles",
+              "Paredes: block normado con repello, alisado, pintura",
+              "Techo: losa de concreto, losa prefabricada, losas inclinadas",
+              "Piso: cerámico, porcelanato",
+              "Ventanas: uPVC, aluminio",
+              "Puertas: madera tratada, metal, prefabricadas",
+              "Servicios: agua, luz, drenajes, cable de TV, internet",
+              "Exterior: fachada con diseño arquitectónico",
+              "Instalaciones: ocultas",
+              "Rango de precios: Q2,500.00/m² a Q2,900.00/m²"
+            ]
+          }
+        ]
       }
     ];
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-    // NUEVA FUNCIÓN PARA RENDERIZAR CON PESTAÑAS Y ACORDEONES
+    // NUEVA FUNCIÓN PARA RENDERIZAR CON PESTAÑAS Y ACORDEONES - MODIFICADA
     function __renderTipos(){
       const tipologias = __getTipos();
       
@@ -2405,6 +2640,7 @@
           const tipoOrder = ['Baja', 'Media', 'Alta'];
           tipoOrder.forEach(tipo => {
             if (tipos[tipo]) {
+              const tipologia = tipos[tipo][0]; // Tomamos la primera para la descripción general
               const rango = RANGOS_PRECIO[categoria.charAt(0).toUpperCase() + categoria.slice(1)]?.[tipo] || { min: 0, max: 0 };
               const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
               
@@ -2415,33 +2651,38 @@
                     <i class="fas fa-chevron-down typology-accordion-icon"></i>
                   </button>
                   <div class="typology-accordion-content">
+                    <!-- DESCRIPCIÓN GENERAL DE LA TIPOLOGÍA -->
+                    <div style="padding: 20px; background: rgba(91, 123, 122, 0.03); border-bottom: 1px solid var(--border-light);">
+                      <div style="font-weight: 600; color: var(--primary); margin-bottom: 12px; font-size: 1.1rem;">
+                        Descripción General - Tipología ${tipo}
+                      </div>
+                      <div style="white-space: pre-line; font-size: 0.9rem; line-height: 1.5; color: var(--text);">
+                        ${tipologia.generalDescription}
+                      </div>
+                    </div>
+                    
                     <div class="typology-variants">
               `;
               
-              tipos[tipo].forEach((tipologia, index) => {
+              // Renderizar cada variante
+              tipologia.variants.forEach((variante, index) => {
                 html += `
-                  <div class="typology-variant" data-id="${tipologia.id}">
+                  <div class="typology-variant" data-id="${variante.id}">
                     <div class="variant-images">
-                      <img class="variant-image" src="${tipologia.img}" alt="${tipologia.title}" onclick="event.stopPropagation(); openImageModal('${tipologia.img}', '${tipologia.title}')">
-                      ${tipologia.imgInterior ? `<img class="variant-image" src="${tipologia.imgInterior}" alt="Interior ${tipologia.title}" onclick="event.stopPropagation(); openImageModal('${tipologia.imgInterior}', 'Interior ${tipologia.title}')">` : ''}
+                      <img class="variant-image" src="${variante.img}" alt="${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.img}', '${variante.title}')">
+                      ${variante.imgInterior ? `<img class="variant-image" src="${variante.imgInterior}" alt="Interior ${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.imgInterior}', 'Interior ${variante.title}')">` : ''}
                     </div>
                     <div class="variant-content">
                       <div class="variant-details">
-                        <div class="variant-title">${tipologia.title}</div>
-                        <div class="variant-price">Q${tipologia.pricePerM2.toLocaleString('es-GT')}/m²</div>
+                        <div class="variant-title">${variante.title}</div>
+                        <div class="variant-price">Q${variante.pricePerM2.toLocaleString('es-GT')}/m²</div>
                         
                         <ul class="variant-features">
-                          ${tipologia.bullets.map(bullet => `<li><i class="fas fa-check"></i>${bullet}</li>`).join('')}
+                          ${variante.bullets.map(bullet => `<li><i class="fas fa-check"></i>${bullet}</li>`).join('')}
                         </ul>
                         
-                        ${tipologia.description ? `
-                          <div class="variant-description">
-                            <strong>Descripción:</strong> ${tipologia.description}
-                          </div>
-                        ` : ''}
-                        
-                        <button class="select-button" onclick="event.stopPropagation(); __selectTipo('${tipologia.id}')">
-                          <i class="fas fa-hand-pointer"></i> Seleccionar esta tipología
+                        <button class="select-button" onclick="event.stopPropagation(); __selectTipo('${variante.id}')">
+                          <i class="fas fa-hand-pointer"></i> Seleccionar esta variante
                         </button>
                       </div>
                     </div>
@@ -2504,10 +2745,23 @@
     }
 
     function __selectTipo(id) {
-      const s = __getTipos().find(z => z.id === id);
-      if (!s) return;
+      // Buscar en todas las tipologías y variantes
+      const tipologias = __getTipos();
+      let varianteSeleccionada = null;
+      let tipologiaPadre = null;
       
-      const rango = RANGOS_PRECIO[s.category]?.[s.type] || { min: 500, max: 1000 };
+      for (const tipologia of tipologias) {
+        const variante = tipologia.variants.find(v => v.id === id);
+        if (variante) {
+          varianteSeleccionada = variante;
+          tipologiaPadre = tipologia;
+          break;
+        }
+      }
+      
+      if (!varianteSeleccionada || !tipologiaPadre) return;
+      
+      const rango = RANGOS_PRECIO[tipologiaPadre.category]?.[tipologiaPadre.type] || { min: 500, max: 1000 };
       const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
       
       const img = document.getElementById('selectedImage');
@@ -2516,13 +2770,13 @@
       const pr = document.getElementById('selectedPrice');
       const hd = document.getElementById('typology');
       
-      if (img) img.src = s.img;
-      if (tp) tp.textContent = `Categoría ${s.category} — ${s.type}`;
-      if (ti) ti.textContent = s.title;
+      if (img) img.src = varianteSeleccionada.img;
+      if (tp) tp.textContent = `Categoría ${tipologiaPadre.category} — ${tipologiaPadre.type}`;
+      if (ti) ti.textContent = varianteSeleccionada.title;
       if (pr) pr.textContent = rangoTexto;
-      if (hd) hd.value = s.id;
+      if (hd) hd.value = varianteSeleccionada.id;
       
-      s.pricePerM2 = s.pricePerM2 || rango.max;
+      varianteSeleccionada.pricePerM2 = varianteSeleccionada.pricePerM2 || rango.max;
       
       if (document.getElementById('resultSection').classList.contains('active')) {
           calculateRealAppraisal();
@@ -2707,8 +2961,14 @@
         const tipId=document.getElementById('typology').value;
         let tipText='No seleccionada';
         try{
-          const t = (Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipId);
-          if(t) tipText = `${t.category}-${t.type}`;
+          const t = __getTipos();
+          for (const tipologia of t) {
+            const variante = tipologia.variants.find(v => v.id === tipId);
+            if (variante) {
+              tipText = `${tipologia.category}-${tipologia.type}`;
+              break;
+            }
+          }
         }catch{}
         document.getElementById('resultTypology').textContent = tipText;
 
@@ -2991,8 +3251,14 @@
       const tipologiaId=document.getElementById('typology').value;
       let tipText='No seleccionada';
       try{
-        const t=(Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipologiaId);
-        if(t) tipText=`${t.category}-${t.type}`;
+        const t=__getTipos();
+        for (const tipologia of t) {
+          const variante = tipologia.variants.find(v => v.id === tipologiaId);
+          if (variante) {
+            tipText=`${tipologia.category}-${tipologia.type}`;
+            break;
+          }
+        }
       }catch{}
 
       const formatCurrency=(v)=> new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(v);
@@ -3370,7 +3636,7 @@ Mientras tanto, puede usar registro con email.`;
           showUsernameModal(session.user.id);
         }, 1500);
       }
-    });
+    }
 
     window.__resendVerification = async (email) => {
       try {
