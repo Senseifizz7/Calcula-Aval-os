@@ -298,7 +298,7 @@
 
     
     #user-box {
-      display: none;
+      display: flex; /* CORREGIDO: Cambiado de 'none' a 'flex' cuando hay sesión */
       align-items: center;
       gap: 12px;
       justify-content: space-between;
@@ -923,6 +923,60 @@
       border-radius: var(--radius-sm);
     }
 
+    /* NUEVOS ESTILOS PARA MEJORAR USABILIDAD DE IMÁGENES */
+    .image-gallery {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .gallery-thumbnail {
+      width: 80px;
+      height: 60px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .gallery-thumbnail:hover,
+    .gallery-thumbnail.active {
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .image-zoom-container {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .main-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: var(--radius);
+      cursor: zoom-in;
+      transition: transform 0.3s ease;
+    }
+
+    .main-image.zoomed {
+      cursor: zoom-out;
+      transform: scale(1.5);
+    }
+
+    .image-counter {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+
     @media (max-width: 768px) {
       .typology-tabs {
         flex-direction: column;
@@ -950,6 +1004,15 @@
       .variant-image {
         width: 120px;
         height: 90px;
+      }
+
+      .image-gallery {
+        justify-content: center;
+      }
+      
+      .gallery-thumbnail {
+        width: 70px;
+        height: 50px;
       }
     }
   </style>
@@ -1080,7 +1143,8 @@
       </div>
     </div>
 
-    <div id="user-box" style="display:none;align-items:center;gap:12px;justify-content:space-between;margin-top:-16px;">
+    <!-- CORREGIDO: user-box ahora se muestra correctamente cuando hay sesión -->
+    <div id="user-box" style="display:none;align-items:center;gap:12px;justify-content:space-between;margin-top:16px;margin-bottom:24px;">
       <div style="color:var(--text-light)">
         <i class="fas fa-circle-user"></i>
         <span data-user-name></span> · <span data-user-email></span>
@@ -2609,7 +2673,7 @@ Como acceso encontramos:
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-    // NUEVA FUNCIÓN PARA RENDERIZAR CON PESTAÑAS Y ACORDEONES - MODIFICADA
+    // NUEVA FUNCIÓN PARA RENDERIZAR CON PESTAÑAS Y ACORDEONES - MEJORADA CON GALERÍA DE IMÁGENES
     function __renderTipos(){
       const tipologias = __getTipos();
       
@@ -2666,12 +2730,31 @@ Como acceso encontramos:
               
               // Renderizar cada variante
               tipologia.variants.forEach((variante, index) => {
+                const images = [variante.img];
+                if (variante.imgInterior) images.push(variante.imgInterior);
+                
                 html += `
                   <div class="typology-variant" data-id="${variante.id}">
-                    <div class="variant-images">
-                      <img class="variant-image" src="${variante.img}" alt="${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.img}', '${variante.title}')">
-                      ${variante.imgInterior ? `<img class="variant-image" src="${variante.imgInterior}" alt="Interior ${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.imgInterior}', 'Interior ${variante.title}')">` : ''}
+                    <!-- GALERÍA DE IMÁGENES MEJORADA -->
+                    <div class="image-gallery">
+                      ${images.map((img, imgIndex) => `
+                        <img class="gallery-thumbnail ${imgIndex === 0 ? 'active' : ''}" 
+                             src="${img}" 
+                             alt="${variante.title} ${imgIndex === 0 ? 'Exterior' : 'Interior'}"
+                             onclick="switchMainImage(this, '${img}', '${variante.title} ${imgIndex === 0 ? 'Exterior' : 'Interior'}')">
+                      `).join('')}
                     </div>
+                    
+                    <!-- IMAGEN PRINCIPAL CON ZOOM -->
+                    <div class="image-zoom-container">
+                      <img class="main-image" 
+                           src="${variante.img}" 
+                           alt="${variante.title}"
+                           onclick="toggleZoom(this)"
+                           onerror="this.src='https://via.placeholder.com/400x300?text=Imagen+no+disponible'">
+                      ${images.length > 1 ? `<div class="image-counter">1/${images.length}</div>` : ''}
+                    </div>
+                    
                     <div class="variant-content">
                       <div class="variant-details">
                         <div class="variant-title">${variante.title}</div>
@@ -2704,6 +2787,34 @@ Como acceso encontramos:
 
       // Inicializar acordeones
       initAccordions();
+    }
+
+    // NUEVAS FUNCIONES PARA MEJORAR LA EXPERIENCIA CON IMÁGENES
+    function switchMainImage(thumbnail, newSrc, altText) {
+      const container = thumbnail.closest('.typology-variant');
+      const mainImage = container.querySelector('.main-image');
+      const imageCounter = container.querySelector('.image-counter');
+      const allThumbnails = container.querySelectorAll('.gallery-thumbnail');
+      
+      // Actualizar imagen principal
+      mainImage.src = newSrc;
+      mainImage.alt = altText;
+      mainImage.classList.remove('zoomed');
+      
+      // Actualizar contador
+      if (imageCounter) {
+        const thumbnails = Array.from(allThumbnails);
+        const currentIndex = thumbnails.indexOf(thumbnail) + 1;
+        imageCounter.textContent = `${currentIndex}/${thumbnails.length}`;
+      }
+      
+      // Actualizar thumbnails activos
+      allThumbnails.forEach(thumb => thumb.classList.remove('active'));
+      thumbnail.classList.add('active');
+    }
+
+    function toggleZoom(image) {
+      image.classList.toggle('zoomed');
     }
 
     function initAccordions() {
@@ -2815,6 +2926,8 @@ Como acceso encontramos:
 
     window.__openTypology = __openTypology; 
     window.__closeTypology = __closeTypology;
+    window.switchMainImage = switchMainImage;
+    window.toggleZoom = toggleZoom;
 
     // Funciones para el visor de imágenes (mantenidas)
     function openImageModal(imageSrc, imageAlt) {
@@ -3430,36 +3543,65 @@ Como acceso encontramos:
     window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     
+    // CORREGIDO: Función mejorada para mostrar/ocultar usuario
     function __updateAuthUI(isLogged){
       const overlay = document.getElementById('auth-overlay');
       const userBox = document.getElementById('user-box');
       
-      if(overlay) overlay.style.display = isLogged ? 'none' : 'flex';
+      console.log('🔄 Actualizando UI de autenticación:', { isLogged, userBox: !!userBox });
+      
+      if(overlay) {
+        overlay.style.display = isLogged ? 'none' : 'flex';
+        console.log('🔧 Overlay actualizado:', overlay.style.display);
+      }
       
       if(userBox){
-        userBox.style.display = isLogged ? 'flex' : 'none';
+        // CORRECCIÓN PRINCIPAL: Mostrar u ocultar correctamente
         if(isLogged && window.__session?.user){
+          userBox.style.display = 'flex'; // CORREGIDO: Cambiado a 'flex'
+          
           const email = window.__session.user.email || "";
           const username = window.__session.user.user_metadata?.username || "";
           const userNameElement = userBox.querySelector('[data-user-name]');
           const userEmailElement = userBox.querySelector('[data-user-email]');
           
-          if(userNameElement) userNameElement.textContent = username || "(sin username)";
-          if(userEmailElement) userEmailElement.textContent = email;
+          console.log('👤 Datos de usuario:', { email, username });
+          
+          if(userNameElement) {
+            userNameElement.textContent = username || "(sin username)";
+            console.log('✅ Nombre de usuario actualizado');
+          }
+          if(userEmailElement) {
+            userEmailElement.textContent = email;
+            console.log('✅ Email actualizado');
+          }
+          
+          console.log('✅ User-box mostrado correctamente');
+        } else {
+          userBox.style.display = 'none'; // Ocultar cuando no hay sesión
+          console.log('❌ User-box ocultado (sin sesión)');
         }
+      } else {
+        console.log('❌ User-box no encontrado en el DOM');
       }
       
       const nextBtn = document.getElementById('next-step');
-      if(nextBtn) nextBtn.disabled = !isLogged;
+      if(nextBtn) {
+        nextBtn.disabled = !isLogged;
+        console.log('🔧 Botón siguiente actualizado:', nextBtn.disabled);
+      }
     }
 
     (async () => {
+      console.log('🔄 Verificando sesión al cargar...');
       const { data: { session} } = await window.supabase.auth.getSession();
       window.__session = session || null;
+      console.log('📋 Sesión encontrada:', !!session);
       __updateAuthUI(!!session);
     })();
 
     window.supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('🔄 Cambio de estado de autenticación:', _event);
       window.__session = session || null;
       __updateAuthUI(!!session);
     });
@@ -3650,7 +3792,10 @@ Mientras tanto, puede usar registro con email.`;
       }
     };
 
-    window.__signOut = async () => { await window.supabase.auth.signOut(); };
+    window.__signOut = async () => { 
+      await window.supabase.auth.signOut(); 
+      console.log('👋 Sesión cerrada');
+    };
     window.__canUseApp = () => !!window.__session;
 
     document.addEventListener('DOMContentLoaded', () => {
