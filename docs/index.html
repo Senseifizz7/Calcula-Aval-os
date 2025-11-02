@@ -1080,7 +1080,7 @@
       </div>
     </div>
 
-    <div id="user-box" style="display:none;align-items:center;gap:12px;justify-content:space-between;margin-top:16px;margin-bottom:24px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);">
+    <div id="user-box" style="display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:16px;margin-bottom:24px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);">
       <div style="color:var(--text-light)">
         <i class="fas fa-circle-user"></i>
         <span data-user-name></span> · <span data-user-email></span>
@@ -3434,32 +3434,59 @@ Como acceso encontramos:
       const overlay = document.getElementById('auth-overlay');
       const userBox = document.getElementById('user-box');
       
-      if(overlay) overlay.style.display = isLogged ? 'none' : 'flex';
+      console.log('🔄 Actualizando UI de autenticación. Logged:', isLogged);
+      console.log('📧 Usuario actual:', window.__session?.user);
+      
+      if(overlay) {
+        overlay.style.display = isLogged ? 'none' : 'flex';
+        console.log('🔧 Overlay display:', overlay.style.display);
+      }
       
       if(userBox){
-        userBox.style.display = isLogged ? 'flex' : 'none';
-        if(isLogged && window.__session?.user){
-          const email = window.__session.user.email || "";
-          const username = window.__session.user.user_metadata?.username || "";
-          const userNameElement = userBox.querySelector('[data-user-name]');
-          const userEmailElement = userBox.querySelector('[data-user-email]');
-          
-          if(userNameElement) userNameElement.textContent = username || "(sin username)";
-          if(userEmailElement) userEmailElement.textContent = email;
+        if(isLogged){
+          userBox.style.display = 'flex';
+          if(window.__session?.user){
+            const email = window.__session.user.email || "";
+            const username = window.__session.user.user_metadata?.username || email.split('@')[0] || "Usuario";
+            const userNameElement = userBox.querySelector('[data-user-name]');
+            const userEmailElement = userBox.querySelector('[data-user-email]');
+            
+            console.log('👤 Datos usuario:', {username, email});
+            
+            if(userNameElement) {
+              userNameElement.textContent = username;
+              console.log('✅ Nombre usuario actualizado');
+            }
+            if(userEmailElement) {
+              userEmailElement.textContent = email;
+              console.log('✅ Email usuario actualizado');
+            }
+          }
+        } else {
+          userBox.style.display = 'none';
         }
+        console.log('🔧 UserBox display:', userBox.style.display);
       }
       
       const nextBtn = document.getElementById('next-step');
-      if(nextBtn) nextBtn.disabled = !isLogged;
+      if(nextBtn) {
+        nextBtn.disabled = !isLogged;
+        console.log('🔧 Botón siguiente disabled:', nextBtn.disabled);
+      }
     }
 
     (async () => {
-      const { data: { session} } = await window.supabase.auth.getSession();
+      console.log('🔍 Iniciando verificación de sesión...');
+      const { data: { session}, error } = await window.supabase.auth.getSession();
+      if(error) console.error('❌ Error obteniendo sesión:', error);
+      
       window.__session = session || null;
+      console.log('✅ Sesión obtenida:', session ? 'SÍ' : 'NO');
       __updateAuthUI(!!session);
     })();
 
     window.supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('🔄 Cambio de estado de autenticación:', _event);
       window.__session = session || null;
       __updateAuthUI(!!session);
     });
@@ -3481,6 +3508,9 @@ Como acceso encontramos:
         }
         if (!data?.session) {
           alert("Te enviamos un correo de confirmación. Revisa spam/promociones.\nDespués de confirmar, vuelve a esta página.");
+        } else {
+          // Si hay sesión inmediatamente, actualizar UI
+          __updateAuthUI(true);
         }
       } catch (e) {
         console.error("signUp error:", e);
@@ -3490,8 +3520,10 @@ Como acceso encontramos:
 
     window.__signInWithEmail = async (email, password) => {
       try {
-        const { error } = await window.supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await window.supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        // Actualizar UI después de login exitoso
+        __updateAuthUI(true);
       } catch (e) {
         const msg = String(e?.message || '').toLowerCase();
         if (msg.includes('email') && msg.includes('confirm')) {
@@ -3694,4 +3726,4 @@ Mientras tanto, puede usar registro con email.`;
     })();
   </script>
 </body>
-</html>
+</html>   
