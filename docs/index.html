@@ -9,8 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* TODOS LOS ESTILOS ORIGINALES SE MANTIENEN EXACTAMENTE IGUAL */
-    
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -924,7 +922,37 @@
       border-radius: var(--radius-sm);
     }
 
-    /* NUEVOS ESTILOS PARA BREADCRUMBS - SE AGREGAN AL FINAL SIN MODIFICAR LOS EXISTENTES */
+    @media (max-width: 768px) {
+      .typology-tabs {
+        flex-direction: column;
+      }
+      
+      .typology-tab {
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
+        border-left: 3px solid transparent;
+      }
+      
+      .typology-tab.active {
+        border-left-color: var(--primary);
+        border-bottom-color: var(--border);
+      }
+      
+      .variant-content {
+        flex-direction: column;
+      }
+      
+      .variant-images {
+        justify-content: center;
+      }
+      
+      .variant-image {
+        width: 120px;
+        height: 90px;
+      }
+    }
+
+    /* === BREADCRUMBS - SOLO ESTO SE AGREGA === */
     .typology-breadcrumbs {
       padding: 16px 24px;
       background: rgba(91, 123, 122, 0.03);
@@ -937,12 +965,7 @@
 
     .typology-breadcrumbs .crumb {
       color: var(--text-light);
-      text-decoration: none;
       transition: color 0.2s ease;
-    }
-
-    .typology-breadcrumbs .crumb:hover {
-      color: var(--primary);
     }
 
     .typology-breadcrumbs .crumb.current {
@@ -978,41 +1001,10 @@
     }
 
     @media (max-width: 768px) {
-      .typology-tabs {
-        flex-direction: column;
-      }
-      
-      .typology-tab {
-        padding: 12px;
-        border-bottom: 1px solid var(--border);
-        border-left: 3px solid transparent;
-      }
-      
-      .typology-tab.active {
-        border-left-color: var(--primary);
-        border-bottom-color: var(--border);
-      }
-      
-      .variant-content {
-        flex-direction: column;
-      }
-      
-      .variant-images {
-        justify-content: center;
-      }
-      
-      .variant-image {
-        width: 120px;
-        height: 90px;
-      }
-
-      /* BREADCRUMBS RESPONSIVE */
       .typology-breadcrumbs {
         padding: 12px 16px;
         font-size: 0.8rem;
-        flex-wrap: wrap;
       }
-
       .nav-indicators {
         padding: 8px 16px;
         flex-direction: column;
@@ -1447,7 +1439,7 @@
           <button class="modal-close" id="closeModal" type="button">&times;</button>
         </div>
         
-        <!-- NUEVO: BREADCRUMBS DE NAVEGACIÓN -->
+        <!-- === AGREGAR ESTO === -->
         <nav class="typology-breadcrumbs">
           <span class="crumb">Catálogo</span>
           <span class="separator">›</span>
@@ -1456,14 +1448,13 @@
           <span class="crumb current" id="breadcrumb-type">Tipología</span>
         </nav>
 
-        <!-- NUEVO: INDICADORES DE POSICIÓN -->
         <div class="nav-indicators">
           <span class="position-indicator" id="position-indicator">Selecciona una categoría</span>
           <span class="types-count" id="types-count">0 tipos disponibles</span>
         </div>
+        <!-- === FIN DE LO AGREGADO === -->
 
         <div class="modal-body" style="padding: 0;">
-          <!-- ESTRUCTURA ORIGINAL MANTENIDA -->
           <div class="typology-tabs">
             <button class="typology-tab active" data-tab="baja">Categoría Baja</button>
             <button class="typology-tab" data-tab="media">Categoría Media</button>
@@ -1495,6 +1486,28 @@
   <button id="pdf-btn" type="button"><i class="fas fa-file-pdf"></i> PDF</button>
 
   <script>
+    // === AGREGAR ESTAS FUNCIONES NUEVAS ===
+    function __updateBreadcrumbs(category, type) {
+      const categoryCrumb = document.getElementById('breadcrumb-category');
+      const typeCrumb = document.getElementById('breadcrumb-type');
+      const positionIndicator = document.getElementById('position-indicator');
+      const typesCount = document.getElementById('types-count');
+      
+      if (categoryCrumb) categoryCrumb.textContent = `Categoría ${category}`;
+      if (typeCrumb) typeCrumb.textContent = type ? `Tipología ${type}` : 'Selecciona tipo';
+      if (positionIndicator) {
+        positionIndicator.textContent = type ? 
+          `Categoría ${category} - Tipología ${type}` : 
+          `Explorando Categoría ${category}`;
+      }
+      if (typesCount) {
+        const tipologias = __getTipos();
+        const tiposEnCategoria = tipologias.filter(t => t.category === category);
+        const totalVariantes = tiposEnCategoria.reduce((acc, curr) => acc + curr.variants.length, 0);
+        typesCount.textContent = `${totalVariantes} variantes disponibles`;
+      }
+    }
+
     // FUNCIONES ORIGINALES MANTENIDAS
     function modificarPrecioTipologia(tipologiaId, nuevoPrecio) {
         const tipologias = __getTipos();
@@ -2693,38 +2706,6 @@ Como acceso encontramos:
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-    // NUEVA FUNCIÓN PARA ACTUALIZAR BREADCRUMBS
-    function __updateBreadcrumbs(category, type) {
-      const categoryCrumb = document.getElementById('breadcrumb-category');
-      const typeCrumb = document.getElementById('breadcrumb-type');
-      const positionIndicator = document.getElementById('position-indicator');
-      const typesCount = document.getElementById('types-count');
-      
-      if (categoryCrumb) {
-        categoryCrumb.textContent = `Categoría ${category}`;
-      }
-      
-      if (typeCrumb) {
-        typeCrumb.textContent = type ? `Tipología ${type}` : 'Selecciona tipo';
-      }
-      
-      if (positionIndicator) {
-        if (type) {
-          positionIndicator.textContent = `Categoría ${category} - Tipología ${type}`;
-        } else {
-          positionIndicator.textContent = `Explorando Categoría ${category}`;
-        }
-      }
-      
-      // Actualizar contador de tipos disponibles
-      if (typesCount) {
-        const tipologias = __getTipos();
-        const tiposEnCategoria = tipologias.filter(t => t.category === category);
-        const totalVariantes = tiposEnCategoria.reduce((acc, curr) => acc + curr.variants.length, 0);
-        typesCount.textContent = `${totalVariantes} variantes disponibles`;
-      }
-    }
-
     // FUNCIÓN ORIGINAL MODIFICADA PARA INCLUIR BREADCRUMBS
     function __renderTipos(){
       const tipologias = __getTipos();
@@ -2821,7 +2802,7 @@ Como acceso encontramos:
       // Inicializar acordeones
       initAccordions();
       
-      // Inicializar breadcrumbs con la primera categoría
+      // === AGREGAR ESTA LÍNEA ===
       __updateBreadcrumbs('Baja', '');
     }
 
@@ -2853,7 +2834,7 @@ Como acceso encontramos:
           const tabName = tab.getAttribute('data-tab');
           const categoryName = tabName.charAt(0).toUpperCase() + tabName.slice(1);
           
-          // Actualizar breadcrumbs al cambiar pestaña
+          // === AGREGAR ESTA LÍNEA ===
           __updateBreadcrumbs(categoryName, '');
           
           // Remover active de todas las pestañas y contenidos
@@ -3038,11 +3019,911 @@ Como acceso encontramos:
 
     // EL RESTO DEL CÓDIGO JAVASCRIPT ORIGINAL SE MANTIENE INTACTO
     // [Todo el resto del código JavaScript original permanece igual...]
-
-    // ... (el resto del código JavaScript se mantiene exactamente igual)
   </script>
 
   <!-- EL RESTO DEL CÓDIGO ORIGINAL SE MANTIENE COMPLETAMENTE -->
-  <!-- ... (todo el resto del código HTML y JavaScript permanece idéntico) -->
+  <script>
+    function formatMoneyGTQ(v){
+      return new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(Number(v||0));
+    }
+
+    function recalcularFila(tr){
+      const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
+      const vbase = parseFloat(tr.querySelector('.vbase-input')?.value)||0;
+      const coef = parseFloat(tr.querySelector('.coef-input')?.value)||0;
+      const monto = area * vbase * coef;
+      const out = tr.querySelector('.monto-output');
+      if(out){ out.value = monto.toFixed(2); }
+      return monto;
+    }
+
+    function recalcularTablaConstruccion(){
+      const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
+      let total = 0, sumaArea = 0;
+      rows.forEach(tr=>{
+        total += recalcularFila(tr);
+        const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
+        sumaArea += area;
+      });
+      const totalEl = document.getElementById('totalConstruccion');
+      if(totalEl) totalEl.value = total.toFixed(2);
+
+      if(document.getElementById('resultSection').classList.contains('active')){
+        document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(total);
+        
+        const fallbackArea = parseFloat(document.getElementById('construction-area').value)||0;
+        const areaMostrar = (sumaArea>0? sumaArea : fallbackArea).toFixed(2);
+        document.getElementById('resultArea').textContent = `${areaMostrar} m²`;
+
+        const estado = document.getElementById('estado-inmueble').value || 'No especificado';
+        document.getElementById('resultCondition').textContent = estado;
+
+        const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
+        const antiguedad = anioConstruccion? (new Date().getFullYear()-anioConstruccion) : 0;
+        document.getElementById('resultAge').textContent = `${antiguedad} años`;
+
+        const tipId=document.getElementById('typology').value;
+        let tipText='No seleccionada';
+        try{
+          const t = __getTipos();
+          for (const tipologia of t) {
+            const variante = tipologia.variants.find(v => v.id === tipId);
+            if (variante) {
+              tipText = `${tipologia.category}-${tipologia.type}`;
+              break;
+            }
+          }
+        }catch{}
+        document.getElementById('resultTypology').textContent = tipText;
+
+        const land=parseFloat(document.getElementById('totalTerreno')?.value)||0;
+        document.getElementById('resultLandValue').textContent = formatMoneyGTQ(land);
+        document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(land);
+        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(land + total);
+        document.getElementById('resultTotal').textContent = formatMoneyGTQ(land + total);
+      }
+    }
+
+    function bindRowEvents(tr){
+      ['input','change'].forEach(evt=>{
+        tr.addEventListener(evt, e=>{
+          if(e.target.matches('.area-input,.vbase-input,.coef-input')){
+            recalcularTablaConstruccion();
+            integrarValores(); 
+          }
+        });
+      });
+    }
+
+    function agregarFilaConstruccion(){
+      const tbody = document.getElementById('tbBodyConstruccion');
+      const n = tbody.querySelectorAll('tr').length + 1;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="text" value="Nivel ${n}" class="planta-input"></td>
+        <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
+        <td><input type="number" min="0, step="0.01" class="vbase-input" placeholder="0"></td>
+        <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
+        <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
+        <td><input type="text" class="monto-output" value="0.00" readonly></td>
+      `;
+      tbody.appendChild(tr);
+      bindRowEvents(tr);
+    }
+
+    function eliminarUltimaFilaConstruccion(){
+      const tbody = document.getElementById('tbBodyConstruccion');
+      const rows = tbody.querySelectorAll('tr');
+      if(rows.length>1){
+        tbody.removeChild(rows[rows.length-1]);
+        recalcularTablaConstruccion();
+        integrarValores(); 
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const firstRow = document.querySelector('#tbBodyConstruccion tr');
+      if(firstRow) bindRowEvents(firstRow);
+    });
+  </script>
+
+  <script>
+    function recalcularTerreno() {
+      const row = document.querySelector('#tablaTerreno tbody tr');
+      if (!row) return 0;
+
+      const num = (sel) => {
+        const value = row.querySelector(sel)?.value;
+        return value === '' ? 0 : parseFloat(value) || 0;
+      };
+
+      const fac = (sel) => {
+        const v = parseFloat(row.querySelector(sel)?.value);
+        return isNaN(v) || v <= 0 ? 1 : v;
+      };
+
+      let area = num('.t-area');
+
+      const vbase = num('.t-vbase');
+      const ffte  = fac('.t-ffte');
+      const ffdo  = fac('.t-ffdo');
+      const ffma  = fac('.t-ffma');
+      const fext  = fac('.t-fext');
+      const fotros= fac('.t-fotros');
+
+      const monto = area * vbase * ffte * ffdo * ffma * fext * fotros;
+
+      const out = document.getElementById('t-monto');
+      if (out) out.value = monto.toFixed(2);
+
+      const totalTerrenoEl = document.getElementById('totalTerreno');
+      if (totalTerrenoEl) totalTerrenoEl.value = monto.toFixed(2);
+
+      const ivTerrenoEl = document.getElementById('ivTerreno');
+      if (ivTerrenoEl) ivTerrenoEl.textContent = formatMoneyGTQ(monto);
+
+      if (document.getElementById('resultSection').classList.contains('active')) {
+        document.getElementById('resultLandValue').textContent = formatMoneyGTQ(monto);
+        document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(monto);
+      }
+
+      return monto;
+    }
+
+    function integrarValores() {
+      const terreno = parseFloat(document.getElementById('totalTerreno')?.value) || 0;
+      const construccion = parseFloat(document.getElementById('totalConstruccion')?.value) || 0;
+      const total = terreno + construccion;
+
+      const ivT = document.getElementById('ivTerreno');
+      const ivConst = document.getElementById('ivConstruccion');
+      const ivTot = document.getElementById('ivTotal');
+      if (ivT) ivT.textContent = formatMoneyGTQ(terreno);
+      if (ivConst) ivConst.textContent = formatMoneyGTQ(construccion);
+      if (ivTot) ivTot.textContent = formatMoneyGTQ(total);
+
+      if (document.getElementById('resultSection').classList.contains('active')) {
+        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(total);
+        document.getElementById('resultTotal').textContent = formatMoneyGTQ(total);
+        document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(construccion);
+      }
+    }
+
+    const __origCalculateRealAppraisal = window.calculateRealAppraisal;
+    window.calculateRealAppraisal = function() {
+      if (typeof __origCalculateRealAppraisal === 'function') {
+        __origCalculateRealAppraisal();
+      }
+      recalcularTerreno();
+      integrarValores();
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const row = document.querySelector('#tablaTerreno tbody tr');
+      if (row) {
+        row.querySelectorAll('input').forEach(inp => {
+          ['input','change'].forEach(evt => {
+            inp.addEventListener(evt, () => {
+              recalcularTerreno();
+              integrarValores();
+            });
+          });
+        });
+      }
+     
+      recalcularTerreno();
+      integrarValores();
+    });
+  </script>
+
+  <script>
+    let gMap=null,gMarker=null,gGeocoder=null,gAutocomplete=null;
+    
+    function setLatLngInputs(lat,lng){
+      const latEl=document.getElementById('geo-lat');
+      const lngEl=document.getElementById('geo-lng');
+      if(latEl) latEl.value=Number(lat).toFixed(6); 
+      if(lngEl) lngEl.value=Number(lng).toFixed(6);
+    }
+    
+    function setGMarker(lat,lng,center=true){
+      if(!gMap) return;
+      const pos={lat:Number(lat),lng:Number(lng)};
+      if(!gMarker){
+        gMarker=new google.maps.Marker({
+          position:pos,
+          map:gMap,
+          draggable:true,
+          animation:google.maps.Animation.DROP
+        });
+        gMarker.addListener('dragend',()=>{
+          const p=gMarker.getPosition();
+          const la=p.lat(),ln=p.lng();
+          setLatLngInputs(la,ln);
+          reverseGeocodeGoogle(la,ln);
+        });
+      }else{
+        gMarker.setPosition(pos);
+      }
+      if(center) gMap.setCenter(pos);
+    }
+    
+    async function reverseGeocodeGoogle(lat,lng){
+      if(!gGeocoder) gGeocoder=new google.maps.Geocoder();
+      const addressEl=document.getElementById('address');
+      try{
+        const {results}=await gGeocoder.geocode({location:{lat,lng}});
+        if(results&&results[0]&&addressEl){
+          addressEl.value=results[0].formatted_address;
+        }
+      }catch(e){
+        console.warn('Geocoder error:',e);
+      }
+    }
+    
+    function attachAutocomplete(){
+      const addressEl=document.getElementById('address');
+      if(!addressEl) return;
+      try{
+        gAutocomplete=new google.maps.places.Autocomplete(addressEl,{
+          fields:['geometry','formatted_address']
+        });
+        gAutocomplete.addListener('place_changed',()=>{
+          const place=gAutocomplete.getPlace();
+          if(!place?.geometry?.location) return;
+          const lat=place.geometry.location.lat();
+          const lng=place.geometry.location.lng();
+          setLatLngInputs(lat,lng);
+          setGMarker(lat,lng,true);
+        });
+      }catch(e){
+        console.warn('Places Autocomplete no disponible.',e);
+      }
+    }
+    
+    function locateMeOnce(){
+      if(!('geolocation'in navigator)){
+        alert('Geolocalización no disponible.');
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(async pos=>{
+        const lat=pos.coords.latitude;
+        const lng=pos.coords.longitude;
+        setLatLngInputs(lat,lng);
+        if(gMap) setGMarker(lat,lng,true);
+        await reverseGeocodeGoogle(lat,lng);
+      },err=>{
+        const msgs={1:'Permiso denegado',2:'Posición no disponible',3:'Tiempo agotado'};
+        alert('No se pudo obtener la ubicación: '+(msgs[err.code]||err.message));
+      },{
+        enableHighAccuracy:true,
+        timeout:15000,
+        maximumAge:0
+      });
+    }
+    
+    function initGMap(){
+      const container=document.getElementById('gmap');
+      const start={
+        lat:Number(document.getElementById('geo-lat')?.value)||14.6349,
+        lng:Number(document.getElementById('geo-lng')?.value)||-90.5069
+      };
+      
+      gMap=new google.maps.Map(container,{
+        center:start,
+        zoom:14,
+        mapTypeControl:false,
+        streetViewControl:false,
+        fullscreenControl:true,
+        gestureHandling:'greedy'
+      });
+      
+      gMap.addListener('click', function(event) {
+        const lat = event.latLng.lat();
+        const lng = event.latLng.lng();
+        setGMarker(lat, lng, false);
+        setLatLngInputs(lat, lng);
+        reverseGeocodeGoogle(lat, lng);
+      });
+      
+      setGMarker(start.lat,start.lng,true);
+      attachAutocomplete();
+    }
+    
+    window.locateMeOnce=locateMeOnce;
+    window.initGMap=initGMap;
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCsWVTI4PKDqGp-wJgWZnD2IbOvd0wKPhQ&libraries=places&callback=initGMap" async defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    function calculateRealAppraisal(){
+      const totalConstruccion = parseFloat(document.getElementById('totalConstruccion')?.value)||0;
+
+      let sumaArea = 0;
+      document.querySelectorAll('#tbBodyConstruccion .area-input').forEach(i=>{
+        sumaArea += parseFloat(i.value)||0;
+      });
+      const areaConstruccion = sumaArea>0 ? sumaArea : (parseFloat(document.getElementById('construction-area').value)||0);
+
+      const estado=document.getElementById('estado-inmueble').value||'No especificado';
+      const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
+      const antiguedad=anioConstruccion? new Date().getFullYear()-anioConstruccion : 0;
+
+      const tipologiaId=document.getElementById('typology').value;
+      let tipText='No seleccionada';
+      try{
+        const t=__getTipos();
+        for (const tipologia of t) {
+          const variante = tipologia.variants.find(v => v.id === tipologiaId);
+          if (variante) {
+            tipText=`${tipologia.category}-${tipologia.type}`;
+            break;
+          }
+        }
+      }catch{}
+
+      const formatCurrency=(v)=> new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(v);
+
+      document.getElementById('resultArea').textContent=`${areaConstruccion.toFixed(2)} m²`;
+      document.getElementById('resultTypology').textContent=tipText;
+      document.getElementById('resultCondition').textContent=estado;
+      document.getElementById('resultAge').textContent=`${antiguedad} años`;
+
+      const terreno = parseFloat(document.getElementById('totalTerreno')?.value) || 0;
+      document.getElementById('resultLandValue').textContent=formatCurrency(terreno);
+      document.getElementById('resultLandAppraisal').textContent=formatCurrency(terreno);
+
+      document.getElementById('resultBuildValue').textContent=formatCurrency(totalConstruccion);
+      document.getElementById('resultGrandTotal').textContent=formatCurrency(terreno + totalConstruccion);
+      document.getElementById('resultTotal').textContent=formatCurrency(terreno + totalConstruccion);
+    }
+
+    async function generateReport(){
+      const loadingOverlay=document.getElementById('loadingOverlay'); loadingOverlay.style.display='flex';
+      try{
+        if(typeof window.jspdf==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); }
+        if(typeof window.jspdfAutoTable==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js'); }
+        const { jsPDF }=window.jspdf; const doc=new jsPDF(); const pageWidth=doc.internal.pageSize.getWidth(); const margin=20; const contentWidth=pageWidth-(margin*2);
+        doc.setFillColor(91,123,122); doc.rect(0,0,pageWidth,60,'F');
+        doc.setTextColor(255,255,255); doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.text('REPORTE DE AVALÚO',margin,30);
+        doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')}`,margin,45); doc.text('Sistema de Avalúos Profesional', pageWidth - margin - 80, 45);
+
+        let y=80;
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN DE LA PROPIEDAD',margin,y); y+=20;
+        const basicData=[
+          ['Asociado:',document.getElementById('associate-name').value||'No especificado'],
+          ['Dirección:',document.getElementById('address').value||'No especificado'],
+          ['Propietario:',document.getElementById('owner-name').value||'No especificado'],
+          ['Área Construida:',document.getElementById('resultArea').textContent||'No especificado'],
+          ['Área Terreno:',document.getElementById('land-area').value?document.getElementById('land-area').value+' m²':'No especificado']
+        ];
+        doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','normal');
+        basicData.forEach(([l,v])=>{doc.setFont('helvetica','bold'); doc.text(l,margin,y); doc.setFont('helvetica','normal'); doc.text(v,margin+45,y); y+=8;}); y+=10;
+
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('RESULTADOS DEL AVALÚO',margin,y); y+=20;
+        const resultsData=[
+          ['Tipología',document.getElementById('resultTypology').textContent],
+          ['Estado',document.getElementById('resultCondition').textContent],
+          ['Antigüedad',document.getElementById('resultAge').textContent],
+          ['Valor Terreno',document.getElementById('resultLandValue').textContent],
+          ['Valor Construcción',document.getElementById('resultBuildValue').textContent],
+          ['TOTAL',document.getElementById('resultTotal').textContent]
+        ];
+        doc.autoTable({startY:y, head:[['Concepto','Valor']], body:resultsData, theme:'grid', headStyles:{fillColor:[91,123,122], textColor:255, fontStyle:'bold'}, styles:{fontSize:10, cellPadding:5}, columnStyles:{0:{fontStyle:'bold', cellWidth:100},1:{cellWidth:80}}, margin:{left:margin,right:margin}});
+        y=doc.lastAutoTable.finalY+15;
+
+        doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15); doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
+
+        if(y>240){ doc.addPage(); y=20; }
+
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
+        const colData=[
+          ['Norte',document.getElementById('norte-propietario').value||'',(document.getElementById('norte-metros').value||'')+' m'],
+          ['Sur',document.getElementById('sur-propietario').value||'',(document.getElementById('sur-metros').value||'')+' m'],
+          ['Oriente',document.getElementById('oriente-propietario').value||'',(document.getElementById('oriente-metros').value||'')+' m'],
+          ['Poniente',document.getElementById('poniente-propietario').value||'',(document.getElementById('poniente-metros').value||'')+' m']
+        ];
+        doc.autoTable({startY:y, head:[['Dirección','Propietario','Metros']], body:colData, theme:'grid', headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'}, styles:{fontSize:9, cellPadding:4}, margin:{left:margin,right:margin}});
+
+        const totalPages=doc.internal.getNumberOfPages();
+        for(let i=1;i<=totalPages;i++){
+          doc.setPage(i); doc.setFontSize(8); doc.setTextColor(128,128,128);
+          doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos`, pageWidth/2, doc.internal.pageSize.getHeight()-10, {align:'center'});
+        }
+        const fileName=`Avaluo_${document.getElementById('associate-name').value||'Propiedad'}_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(fileName);
+      }catch(error){
+        console.error('Error generando PDF:',error); alert('Error al generar el PDF: '+error.message);
+      }
+      finally{ loadingOverlay.style.display='none'; }
+    }
+    function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);});}
+
+    class FormWizard{
+      constructor(){this.currentStep=1; this.totalSteps=4; this.init();}
+      init(){this.bindEvents(); this.updateUI();}
+      bindEvents(){
+        document.getElementById('next-step').addEventListener('click',()=>this.next());
+        document.getElementById('prev-step').addEventListener('click',()=>this.previous());
+        document.querySelectorAll('.step').forEach(step=>{
+          step.addEventListener('click',(e)=>{
+            const n=parseInt(e.currentTarget.dataset.step);
+            if(n<this.currentStep){this.goToStep(n);}
+          });
+        });
+      }
+      validateStep(step){
+        const req=document.querySelectorAll(`[data-step="${step}"] [required]`);
+        let ok=true; req.forEach(f=>{if(!f.value.trim()){f.style.borderColor='var(--error)'; ok=false;} else{f.style.borderColor='';}});
+        if(!ok){alert('Por favor completa todos los campos requeridos marcados con *');}
+        return ok;
+      }
+      next(){
+        if(this.currentStep<this.totalSteps){
+          if(this.validateStep(this.currentStep)){ this.currentStep++; this.updateUI(); }
+        } else { this.calculateAppraisal(); }
+      }
+      previous(){ if(this.currentStep>1){ this.currentStep--; this.updateUI(); } }
+      goToStep(step){ if(step>=1&&step<=this.totalSteps){ this.currentStep=step; this.updateUI(); } }
+      updateUI(){
+        document.querySelectorAll('.step').forEach(s=>{
+          const n=parseInt(s.dataset.step);
+          s.classList.remove('active','completed');
+          if(n===this.currentStep){s.classList.add('active');}
+          else if(n<this.currentStep){s.classList.add('completed');}
+        });
+        document.querySelectorAll('.form-section').forEach(sec=>{
+          sec.classList.remove('active'); if(parseInt(sec.dataset.step)===this.currentStep){sec.classList.add('active');}
+        });
+        const prevBtn=document.getElementById('prev-step');
+        const nextBtn=document.getElementById('next-step');
+        prevBtn.style.display=this.currentStep>1?'flex':'none';
+        nextBtn.innerHTML=this.currentStep===this.totalSteps?'<i class="fas fa-calculator"></i> Calcular Avalúo':'Siguiente <i class="fas fa-arrow-right"></i>';
+      }
+      calculateAppraisal(){
+        if(this.validateStep(this.currentStep)){
+          const nextBtn=document.getElementById('next-step');
+          const original=nextBtn.innerHTML;
+          nextBtn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Calculando...'; nextBtn.disabled=true;
+          setTimeout(()=>{
+            calculateRealAppraisal();
+            document.getElementById('resultSection').classList.add('active');
+            document.getElementById('save-btn').style.display='flex';
+            document.getElementById('pdf-btn').style.display='flex';
+            nextBtn.innerHTML=original; nextBtn.disabled=false;
+          },800);
+        }
+      }
+    }
+    function newAppraisal(){
+      document.getElementById('resultSection').classList.remove('active');
+      document.getElementById('save-btn').style.display='none';
+      document.getElementById('pdf-btn').style.display='none';
+      window.formWizard.goToStep(1);
+    }
+
+    
+    document.addEventListener('DOMContentLoaded',function(){
+      window.formWizard=new FormWizard();
+      document.getElementById('save-btn').addEventListener('click',async function(){ 
+        await saveCurrentAppraisal();
+        
+      });
+      document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
+      document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
+      document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
+      
+      // Inicializar funcionalidades adicionales
+      initImageModalEvents();
+      initImageUpload();
+    });
+  </script>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+    const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
+
+    let PUBLIC_APP_URL = window.location.origin + window.location.pathname;
+    if (!PUBLIC_APP_URL.endsWith("/")) PUBLIC_APP_URL += "/";
+
+    window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    
+    function __updateAuthUI(isLogged){
+      const overlay = document.getElementById('auth-overlay');
+      const userBox = document.getElementById('user-box');
+      
+      console.log('🔄 Actualizando UI de autenticación. Logged:', isLogged);
+      console.log('📧 Usuario actual:', window.__session?.user);
+      
+      if(overlay) {
+        overlay.style.display = isLogged ? 'none' : 'flex';
+        console.log('🔧 Overlay display:', overlay.style.display);
+      }
+      
+      if(userBox){
+        if(isLogged){
+          userBox.style.display = 'flex';
+          if(window.__session?.user){
+            const email = window.__session.user.email || "";
+            const username = window.__session.user.user_metadata?.username || email.split('@')[0] || "Usuario";
+            const userNameElement = userBox.querySelector('[data-user-name]');
+            const userEmailElement = userBox.querySelector('[data-user-email]');
+            
+            console.log('👤 Datos usuario:', {username, email});
+            
+            if(userNameElement) {
+              userNameElement.textContent = username;
+              console.log('✅ Nombre usuario actualizado');
+            }
+            if(userEmailElement) {
+              userEmailElement.textContent = email;
+              console.log('✅ Email usuario actualizado');
+            }
+          }
+        } else {
+          userBox.style.display = 'none';
+        }
+        console.log('🔧 UserBox display:', userBox.style.display);
+      }
+      
+      const nextBtn = document.getElementById('next-step');
+      if(nextBtn) {
+        nextBtn.disabled = !isLogged;
+        console.log('🔧 Botón siguiente disabled:', nextBtn.disabled);
+      }
+    }
+
+    (async () => {
+      console.log('🔍 Iniciando verificación de sesión...');
+      const { data: { session}, error } = await window.supabase.auth.getSession();
+      if(error) console.error('❌ Error obteniendo sesión:', error);
+      
+      window.__session = session || null;
+      console.log('✅ Sesión obtenida:', session ? 'SÍ' : 'NO');
+      __updateAuthUI(!!session);
+    })();
+
+    window.supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('🔄 Cambio de estado de autenticación:', _event);
+      window.__session = session || null;
+      __updateAuthUI(!!session);
+    });
+
+    window.__signUpWithEmail = async (email, password, username) => {
+      try {
+        console.log("📝 Intentando registro con:", email);
+        
+        if (!email || !password) {
+          alert("Por favor ingresa email y contraseña");
+          return;
+        }
+
+        const { data, error } = await window.supabase.auth.signUp({
+          email: email.trim(),
+          password: password.trim(),
+          options: { 
+            data: { username: username || email.split('@')[0] },
+            emailRedirectTo: PUBLIC_APP_URL
+          }
+        });
+
+        if (error) {
+          console.error("❌ Error en registro:", error);
+          
+          // Si el usuario ya existe, intentar login
+          if (error.message?.includes('already registered') || error.message?.includes('user_exists')) {
+            const { data: loginData, error: loginError } = await window.supabase.auth.signInWithPassword({ 
+              email: email.trim(), 
+              password: password.trim() 
+            });
+            
+            if (loginError) {
+              if (loginError.message?.includes('Email not confirmed')) {
+                alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
+                return;
+              }
+              throw loginError;
+            }
+            
+            // Login exitoso
+            window.__session = loginData.session;
+            __updateAuthUI(true);
+            alert("¡Bienvenido de nuevo!");
+            return;
+          }
+          throw error;
+        }
+
+        if (data?.user) {
+          if (!data.session) {
+            alert("✅ ¡Cuenta creada! Revisa tu email y confirma tu cuenta antes de iniciar sesión.");
+          } else {
+            // Sesión automática (raro pero posible)
+            window.__session = data.session;
+            __updateAuthUI(true);
+            alert("¡Cuenta creada y sesión iniciada!");
+          }
+        }
+
+      } catch (e) {
+        console.error("❌ Error completo en registro:", e);
+        const errorMsg = e.message || 'Error desconocido';
+        
+        if (errorMsg.includes('Password should be at least')) {
+          alert("La contraseña debe tener al menos 6 caracteres");
+        } else if (errorMsg.includes('Invalid email')) {
+          alert("Por favor ingresa un email válido");
+        } else {
+          alert("Error al crear cuenta: " + errorMsg);
+        }
+      }
+    };
+
+    window.__signInWithEmail = async (email, password) => {
+      try {
+        console.log("🔐 Intentando login con:", email);
+        
+        if (!email || !password) {
+          alert("Por favor ingresa email y contraseña");
+          return;
+        }
+
+        const { data, error } = await window.supabase.auth.signInWithPassword({ 
+          email: email.trim(), 
+          password: password.trim() 
+        });
+
+        if (error) {
+          console.error("❌ Error en login:", error);
+          
+          if (error.message?.includes('Invalid login credentials')) {
+            alert("Email o contraseña incorrectos");
+          } else if (error.message?.includes('Email not confirmed')) {
+            alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
+          } else if (error.message?.includes('Email rate limit exceeded')) {
+            alert("Demasiados intentos. Espera unos minutos.");
+          } else {
+            throw error;
+          }
+          return;
+        }
+
+        // Login exitoso
+        window.__session = data.session;
+        __updateAuthUI(true);
+        console.log("✅ Login exitoso:", data.user.email);
+        
+        // Mostrar modal de username si no tiene
+        if (data.user && !data.user.user_metadata?.username) {
+          setTimeout(() => {
+            showUsernameModal(data.user.id);
+          }, 1000);
+        }
+
+      } catch (e) {
+        console.error("❌ Error completo en login:", e);
+        alert("Error al iniciar sesión: " + (e.message || e));
+      }
+    };
+
+    window.__signInWithGoogle = async () => {
+      try {
+        console.log("🔐 Iniciando Google OAuth...");
+        
+        const currentUrl = window.location.origin + window.location.pathname;
+        const redirectUrl = currentUrl.endsWith('/') ? currentUrl : currentUrl + '/';
+        
+        console.log("📍 Redirect URL:", redirectUrl);
+
+        const { data, error } = await window.supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { 
+            redirectTo: redirectUrl,
+            skipBrowserRedirect: false,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent'
+            }
+          }
+        });
+
+        if (error) {
+          console.error("❌ Error Google OAuth:", error);
+          
+          // Si Google OAuth no está configurado, ofrecer alternativa
+          if (error.message?.includes('OAuth') || error.message?.includes('provider') || error.message?.includes('configuration')) {
+            const useEmail = confirm(
+              "Google OAuth no está configurado aún.\n\n" +
+              "Mientras el administrador configura Google OAuth, ¿quieres crear una cuenta con tu email?"
+            );
+            
+            if (useEmail) {
+              document.getElementById('auth-email').focus();
+            }
+          } else {
+            alert("Error con Google: " + (error.message || error));
+          }
+          return;
+        }
+
+        // Si llegamos aquí, la redirección debería ocurrir automáticamente
+        console.log("🔄 Redirigiendo a Google...");
+
+      } catch (e) {
+        console.error("❌ Error completo Google OAuth:", e);
+        
+        // Fallback a registro por email
+        const useEmail = confirm(
+          "Error temporal con Google.\n\n" +
+          "¿Quieres crear una cuenta con tu email en su lugar?"
+        );
+        
+        if (useEmail) {
+          document.getElementById('auth-email').focus();
+        }
+      }
+    };
+
+    function showUsernameModal(userId) {
+      const modal = document.getElementById('username-modal');
+      const usernameInput = document.getElementById('google-username');
+      const saveButton = document.getElementById('save-google-username');
+      
+      if (!modal || !usernameInput || !saveButton) return;
+      
+      modal.classList.add('active');
+      
+      saveButton.replaceWith(saveButton.cloneNode(true));
+      const newSaveButton = document.getElementById('save-google-username');
+      
+      newSaveButton.addEventListener('click', async () => {
+        const username = usernameInput.value.trim();
+        
+        if (!username) {
+          alert('Por favor ingresa un nombre de usuario');
+          return;
+        }
+        
+        if (username.length < 3) {
+          alert('El username debe tener al menos 3 caracteres');
+          return;
+        }
+        
+        try {
+          newSaveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+          newSaveButton.disabled = true;
+          
+          const { error } = await window.supabase.auth.updateUser({
+            data: { username: username }
+          });
+          
+          if (error) throw error;
+          
+          modal.classList.remove('active');
+          usernameInput.value = '';
+          
+          const { data: { session } } = await window.supabase.auth.getSession();
+          window.__session = session;
+          __updateAuthUI(!!session);
+          
+          alert(`¡Bienvenido ${username}! Tu perfil ha sido actualizado.`);
+          
+        } catch (error) {
+          console.error('Error updating username:', error);
+          alert('Error al guardar username: ' + (error.message || error));
+          newSaveButton.innerHTML = '<i class="fas fa-check"></i> Guardar y continuar';
+          newSaveButton.disabled = false;
+        }
+      });
+      
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+      
+      usernameInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          newSaveButton.click();
+        }
+      });
+      
+      setTimeout(() => usernameInput.focus(), 300);
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const { data: { session } } = await window.supabase.auth.getSession();
+      if (session?.user && !session.user.user_metadata?.username) {
+        setTimeout(() => {
+          showUsernameModal(session.user.id);
+        }, 1500);
+      }
+    });
+
+    window.__resendVerification = async (email) => {
+      try {
+        if (!email) {
+          alert("Por favor escribe tu correo electrónico primero");
+          return;
+        }
+
+        console.log("🔄 Reenviando verificación a:", email);
+        
+        const { error } = await window.supabase.auth.resend({ 
+          type: 'signup', 
+          email: email.trim(),
+          options: {
+            emailRedirectTo: PUBLIC_APP_URL
+          }
+        });
+
+        if (error) {
+          if (error.message?.includes('already confirmed')) {
+            alert("Este email ya fue confirmado. Puedes iniciar sesión.");
+          } else if (error.message?.includes('rate limit')) {
+            alert("Espera unos minutos antes de solicitar otro email.");
+          } else {
+            throw error;
+          }
+          return;
+        }
+
+        alert("✅ ¡Email de verificación reenviado! Revisa tu bandeja de entrada y carpeta de spam.");
+
+      } catch (e) {
+        console.error("❌ Error reenviando verificación:", e);
+        alert("Error al reenviar: " + (e.message || e));
+      }
+    };
+
+    window.__signOut = async () => { await window.supabase.auth.signOut(); };
+    window.__canUseApp = () => !!window.__session;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const nextBtn = document.getElementById('next-step');
+      if(nextBtn){
+        nextBtn.addEventListener('click', (e) => {
+          if(!window.__canUseApp()){
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            document.getElementById('auth-overlay').style.display='flex';
+            alert("Inicia sesión para continuar.");
+          }
+        }, true);
+      }
+    });
+
+    const _origCalculate = window.calculateRealAppraisal;
+    if(_origCalculate){
+      window.calculateRealAppraisal = function(){
+        if(!window.__canUseApp()){
+          document.getElementById('auth-overlay').style.display='flex';
+          alert("Inicia sesión para calcular el avalúo.");
+          return;
+        }
+        return _origCalculate.apply(this, arguments);
+      };
+    }
+  </script>
+
+  <script>
+    (function () {
+      const url = new URL(window.location.href);
+      const hashStr = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+      const hash = new URLSearchParams(hashStr);
+      const qs = new URLSearchParams(url.search);
+      const msg = hash.get("error_description") || hash.get("error") || qs.get("error_description") || qs.get("error");
+      if (msg) {
+        console.error("Auth callback error:", msg);
+        alert("Autenticación: " + msg);
+      }
+    })();
+  </script>
 </body>
 </html>
