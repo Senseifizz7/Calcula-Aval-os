@@ -3493,104 +3493,176 @@ Como acceso encontramos:
 
     window.__signUpWithEmail = async (email, password, username) => {
       try {
+        console.log("📝 Intentando registro con:", email);
+        
+        if (!email || !password) {
+          alert("Por favor ingresa email y contraseña");
+          return;
+        }
+
         const { data, error } = await window.supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { username }, emailRedirectTo: PUBLIC_APP_URL }
+          email: email.trim(),
+          password: password.trim(),
+          options: { 
+            data: { username: username || email.split('@')[0] },
+            emailRedirectTo: PUBLIC_APP_URL
+          }
         });
+
         if (error) {
-          if (String(error.message || '').toLowerCase().includes('already')) {
-            const { error: e2 } = await window.supabase.auth.signInWithPassword({ email, password });
-            if (e2) throw e2;
+          console.error("❌ Error en registro:", error);
+          
+          // Si el usuario ya existe, intentar login
+          if (error.message?.includes('already registered') || error.message?.includes('user_exists')) {
+            const { data: loginData, error: loginError } = await window.supabase.auth.signInWithPassword({ 
+              email: email.trim(), 
+              password: password.trim() 
+            });
+            
+            if (loginError) {
+              if (loginError.message?.includes('Email not confirmed')) {
+                alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
+                return;
+              }
+              throw loginError;
+            }
+            
+            // Login exitoso
+            window.__session = loginData.session;
+            __updateAuthUI(true);
+            alert("¡Bienvenido de nuevo!");
             return;
           }
           throw error;
         }
-        if (!data?.session) {
-          alert("Te enviamos un correo de confirmación. Revisa spam/promociones.\nDespués de confirmar, vuelve a esta página.");
-        } else {
-          // Si hay sesión inmediatamente, actualizar UI
-          __updateAuthUI(true);
+
+        if (data?.user) {
+          if (!data.session) {
+            alert("✅ ¡Cuenta creada! Revisa tu email y confirma tu cuenta antes de iniciar sesión.");
+          } else {
+            // Sesión automática (raro pero posible)
+            window.__session = data.session;
+            __updateAuthUI(true);
+            alert("¡Cuenta creada y sesión iniciada!");
+          }
         }
+
       } catch (e) {
-        console.error("signUp error:", e);
-        alert("Error al crear cuenta: " + (e?.message || e));
+        console.error("❌ Error completo en registro:", e);
+        const errorMsg = e.message || 'Error desconocido';
+        
+        if (errorMsg.includes('Password should be at least')) {
+          alert("La contraseña debe tener al menos 6 caracteres");
+        } else if (errorMsg.includes('Invalid email')) {
+          alert("Por favor ingresa un email válido");
+        } else {
+          alert("Error al crear cuenta: " + errorMsg);
+        }
       }
     };
 
     window.__signInWithEmail = async (email, password) => {
       try {
-        const { data, error } = await window.supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        // Actualizar UI después de login exitoso
-        __updateAuthUI(true);
-      } catch (e) {
-        const msg = String(e?.message || '').toLowerCase();
-        if (msg.includes('email') && msg.includes('confirm')) {
-          alert("Tu correo aún no está confirmado. Revisa tu email y confirma la cuenta.");
-        } else {
-          alert("Error al iniciar sesión: " + (e?.message || e));
+        console.log("🔐 Intentando login con:", email);
+        
+        if (!email || !password) {
+          alert("Por favor ingresa email y contraseña");
+          return;
         }
-        console.error("signIn error:", e);
+
+        const { data, error } = await window.supabase.auth.signInWithPassword({ 
+          email: email.trim(), 
+          password: password.trim() 
+        });
+
+        if (error) {
+          console.error("❌ Error en login:", error);
+          
+          if (error.message?.includes('Invalid login credentials')) {
+            alert("Email o contraseña incorrectos");
+          } else if (error.message?.includes('Email not confirmed')) {
+            alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
+          } else if (error.message?.includes('Email rate limit exceeded')) {
+            alert("Demasiados intentos. Espera unos minutos.");
+          } else {
+            throw error;
+          }
+          return;
+        }
+
+        // Login exitoso
+        window.__session = data.session;
+        __updateAuthUI(true);
+        console.log("✅ Login exitoso:", data.user.email);
+        
+        // Mostrar modal de username si no tiene
+        if (data.user && !data.user.user_metadata?.username) {
+          setTimeout(() => {
+            showUsernameModal(data.user.id);
+          }, 1000);
+        }
+
+      } catch (e) {
+        console.error("❌ Error completo en login:", e);
+        alert("Error al iniciar sesión: " + (e.message || e));
       }
     };
 
-    
     window.__signInWithGoogle = async () => {
       try {
+        console.log("🔐 Iniciando Google OAuth...");
         
         const currentUrl = window.location.origin + window.location.pathname;
         const redirectUrl = currentUrl.endsWith('/') ? currentUrl : currentUrl + '/';
         
-        console.log("Iniciando Google OAuth con redirect:", redirectUrl);
-        
+        console.log("📍 Redirect URL:", redirectUrl);
+
         const { data, error } = await window.supabase.auth.signInWithOAuth({
           provider: "google",
           options: { 
             redirectTo: redirectUrl,
+            skipBrowserRedirect: false,
             queryParams: {
               access_type: 'offline',
               prompt: 'consent'
             }
           }
         });
-        
+
         if (error) {
-          console.error("Error Google OAuth:", error);
+          console.error("❌ Error Google OAuth:", error);
           
-          
-          if (error.message?.includes('provider') || error.message?.includes('configuration') || error.message?.includes('disabled')) {
-            const configSteps = `
-CONFIGURACIÓN REQUERIDA EN SUPABASE:
-
-1. Supabase Dashboard → Authentication → Settings
-2. En 'Site URL' poner: ${redirectUrl}
-3. En 'Redirect URLs' añadir: ${redirectUrl}
-4. Google Provider → Configurar Client ID y Secret
-
-CONFIGURACIÓN EN GOOGLE CLOUD:
-1. Google Cloud Console → APIs & Services → Credentials
-2. Crear OAuth 2.0 Client ID para Web Application
-3. En 'Authorized JavaScript origins' añadir: ${window.location.origin}
-4. En 'Authorized redirect URIs' añadir: 
-   https://csinbmcauuyljjqshawi.supabase.co/auth/v1/callback
-   ${redirectUrl}
-
-Mientras tanto, puede usar registro con email.`;
+          // Si Google OAuth no está configurado, ofrecer alternativa
+          if (error.message?.includes('OAuth') || error.message?.includes('provider') || error.message?.includes('configuration')) {
+            const useEmail = confirm(
+              "Google OAuth no está configurado aún.\n\n" +
+              "Mientras el administrador configura Google OAuth, ¿quieres crear una cuenta con tu email?"
+            );
             
-            alert("Google OAuth requiere configuración:\n" + configSteps);
+            if (useEmail) {
+              document.getElementById('auth-email').focus();
+            }
           } else {
-            alert("Error con Google OAuth: " + error.message);
+            alert("Error con Google: " + (error.message || error));
           }
           return;
         }
-        
-        
-        console.log("Google OAuth iniciado correctamente, redirigiendo...");
-        
+
+        // Si llegamos aquí, la redirección debería ocurrir automáticamente
+        console.log("🔄 Redirigiendo a Google...");
+
       } catch (e) {
-        console.error("Error completo Google OAuth:", e);
-        alert("Error al conectar con Google: " + (e.message || e));
+        console.error("❌ Error completo Google OAuth:", e);
+        
+        // Fallback a registro por email
+        const useEmail = confirm(
+          "Error temporal con Google.\n\n" +
+          "¿Quieres crear una cuenta con tu email en su lugar?"
+        );
+        
+        if (useEmail) {
+          document.getElementById('auth-email').focus();
+        }
       }
     };
 
@@ -3668,17 +3740,41 @@ Mientras tanto, puede usar registro con email.`;
           showUsernameModal(session.user.id);
         }, 1500);
       }
-    }
+    });
 
     window.__resendVerification = async (email) => {
       try {
-        if (!email) return alert("Escribe tu correo primero.");
-        const { data, error } = await window.supabase.auth.resend({ type: 'signup', email });
-        if (error) throw error;
-        alert("Listo, te reenviamos el correo. Revisa bandeja y spam.");
+        if (!email) {
+          alert("Por favor escribe tu correo electrónico primero");
+          return;
+        }
+
+        console.log("🔄 Reenviando verificación a:", email);
+        
+        const { error } = await window.supabase.auth.resend({ 
+          type: 'signup', 
+          email: email.trim(),
+          options: {
+            emailRedirectTo: PUBLIC_APP_URL
+          }
+        });
+
+        if (error) {
+          if (error.message?.includes('already confirmed')) {
+            alert("Este email ya fue confirmado. Puedes iniciar sesión.");
+          } else if (error.message?.includes('rate limit')) {
+            alert("Espera unos minutos antes de solicitar otro email.");
+          } else {
+            throw error;
+          }
+          return;
+        }
+
+        alert("✅ ¡Email de verificación reenviado! Revisa tu bandeja de entrada y carpeta de spam.");
+
       } catch (e) {
-        console.error("resend error:", e);
-        alert("No se pudo reenviar: " + (e?.message || e));
+        console.error("❌ Error reenviando verificación:", e);
+        alert("Error al reenviar: " + (e.message || e));
       }
     };
 
@@ -3726,4 +3822,4 @@ Mientras tanto, puede usar registro con email.`;
     })();
   </script>
 </body>
-</html>   
+</html>
