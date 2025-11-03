@@ -3275,7 +3275,7 @@ function openTypologyForConstruction(row) {
     });
   });
 }
-   function agregarFilaConstruccion() {
+    function agregarFilaConstruccion() {
   const tbody = document.getElementById('tbBodyConstruccion');
   const n = tbody.querySelectorAll('tr').length + 1;
   const tr = document.createElement('tr');
@@ -3296,13 +3296,7 @@ function openTypologyForConstruction(row) {
   `;
   tbody.appendChild(tr);
   bindRowEvents(tr);
-} 
-  
-  llenarSelectsTipologias();
-  
-  
-  bindRowEvents(tr);
-  
+}
   
   const select = tr.querySelector('.tipo-construccion-select');
   select.addEventListener('change', function() {
