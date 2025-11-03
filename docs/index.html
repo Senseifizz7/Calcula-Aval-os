@@ -3017,7 +3017,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     const modal = document.getElementById('catalogModal');
     const targetRowIndex = modal?.dataset.targetRow;
     
-    if (targetRowIndex !== undefined) {
+    if (targetRowIndex !== undefined && targetRowIndex !== "") {
         
         const rows = document.querySelectorAll('#tbBodyConstruccion tr');
         const row = rows[targetRowIndex];
@@ -3046,6 +3046,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
             integrarValores();
         }
         
+       
         delete modal.dataset.targetRow;
     } else {
         
@@ -3071,26 +3072,30 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     __closeTypology();
 }
 
-    
+
 function openTypologyForConstruction(row) {
     const m = document.getElementById('catalogModal');
     if(!m) return alert('No se encontró el modal (#catalogModal).');
     
     
     const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
-    m.dataset.targetRow = rows.indexOf(row);
-    m.classList.add('active');
-    __renderTipos();
-    initTabs();
+    const rowIndex = rows.indexOf(row);
     
-    const hb = e => {
-        if(e.target === m){
-            __closeTypology();
-            m.removeEventListener('click', hb);
-        }
-    };
-    m.addEventListener('click', hb);
-}
+    if (rowIndex !== -1) {
+        m.dataset.targetRow = rowIndex;
+        m.classList.add('active');
+        __renderTipos();
+        initTabs();
+        
+        const hb = e => {
+            if(e.target === m){
+                __closeTypology();
+                m.removeEventListener('click', hb);
+            }
+        };
+        m.addEventListener('click', hb);
+    }
+}    
     function __closeTypology(){
       const m = document.getElementById('catalogModal');
       const t = document.getElementById('typologyTrigger');
@@ -3296,8 +3301,7 @@ function openTypologyForConstruction(row) {
   `;
   tbody.appendChild(tr);
   bindRowEvents(tr);
-}
-  
+}  
   const select = tr.querySelector('.tipo-construccion-select');
   select.addEventListener('change', function() {
     actualizarValorBaseDesdeTipologia(this);
@@ -4118,7 +4122,8 @@ function openTypologyForConstruction(row) {
     document.addEventListener('DOMContentLoaded',function(){
   window.formWizard=new FormWizard();
   
-    const primeraFila = document.querySelector('#tbBodyConstruccion tr');
+  
+  const primeraFila = document.querySelector('#tbBodyConstruccion tr');
   if (primeraFila) {
     const tdTipologia = primeraFila.querySelector('td:nth-child(5)');
     if (tdTipologia) {
@@ -4132,7 +4137,7 @@ function openTypologyForConstruction(row) {
       `;
     }
   }
- 
+  
   
   document.getElementById('save-btn').addEventListener('click',async function(){ 
     await saveCurrentAppraisal();
