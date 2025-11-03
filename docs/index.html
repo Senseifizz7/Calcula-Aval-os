@@ -952,7 +952,7 @@
       }
     }
 
-    /* === BREADCRUMBS - SOLO ESTO SE AGREGA === */
+    
     .typology-breadcrumbs {
       padding: 16px 24px;
       background: rgba(91, 123, 122, 0.03);
@@ -3280,31 +3280,17 @@ function openTypologyForConstruction(row) {
     });
   });
 }
-    function __openTypology(){
-  console.log("🔵 Abriendo catálogo principal...");
+       // Cerrar al hacer clic fuera
+  const handleClick = e => {
+    if(e.target === m){
+      console.log("🔒 Cerrando catálogo (click fuera)");
+      __closeTypology();
+      m.removeEventListener('click', handleClick);
+    }
+  };
+  m.addEventListener('click', handleClick);
   
-  const m = document.getElementById('catalogModal');
-  const t = document.getElementById('typologyTrigger');
-  
-  if(!m) {
-    console.error("❌ No se encontró: #catalogModal");
-    alert("Error: No se puede abrir el catálogo");
-    return;
-  }
-  
-  console.log("✅ Modal encontrado, abriendo...");
-  
-  
-  if (m.dataset.targetRow) {
-    delete m.dataset.targetRow;
-  }
-  
-  m.classList.add('active');
-  if(t) t.classList.add('active');
-  
-  __renderTipos();
-  initTabs();
-  
+  console.log("✅ Catálogo abierto correctamente"); 
   
   const handleClick = e => {
     if(e.target === m){
