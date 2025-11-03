@@ -1173,49 +1173,49 @@
       
 
       <div class="form-section active" data-step="1">
-        <h2><i class="fas fa-info-circle"></i> Información General</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="associate-name" class="required">Nombre del Asociado</label>
-            <input type="text" id="associate-name" placeholder="Ingrese el nombre completo" required />
-            <div class="form-help">Nombre completo del solicitante</div>
-          </div>
-          <div class="form-group">
-            <label for="address" class="required">Dirección de la Propiedad</label>
-            <input type="text" id="address" placeholder="Escriba y elija de las sugerencias" required />
-            <div class="form-help">La dirección se completará automáticamente</div>
-          </div>
-          <div class="form-group">
-            <label for="geo-lat">Latitud</label>
-            <input type="text" id="geo-lat" placeholder="-" readonly />
-          </div>
-          <div class="form-group">
-            <label for="geo-lng">Longitud</label>
-            <input type="text" id="geo-lng" placeholder="-" readonly />
-          </div>
-          <div class="form-group">
-            <label for="construction-area" class="required">Área Construida (m²)</label>
-            <input type="number" id="construction-area" placeholder="Ej: 120" min="1" required />
-          </div>
-          <div class="form-group">
-            <label for="land-area" class="required">Área del Terreno (m²)</label>
-            <input type="number" id="land-area" placeholder="Ej: 200" min="1" required />
-          </div>
-        </div>
-        
-        <div style="margin: var(--space-md) 0;">
-          <button class="btn-primary" type="button" onclick="locateMeOnce()">
-            <i class="fas fa-location-crosshairs"></i> Usar mi ubicación
-          </button>
-          <div class="form-help">Requiere HTTPS o localhost y permiso del navegador</div>
-        </div>
+  <h2><i class="fas fa-info-circle"></i> Información General</h2>
+  <div class="form-grid">
+    <div class="form-group">
+      <label for="associate-name" class="required">Nombre del Asociado</label>
+      <input type="text" id="associate-name" placeholder="Ingrese el nombre completo" required />
+      <div class="form-help">Nombre completo del solicitante</div>
+    </div>
+    <div class="form-group">
+      <label for="address" class="required">Dirección de la Propiedad</label>
+      <input type="text" id="address" placeholder="Escriba y elija de las sugerencias" required />
+      <div class="form-help">La dirección se completará automáticamente</div>
+    </div>
+    <div class="form-group">
+      <label for="geo-lat">Latitud</label>
+      <input type="text" id="geo-lat" placeholder="-" readonly />
+    </div>
+    <div class="form-group">
+      <label for="geo-lng">Longitud</label>
+      <input type="text" id="geo-lng" placeholder="-" readonly />
+    </div>
+    <div class="form-group">
+      <label for="construction-area" class="required">Área Construida (m²)</label>
+      <input type="number" id="construction-area" placeholder="Ej: 120" min="1" required />
+    </div>
+    <div class="form-group">
+      <label for="land-area" class="required">Área del Terreno (m²)</label>
+      <input type="number" id="land-area" placeholder="Ej: 200" min="1" required />
+    </div>
+  </div>
+  
+  <div style="margin: var(--space-md) 0;">
+    <button class="btn-primary" type="button" onclick="locateMeOnce()">
+      <i class="fas fa-location-crosshairs"></i> Usar mi ubicación
+    </button>
+    <div class="form-help">Requiere HTTPS o localhost y permiso del navegador</div>
+  </div>
 
-        <div class="form-section-title"><i class="fas fa-map"></i> Ubicación en Mapa</div>
-        <div id="gmap" style="height: 360px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);"></div>
-        <div class="form-help">Arrastre el pin para ajustar la posición o <strong>toque/cliquee en cualquier lugar del mapa</strong> para colocar el marcador</div>
-      </div>
+  <div class="form-section-title"><i class="fas fa-map"></i> Ubicación en Mapa</div>
+  <div id="gmap" style="height: 360px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);"></div>
+  <div class="form-help">Arrastre el pin para ajustar la posición o <strong>toque/cliquee en cualquier lugar del mapa</strong> para colocar el marcador</div>
+</div> 
 
-      <div class="form-navigation">
+<div class="form-navigation">
   <button class="btn-secondary" id="prev-step"><i class="fas fa-arrow-left"></i> Anterior</button>
   <button class="btn-primary" id="next-step">Siguiente <i class="fas fa-arrow-right"></i></button>
 </div>
