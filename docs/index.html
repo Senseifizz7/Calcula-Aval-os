@@ -1215,11 +1215,11 @@
   <div class="form-help">Arrastre el pin para ajustar la posición o <strong>toque/cliquee en cualquier lugar del mapa</strong> para colocar el marcador</div>
 </div> 
 
-<div class="form-navigation">
-  <button class="btn-secondary" id="prev-step"><i class="fas fa-arrow-left"></i> Anterior</button>
-  <button class="btn-primary" id="next-step">Siguiente <i class="fas fa-arrow-right"></i></button>
-</div>
-      
+  <div class="form-navigation">
+    <button class="btn-secondary" id="prev-step"><i class="fas fa-arrow-left"></i> Anterior</button>
+    <button class="btn-primary" id="next-step">Siguiente <i class="fas fa-arrow-right"></i></button>
+  </div>
+</div>       
       <div class="form-section" data-step="2">
         <h2><i class="fas fa-home"></i> Características de la Propiedad</h2>
         
@@ -4239,18 +4239,7 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 </script>
     
-  document.getElementById('save-btn').addEventListener('click',async function(){ 
-    await saveCurrentAppraisal();
-    
-  });
-  document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
-  document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
-  document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
-  
-  
-  initImageModalEvents();
-  initImageUpload();
-});
+
 </script>
 
   <script type="module">
