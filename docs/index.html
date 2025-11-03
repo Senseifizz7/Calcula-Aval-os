@@ -1245,6 +1245,110 @@
           </tbody>
         </table>
 
+<div class="form-section-title" style="margin-top: var(--space-lg);">
+  <i class="fas fa-map-marked-alt"></i> Información del Solar
+</div>
+
+<div class="form-grid">
+  
+  <div class="form-group">
+    <label style="font-weight: 600; color: var(--text); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-xs);">
+      <i class="fas fa-road" style="color: var(--primary);"></i> Calles
+    </label>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Concreto:</span>
+      <input type="text" id="calle-concreto" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Adoquín:</span>
+      <input type="text" id="calle-adoquin" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Servidumbre de Paso:</span>
+      <input type="text" id="calle-servidumbre" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Vereda:</span>
+      <input type="text" id="calle-vereda" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Tierra:</span>
+      <input type="text" id="calle-tierra" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Asfalto:</span>
+      <input type="text" id="calle-asfalto" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+  </div>
+
+  
+  <div class="form-group">
+    <label style="font-weight: 600; color: var(--text); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-xs);">
+      <i class="fas fa-bolt" style="color: var(--primary);"></i> Servicios Públicos
+    </label>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Energía Eléctrica:</span>
+      <input type="text" id="servicio-electricidad" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Red de Agua:</span>
+      <input type="text" id="servicio-agua" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Ducto Teléfono:</span>
+      <input type="text" id="servicio-telefono" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Drenaje:</span>
+      <input type="text" id="servicio-drenaje" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Acera:</span>
+      <input type="text" id="servicio-acera" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Bordillo:</span>
+      <input type="text" id="servicio-bordillo" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+  </div>
+</div>
+
+<div class="form-grid" style="margin-top: var(--space-md);">
+  
+  <div class="form-group">
+    <label style="font-weight: 600; color: var(--text); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-xs);">
+      <i class="fas fa-location-dot" style="color: var(--primary);"></i> Ubicación del terreno
+    </label>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Esquina:</span>
+      <input type="text" id="ubicacion-esquina" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Medial:</span>
+      <input type="text" id="ubicacion-medial" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+  </div>
+
+  
+  <div class="form-group">
+    <label style="font-weight: 600; color: var(--text); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-xs);">
+      <i class="fas fa-tag" style="color: var(--primary);"></i> Clasificación del terreno
+    </label>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Urbano:</span>
+      <input type="text" id="clasificacion-urbano" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
+      <span style="color: var(--text); font-size: 0.9rem;">Rústico:</span>
+      <input type="text" id="clasificacion-rustico" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
+    </div>
+  </div>
+</div>
+
+<div class="form-help" style="margin-top: var(--space-sm); color: var(--text-light); font-size: 0.85rem;">
+  <i class="fas fa-info-circle" style="color: var(--primary-light);"></i> Marque con "x" los elementos que correspondan al solar. Deje en blanco los que no apliquen.
+</div>
+
         <div class="form-section-title"><i class="fas fa-hammer"></i> Características Constructivas</div>
         <div class="characteristics-grid">
           <div class="form-group"><label for="uso-destino">Uso y Destino</label><select id="uso-destino"><option value="">Seleccionar</option><option value="residencia">Residencia</option><option value="cultivo">Cultivo</option><option value="industrial">Industrial</option><option value="comercial">Comercial</option><option value="edificio">Edificio</option></select></div>
