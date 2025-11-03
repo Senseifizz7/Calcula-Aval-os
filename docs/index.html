@@ -1466,7 +1466,7 @@
   </tfoot>
 </table>
         
-       <button class="btn-secondary btn-small" type="button" onclick="alert('Agregar nivel - Próximamente')">
+       <button class="btn-secondary btn-small" type="button" onclick="agregarNivelConstruccion()">
   <i class="fas fa-plus"></i> Agregar nivel
 </button>
   <button class="btn-secondary btn-small" type="button" onclick="eliminarUltimaFilaConstruccion()">
@@ -2975,18 +2975,39 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     }
 
     function __selectTipo(id) {
-    const tipologias = __getTipos();
-    let varianteSeleccionada = null;
-    let tipologiaPadre = null;
+  :
+const targetRowIndex = modal?.dataset.targetRow;
+
+if (targetRowIndex !== undefined && targetRowIndex !== "") {
+    const rows = document.querySelectorAll('#tbBodyConstruccion tr');
+    const row = rows[targetRowIndex];
     
-    for (const tipologia of tipologias) {
-        const variante = tipologia.variants.find(v => v.id === id);
-        if (variante) {
-            varianteSeleccionada = variante;
-            tipologiaPadre = tipologia;
-            break;
+    if (row) {
+        const vbaseInput = row.querySelector('.vbase-input');
+        const tipoDisplay = row.querySelector('.tipo-construccion-display');
+        
+        if (vbaseInput) {
+            vbaseInput.value = varianteSeleccionada.pricePerM2;
         }
+        
+        if (tipoDisplay) {
+            tipoDisplay.innerHTML = `
+                <div style="text-align: left;">
+                    <div style="font-weight: 600; color: var(--primary);">${tipologiaPadre.category} - ${tipologiaPadre.type}</div>
+                    <div style="font-size: 0.8rem; color: var(--text);">${varianteSeleccionada.title}</div>
+                    <div style="font-size: 0.75rem; color: var(--success);">Q${varianteSeleccionada.pricePerM2}/m²</div>
+                </div>
+            `;
+            tipoDisplay.dataset.tipologiaId = varianteSeleccionada.id;
+        }
+        
+        recalcularFila(row);
+        recalcularTablaConstruccion();
+        integrarValores();
     }
+    
+    delete modal.dataset.targetRow;
+} 
     
     if (!varianteSeleccionada || !tipologiaPadre) return;
     
@@ -3052,11 +3073,9 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     __closeTypology();
 }
 
-
 function openTypologyForConstruction(row) {
     const m = document.getElementById('catalogModal');
     if(!m) return alert('No se encontró el modal (#catalogModal).');
-    
     
     const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
     const rowIndex = rows.indexOf(row);
@@ -3075,7 +3094,7 @@ function openTypologyForConstruction(row) {
         };
         m.addEventListener('click', hb);
     }
-}    
+}
     function __closeTypology(){
       const m = document.getElementById('catalogModal');
       const t = document.getElementById('typologyTrigger');
@@ -3260,7 +3279,7 @@ function openTypologyForConstruction(row) {
     });
   });
 }
-       // Cerrar al hacer clic fuera
+       
   const handleClick = e => {
     if(e.target === m){
       console.log("🔒 Cerrando catálogo (click fuera)");
