@@ -1451,34 +1451,39 @@
 
         <div class="form-section-title"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
         <table class="table-ui" id="tablaConstruccion">
-          <thead>
-            <tr>
-              <th style="width:160px">Planta</th>
-              <th style="width:140px">Área m²</th>
-              <th style="width:140px">V/Base</th>
-              <th style="width:120px">%</th>
-              <th>Tipo de Construcción</th>
-              <th style="width:160px">MONTO</th>
-            </tr>
-          </thead>
-          <tbody id="tbBodyConstruccion">
-            <tr>
-              <td><input type="text" value="Primer Nivel" class="planta-input"></td>
-              <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
-              <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
-              <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
-              <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
-              <td><input type="text" class="monto-output" value="0.00" readonly></td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="5" style="text-align:right; font-weight:600;">TOTAL</td>
-              <td><input type="text" id="totalConstruccion" value="0.00" readonly></td>
-            </tr>
-          </tfoot>
-        </table>
-
+  <thead>
+    <tr>
+      <th style="width:160px">Planta</th>
+      <th style="width:140px">Área m²</th>
+      <th style="width:140px">V/Base</th>
+      <th style="width:120px">%</th>
+      <th>Categoria y Tipologia</th>
+      <th style="width:160px">MONTO</th>
+    </tr>
+  </thead>
+  <tbody id="tbBodyConstruccion">
+    <tr>
+      <td><input type="text" value="Primer Nivel" class="planta-input"></td>
+      <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
+      <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
+      <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
+      <td>
+        <select class="tipo-construccion-select">
+          <option value="">Seleccionar tipología</option>
+          
+        </select>
+      </td>
+      <td><input type="text" class="monto-output" value="0.00" readonly></td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td colspan="5" style="text-align:right; font-weight:600;">TOTAL</td>
+      <td><input type="text" id="totalConstruccion" value="0.00" readonly></td>
+    </tr>
+  </tfoot>
+</table>
+        
         <div style="display:flex; gap:12px; margin-top:8px;">
           <button class="btn-secondary btn-small" type="button" onclick="agregarFilaConstruccion()">
             <i class="fas fa-plus"></i> Agregar nivel
@@ -2808,7 +2813,46 @@ Como acceso encontramos:
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
+
+function llenarSelectsTipologias() {
+  const selects = document.querySelectorAll('.tipo-construccion-select');
+  const tipologias = __getTipos();
+  
+  
+  selects.forEach(select => {
+    select.innerHTML = '<option value="">Seleccionar tipología</option>';
+  });
+  
+  s
+  tipologias.forEach(tipologia => {
+    tipologia.variants.forEach(variante => {
+      const option = document.createElement('option');
+      option.value = variante.id;
+      option.textContent = `${tipologia.category} - ${tipologia.type}: ${variante.title} (Q${variante.pricePerM2}/m²)`;
+      option.dataset.precio = variante.pricePerM2;
+      
+      selects.forEach(select => {
+        select.appendChild(option.cloneNode(true));
+      });
+    });
+  });
+}
+
+
+function actualizarValorBaseDesdeTipologia(selectElement) {
+  const selectedOption = selectElement.options[selectElement.selectedIndex];
+  const precio = selectedOption.dataset.precio;
+  const row = selectElement.closest('tr');
+  const vbaseInput = row.querySelector('.vbase-input');
+  
+  if (precio && vbaseInput) {
+    vbaseInput.value = precio;
     
+    recalcularFila(row);
+    recalcularTablaConstruccion();
+    integrarValores();
+  }
+}
     function __renderTipos(){
       const tipologias = __getTipos();
       
@@ -2936,14 +2980,14 @@ Como acceso encontramos:
           const tabName = tab.getAttribute('data-tab');
           const categoryName = tabName.charAt(0).toUpperCase() + tabName.slice(1);
           
-          // === AGREGAR ESTA LÍNEA ===
+          
           __updateBreadcrumbs(categoryName, '');
           
-          // Remover active de todas las pestañas y contenidos
+          
           document.querySelectorAll('.typology-tab').forEach(t => t.classList.remove('active'));
           document.querySelectorAll('.typology-tab-content').forEach(c => c.classList.remove('active'));
           
-          // Activar pestaña y contenido actual
+          
           tab.classList.add('active');
           document.getElementById(`tab-${tabName}`).classList.add('active');
         });
@@ -2951,7 +2995,7 @@ Como acceso encontramos:
     }
 
     function __selectTipo(id) {
-      // Buscar en todas las tipologías y variantes
+      
       const tipologias = __getTipos();
       let varianteSeleccionada = null;
       let tipologiaPadre = null;
@@ -3121,7 +3165,7 @@ Como acceso encontramos:
 
   </script>
 
-  <!-- EL RESTO DEL CÓDIGO ORIGINAL SE MANTIENE COMPLETAMENTE -->
+  
   <script>
     function formatMoneyGTQ(v){
       return new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(Number(v||0));
@@ -3138,79 +3182,95 @@ Como acceso encontramos:
     }
 
     function recalcularTablaConstruccion(){
-      const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
-      let total = 0, sumaArea = 0;
-      rows.forEach(tr=>{
-        total += recalcularFila(tr);
-        const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
-        sumaArea += area;
-      });
-      const totalEl = document.getElementById('totalConstruccion');
-      if(totalEl) totalEl.value = total.toFixed(2);
+  const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
+  let total = 0, sumaArea = 0;
+  
+  rows.forEach(tr=>{
+    total += recalcularFila(tr);
+    const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
+    sumaArea += area;
+  });
+  
+  const totalEl = document.getElementById('totalConstruccion');
+  if(totalEl) totalEl.value = total.toFixed(2);
 
-      if(document.getElementById('resultSection').classList.contains('active')){
-        document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(total);
-        
-        const fallbackArea = parseFloat(document.getElementById('construction-area').value)||0;
-        const areaMostrar = (sumaArea>0? sumaArea : fallbackArea).toFixed(2);
-        document.getElementById('resultArea').textContent = `${areaMostrar} m²`;
+  if(document.getElementById('resultSection').classList.contains('active')){
+    document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(total);
+    
+    const fallbackArea = parseFloat(document.getElementById('construction-area').value)||0;
+    const areaMostrar = (sumaArea>0? sumaArea : fallbackArea).toFixed(2);
+    document.getElementById('resultArea').textContent = `${areaMostrar} m²`;
 
-        const estado = document.getElementById('estado-inmueble').value || 'No especificado';
-        document.getElementById('resultCondition').textContent = estado;
-
-        const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
-        const antiguedad = anioConstruccion? (new Date().getFullYear()-anioConstruccion) : 0;
-        document.getElementById('resultAge').textContent = `${antiguedad} años`;
-
-        const tipId=document.getElementById('typology').value;
-        let tipText='No seleccionada';
-        try{
-          const t = __getTipos();
-          for (const tipologia of t) {
-            const variante = tipologia.variants.find(v => v.id === tipId);
-            if (variante) {
-              tipText = `${tipologia.category}-${tipologia.type}`;
-              break;
-            }
-          }
-        }catch{}
-        document.getElementById('resultTypology').textContent = tipText;
-
-        const land=parseFloat(document.getElementById('totalTerreno')?.value)||0;
-        document.getElementById('resultLandValue').textContent = formatMoneyGTQ(land);
-        document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(land);
-        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(land + total);
-        document.getElementById('resultTotal').textContent = formatMoneyGTQ(land + total);
+    
+    const tipologiasSeleccionadas = [];
+    rows.forEach(tr => {
+      const select = tr.querySelector('.tipo-construccion-select');
+      const selectedOption = select?.options[select.selectedIndex];
+      if (selectedOption && selectedOption.value) {
+        tipologiasSeleccionadas.push(selectedOption.textContent.split(' (')[0]); 
       }
-    }
+    });
+    
+    const tipText = tipologiasSeleccionadas.length > 0 ? 
+      tipologiasSeleccionadas.join(' | ') : 'No seleccionada';
+    document.getElementById('resultTypology').textContent = tipText;
 
+    const estado = document.getElementById('estado-inmueble').value || 'No especificado';
+    document.getElementById('resultCondition').textContent = estado;
+
+    const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
+    const antiguedad = anioConstruccion? (new Date().getFullYear()-anioConstruccion) : 0;
+    document.getElementById('resultAge').textContent = `${antiguedad} años`;
+
+    const land=parseFloat(document.getElementById('totalTerreno')?.value)||0;
+    document.getElementById('resultLandValue').textContent = formatMoneyGTQ(land);
+    document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(land);
+    document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(land + total);
+    document.getElementById('resultTotal').textContent = formatMoneyGTQ(land + total);
+  }
+}
     function bindRowEvents(tr){
-      ['input','change'].forEach(evt=>{
-        tr.addEventListener(evt, e=>{
-          if(e.target.matches('.area-input,.vbase-input,.coef-input')){
-            recalcularTablaConstruccion();
-            integrarValores(); 
-          }
-        });
-      });
-    }
-
-    function agregarFilaConstruccion(){
-      const tbody = document.getElementById('tbBodyConstruccion');
-      const n = tbody.querySelectorAll('tr').length + 1;
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td><input type="text" value="Nivel ${n}" class="planta-input"></td>
-        <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
-        <td><input type="number" min="0, step="0.01" class="vbase-input" placeholder="0"></td>
-        <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
-        <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
-        <td><input type="text" class="monto-output" value="0.00" readonly></td>
-      `;
-      tbody.appendChild(tr);
-      bindRowEvents(tr);
-    }
-
+  ['input','change'].forEach(evt=>{
+    tr.addEventListener(evt, e=>{
+      if(e.target.matches('.area-input,.vbase-input,.coef-input')){
+        recalcularTablaConstruccion();
+        integrarValores(); 
+      }
+    });
+  });
+}
+   function agregarFilaConstruccion() {
+  const tbody = document.getElementById('tbBodyConstruccion');
+  const n = tbody.querySelectorAll('tr').length + 1;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" value="Nivel ${n}" class="planta-input"></td>
+    <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
+    <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
+    <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
+    <td>
+      <select class="tipo-construccion-select">
+        <option value="">Seleccionar tipología</option>
+        <!-- Las opciones se llenarán dinámicamente -->
+      </select>
+    </td>
+    <td><input type="text" class="monto-output" value="0.00" readonly></td>
+  `;
+  tbody.appendChild(tr);
+  
+  
+  llenarSelectsTipologias();
+  
+  
+  bindRowEvents(tr);
+  
+  
+  const select = tr.querySelector('.tipo-construccion-select');
+  select.addEventListener('change', function() {
+    actualizarValorBaseDesdeTipologia(this);
+  });
+}
+    
     function eliminarUltimaFilaConstruccion(){
       const tbody = document.getElementById('tbBodyConstruccion');
       const rows = tbody.querySelectorAll('tr');
@@ -3221,10 +3281,19 @@ Como acceso encontramos:
       }
     }
 
-    document.addEventListener('DOMContentLoaded', ()=>{
-      const firstRow = document.querySelector('#tbBodyConstruccion tr');
-      if(firstRow) bindRowEvents(firstRow);
+   document.addEventListener('DOMContentLoaded', () => {
+  
+  llenarSelectsTipologias();
+  
+  document.querySelectorAll('.tipo-construccion-select').forEach(select => {
+    select.addEventListener('change', function() {
+      actualizarValorBaseDesdeTipologia(this);
     });
+  });
+  
+  const firstRow = document.querySelector('#tbBodyConstruccion tr');
+  if (firstRow) bindRowEvents(firstRow);
+});
   </script>
 
   <script>
@@ -3499,9 +3568,9 @@ Como acceso encontramos:
     const margin = 20; 
     const contentWidth = pageWidth - (margin * 2);
     
-    let y = 0; // Variable para controlar la posición Y
+    let y = 0; 
 
-    // ========== PORTADA ==========
+    
     doc.setFillColor(91, 123, 122); 
     doc.rect(0, 0, pageWidth, 60, 'F');
     doc.setTextColor(255, 255, 255); 
@@ -3515,7 +3584,7 @@ Como acceso encontramos:
 
     y = 80;
 
-    // ========== INFORMACIÓN GENERAL ==========
+    
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
     doc.setTextColor(91, 123, 122); 
@@ -3524,7 +3593,7 @@ Como acceso encontramos:
     doc.text('1. INFORMACIÓN GENERAL', margin, y); 
     y += 20;
 
-    // Datos básicos
+    
     const basicData = [
       ['Asociado:', document.getElementById('associate-name').value || 'No especificado'],
       ['Dirección:', document.getElementById('address').value || 'No especificado'],
@@ -3548,7 +3617,7 @@ Como acceso encontramos:
 
     y += 10;
 
-    // ========== DATOS REGISTRALES ==========
+    
     if(y > 220) { doc.addPage(); y = 20; }
     
     doc.setFillColor(240, 240, 240); 
@@ -3581,7 +3650,7 @@ Como acceso encontramos:
 
     y += 15;
 
-    // ========== COLINDANCIAS ==========
+    
     if(y > 200) { doc.addPage(); y = 20; }
     
     doc.setFillColor(240, 240, 240); 
@@ -3611,7 +3680,7 @@ Como acceso encontramos:
 
     y = doc.lastAutoTable.finalY + 15;
 
-    // ========== INFORMACIÓN DEL SOLAR ==========
+    
     if(y > 200) { doc.addPage(); y = 20; }
     
     doc.setFillColor(240, 240, 240); 
@@ -3622,7 +3691,7 @@ Como acceso encontramos:
     doc.text('1.3 INFORMACIÓN DEL SOLAR', margin, y); 
     y += 20;
 
-    // Calles
+    
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
     doc.text('Calles:', margin, y);
@@ -3648,7 +3717,7 @@ Como acceso encontramos:
 
     y += 8;
 
-    // Servicios Públicos
+    
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
@@ -3675,7 +3744,7 @@ Como acceso encontramos:
 
     y += 8;
 
-    // Ubicación y Clasificación
+    
     if(y > 220) { doc.addPage(); y = 20; }
     
     const ubicacionData = [
@@ -3703,7 +3772,7 @@ Como acceso encontramos:
 
     y += 15;
 
-    // ========== CARACTERÍSTICAS CONSTRUCTIVAS ==========
+    
     if(y > 200) { doc.addPage(); y = 20; }
     
     doc.setFillColor(240, 240, 240); 
@@ -3744,7 +3813,7 @@ Como acceso encontramos:
 
     y += 10;
 
-    // Otros detalles
+    
     const otrosDetalles = document.getElementById('otros-detalles').value;
     if(otrosDetalles) {
       if(y > 230) { doc.addPage(); y = 20; }
@@ -3761,7 +3830,7 @@ Como acceso encontramos:
       y += 10;
     }
 
-    // Tipología
+    
     const tipologiaId = document.getElementById('typology').value;
     let tipologiaText = 'No seleccionada';
     if(tipologiaId) {
@@ -3786,7 +3855,7 @@ Como acceso encontramos:
     doc.text(tipologiaText, margin + 60, y);
     y += 15;
 
-    // ========== EVIDENCIA FOTOGRÁFICA ==========
+   
     const imagePreviews = document.querySelectorAll('#image-preview .image-preview-item img');
     if(imagePreviews.length > 0) {
       if(y > 200) { doc.addPage(); y = 20; }
@@ -3805,7 +3874,7 @@ Como acceso encontramos:
       y += 10;
     }
 
-    // ========== CÁLCULOS ==========
+    
     if(y > 200) { doc.addPage(); y = 20; }
     
     doc.setFillColor(240, 240, 240); 
@@ -3816,7 +3885,7 @@ Como acceso encontramos:
     doc.text('3. CÁLCULOS Y VALORACIONES', margin, y); 
     y += 20;
 
-    // Valor del Terreno
+    
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('3.1 VALOR DEL TERRENO', margin, y);
@@ -3845,7 +3914,7 @@ Como acceso encontramos:
 
     y += 15;
 
-    // Valor de Construcción
+    
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
@@ -4023,7 +4092,7 @@ Como acceso encontramos:
       document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
       document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
       
-      // Inicializar funcionalidades adicionales
+      
       initImageModalEvents();
       initImageUpload();
     });
@@ -4123,7 +4192,7 @@ Como acceso encontramos:
         if (error) {
           console.error("❌ Error en registro:", error);
           
-          // Si el usuario ya existe, intentar login
+          
           if (error.message?.includes('already registered') || error.message?.includes('user_exists')) {
             const { data: loginData, error: loginError } = await window.supabase.auth.signInWithPassword({ 
               email: email.trim(), 
@@ -4138,7 +4207,7 @@ Como acceso encontramos:
               throw loginError;
             }
             
-            // Login exitoso
+           
             window.__session = loginData.session;
             __updateAuthUI(true);
             alert("¡Bienvenido de nuevo!");
@@ -4151,7 +4220,7 @@ Como acceso encontramos:
           if (!data.session) {
             alert("✅ ¡Cuenta creada! Revisa tu email y confirma tu cuenta antes de iniciar sesión.");
           } else {
-            // Sesión automática (raro pero posible)
+            
             window.__session = data.session;
             __updateAuthUI(true);
             alert("¡Cuenta creada y sesión iniciada!");
@@ -4201,12 +4270,12 @@ Como acceso encontramos:
           return;
         }
 
-        // Login exitoso
+        
         window.__session = data.session;
         __updateAuthUI(true);
         console.log("✅ Login exitoso:", data.user.email);
         
-        // Mostrar modal de username si no tiene
+        
         if (data.user && !data.user.user_metadata?.username) {
           setTimeout(() => {
             showUsernameModal(data.user.id);
@@ -4243,7 +4312,7 @@ Como acceso encontramos:
         if (error) {
           console.error("❌ Error Google OAuth:", error);
           
-          // Si Google OAuth no está configurado, ofrecer alternativa
+         
           if (error.message?.includes('OAuth') || error.message?.includes('provider') || error.message?.includes('configuration')) {
             const useEmail = confirm(
               "Google OAuth no está configurado aún.\n\n" +
@@ -4259,13 +4328,13 @@ Como acceso encontramos:
           return;
         }
 
-        // Si llegamos aquí, la redirección debería ocurrir automáticamente
+        
         console.log("🔄 Redirigiendo a Google...");
 
       } catch (e) {
         console.error("❌ Error completo Google OAuth:", e);
         
-        // Fallback a registro por email
+       
         const useEmail = confirm(
           "Error temporal con Google.\n\n" +
           "¿Quieres crear una cuenta con tu email en su lugar?"
