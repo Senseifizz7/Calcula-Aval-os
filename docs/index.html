@@ -2995,66 +2995,102 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     }
 
     function __selectTipo(id) {
-      
-      const tipologias = __getTipos();
-      let varianteSeleccionada = null;
-      let tipologiaPadre = null;
-      
-      for (const tipologia of tipologias) {
+    const tipologias = __getTipos();
+    let varianteSeleccionada = null;
+    let tipologiaPadre = null;
+    
+    for (const tipologia of tipologias) {
         const variante = tipologia.variants.find(v => v.id === id);
         if (variante) {
-          varianteSeleccionada = variante;
-          tipologiaPadre = tipologia;
-          break;
+            varianteSeleccionada = variante;
+            tipologiaPadre = tipologia;
+            break;
         }
-      }
-      
-      if (!varianteSeleccionada || !tipologiaPadre) return;
-      
-      const rango = RANGOS_PRECIO[tipologiaPadre.category]?.[tipologiaPadre.type] || { min: 500, max: 1000 };
-      const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
-      
-      const img = document.getElementById('selectedImage');
-      const tp = document.getElementById('selectedType');
-      const ti = document.getElementById('selectedTitle');
-      const pr = document.getElementById('selectedPrice');
-      const hd = document.getElementById('typology');
-      
-      if (img) img.src = varianteSeleccionada.img;
-      if (tp) tp.textContent = `Categoría ${tipologiaPadre.category} — ${tipologiaPadre.type}`;
-      if (ti) ti.textContent = varianteSeleccionada.title;
-      if (pr) pr.textContent = rangoTexto;
-      if (hd) hd.value = varianteSeleccionada.id;
-      
-      varianteSeleccionada.pricePerM2 = varianteSeleccionada.pricePerM2 || rango.max;
-      
-      if (document.getElementById('resultSection').classList.contains('active')) {
-          calculateRealAppraisal();
-      }
-      
-      __closeTypology();
     }
+    
+    if (!varianteSeleccionada || !tipologiaPadre) return;
+    
+    const rango = RANGOS_PRECIO[tipologiaPadre.category]?.[tipologiaPadre.type] || { min: 500, max: 1000 };
+    const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
+    
+    
+    const modal = document.getElementById('catalogModal');
+    const targetRowIndex = modal?.dataset.targetRow;
+    
+    if (targetRowIndex !== undefined) {
+        
+        const rows = document.querySelectorAll('#tbBodyConstruccion tr');
+        const row = rows[targetRowIndex];
+        
+        if (row) {
+            const vbaseInput = row.querySelector('.vbase-input');
+            const tipoDisplay = row.querySelector('.tipo-construccion-display');
+            
+            if (vbaseInput) {
+                vbaseInput.value = varianteSeleccionada.pricePerM2;
+            }
+            
+            if (tipoDisplay) {
+                tipoDisplay.innerHTML = `
+                    <div style="text-align: left;">
+                        <div style="font-weight: 600; color: var(--primary);">${tipologiaPadre.category} - ${tipologiaPadre.type}</div>
+                        <div style="font-size: 0.8rem; color: var(--text);">${varianteSeleccionada.title}</div>
+                        <div style="font-size: 0.75rem; color: var(--success);">Q${varianteSeleccionada.pricePerM2}/m²</div>
+                    </div>
+                `;
+                tipoDisplay.dataset.tipologiaId = varianteSeleccionada.id;
+            }
+            
+            recalcularFila(row);
+            recalcularTablaConstruccion();
+            integrarValores();
+        }
+        
+        delete modal.dataset.targetRow;
+    } else {
+        
+        const img = document.getElementById('selectedImage');
+        const tp = document.getElementById('selectedType');
+        const ti = document.getElementById('selectedTitle');
+        const pr = document.getElementById('selectedPrice');
+        const hd = document.getElementById('typology');
+        
+        if (img) img.src = varianteSeleccionada.img;
+        if (tp) tp.textContent = `Categoría ${tipologiaPadre.category} — ${tipologiaPadre.type}`;
+        if (ti) ti.textContent = varianteSeleccionada.title;
+        if (pr) pr.textContent = rangoTexto;
+        if (hd) hd.value = varianteSeleccionada.id;
+        
+        varianteSeleccionada.pricePerM2 = varianteSeleccionada.pricePerM2 || rango.max;
+        
+        if (document.getElementById('resultSection').classList.contains('active')) {
+            calculateRealAppraisal();
+        }
+    }
+    
+    __closeTypology();
+}
 
-    function __openTypology(){
-      const m = document.getElementById('catalogModal');
-      const t = document.getElementById('typologyTrigger');
-      if(!m) return alert('No se encontró el modal (#catalogModal).');
-      m.classList.add('active');
-      t?.classList.add('active');
-      __renderTipos();
-      initTabs();
-      
-      const hb = e => {
+    
+function openTypologyForConstruction(row) {
+    const m = document.getElementById('catalogModal');
+    if(!m) return alert('No se encontró el modal (#catalogModal).');
+    
+    
+    const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
+    m.dataset.targetRow = rows.indexOf(row);
+    m.classList.add('active');
+    __renderTipos();
+    initTabs();
+    
+    const hb = e => {
         if(e.target === m){
-          __closeTypology();
-          m.removeEventListener('click', hb);
+            __closeTypology();
+            m.removeEventListener('click', hb);
         }
-      };
-      m.addEventListener('click', hb);
-      const x = document.getElementById('closeModal');
-      if(x) x.onclick = __closeTypology;
-    }
-
+    };
+    m.addEventListener('click', hb);
+}
     function __closeTypology(){
       const m = document.getElementById('catalogModal');
       const t = document.getElementById('typologyTrigger');
@@ -3249,15 +3285,18 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
     <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
     <td>
-      <select class="tipo-construccion-select">
-        <option value="">Seleccionar tipología</option>
-        <!-- Las opciones se llenarán dinámicamente -->
-      </select>
+      <div class="typology-trigger" style="margin: 0; cursor: pointer; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card);" onclick="openTypologyForConstruction(this.parentElement.parentElement)">
+        <div class="tipo-construccion-display" style="text-align: center; color: var(--text-light);">
+          <i class="fas fa-home"></i><br>
+          <small>Click para seleccionar tipología</small>
+        </div>
+      </div>
     </td>
     <td><input type="text" class="monto-output" value="0.00" readonly></td>
   `;
   tbody.appendChild(tr);
-  
+  bindRowEvents(tr);
+} 
   
   llenarSelectsTipologias();
   
@@ -4083,20 +4122,37 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     
     document.addEventListener('DOMContentLoaded',function(){
-      window.formWizard=new FormWizard();
-      document.getElementById('save-btn').addEventListener('click',async function(){ 
-        await saveCurrentAppraisal();
-        
-      });
-      document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
-      document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
-      document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
-      
-      
-      initImageModalEvents();
-      initImageUpload();
-    });
-  </script>
+  window.formWizard=new FormWizard();
+  
+    const primeraFila = document.querySelector('#tbBodyConstruccion tr');
+  if (primeraFila) {
+    const tdTipologia = primeraFila.querySelector('td:nth-child(5)');
+    if (tdTipologia) {
+      tdTipologia.innerHTML = `
+        <div class="typology-trigger" style="margin: 0; cursor: pointer; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card);" onclick="openTypologyForConstruction(this.parentElement.parentElement)">
+          <div class="tipo-construccion-display" style="text-align: center; color: var(--text-light);">
+            <i class="fas fa-home"></i><br>
+            <small>Click para seleccionar tipología</small>
+          </div>
+        </div>
+      `;
+    }
+  }
+ 
+  
+  document.getElementById('save-btn').addEventListener('click',async function(){ 
+    await saveCurrentAppraisal();
+    
+  });
+  document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
+  document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
+  document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
+  
+  
+  initImageModalEvents();
+  initImageUpload();
+});
+</script>
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
