@@ -3280,32 +3280,67 @@ function openTypologyForConstruction(row) {
     });
   });
 }
-    function agregarFilaConstruccion() {
-  const tbody = document.getElementById('tbBodyConstruccion');
-  const n = tbody.querySelectorAll('tr').length + 1;
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td><input type="text" value="Nivel ${n}" class="planta-input"></td>
-    <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
-    <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
-    <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
-    <td>
-      <div class="typology-trigger" style="margin: 0; cursor: pointer; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card);" onclick="openTypologyForConstruction(this.parentElement.parentElement)">
-        <div class="tipo-construccion-display" style="text-align: center; color: var(--text-light);">
-          <i class="fas fa-home"></i><br>
-          <small>Click para seleccionar tipología</small>
-        </div>
-      </div>
-    </td>
-    <td><input type="text" class="monto-output" value="0.00" readonly></td>
-  `;
-  tbody.appendChild(tr);
-  bindRowEvents(tr);
+    function __openTypology(){
+  console.log("🔵 Abriendo catálogo principal...");
+  
+  const m = document.getElementById('catalogModal');
+  const t = document.getElementById('typologyTrigger');
+  
+  if(!m) {
+    console.error("❌ No se encontró: #catalogModal");
+    alert("Error: No se puede abrir el catálogo");
+    return;
+  }
+  
+  console.log("✅ Modal encontrado, abriendo...");
+  
+  
+  if (m.dataset.targetRow) {
+    delete m.dataset.targetRow;
+  }
+  
+  m.classList.add('active');
+  if(t) t.classList.add('active');
+  
+  __renderTipos();
+  initTabs();
+  
+  
+  const handleClick = e => {
+    if(e.target === m){
+      console.log("🔒 Cerrando catálogo (click fuera)");
+      __closeTypology();
+      m.removeEventListener('click', handleClick);
+    }
+  };
+  m.addEventListener('click', handleClick);
+  
+  console.log("✅ Catálogo abierto correctamente");
+}
+  
+  
+  const handleClick = e => {
+    if(e.target === m){
+      console.log("🔒 Cerrando catálogo (click fuera)");
+      __closeTypology();
+      m.removeEventListener('click', handleClick);
+    }
+  };
+  m.addEventListener('click', handleClick);
+  
+  console.log("✅ Catálogo abierto correctamente");
 }  
-  const select = tr.querySelector('.tipo-construccion-select');
-  select.addEventListener('change', function() {
-    actualizarValorBaseDesdeTipologia(this);
-  });
+  
+  const handleClick = e => {
+    if(e.target === m){
+      console.log("🔒 Cerrando catálogo (click fuera)");
+      __closeTypology();
+      m.removeEventListener('click', handleClick);
+    }
+  };
+  m.addEventListener('click', handleClick);
+  
+  console.log("✅ Catálogo abierto correctamente");
 }
     
     function eliminarUltimaFilaConstruccion(){
