@@ -1372,24 +1372,6 @@
           <label for="otros-detalles">Otros Detalles Específicos</label>
           <textarea id="otros-detalles" placeholder="Describa otros detalles como: Aire Acondicionado, Car-port, Garaje, Chimeneas, etc."></textarea>
         </div>
-
-        <div class="form-section-title" style="margin-top: var(--space-lg);"><i class="fas fa-list"></i> Catalogo de categorías y tipologías</div>
-        <div class="form-group">
-          <label>Tipología constructiva</label>
-          <div class="typology-selector" onclick="alert('Catálogo funciona')">
-            <div id="typologyTrigger" class="typology-trigger">
-              <img id="selectedImage" class="selected-image" src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=200&q=60" alt="Tipología" />
-              <div class="selected-text">
-                <div id="selectedType" class="selected-type">Catálogo</div>
-                <div id="selectedTitle" class="selected-title">Pulsa para elegir del catálogo</div>
-                <div id="selectedPrice" class="selected-price">—</div>
-              </div>
-            </div>
-          </div>
-          <input type="hidden" id="typology" value="">
-          <div class="form-help">Toca el recuadro para abrir el catálogo de tipologías</div>
-        </div>
-
         
         <div class="form-section-title" style="margin-top: var(--space-lg);">
           <i class="fas fa-camera"></i> Evidencia Fotográfica del Inmueble
@@ -1484,10 +1466,9 @@
   </tfoot>
 </table>
         
-       <div style="display:flex; gap:12px; margin-top:8px;">
-  <button class="btn-secondary btn-small" type="button" onclick="alert('Agregar nivel funciona')">
-    <i class="fas fa-plus"></i> Agregar nivel
-  </button>
+       <button class="btn-secondary btn-small" type="button" onclick="alert('Agregar nivel - Próximamente')">
+  <i class="fas fa-plus"></i> Agregar nivel
+</button>
   <button class="btn-secondary btn-small" type="button" onclick="eliminarUltimaFilaConstruccion()">
     <i class="fas fa-minus"></i> Quitar último nivel
   </button>
