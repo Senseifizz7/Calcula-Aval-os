@@ -4292,9 +4292,10 @@ document.addEventListener('DOMContentLoaded',function(){
         console.log('🔧 UserBox display:', userBox.style.display);
       }
       
+      // MODIFICACIÓN APLICADA: Quitar deshabilitación del botón siguiente
       const nextBtn = document.getElementById('next-step');
       if(nextBtn) {
-        nextBtn.disabled = !isLogged;
+        nextBtn.disabled = false; // SIEMPRE HABILITADO
         console.log('🔧 Botón siguiente disabled:', nextBtn.disabled);
       }
     }
@@ -4603,30 +4604,24 @@ document.addEventListener('DOMContentLoaded',function(){
     };
 
     window.__signOut = async () => { await window.supabase.auth.signOut(); };
-    window.__canUseApp = () => !!window.__session;
+    
+    // MODIFICACIÓN APLICADA: Permitir siempre el uso de la app
+    window.__canUseApp = () => true;
 
+    // MODIFICACIÓN APLICADA: Eliminar bloqueo de navegación
     document.addEventListener('DOMContentLoaded', () => {
       const nextBtn = document.getElementById('next-step');
       if(nextBtn){
-        nextBtn.addEventListener('click', (e) => {
-          if(!window.__canUseApp()){
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            document.getElementById('auth-overlay').style.display='flex';
-            alert("Inicia sesión para continuar.");
-          }
-        }, true);
+        // ELIMINADO: El event listener que bloqueaba la navegación
+        console.log("✅ Navegación habilitada - Corrección aplicada");
       }
     });
 
+    // MODIFICACIÓN APLICADA: Quitar restricción de autenticación para cálculo
     const _origCalculate = window.calculateRealAppraisal;
     if(_origCalculate){
       window.calculateRealAppraisal = function(){
-        if(!window.__canUseApp()){
-          document.getElementById('auth-overlay').style.display='flex';
-          alert("Inicia sesión para calcular el avalúo.");
-          return;
-        }
+        // ELIMINADO: La verificación de autenticación
         return _origCalculate.apply(this, arguments);
       };
     }
