@@ -4640,5 +4640,220 @@ document.addEventListener('DOMContentLoaded',function(){
       }
     })();
   </script>
+
+  <!-- CORRECCIÓN ESPECÍFICA PARA EL BOTÓN SIGUIENTE -->
+  <script>
+    // CORRECCIÓN ESPECÍFICA PARA EL BOTÓN SIGUIENTE
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("🔧 Aplicando corrección al botón Siguiente...");
+        
+        // Reemplazar el FormWizard original con uno funcional
+        class FormWizardFixed {
+            constructor() { 
+                this.currentStep = 1; 
+                this.totalSteps = 4; 
+                this.init(); 
+            }
+            
+            init() { 
+                this.bindEvents(); 
+                this.updateUI(); 
+            }
+            
+            bindEvents() {
+                const nextBtn = document.getElementById('next-step');
+                const prevBtn = document.getElementById('prev-step');
+                
+                if (nextBtn) {
+                    // Limpiar event listeners anteriores
+                    nextBtn.replaceWith(nextBtn.cloneNode(true));
+                    document.getElementById('next-step').addEventListener('click', () => this.next());
+                }
+                
+                if (prevBtn) {
+                    prevBtn.replaceWith(prevBtn.cloneNode(true));
+                    document.getElementById('prev-step').addEventListener('click', () => this.previous());
+                }
+                
+                // Steps click
+                document.querySelectorAll('.step').forEach(step => {
+                    step.addEventListener('click', (e) => {
+                        const stepNum = parseInt(e.currentTarget.dataset.step);
+                        if (stepNum < this.currentStep) {
+                            this.goToStep(stepNum);
+                        }
+                    });
+                });
+            }
+            
+            validateStep(step) {
+                const requiredFields = document.querySelectorAll(`[data-step="${step}"] [required]`);
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.style.borderColor = 'var(--error)';
+                        isValid = false;
+                    } else {
+                        field.style.borderColor = '';
+                    }
+                });
+                
+                if (!isValid) {
+                    alert('Por favor completa todos los campos requeridos marcados con *');
+                }
+                return isValid;
+            }
+            
+            next() {
+                console.log("➡️ Botón Siguiente clickeado, paso actual:", this.currentStep);
+                
+                if (this.currentStep < this.totalSteps) {
+                    if (this.validateStep(this.currentStep)) {
+                        this.currentStep++;
+                        this.updateUI();
+                    }
+                } else {
+                    this.calculateAppraisal();
+                }
+            }
+            
+            previous() { 
+                if (this.currentStep > 1) { 
+                    this.currentStep--; 
+                    this.updateUI(); 
+                } 
+            }
+            
+            goToStep(step) { 
+                if (step >= 1 && step <= this.totalSteps) { 
+                    this.currentStep = step; 
+                    this.updateUI(); 
+                } 
+            }
+            
+            updateUI() {
+                console.log("🔄 Actualizando UI al paso:", this.currentStep);
+                
+                // Actualizar steps
+                document.querySelectorAll('.step').forEach(step => {
+                    const stepNum = parseInt(step.dataset.step);
+                    step.classList.remove('active', 'completed');
+                    if (stepNum === this.currentStep) {
+                        step.classList.add('active');
+                    } else if (stepNum < this.currentStep) {
+                        step.classList.add('completed');
+                    }
+                });
+                
+                // Actualizar secciones
+                document.querySelectorAll('.form-section').forEach(section => {
+                    section.classList.remove('active');
+                    if (parseInt(section.dataset.step) === this.currentStep) {
+                        section.classList.add('active');
+                    }
+                });
+                
+                // Actualizar botones
+                const prevBtn = document.getElementById('prev-step');
+                const nextBtn = document.getElementById('next-step');
+                
+                if (prevBtn) {
+                    prevBtn.style.display = this.currentStep > 1 ? 'flex' : 'none';
+                }
+                
+                if (nextBtn) {
+                    nextBtn.innerHTML = this.currentStep === this.totalSteps ? 
+                        '<i class="fas fa-calculator"></i> Calcular Avalúo' : 
+                        'Siguiente <i class="fas fa-arrow-right"></i>';
+                }
+                
+                // Forzar mostrar todas las secciones temporalmente para debug
+                console.log("📋 Estado de secciones:");
+                document.querySelectorAll('.form-section').forEach((section, index) => {
+                    console.log(`Sección ${index + 1}:`, section.classList.contains('active') ? 'ACTIVA' : 'oculta');
+                });
+            }
+            
+            calculateAppraisal() {
+                console.log("🧮 Iniciando cálculo de avalúo...");
+                
+                if (this.validateStep(this.currentStep)) {
+                    const nextBtn = document.getElementById('next-step');
+                    const originalHTML = nextBtn.innerHTML;
+                    
+                    nextBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
+                    nextBtn.disabled = true;
+                    
+                    setTimeout(() => {
+                        // Ejecutar función de cálculo si existe
+                        if (typeof calculateRealAppraisal === 'function') {
+                            calculateRealAppraisal();
+                        }
+                        
+                        // Mostrar sección de resultados
+                        const resultSection = document.getElementById('resultSection');
+                        if (resultSection) {
+                            resultSection.classList.add('active');
+                        }
+                        
+                        // Mostrar botones de acción
+                        const saveBtn = document.getElementById('save-btn');
+                        const pdfBtn = document.getElementById('pdf-btn');
+                        if (saveBtn) saveBtn.style.display = 'flex';
+                        if (pdfBtn) pdfBtn.style.display = 'flex';
+                        
+                        nextBtn.innerHTML = originalHTML;
+                        nextBtn.disabled = false;
+                        
+                        console.log("✅ Cálculo completado, resultados mostrados");
+                    }, 800);
+                }
+            }
+        }
+        
+        // Inicializar el wizard corregido
+        setTimeout(() => {
+            window.formWizard = new FormWizardFixed();
+            console.log("✅ FormWizard corregido inicializado");
+            
+            // Verificar que los botones estén funcionando
+            const nextBtn = document.getElementById('next-step');
+            const prevBtn = document.getElementById('prev-step');
+            
+            if (nextBtn) {
+                console.log("✅ Botón Siguiente listo:", nextBtn);
+            }
+            if (prevBtn) {
+                console.log("✅ Botón Anterior listo:", prevBtn);
+            }
+        }, 100);
+    });
+
+    // Función de respaldo para navegación manual entre pasos
+    function forceGoToStep(stepNumber) {
+        if (window.formWizard && typeof window.formWizard.goToStep === 'function') {
+            window.formWizard.goToStep(stepNumber);
+        } else {
+            // Fallback manual
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+                if (parseInt(section.dataset.step) === stepNumber) {
+                    section.classList.add('active');
+                }
+            });
+            
+            document.querySelectorAll('.step').forEach(step => {
+                const stepNum = parseInt(step.dataset.step);
+                step.classList.remove('active', 'completed');
+                if (stepNum === stepNumber) {
+                    step.classList.add('active');
+                } else if (stepNum < stepNumber) {
+                    step.classList.add('completed');
+                }
+            });
+        }
+    }
+  </script>
 </body>
 </html>
