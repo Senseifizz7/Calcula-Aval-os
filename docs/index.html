@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    
     :root {
       --primary: #5B7B7A;
       --primary-light: #8AA6A5;
@@ -589,7 +590,7 @@
       }
     }
 
-    
+    /* Estilos para el visor de imágenes */
     #image-viewer-modal .modal-content {
       background: transparent !important;
       box-shadow: none !important;
@@ -629,7 +630,7 @@
       border-color: var(--primary);
     }
 
-    
+    /* Efecto de overlay en hover para las imágenes */
     .catalog-item-content {
       position: relative;
     }
@@ -659,7 +660,7 @@
       opacity: 1;
     }
 
-   
+    /* Estilos para subida de imágenes */
     .image-upload-container {
       margin-top: 12px;
     }
@@ -725,7 +726,7 @@
       color: var(--text-light);
     }
 
-   /
+    /* CORRECCIÓN ESPECÍFICA PARA EL VISOR DE IMÁGENES */
     #image-viewer-modal {
       z-index: 2000 !important;
     }
@@ -733,290 +734,10 @@
     #image-viewer-modal .modal-content {
       z-index: 2001 !important;
     }
-
-    
-    .typology-tabs {
-      display: flex;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg-card);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .typology-tab {
-      flex: 1;
-      padding: 16px;
-      text-align: center;
-      background: none;
-      border: none;
-      border-bottom: 3px solid transparent;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-weight: 500;
-      color: var(--text-light);
-    }
-
-    .typology-tab.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-      background: rgba(91, 123, 122, 0.05);
-    }
-
-    .typology-tab:hover:not(.active) {
-      background: var(--bg-hover);
-      color: var(--text);
-    }
-
-    .typology-tab-content {
-      display: none;
-      padding: 20px;
-    }
-
-    .typology-tab-content.active {
-      display: block;
-    }
-
-    .typology-accordion {
-      margin-bottom: 8px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
-    .typology-accordion-header {
-      padding: 16px 20px;
-      background: var(--bg-hover);
-      border: none;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-      color: var(--text);
-      transition: all 0.3s ease;
-    }
-
-    .typology-accordion-header:hover {
-      background: rgba(91, 123, 122, 0.1);
-    }
-
-    .typology-accordion-header.active {
-      background: rgba(91, 123, 122, 0.15);
-      color: var(--primary);
-    }
-
-    .typology-accordion-icon {
-      transition: transform 0.3s ease;
-    }
-
-    .typology-accordion-header.active .typology-accordion-icon {
-      transform: rotate(180deg);
-    }
-
-    .typology-accordion-content {
-      display: none;
-      padding: 0;
-      background: var(--bg-card);
-    }
-
-    .typology-accordion-content.active {
-      display: block;
-    }
-
-    .typology-variants {
-      display: grid;
-      gap: 0;
-    }
-
-    .typology-variant {
-      padding: 20px;
-      border-bottom: 1px solid var(--border-light);
-      transition: all 0.3s ease;
-    }
-
-    .typology-variant:last-child {
-      border-bottom: none;
-    }
-
-    .typology-variant:hover {
-      background: rgba(91, 123, 122, 0.03);
-    }
-
-    .variant-content {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-    }
-
-    .variant-images {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .variant-image {
-      width: 100px;
-      height: 80px;
-      border-radius: var(--radius-sm);
-      object-fit: cover;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      border: 1px solid var(--border);
-    }
-
-    .variant-image:hover {
-      transform: scale(1.05);
-      border-color: var(--primary);
-    }
-
-    .variant-details {
-      flex: 1;
-    }
-
-    .variant-title {
-      font-weight: 600;
-      color: var(--primary);
-      font-size: 1rem;
-      margin-bottom: 8px;
-    }
-
-    .variant-price {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--success);
-      margin-bottom: 12px;
-    }
-
-    .variant-features {
-      list-style: none;
-      margin-bottom: 12px;
-    }
-
-    .variant-features li {
-      padding: 4px 0;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      font-size: 0.85rem;
-      color: var(--text);
-      line-height: 1.4;
-    }
-
-    .variant-features li i {
-      color: var(--primary);
-      font-size: 0.8rem;
-      margin-top: 2px;
-      flex-shrink: 0;
-    }
-
-    .variant-description {
-      font-size: 0.8rem;
-      color: var(--text-light);
-      line-height: 1.5;
-      margin-bottom: 12px;
-      padding: 12px;
-      background: rgba(91, 123, 122, 0.03);
-      border-radius: var(--radius-sm);
-    }
-
-    @media (max-width: 768px) {
-      .typology-tabs {
-        flex-direction: column;
-      }
-      
-      .typology-tab {
-        padding: 12px;
-        border-bottom: 1px solid var(--border);
-        border-left: 3px solid transparent;
-      }
-      
-      .typology-tab.active {
-        border-left-color: var(--primary);
-        border-bottom-color: var(--border);
-      }
-      
-      .variant-content {
-        flex-direction: column;
-      }
-      
-      .variant-images {
-        justify-content: center;
-      }
-      
-      .variant-image {
-        width: 120px;
-        height: 90px;
-      }
-    }
-
-    
-    .typology-breadcrumbs {
-      padding: 16px 24px;
-      background: rgba(91, 123, 122, 0.03);
-      border-bottom: 1px solid var(--border-light);
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .typology-breadcrumbs .crumb {
-      color: var(--text-light);
-      transition: color 0.2s ease;
-    }
-
-    .typology-breadcrumbs .crumb.current {
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .typology-breadcrumbs .separator {
-      color: var(--text-lighter);
-    }
-
-    .nav-indicators {
-      padding: 12px 24px;
-      background: var(--bg-hover);
-      border-bottom: 1px solid var(--border-light);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-    }
-
-    .position-indicator {
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    .types-count {
-      color: var(--text-light);
-      background: rgba(91, 123, 122, 0.1);
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-    }
-
-    @media (max-width: 768px) {
-      .typology-breadcrumbs {
-        padding: 12px 16px;
-        font-size: 0.8rem;
-      }
-      .nav-indicators {
-        padding: 8px 16px;
-        flex-direction: column;
-        gap: 8px;
-        align-items: flex-start;
-      }
-    }
   </style>
 </head>
 
 <body>
-  
   <div class="app-container">
     <header class="app-header">
       <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 200px; height: 60px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
@@ -1083,7 +804,7 @@
       </div>
     </div>
 
-    
+    <!-- Modal para visualizar imagen grande - CON Z-INDEX CORREGIDO -->
     <div class="catalog-modal" id="image-viewer-modal" style="z-index: 2000;">
       <div class="modal-content" style="max-width: 90vw; max-height: 90vh; background: transparent; box-shadow: none; z-index: 2001;">
         <button class="modal-close" onclick="closeImageViewer()" style="position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.7); color: white; z-index: 2002;">
@@ -1140,7 +861,7 @@
       </div>
     </div>
 
-    <div id="user-box" style="display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:16px;margin-bottom:24px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);">
+    <div id="user-box" style="display:none;align-items:center;gap:12px;justify-content:space-between;margin-top:-16px;">
       <div style="color:var(--text-light)">
         <i class="fas fa-circle-user"></i>
         <span data-user-name></span> · <span data-user-email></span>
@@ -1173,53 +894,48 @@
       
 
       <div class="form-section active" data-step="1">
-  <h2><i class="fas fa-info-circle"></i> Información General</h2>
-  <div class="form-grid">
-    <div class="form-group">
-      <label for="associate-name" class="required">Nombre del Asociado</label>
-      <input type="text" id="associate-name" placeholder="Ingrese el nombre completo" required />
-      <div class="form-help">Nombre completo del solicitante</div>
-    </div>
-    <div class="form-group">
-      <label for="address" class="required">Dirección de la Propiedad</label>
-      <input type="text" id="address" placeholder="Escriba y elija de las sugerencias" required />
-      <div class="form-help">La dirección se completará automáticamente</div>
-    </div>
-    <div class="form-group">
-      <label for="geo-lat">Latitud</label>
-      <input type="text" id="geo-lat" placeholder="-" readonly />
-    </div>
-    <div class="form-group">
-      <label for="geo-lng">Longitud</label>
-      <input type="text" id="geo-lng" placeholder="-" readonly />
-    </div>
-    <div class="form-group">
-      <label for="construction-area" class="required">Área Construida (m²)</label>
-      <input type="number" id="construction-area" placeholder="Ej: 120" min="1" required />
-    </div>
-    <div class="form-group">
-      <label for="land-area" class="required">Área del Terreno (m²)</label>
-      <input type="number" id="land-area" placeholder="Ej: 200" min="1" required />
-    </div>
-  </div>
-  
-  <div style="margin: var(--space-md) 0;">
-    <button class="btn-primary" type="button" onclick="locateMeOnce()">
-      <i class="fas fa-location-crosshairs"></i> Usar mi ubicación
-    </button>
-    <div class="form-help">Requiere HTTPS o localhost y permiso del navegador</div>
-  </div>
+        <h2><i class="fas fa-info-circle"></i> Información General</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="associate-name" class="required">Nombre del Asociado</label>
+            <input type="text" id="associate-name" placeholder="Ingrese el nombre completo" required />
+            <div class="form-help">Nombre completo del solicitante</div>
+          </div>
+          <div class="form-group">
+            <label for="address" class="required">Dirección de la Propiedad</label>
+            <input type="text" id="address" placeholder="Escriba y elija de las sugerencias" required />
+            <div class="form-help">La dirección se completará automáticamente</div>
+          </div>
+          <div class="form-group">
+            <label for="geo-lat">Latitud</label>
+            <input type="text" id="geo-lat" placeholder="-" readonly />
+          </div>
+          <div class="form-group">
+            <label for="geo-lng">Longitud</label>
+            <input type="text" id="geo-lng" placeholder="-" readonly />
+          </div>
+          <div class="form-group">
+            <label for="construction-area" class="required">Área Construida (m²)</label>
+            <input type="number" id="construction-area" placeholder="Ej: 120" min="1" required />
+          </div>
+          <div class="form-group">
+            <label for="land-area" class="required">Área del Terreno (m²)</label>
+            <input type="number" id="land-area" placeholder="Ej: 200" min="1" required />
+          </div>
+        </div>
+        
+        <div style="margin: var(--space-md) 0;">
+          <button class="btn-primary" type="button" onclick="locateMeOnce()">
+            <i class="fas fa-location-crosshairs"></i> Usar mi ubicación
+          </button>
+          <div class="form-help">Requiere HTTPS o localhost y permiso del navegador</div>
+        </div>
 
-  <div class="form-section-title"><i class="fas fa-map"></i> Ubicación en Mapa</div>
-  <div id="gmap" style="height: 360px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);"></div>
-  <div class="form-help">Arrastre el pin para ajustar la posición o <strong>toque/cliquee en cualquier lugar del mapa</strong> para colocar el marcador</div>
-</div> 
+        <div class="form-section-title"><i class="fas fa-map"></i> Ubicación en Mapa</div>
+        <div id="gmap" style="height: 360px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);"></div>
+        <div class="form-help">Arrastre el pin para ajustar la posición o <strong>toque/cliquee en cualquier lugar del mapa</strong> para colocar el marcador</div>
+      </div>
 
-  <div class="form-navigation">
-    <button class="btn-secondary" id="prev-step"><i class="fas fa-arrow-left"></i> Anterior</button>
-    <button class="btn-primary" id="next-step">Siguiente <i class="fas fa-arrow-right"></i></button>
-  </div>
-</div>       
       <div class="form-section" data-step="2">
         <h2><i class="fas fa-home"></i> Características de la Propiedad</h2>
         
@@ -1250,110 +966,6 @@
           </tbody>
         </table>
 
-<div class="form-section-title" style="margin-top: var(--space-lg);">
-  <i class="fas fa-map-marked-alt"></i> Información del Solar
-</div>
-
-<div class="form-grid">
-  
-  <div class="form-group">
-    <label style="font-weight: 600; color: var(--text); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-xs);">
-      <i class="fas fa-road" style="color: var(--primary);"></i> Calles
-    </label>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Concreto:</span>
-      <input type="text" id="calle-concreto" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Adoquín:</span>
-      <input type="text" id="calle-adoquin" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Servidumbre de Paso:</span>
-      <input type="text" id="calle-servidumbre" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Vereda:</span>
-      <input type="text" id="calle-vereda" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Tierra:</span>
-      <input type="text" id="calle-tierra" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Asfalto:</span>
-      <input type="text" id="calle-asfalto" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-  </div>
-
-  
-  <div class="form-group">
-    <label style="font-weight: 600; color: var(--text); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-xs);">
-      <i class="fas fa-bolt" style="color: var(--primary);"></i> Servicios Públicos
-    </label>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Energía Eléctrica:</span>
-      <input type="text" id="servicio-electricidad" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Red de Agua:</span>
-      <input type="text" id="servicio-agua" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Ducto Teléfono:</span>
-      <input type="text" id="servicio-telefono" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Drenaje:</span>
-      <input type="text" id="servicio-drenaje" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Acera:</span>
-      <input type="text" id="servicio-acera" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Bordillo:</span>
-      <input type="text" id="servicio-bordillo" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-  </div>
-</div>
-
-<div class="form-grid" style="margin-top: var(--space-md);">
-  
-  <div class="form-group">
-    <label style="font-weight: 600; color: var(--text); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-xs);">
-      <i class="fas fa-location-dot" style="color: var(--primary);"></i> Ubicación del terreno
-    </label>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Esquina:</span>
-      <input type="text" id="ubicacion-esquina" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Medial:</span>
-      <input type="text" id="ubicacion-medial" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-  </div>
-
- 
-  <div class="form-group">
-    <label style="font-weight: 600; color: var(--text); margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-xs);">
-      <i class="fas fa-tag" style="color: var(--primary);"></i> Clasificación del terreno
-    </label>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Urbano:</span>
-      <input type="text" id="clasificacion-urbano" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--space-sm); align-items: center; padding: var(--space-xs) 0;">
-      <span style="color: var(--text); font-size: 0.9rem;">Rústico:</span>
-      <input type="text" id="clasificacion-rustico" placeholder="x" style="width: 60px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-card); color: var(--text); text-align: center; font-size: 0.9rem;">
-    </div>
-  </div>
-</div>
-
-<div class="form-help" style="margin-top: var(--space-lg); margin-bottom: var(--space-lg); color: var(--text-light); font-size: 0.85rem;">
-  <i class="fas fa-info-circle" style="color: var(--primary-light);"></i> Marque con "x" los elementos que correspondan al solar. Deje en blanco los que no apliquen.
-</div>
-
         <div class="form-section-title"><i class="fas fa-hammer"></i> Características Constructivas</div>
         <div class="characteristics-grid">
           <div class="form-group"><label for="uso-destino">Uso y Destino</label><select id="uso-destino"><option value="">Seleccionar</option><option value="residencia">Residencia</option><option value="cultivo">Cultivo</option><option value="industrial">Industrial</option><option value="comercial">Comercial</option><option value="edificio">Edificio</option></select></div>
@@ -1377,7 +989,25 @@
           <label for="otros-detalles">Otros Detalles Específicos</label>
           <textarea id="otros-detalles" placeholder="Describa otros detalles como: Aire Acondicionado, Car-port, Garaje, Chimeneas, etc."></textarea>
         </div>
-        
+
+        <div class="form-section-title" style="margin-top: var(--space-lg);"><i class="fas fa-list"></i> Catalogo de categorías y tipologías</div>
+        <div class="form-group">
+          <label>Tipología constructiva</label>
+          <div class="typology-selector" onclick="__openTypology()">
+            <div id="typologyTrigger" class="typology-trigger">
+              <img id="selectedImage" class="selected-image" src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=200&q=60" alt="Tipología" />
+              <div class="selected-text">
+                <div id="selectedType" class="selected-type">Catálogo</div>
+                <div id="selectedTitle" class="selected-title">Pulsa para elegir del catálogo</div>
+                <div id="selectedPrice" class="selected-price">—</div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="typology" value="">
+          <div class="form-help">Toca el recuadro para abrir el catálogo de tipologías</div>
+        </div>
+
+        <!-- Sección para subir imágenes de evidencia -->
         <div class="form-section-title" style="margin-top: var(--space-lg);">
           <i class="fas fa-camera"></i> Evidencia Fotográfica del Inmueble
         </div>
@@ -1436,67 +1066,66 @@
           </tfoot>
         </table>
 
-        
-<table class="table-ui" id="tablaConstruccion">
-  <thead>
-    <tr>
-      <th style="width:160px">Planta</th>
-      <th style="width:140px">Área m²</th>
-      <th style="width:140px">V/Base</th>
-      <th style="width:120px">%</th>
-      <th style="width:160px">MONTO</th>
-    </tr>
-  </thead>
-  <tbody id="tbBodyConstruccion">
-    <tr>
-      <td><input type="text" value="Primer Nivel" class="planta-input"></td>
-      <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
-      <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
-      <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
-      <td><input type="text" class="monto-output" value="0.00" readonly></td>
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td colspan="4" style="text-align:right; font-weight:600;">TOTAL</td>
-      <td><input type="text" id="totalConstruccion" value="0.00" readonly></td>
-    </tr>
-  </tfoot>
-</table>
+        <div class="form-section-title"><i class="fas fa-building-user"></i> Cálculo del Valor de la Construcción</div>
+        <table class="table-ui" id="tablaConstruccion">
+          <thead>
+            <tr>
+              <th style="width:160px">Planta</th>
+              <th style="width:140px">Área m²</th>
+              <th style="width:140px">V/Base</th>
+              <th style="width:120px">%</th>
+              <th>Tipo de Construcción</th>
+              <th style="width:160px">MONTO</th>
+            </tr>
+          </thead>
+          <tbody id="tbBodyConstruccion">
+            <tr>
+              <td><input type="text" value="Primer Nivel" class="planta-input"></td>
+              <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
+              <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
+              <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
+              <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
+              <td><input type="text" class="monto-output" value="0.00" readonly></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="5" style="text-align:right; font-weight:600;">TOTAL</td>
+              <td><input type="text" id="totalConstruccion" value="0.00" readonly></td>
+            </tr>
+          </tfoot>
+        </table>
 
+        <div style="display:flex; gap:12px; margin-top:8px;">
+          <button class="btn-secondary btn-small" type="button" onclick="agregarFilaConstruccion()">
+            <i class="fas fa-plus"></i> Agregar nivel
+          </button>
+          <button class="btn-secondary btn-small" type="button" onclick="eliminarUltimaFilaConstruccion()">
+            <i class="fas fa-minus"></i> Quitar último nivel
+          </button>
+        </div>
 
-<div class="form-section-title"><i class="fas fa-layer-group"></i> Integración de Valores</div>
-<div class="result-grid" id="integracionValores">
-  <div class="result-item">
-    <div class="label">Valor del Terreno</div>
-    <div class="value" id="ivTerreno">Q0.00</div>
-  </div>
-  <div class="result-item">
-    <div class="label">Valor de Construcción</div>
-    <div class="value" id="ivConstruccion">Q0.00</div>
-  </div>
-  <div class="result-item">
-    <div class="label">Total Avalúo</div>
-    <div class="value" id="ivTotal">Q0.00</div>
-  </div>
-</div>
-
-<div>
-  <button class="btn-secondary btn-small" type="button" onclick="agregarFilaConstruccion()">
-  <i class="fas fa-plus"></i> Agregar nivel
-</button>
-    <button class="btn-secondary btn-small" type="button" onclick="eliminarUltimaFilaConstruccion()">
-    <i class="fas fa-minus"></i> Quitar último nivel
-  </button>
-</div>
-<div class="form-help" style="margin-top:8px;">
-  El MONTO se calcula como: <strong>Área m² × V/Base × %</strong>. Todos los campos son manuales (editables), excepto MONTO.
-</div>
         <div class="form-help" style="margin-top:8px;">
           El MONTO se calcula como: <strong>Área m² × V/Base × %</strong>. Todos los campos son manuales (editables), excepto MONTO.
         </div>
 
-        
+        <div class="form-section-title"><i class="fas fa-layer-group"></i> Integración de Valores</div>
+        <div class="result-grid" id="integracionValores">
+          <div class="result-item">
+            <div class="label">Valor del Terreno</div>
+            <div class="value" id="ivTerreno">Q0.00</div>
+          </div>
+          <div class="result-item">
+            <div class="label">Valor de Construcción</div>
+            <div class="value" id="ivConstruccion">Q0.00</div>
+          </div>
+          <div class="result-item">
+            <div class="label">Total Avalúo</div>
+            <div class="value" id="ivTotal">Q0.00</div>
+          </div>
+        </div>
+      </div>
+
       <div class="form-navigation">
         <button class="btn-secondary" id="prev-step"><i class="fas fa-arrow-left"></i> Anterior</button>
         <button class="btn-primary" id="next-step">Siguiente <i class="fas fa-arrow-right"></i></button>
@@ -1530,39 +1159,7 @@
           <h3><i class="fas fa-home"></i> Seleccionar Tipología Constructiva</h3>
           <button class="modal-close" id="closeModal" type="button">&times;</button>
         </div>
-        
-        <nav class="typology-breadcrumbs">
-          <span class="crumb">Catálogo</span>
-          <span class="separator">›</span>
-          <span class="crumb" id="breadcrumb-category">Categoría</span>
-          <span class="separator">›</span>
-          <span class="crumb current" id="breadcrumb-type">Tipología</span>
-        </nav>
-
-        <div class="nav-indicators">
-          <span class="position-indicator" id="position-indicator">Selecciona una categoría</span>
-          <span class="types-count" id="types-count">0 tipos disponibles</span>
-        </div>
-        
-        <div class="modal-body" style="padding: 0;">
-          <div class="typology-tabs">
-            <button class="typology-tab active" data-tab="baja">Categoría Baja</button>
-            <button class="typology-tab" data-tab="media">Categoría Media</button>
-            <button class="typology-tab" data-tab="alta">Categoría Alta</button>
-          </div>
-          
-          <div class="typology-tab-content active" id="tab-baja">
-           
-          </div>
-          
-          <div class="typology-tab-content" id="tab-media">
-            
-          </div>
-          
-          <div class="typology-tab-content" id="tab-alta">
-            
-          </div>
-        </div>
+        <div class="modal-body" id="modalCatalogContent"></div>
       </div>
     </div>
   </div>
@@ -1577,30 +1174,11 @@
 
   <script>
     
-    function __updateBreadcrumbs(category, type) {
-      const categoryCrumb = document.getElementById('breadcrumb-category');
-      const typeCrumb = document.getElementById('breadcrumb-type');
-      const positionIndicator = document.getElementById('position-indicator');
-      const typesCount = document.getElementById('types-count');
-      
-      if (categoryCrumb) categoryCrumb.textContent = `Categoría ${category}`;
-      if (typeCrumb) typeCrumb.textContent = type ? `Tipología ${type}` : 'Selecciona tipo';
-      if (positionIndicator) {
-        positionIndicator.textContent = type ? 
-          `Categoría ${category} - Tipología ${type}` : 
-          `Explorando Categoría ${category}`;
-      }
-      if (typesCount) {
-        const tipologias = __getTipos();
-        const tiposEnCategoria = tipologias.filter(t => t.category === category);
-        const totalVariantes = tiposEnCategoria.reduce((acc, curr) => acc + curr.variants.length, 0);
-        typesCount.textContent = `${totalVariantes} variantes disponibles`;
-      }
-    }
-
-    
     function modificarPrecioTipologia(tipologiaId, nuevoPrecio) {
+        
         const tipologias = __getTipos();
+        
+        
         const tipologia = tipologias.find(t => t.id === tipologiaId);
         
         if (!tipologia) {
@@ -1608,12 +1186,14 @@
             return false;
         }
         
+        
         const rango = RANGOS_PRECIO[tipologia.category]?.[tipologia.type];
         
         if (!rango) {
             console.error('Rango de precios no encontrado para:', tipologia.category, tipologia.type);
             return false;
         }
+        
         
         const precioMaximo = rango.max;
         
@@ -1627,7 +1207,9 @@
             nuevoPrecio = rango.min;
         }
         
+        
         tipologia.pricePerM2 = nuevoPrecio;
+        
         
         const tipologiaActual = document.getElementById('typology').value;
         if (tipologiaActual === tipologiaId) {
@@ -1635,10 +1217,12 @@
             if (precioInput) {
                 precioInput.value = nuevoPrecio;
                 
+                
                 const pr = document.getElementById('selectedPrice');
                 if (pr) {
                     pr.textContent = `Q${nuevoPrecio.toLocaleString('es-GT')}/m²`;
                 }
+                
                 
                 if (document.getElementById('resultSection').classList.contains('active')) {
                     calculateRealAppraisal();
@@ -1875,6 +1459,7 @@
       if (loadingOverlay) loadingOverlay.style.display = 'flex';
       
       try {
+        
         const appraisalData = {
           associateName: document.getElementById('associate-name').value || 'No especificado',
           address: document.getElementById('address').value || 'No especificado',
@@ -1892,9 +1477,11 @@
 
         console.log('📦 Datos a guardar:', appraisalData);
 
+        
         const savedInLocal = window.avaluosStorage.saveAppraisal(appraisalData);
         console.log('✅ Guardado en localStorage:', savedInLocal);
 
+        
         console.log('🔄 Enviando a Supabase...');
         
         const { data, error } = await window.supabase
@@ -1930,7 +1517,9 @@
           console.log('✅ Éxito - Datos guardados en Supabase:', data);
         }
 
+        
         alert('✅ Avalúo guardado EXITOSAMENTE\n\n• En la web: Disponible en "Lista de Avalúos"\n• En base de datos: Para tu seguimiento');
+        
         
         if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
           showAllAppraisals();
@@ -1950,9 +1539,11 @@
       }
     }
 
+    
     document.getElementById('all-appraisals-btn').addEventListener('click', showAllAppraisals);
     document.getElementById('my-appraisals-btn').addEventListener('click', showMyAppraisals);
 
+    
     document.getElementById('all-appraisals-modal').addEventListener('click', function(e) {
       if (e.target === this) closeModal('all-appraisals-modal');
     });
@@ -1963,1122 +1554,315 @@
     
     const RANGOS_PRECIO = {
         'Baja': {
-            'Baja': { min: 250, max: 500 },
-            'Media': { min: 650, max: 850 },
-            'Alta': { min: 850, max: 1000 }
+            'Baja 1': { min: 250, max: 400 },
+            'Baja 2': { min: 250, max: 500 },
+            'Media 1': { min: 650, max: 750 },
+            'Media 2': { min: 650, max: 850 },
+            'Alta 1': { min: 850, max: 950 },
+            'Alta 2': { min: 850, max: 1000 }
         },
         'Media': {
-            'Baja': { min: 800, max: 1100 },
-            'Media': { min: 900, max: 1300 },
-            'Alta': { min: 1300, max: 1800 }
+            'Baja 1': { min: 800, max: 1100 },
+            'Baja 2': { min: 800, max: 1100 },
+            'Media 1': { min: 900, max: 1200 },
+            'Media 2': { min: 1000, max: 1300 },
+            'Alta 1': { min: 1300, max: 1700 },
+            'Alta 2': { min: 1400, max: 1800 }
         },
         'Alta': {
-            'Baja': { min: 1400, max: 1800 },
-            'Media': { min: 1800, max: 2200 },
-            'Alta': { min: 2300, max: 2900 }
+            'Baja 1': { min: 1400, max: 1700 },
+            'Baja 2': { min: 1500, max: 1800 },
+            'Media 1': { min: 1800, max: 2100 },
+            'Media 2': { min: 1900, max: 2200 }
         }
     };
 
-    
+   
     const __FALLBACK_TIPOLOGIAS = [
+      
       {
+        id: "baja-baja-1",
+        category: "Baja", 
+        type: "Baja 1",
+        title: "Categoría Baja — Baja 1",
+        img: "https://i.ibb.co/nMLmvDzW/Baja-1.png",
+        priceRange: "Q250–Q400/m²",
+        pricePerM2: 400,
+        bullets: ["Estructura de adobe y madera", "Paredes con nylon", "Techo de teja de barro sin cielo falso", "Piso de tierra con cemento", "Ventanas y puertas de madera sin tratar"]
+      },
+      {
+        id: "baja-baja-2",
         category: "Baja",
-        type: "Baja",
-        generalDescription: 
-
-`Como sistema constructivo encontramos:
-– estructura de madera
-– muro de block o adobe de 1.00 metro de alto con estructura de madera
-
-Como recubrimiento de paredes encontramos:
-– adobe
-– block de cantera sin norma de construcción
-– madera sin tratar
-
-Como acabados interiores y exteriores:
-– block sisado visto
-– adobe visto
-– madera sin tratar
-– blanqueado con cal hidratada
-
-Como cubierta encontramos:
-– estructura de madera con cubierta de lámina de zinc
-– estructura de costaneras de metal con cubierta de lámina de zinc
-– estructura de madera cubierta con teja de barro
-
-Como piso encontramos:
-– tierra
-– cemento líquido
-
-Como puertas y ventanas encontramos:
-– madera sencilla sin tratamiento
-– cortinas o cedazo
-– sin puertas o ventanas
-
-Como diseño arquitectónico encontramos:
-– casas diseñadas en un solo ambiente
-– casas diseñadas en dos ambientes
-– baño en el exterior de la vivienda (letrina o pozo ciego)
-
-Como servicios básicos encontramos:
-– agua potable
-– energía eléctrica
-
-Como acceso a este tipo de construcción encontramos:
-– terracería (vehicular o vecinal)`,
-        variants: [
-          {
-            id: "baja-baja-1",
-            title: "Tipología Baja - Variante 1",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20baja.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja.png?raw=true",
-            pricePerM2: 400,
-            bullets: [
-              "Estructura: sistema de adobe, madera",
-              "Paredes: adobe recubierto con nylon",
-              "Techos: teja de barro sin cielo falso",
-              "Piso: tierra con cemento",
-              "Ventanas: madera sin tratar",
-              "Puertas: madera sin tratar",
-              "Servicios: luz, alumbrado público",
-              "Exterior: fachada con material expuesto",
-              "Instalaciones: expuestas",
-              "Rango de precios: Q250.00/m² a Q400.00/m²"
-            ]
-          },
-          {
-            id: "baja-baja-2",
-            title: "Tipología Baja - Variante 2",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20baja%202.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja%202.png?raw=true",
-            pricePerM2: 500,
-            bullets: [
-              "Estructura: sistema de adobe, columnas de madera",
-              "Paredes: adobe, madera sin tratar, cartón",
-              "Techos: teja de barro, lámina de zinc sin cielo falso",
-              "Piso: tierra con cemento",
-              "Ventanas: madera sin tratar",
-              "Puertas: madera sin tratar",
-              "Servicios: luz, alumbrado público",
-              "Exterior: fachada sin mantenimiento",
-              "Instalaciones: expuestas",
-              "Rango de precios: Q250.00/m² a Q500.00/m²"
-            ]
-          }
-        ]
+        type: "Baja 2", 
+        title: "Categoría Baja — Baja 2",
+        img: "https://i.ibb.co/WNBMdyjp/Baja-2.png",
+        priceRange: "Q250–Q500/m²",
+        pricePerM2: 500,
+        bullets: ["Estructura de adobe con columnas de madera", "Paredes de adobe, madera sin tratar y cartón", "Techo de teja de barro y lámina de zinc", "Piso de tierra con cemento", "Fachada sin mantenimiento"]
       },
       {
+        id: "baja-media-1",
         category: "Baja",
-        type: "Media",
-        generalDescription: 
-
-`Como sistema constructivo encontramos:
-– estructura de madera
-– muro de block o adobe de 1.00 metro de alto, resto estructura de madera
-– mampostería con sistema pinedo
-– mampostería con columnas para un nivel
-
-Como recubrimiento de paredes encontramos:
-– adobe
-– block de cantera sin norma de construcción
-
-Como acabados interiores y exteriores:
-– block sisado visto
-– adobe visto
-– madera sin tratar
-– blanqueado con cal hidratada
-
-Como cubierta encontramos:
-– estructura de madera con cubierta de lámina de zinc
-– estructura de costaneras de metal con cubierta de lámina de zinc
-– estructura de madera cubierta con teja de barro
-– losa de concreto armado
-
-Como piso encontramos:
-– tierra
-– cemento líquido
-– granito
-
-Como puertas y ventanas encontramos:
-– madera sin tratar
-– metal
-– prefabricadas en MDF
-
-Como diseño arquitectónico encontramos:
-– casas diseñadas en dos ambientes
-– casas diseñadas en tres ambientes
-– baño en el exterior de la vivienda (letrina o pozo ciego)
-
-Como servicios básicos encontramos:
-– agua potable
-– energía eléctrica
-– alumbrado público
-
-Como acceso encontramos:
-– terracería (vehicular o vecinal)
-– adoquín
-– carrileras de concreto (vehicular o vecinal)`,
-        variants: [
-          {
-            id: "baja-media-1",
-            title: "Tipología Media - Variante 1",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20media.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20media.png?raw=true",
-            pricePerM2: 750,
-            bullets: [
-              "Estructura: sistema de adobe, block con pines fundidos",
-              "Paredes: adobe con repello",
-              "Techos: lámina de zinc con cielo falso de machimbre",
-              "Piso: torta de cemento líquido, cerámico",
-              "Ventanas: madera sin tratar",
-              "Puertas: madera sin tratar",
-              "Servicios: agua, luz, alumbrado público",
-              "Exterior: fachada tipo corredor",
-              "Instalaciones: expuestas",
-              "Rango de precios: Q650.00/m² a Q750.00/m²"
-            ]
-          },
-          {
-            id: "baja-media-2",
-            title: "Tipología Media - Variante 2",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20media%202.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20media%202.png?raw=true",
-            pricePerM2: 850,
-            bullets: [
-              "Estructura: mampostería con columnas",
-              "Paredes: block de cantera",
-              "Techos: lámina de zinc",
-              "Piso: torta de cemento líquido",
-              "Ventanas: madera sin tratar",
-              "Puertas: metal y madera sin tratar",
-              "Servicios: agua, luz, drenajes",
-              "Exterior: fachada sin ventanas ni diseño",
-              "Instalaciones: expuestas",
-              "Rango de precios: Q650.00/m² a Q850.00/m²"
-            ]
-          }
-        ]
+        type: "Media 1",
+        title: "Categoría Baja — Media 1", 
+        img: "https://i.ibb.co/hzsFrgD/Media-1.png",
+        priceRange: "Q650–Q750/m²",
+        pricePerM2: 750,
+        bullets: ["Estructura de adobe y block con pines fundidos", "Paredes con repello", "Techo de lámina de zinc con cielo falso de machimbre", "Piso de cemento líquido y cerámico", "Fachada tipo corredor"]
       },
       {
+        id: "baja-media-2",
         category: "Baja",
-        type: "Alta",
-        generalDescription: 
-
-`Como sistema constructivo encontramos:
-– estructura de madera
-– mampostería con sistema estructural pineado a cada 0.60 metros
-– mampostería con columnas para un nivel
-– mampostería con columnas para dos niveles (sin diseño estructural específico)
-
-Como recubrimiento de paredes encontramos:
-– adobe
-– block normado estructuralmente para la construcción
-– block de cantera sin norma de construcción
-
-Como acabados interiores y exteriores:
-– block sisado visto
-– blanqueado con cal hidratada
-– pintura sobre el block visto
-– capa delgada de repello y cernido
-
-Como cubierta encontramos:
-– estructura de madera con cubierta de lámina de zinc
-– estructura de costaneras de metal con cubierta de lámina de zinc
-– estructura de madera cubierta con teja de barro
-– losa de concreto armado
-
-Como cielo falso encontramos:
-– machimbré
-– plywood
-
-Como piso encontramos:
-– granito
-– cemento líquido
-– cerámico
-
-Como puertas y ventanas encontramos:
-– madera sin tratar
-– metal
-– uPVC
-
-Como diseño arquitectónico encontramos:
-– casas diseñadas en tres ambientes
-– casas diseñadas en cuatro ambientes
-– baño simples en interior de la vivienda
-
-Como servicios básicos encontramos:
-– agua potable
-– energía eléctrica
-– alumbrado público
-– drenaje
-
-Como acceso encontramos:
-– terracería
-– adoquín
-– carrileras de concreto
-– pavimento de concreto`,
-        variants: [
-          {
-            id: "baja-alta-1",
-            title: "Tipología Alta - Variante 1",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20alta.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta.png?raw=true",
-            pricePerM2: 950,
-            bullets: [
-              "Estructura: mampostería con pines fundidos a 0.60 metros",
-              "Paredes: block de cantera con pintura",
-              "Techos: lámina troquelada",
-              "Piso: torta de cemento líquido",
-              "Ventanas: metal, madera sin tratar",
-              "Puertas: metal, madera sin tratar",
-              "Servicios: agua, luz, drenajes",
-              "Exterior: fachada a dos aguas",
-              "Instalaciones: ocultas",
-              "Rango de precios: Q850.00/m² a Q950.00/m²"
-            ]
-          },
-          {
-            id: "baja-alta-2",
-            title: "Tipología Alta - Variante 2",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20alta%202.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta%202.png?raw=true",
-            pricePerM2: 1000,
-            bullets: [
-              "Estructura: sistema de adobe, mampostería reforzada",
-              "Paredes: adobe con repello y cernido, block normado",
-              "Techos: teja de barro, lámina de zinc, cielo falso de madera",
-              "Piso: torta de cemento líquido, granito",
-              "Ventanas: madera sin tratar, metal, uPVC",
-              "Puertas: madera sin tratar, metal",
-              "Servicios: agua, luz, drenajes",
-              "Exterior: fachada tipo corredor",
-              "Instalaciones: ocultas, expuestas",
-              "Rango de precios: Q850.00/m² a Q1,000.00/m²"
-            ]
-          }
-        ]
+        type: "Media 2",
+        title: "Categoría Baja — Media 2",
+        img: "https://i.ibb.co/pjD7yPwC/Media-2.png",
+        priceRange: "Q650–Q850/m²",
+        pricePerM2: 850,
+        bullets: ["Estructura de mampostería con columnas", "Paredes de block de cantera", "Techo de lámina de zinc", "Piso de cemento líquido", "Fachada sin diseño con ventanas y materiales expuestos"]
       },
       {
+        id: "baja-alta-1",
+        category: "Baja",
+        type: "Alta 1",
+        title: "Categoría Baja — Alta 1",
+        img: "https://i.ibb.co/mrV6y2W7/Alta-1.png",
+        priceRange: "Q850–Q950/m²",
+        pricePerM2: 950,
+        bullets: ["Estructura de mampostería con pines fundidos a 0.60 m", "Paredes de block de cantera con pintura", "Techo de lámina troquelada", "Piso de cemento líquido", "Ventanas y puertas de metal o madera sin tratar", "Instalaciones ocultas"]
+      },
+      {
+        id: "baja-alta-2",
+        category: "Baja", 
+        type: "Alta 2",
+        title: "Categoría Baja — Alta 2",
+        img: "https://i.ibb.co/B5cwkYTd/Alta-2.png",
+        priceRange: "Q850–Q1,000/m²",
+        pricePerM2: 1000,
+        bullets: ["Estructura de adobe y mampostería reforzada", "Paredes de adobe con repello, cernido y block normado", "Techo de teja de barro y lámina de zinc con cielo falso de madera", "Piso de granito y cemento líquido", "Instalaciones ocultas o expuestas"]
+      },
+
+      
+      {
+        id: "media-baja-1",
         category: "Media",
-        type: "Baja",
-        generalDescription: 
-
-`Como sistema constructivo encontramos:
-– sistema de mampostería reforzada
-– sistema de block pineado a cada 60 centímetros
-– algunas reforzadas para segundo nivel
-
-Como recubrimiento de paredes encontramos:
-– block de cantera fabricado sin norma
-– block normado
-
-Como acabados interiores y exteriores:
-– block sisado visto
-– pintura o blanqueado
-– repello y cernido con capa delgada
-
-Como cubierta encontramos:
-– techo de losa de concreto
-– estructura de metal cubierta con lámina de zinc o lámina troquelada
-– estructura de madera cubierta con lámina de zinc
-
-Como piso encontramos:
-– cerámico
-– granito
-
-Como puertas y ventanas encontramos:
-– madera
-– metal
-– prefabricados
-– aluminio
-
-Como diseño arquitectónico encontramos:
-– casas sin presencia de diseño arquitectónico
-– casas con jardín o patio
-– casas con el baño dentro de la vivienda
-
-Como servicios básicos encontramos:
-– agua potable
-– energía eléctrica
-– drenajes
-
-Como acceso encontramos:
-– adoquín
-– pavimento
-– asfalto`,
-        variants: [
-          {
-            id: "media-baja-1",
-            title: "Tipología Baja - Variante 1",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20baja.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20baja.png?raw=true",
-            pricePerM2: 1100,
-            bullets: [
-              "Estructura: mampostería con block con pines fundidos",
-              "Paredes: block con repello y cernido",
-              "Techo: lámina de zinc sin cielo falso",
-              "Piso: torta de cemento líquido",
-              "Ventanas: madera tratada",
-              "Puertas: madera tratada, metal",
-              "Servicios: agua, luz, drenajes",
-              "Exterior: fachada tipo corredor",
-              "Instalaciones: sobrepuestas",
-              "Rango de precios: Q800.00/m² a Q1,100.00/m²"
-            ]
-          },
-          {
-            id: "media-baja-2",
-            title: "Tipología Baja - Variante 2",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20baja%202.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20baja%202.png?raw=true",
-            pricePerM2: 1100,
-            bullets: [
-              "Estructura: mampostería con columnas para un nivel",
-              "Paredes: block sisado visto, partes con repello y pintura",
-              "Techo: tejas de barro, lámina de zinc con cielo falso de madera",
-              "Piso: torta de cemento líquido",
-              "Ventanas: metal, madera tratada",
-              "Puertas: metal, madera tratada",
-              "Servicios: agua, luz, drenajes",
-              "Exterior: fachada sin diseño arquitectónico",
-              "Instalaciones: sobrepuestas",
-              "Rango de precios: Q800.00/m² a Q1,100.00/m²"
-            ]
-          }
-        ]
+        type: "Baja 1", 
+        title: "Categoría Media — Baja 1",
+        img: "https://i.ibb.co/YB1Z3htk/Media-baja-1.png",
+        priceRange: "Q800–Q1,100/m²",
+        pricePerM2: 1100,
+        bullets: ["Estructura de mampostería con block y pines fundidos", "Paredes de block con repello y cernido", "Techo de lámina de zinc sin cielo falso", "Piso de cemento líquido", "Fachada tipo corredor"]
       },
       {
+        id: "media-baja-2",
         category: "Media",
-        type: "Media",
-        generalDescription: 
-
-`Como sistema constructivo encontramos:
-– sistema de mampostería reforzada
-– sistema de block pineado a cada 60 centímetros
-– algunas reforzadas para segundo nivel
-
-Como recubrimiento de paredes encontramos:
-– block de cantera fabricado sin norma
-– block normado
-
-Como acabados interiores y exteriores:
-– block sisado visto
-– pintura o blanqueado
-– repello y cernido con capa delgada
-
-Como cubierta encontramos:
-– techo de losa de concreto
-– estructura de metal cubierta con lámina de zinc o lámina troquelada
-– estructura de madera cubierta con lámina de zinc
-
-Como piso encontramos:
-– cerámico
-– granito
-
-Como puertas y ventanas encontramos:
-– madera
-– metal
-– prefabricados
-– aluminio
-
-Como diseño arquitectónico encontramos:
-– casas sin presencia de diseño arquitectónico
-– casas con jardín o patio
-– casas con el baño dentro de la vivienda
-
-Como servicios básicos encontramos:
-– agua potable
-– energía eléctrica
-– drenajes
-
-Como acceso encontramos:
-– adoquín
-– pavimento
-– asfalto`,
-        variants: [
-          {
-            id: "media-media-1",
-            title: "Tipología Media - Variante 1",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20media.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20media.png?raw=true",
-            pricePerM2: 1200,
-            bullets: [
-              "Estructura: mampostería reforzada para un nivel",
-              "Paredes: block con repello y cernido",
-              "Techo: estructura de metal con lámina troquelada",
-              "Piso: torta de cemento líquido",
-              "Ventanas: metal",
-              "Puertas: metal",
-              "Servicios: agua, luz, drenajes",
-              "Exterior: fachada tipo corredor interno",
-              "Instalaciones: sobrepuestas o semi ocultas",
-              "Rango de precios: Q900.00/m² a Q1,200.00/m²"
-            ]
-          },
-          {
-            id: "media-media-2",
-            title: "Tipología Media - Variante 2",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20media%202.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20media%202.png?raw=true",
-            pricePerM2: 1300,
-            bullets: [
-              "Estructura: mampostería reforzada para un nivel",
-              "Paredes: block normado con repello y cernido, pintura",
-              "Techo: madera con lámina de zinc sin cielo falso",
-              "Piso: granito, torta de cemento líquido",
-              "Ventanas: metal con balcones",
-              "Puertas: metal",
-              "Servicios: agua, luz, drenajes, cable de TV",
-              "Exterior: fachada tradicional sin diseño arquitectónico",
-              "Instalaciones: ocultas, semi-ocultas",
-              "Rango de precios: Q1,000.00/m² a Q1,300.00/m²"
-            ]
-          }
-        ]
+        type: "Baja 2",
+        title: "Categoría Media — Baja 2",
+        img: "https://i.ibb.co/PzrjJL7L/Media-baja-2.png",
+        priceRange: "Q800–Q1,100/m²", 
+        pricePerM2: 1100,
+        bullets: ["Estructura de mampostería con columnas para un nivel", "Paredes de block sizado visto con repello y pintura parcial", "Techo de tejas de barro y lámina de zinc con cielo falso de madera", "Piso de cemento líquido", "Fachada sin diseño arquitectónico"]
       },
       {
+        id: "media-media-1",
         category: "Media",
-        type: "Alta",
-        generalDescription: 
-
-`Como sistema constructivo encontramos:
-– sistema de mampostería reforzada
-– sistema de combinación de columnas con vigas de carga
-– algunas reforzadas para segundo nivel
-
-Como recubrimiento de paredes encontramos:
-– block de cantera fabricado sin norma
-– block normado
-
-Como acabados interiores y exteriores:
-– pintura o blanqueado
-– repello y cernido
-
-Como cubierta encontramos:
-– techo de losa de concreto
-– estructura de metal cubierta con lámina de zinc o lámina troquelada
-
-Como piso encontramos:
-– cerámico
-– porcelanato
-– granito
-
-Como puertas y ventanas encontramos:
-– madera
-– metal
-– prefabricadas
-– aluminio
-– uPVC
-
-Como diseño arquitectónico encontramos:
-– casas sin presencia de diseño arquitectónico
-– casas con jardín o patio
-– casas con el baño dentro de la vivienda
-
-Como servicios básicos encontramos:
-– agua potable
-– energía eléctrica
-– drenajes
-– internet
-– teléfono
-– cable de TV
-
-Como acceso encontramos:
-– adoquín
-– pavimento
-– asfalto`,
-        variants: [
-          {
-            id: "media-alta-1",
-            title: "Tipología Alta - Variante 1",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20alta.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20alta.png?raw=true",
-            pricePerM2: 1700,
-            bullets: [
-              "Estructura: mampostería reforzada con columnas para dos niveles",
-              "Paredes: ladrillo sisado visto, pintura",
-              "Techo: losa de concreto armado",
-              "Piso: granito",
-              "Ventanas: metal, madera tratada",
-              "Puertas: madera tratada, metal",
-              "Servicios: agua, luz, drenajes, cable de TV",
-              "Exterior: fachada típica de casas de ladrillo",
-              "Instalaciones: ocultas",
-              "Rango de precios: Q1,300.00/m² a Q1,700.00/m²"
-            ]
-          },
-          {
-            id: "media-alta-2",
-            title: "Tipología Alta - Variante 2",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20alta%202.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20alta%202.png?raw=true",
-            pricePerM2: 1800,
-            bullets: [
-              "Estructura: mampostería reforzada con pines para un nivel",
-              "Paredes: block normado con repello, alisado, pintura",
-              "Techo: costaneras de metal con lámina de zinc, sin cielo falso",
-              "Piso: cerámico",
-              "Ventanas: metal con balcones",
-              "Puertas: metal y madera tratada",
-              "Servicios: luz, agua, drenaje, cable de TV",
-              "Exterior: fachada con diseño tipo colonial",
-              "Instalaciones: ocultas",
-              "Rango de precios: Q1,400.00/m² a Q1,800.00/m²"
-            ]
-          }
-        ]
+        type: "Media 1",
+        title: "Categoría Media — Media 1",
+        img: "https://i.ibb.co/35PjQqbk/Media-media-1.png",
+        priceRange: "Q900–Q1,200/m²",
+        pricePerM2: 1200,
+        bullets: ["Estructura de mampostería reforzada para un nivel", "Paredes de block con repello y cernido", "Techo metálico con lámina troquelada", "Piso de cemento líquido", "Fachada tipo corredor interno", "Instalaciones semi ocultas"]
       },
       {
-        category: "Alta",
-        type: "Baja",
-        generalDescription:
-
-`Como sistema constructivo encontramos:
-– sistema de mampostería reforzada
-– combinación de columnas–vigas con sistema de muros de carga
-– columnas de concreto reforzado
-
-Como recubrimiento de paredes encontramos:
-– block de cantera fabricado sin norma
-– block normado
-
-Como cubierta encontramos:
-– losa de concreto
-– lámina en algunas áreas o segundo nivel
-
-Como piso encontramos:
-– cerámico
-– granito
-– porcelanato
-– laminados
-
-Como puertas y ventanas encontramos:
-– madera
-– metal
-– prefabricadas
-– aluminio
-– uPVC
-
-Como diseño arquitectónico encontramos:
-– casas con un estudio en su diseño arquitectónico
-– casas con jardín o patio
-– casas con el baño dentro de la vivienda
-
-Como servicios básicos encontramos:
-– agua potable
-– energía eléctrica
-– drenajes
-– teléfono
-– internet
-– cable de TV
-
-Como acceso encontramos:
-– adoquín
-– pavimento
-– asfalto`,
-        variants: [
-          {
-            id: "alta-baja-1",
-            title: "Tipología Baja - Variante 1",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipolog%C3%ADa%20baja.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipolog%C3%ADa%20baja.png?raw=true",
-            pricePerM2: 1700,
-            bullets: [
-              "Estructura: columnas y paredes de carga",
-              "Paredes: repello, alisado, pintura",
-              "Techo: losa de concreto o losa prefabricada",
-              "Piso: cerámico, granito o porcelanato",
-              "Ventanas: ventanas de aluminio o PVC",
-              "Puertas: madera, metal y prefabricadas",
-              "Servicios: agua, luz, drenajes, cable de TV",
-              "Exterior: fachada tipo corredor, pintura",
-              "Instalaciones: ocultas",
-              "Rango de precios: Q1,400.00/m² a Q1,700.00/m²"
-            ]
-          },
-          {
-            id: "alta-baja-2",
-            title: "Tipología Baja - Variante 2",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipologia%20baja%202.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20baja%202.png?raw=true",
-            pricePerM2: 1800,
-            bullets: [
-              "Estructura: columnas y paredes de carga",
-              "Paredes: repello, alisado, pintura",
-              "Techo: losa de concreto o losa prefabricada",
-              "Piso: cerámico, granito o porcelanato",
-              "Ventanas: ventanas de aluminio o PVC",
-              "Puertas: madera, metal y prefabricadas",
-              "Exterior: fachada con acabados y pintura",
-              "Instalaciones: ocultas",
-              "Rango de precios: Q1,500.00/m² a Q1,800.00/m²"
-            ]
-          }
-        ]
+        id: "media-media-2",
+        category: "Media",
+        type: "Media 2",
+        title: "Categoría Media — Media 2", 
+        img: "https://i.ibb.co/W8cwVB6/Media-media-2.png",
+        priceRange: "Q1,000–Q1,300/m²",
+        pricePerM2: 1300,
+        bullets: ["Estructura de mampostería reforzada", "Paredes de block normado con repello, cernido y pintura", "Techo de madera con lámina de zinc", "Piso de granito y cemento líquido", "Fachada tradicional sin diseño arquitectónico", "Instalaciones ocultas o semi ocultas"]
       },
       {
-        category: "Alta",
-        type: "Media",
-        generalDescription: 
-`Como sistema constructivo encontramos:
-– sistema de mampostería reforzada
-– combinación de columnas–vigas con sistema de muros de carga
-– columnas de concreto reforzado
-
-Como recubrimiento de paredes encontramos:
-– block de cantera fabricado sin norma
-– block normado
-
-Como cubierta encontramos:
-– techo de losa de concreto
-– techo de lámina en algunas áreas o segundo nivel
-
-Como piso en este tipo de construcción encontramos:
-– cerámico
-– granito
-– porcelanato
-– laminado
-
-Como puertas y ventanas encontramos:
-– madera
-– prefabricadas
-– metal
-– aluminio
-– uPVC
-
-Como diseño arquitectónico encontramos:
-– casas con un estudio en su diseño arquitectónico
-– casas con jardín o patio
-– casas con el baño dentro de la vivienda
-
-Como servicios básicos encontramos:
-– agua potable
-– energía eléctrica
-– drenajes
-– teléfono
-– internet
-– cable de TV
-
-Como acceso encontramos:
-– calles de adoquín
-– pavimento
-– asfalto`,
-        variants: [
-          {
-            id: "alta-media-1",
-            title: "Tipología Media - Variante 1",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipolog%C3%ADa%20media.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20media.png?raw=true",
-            pricePerM2: 2100,
-            bullets: [
-              "Estructura: mampostería reforzada con columnas para dos niveles",
-              "Paredes: block normado con repello, alisado, pintura",
-              "Techo: losa de concreto, losa prefabricada",
-              "Piso: cerámico, granito, porcelanato",
-              "Ventanas: aluminio, uPVC",
-              "Puertas: madera tratada, metal, prefabricadas",
-              "Servicios: agua, luz, drenajes, cable de TV, internet",
-              "Exterior: fachada con detalles arquitectónicos",
-              "Instalaciones: ocultas",
-              "Rango de precios: Q1,800.00/m² a Q2,100.00/m²"
-            ]
-          },
-          {
-            id: "alta-media-2",
-            title: "Tipología Media - Variante 2",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipologia%20media%202.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20media%202.png?raw=true",
-            pricePerM2: 2200,
-            bullets: [
-              "Estructura: mampostería reforzada con columnas para dos niveles",
-              "Paredes: block normado con repello, alisado, pintura",
-              "Techo: losa de concreto, losa prefabricada",
-              "Piso: cerámico, granito, porcelanato",
-              "Ventanas: aluminio, uPVC",
-              "Puertas: madera tratada, metal, prefabricadas",
-              "Servicios: agua, luz, drenajes, cable de TV, internet",
-              "Exterior: fachada con diseño arquitectónico",
-              "Instalaciones: ocultas",
-              "Rango de precios: Q1,900.00/m² a Q2,200.00/m²"
-            ]
-          }
-        ]
+        id: "media-alta-1",
+        category: "Media",
+        type: "Alta 1",
+        title: "Categoría Media — Alta 1",
+        img: "https://i.ibb.co/LXxCXPXh/Media-alta-1.png",
+        priceRange: "Q1,300–Q1,700/m²", 
+        pricePerM2: 1700,
+        bullets: ["Estructura de mampostería reforzada con columnas para dos niveles", "Paredes de ladrillo sisado visto con pintura", "Techo de losa de concreto armado", "Piso de granito", "Fachada de casas de ladrillo", "Instalaciones ocultas"]
       },
       {
+        id: "media-alta-2",
+        category: "Media",
+        type: "Alta 2",
+        title: "Categoría Media — Alta 2",
+        img: "https://i.ibb.co/XxFb5Jw8/Media-alta-2.png",
+        priceRange: "Q1,400–Q1,800/m²",
+        pricePerM2: 1800,
+        bullets: ["Estructura de mampostería reforzada con pines", "Paredes de block normado con repello, alisado y pintura", "Techo metálico con lámina de zinc", "Piso cerámico", "Fachada tipo colonial con balcones", "Instalaciones ocultas"]
+      },
+
+      
+      {
+        id: "alta-baja-1",
+        category: "Alta", 
+        type: "Baja 1",
+        title: "Categoría Alta — Baja 1",
+        img: "https://i.ibb.co/B5TRtNJK/alta-baja-1.png",
+        priceRange: "Q1,400–Q1,700/m²",
+        pricePerM2: 1700,
+        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada tipo corredor", "Instalaciones ocultas"]
+      },
+      {
+        id: "alta-baja-2",
         category: "Alta",
-        type: "Alta",
-        generalDescription:
-`Como sistema constructivo encontramos:
-– sistema de mampostería reforzada
-– combinación de columnas–vigas con sistema de muros de carga
-– columnas de concreto reforzado
-
-Como recubrimiento de paredes encontramos:
-– block de cantera fabricado sin norma
-– block normado
-
-Como cubierta encontramos:
-– techo de losa de concreto
-– techo de lámina en algunas áreas o segundo nivel
-
-Como piso en este tipo de construcción encontramos:
-– cerámico
-– granito
-– porcelanato
-– laminados
-
-Como puertas y ventanas encontramos:
-– madera
-– prefabricadas
-– metal
-– aluminio
-– uPVC
-
-Como diseño arquitectónico encontramos:
-– casas con un estudio en su diseño arquitectónico
-– casas con jardín o patio
-– casas con el baño dentro de la vivienda
-
-Como servicios básicos encontramos:
-– agua potable
-– energía eléctrica
-– drenajes
-– teléfono
-– internet
-– cable de TV
-
-Como acceso encontramos:
-– adoquín
-– pavimento
-– asfalto`,
-        variants: [
-          {
-            id: "alta-alta-1",
-            title: "Tipología Alta - Variante 1",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipolog%C3%ADa%20alta.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20alta.png?raw=true",
-            pricePerM2: 2800,
-            bullets: [
-              "Estructura: mampostería reforzada con columnas para dos niveles",
-              "Paredes: block normado con repello, alisado, pintura",
-              "Techo: losa de concreto, losa prefabricada, losas inclinadas",
-              "Piso: cerámico, porcelanato",
-              "Ventanas: uPVC, aluminio",
-              "Puertas: madera tratada, metal, prefabricadas",
-              "Servicios: agua, luz, drenajes, cable de TV, internet",
-              "Exterior: fachada con diseño arquitectónico",
-              "Instalaciones: ocultas",
-              "Rango de precios: Q2,300.00/m² a Q2,800.00/m²"
-            ]
-          },
-          {
-            id: "alta-alta-2",
-            title: "Tipología Alta - Variante 2",
-            img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipologia%20alta%202.png?raw=true",
-            imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20alta%202.png?raw=true",
-            pricePerM2: 2900,
-            bullets: [
-              "Estructura: mampostería reforzada con columnas para dos niveles",
-              "Paredes: block normado con repello, alisado, pintura",
-              "Techo: losa de concreto, losa prefabricada, losas inclinadas",
-              "Piso: cerámico, porcelanato",
-              "Ventanas: uPVC, aluminio",
-              "Puertas: madera tratada, metal, prefabricadas",
-              "Servicios: agua, luz, drenajes, cable de TV, internet",
-              "Exterior: fachada con diseño arquitectónico",
-              "Instalaciones: ocultas",
-              "Rango de precios: Q2,500.00/m² a Q2,900.00/m²"
-            ]
-          }
-        ]
+        type: "Baja 2",
+        title: "Categoría Alta — Baja 2", 
+        img: "https://i.ibb.co/v6M0W4hJ/alta-baja-2.png",
+        priceRange: "Q1,500–Q1,800/m²",
+        pricePerM2: 1800,
+        bullets: ["Columnas y paredes de carga", "Repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio o PVC", "Puertas de madera, metal o prefabricadas", "Fachada con acabados y pintura", "Instalaciones ocultas"]
+      },
+      {
+        id: "alta-media-1",
+        category: "Alta",
+        type: "Media 1",
+        title: "Categoría Alta — Media 1",
+        img: "https://i.ibb.co/VcvD4kgQ/alta-media-1.png",
+        priceRange: "Q1,800–Q2,100/m²",
+        pricePerM2: 2100,
+        bullets: ["Mampostería reforzada con columnas para dos niveles", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con detalles arquitectónicos", "Instalaciones ocultas"]
+      },
+      {
+        id: "alta-media-2",
+        category: "Alta",
+        type: "Media 2", 
+        title: "Categoría Alta — Media 2",
+        img: "https://i.ibb.co/0VcrkTWQ/alta-media-2.png",
+        priceRange: "Q1,900–Q2,200/m²",
+        pricePerM2: 2200,
+        bullets: ["Mampostería reforzada con columnas", "Paredes de block normado con repello, alisado y pintura", "Losa de concreto o prefabricada", "Piso cerámico, granito o porcelanato", "Ventanas de aluminio y uPVC", "Fachada con diseño arquitectónico", "Instalaciones ocultas"]
       }
     ];
 
     function __getTipos(){try{return Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS;}catch{return __FALLBACK_TIPOLOGIAS;}}
 
-
-function llenarSelectsTipologias() {
-  const selects = document.querySelectorAll('.tipo-construccion-select');
-  const tipologias = __getTipos();
-  
-  
-  selects.forEach(select => {
-    select.innerHTML = '<option value="">Seleccionar tipología</option>';
-  });
-  
-  s
-  tipologias.forEach(tipologia => {
-    tipologia.variants.forEach(variante => {
-      const option = document.createElement('option');
-      option.value = variante.id;
-      option.textContent = `${tipologia.category} - ${tipologia.type}: ${variante.title} (Q${variante.pricePerM2}/m²)`;
-      option.dataset.precio = variante.pricePerM2;
-      
-      selects.forEach(select => {
-        select.appendChild(option.cloneNode(true));
-      });
-    });
-  });
-}
-
-
-function actualizarValorBaseDesdeTipologia(selectElement) {
-  const selectedOption = selectElement.options[selectElement.selectedIndex];
-  const precio = selectedOption.dataset.precio;
-  const row = selectElement.closest('tr');
-  const vbaseInput = row.querySelector('.vbase-input');
-  
-  if (precio && vbaseInput) {
-    vbaseInput.value = precio;
     
-    recalcularFila(row);
-    recalcularTablaConstruccion();
-    integrarValores();
-  }
-}
-    function __renderTipos(){
-      const tipologias = __getTipos();
-      
-      
-      const grouped = tipologias.reduce((acc, tipologia) => {
-        if (!acc[tipologia.category]) {
-          acc[tipologia.category] = {};
-        }
-        if (!acc[tipologia.category][tipologia.type]) {
-          acc[tipologia.category][tipologia.type] = [];
-        }
-        acc[tipologia.category][tipologia.type].push(tipologia);
-        return acc;
-      }, {});
-
-      
-      ['baja', 'media', 'alta'].forEach(categoria => {
-        const tabContent = document.getElementById(`tab-${categoria}`);
-        if (!tabContent) return;
-
-        let html = '';
-        const tipos = grouped[categoria.charAt(0).toUpperCase() + categoria.slice(1)];
-        
-        if (!tipos) {
-          html = '<div style="padding: 40px; text-align: center; color: var(--text-light);"><i class="fas fa-home" style="font-size: 3rem; margin-bottom: 16px;"></i><p>No hay tipologías disponibles para esta categoría</p></div>';
-        } else {
-          
-          const tipoOrder = ['Baja', 'Media', 'Alta'];
-          tipoOrder.forEach(tipo => {
-            if (tipos[tipo]) {
-              const tipologia = tipos[tipo][0]; 
-              const rango = RANGOS_PRECIO[categoria.charAt(0).toUpperCase() + categoria.slice(1)]?.[tipo] || { min: 0, max: 0 };
-              const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
-              
-              html += `
-                <div class="typology-accordion">
-                  <button class="typology-accordion-header" onclick="__updateBreadcrumbs('${categoria.charAt(0).toUpperCase() + categoria.slice(1)}', '${tipo}')">
-                    <span>Tipología ${tipo} - ${rangoTexto}</span>
-                    <i class="fas fa-chevron-down typology-accordion-icon"></i>
-                  </button>
-                  <div class="typology-accordion-content">
-                    <!-- DESCRIPCIÓN GENERAL DE LA TIPOLOGÍA -->
-                    <div style="padding: 20px; background: rgba(91, 123, 122, 0.03); border-bottom: 1px solid var(--border-light);">
-                      <div style="font-weight: 600; color: var(--primary); margin-bottom: 12px; font-size: 1.1rem;">
-                        Descripción General - Tipología ${tipo}
-                      </div>
-                      <div style="white-space: pre-line; font-size: 0.9rem; line-height: 1.5; color: var(--text);">
-                        ${tipologia.generalDescription}
-                      </div>
-                    </div>
-                    
-                    <div class="typology-variants">
-              `;
-              
-              
-              tipologia.variants.forEach((variante, index) => {
-                html += `
-                  <div class="typology-variant" data-id="${variante.id}">
-                    <div class="variant-images">
-                      <img class="variant-image" src="${variante.img}" alt="${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.img}', '${variante.title}')">
-                      ${variante.imgInterior ? `<img class="variant-image" src="${variante.imgInterior}" alt="Interior ${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.imgInterior}', 'Interior ${variante.title}')">` : ''}
-                    </div>
-                    <div class="variant-content">
-                      <div class="variant-details">
-                        <div class="variant-title">${variante.title}</div>
-                        <div class="variant-price">Q${variante.pricePerM2.toLocaleString('es-GT')}/m²</div>
-                        
-                        <ul class="variant-features">
-                          ${variante.bullets.map(bullet => `<li><i class="fas fa-check"></i>${bullet}</li>`).join('')}
-                        </ul>
-                        
-                        <button class="select-button" onclick="event.stopPropagation(); __selectTipo('${variante.id}')">
-                          <i class="fas fa-hand-pointer"></i> Seleccionar esta variante
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                `;
-              });
-              
-              html += `
-                    </div>
-                  </div>
-                </div>
-              `;
-            }
-          });
-        }
-        
-        tabContent.innerHTML = html;
-      });
-
-      
-      initAccordions();
-      
-      
-      __updateBreadcrumbs('Baja', '');
-    }
-
-    function initAccordions() {
-      document.querySelectorAll('.typology-accordion-header').forEach(header => {
-        header.addEventListener('click', () => {
-          const accordion = header.parentElement;
-          const content = header.nextElementSibling;
-          
-          
-          const tab = accordion.closest('.typology-tab-content');
-          tab.querySelectorAll('.typology-accordion').forEach(acc => {
-            if (acc !== accordion) {
-              acc.querySelector('.typology-accordion-header').classList.remove('active');
-              acc.querySelector('.typology-accordion-content').classList.remove('active');
-            }
-          });
-          
-          
-          header.classList.toggle('active');
-          content.classList.toggle('active');
-        });
-      });
-    }
-
-    function initTabs() {
-      document.querySelectorAll('.typology-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-          const tabName = tab.getAttribute('data-tab');
-          const categoryName = tabName.charAt(0).toUpperCase() + tabName.slice(1);
-          
-          
-          __updateBreadcrumbs(categoryName, '');
-          
-          
-          document.querySelectorAll('.typology-tab').forEach(t => t.classList.remove('active'));
-          document.querySelectorAll('.typology-tab-content').forEach(c => c.classList.remove('active'));
-          
-          
-          tab.classList.add('active');
-          document.getElementById(`tab-${tabName}`).classList.add('active');
-        });
-      });
-    }
-
     function __selectTipo(id) {
-    const tipologias = __getTipos();
-    let varianteSeleccionada = null;
-    let tipologiaPadre = null;
-    
-    for (const tipologia of tipologias) {
-        const variante = tipologia.variants.find(v => v.id === id);
-        if (variante) {
-            varianteSeleccionada = variante;
-            tipologiaPadre = tipologia;
-            break;
-        }
+      const s = __getTipos().find(z => z.id === id);
+      if (!s) return;
+      
+      
+      const rango = RANGOS_PRECIO[s.category]?.[s.type] || { min: 500, max: 1000 };
+      const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
+      
+      const img = document.getElementById('selectedImage');
+      const tp = document.getElementById('selectedType');
+      const ti = document.getElementById('selectedTitle');
+      const pr = document.getElementById('selectedPrice');
+      const hd = document.getElementById('typology');
+      
+      if (img) img.src = s.img;
+      if (tp) tp.textContent = `Categoría ${s.category} — ${s.type}`;
+      if (ti) ti.textContent = s.title;
+      if (pr) pr.textContent = rangoTexto;
+      if (hd) hd.value = s.id;
+      
+      s.pricePerM2 = s.pricePerM2 || rango.max;
+      
+      
+      if (document.getElementById('resultSection').classList.contains('active')) {
+          calculateRealAppraisal();
+      }
+      
+      __closeTypology();
     }
-    
-    if (!varianteSeleccionada || !tipologiaPadre) return;
-    
-    const rango = RANGOS_PRECIO[tipologiaPadre.category]?.[tipologiaPadre.type] || { min: 500, max: 1000 };
-    const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
-    
-    
-    const modal = document.getElementById('catalogModal');
-    const targetRowIndex = modal?.dataset.targetRow;
-    
-    if (targetRowIndex !== undefined && targetRowIndex !== "") {
-        
-        const rows = document.querySelectorAll('#tbBodyConstruccion tr');
-        const row = rows[targetRowIndex];
-        
-        if (row) {
-            const vbaseInput = row.querySelector('.vbase-input');
-            const tipoDisplay = row.querySelector('.tipo-construccion-display');
-            
-            if (vbaseInput) {
-                vbaseInput.value = varianteSeleccionada.pricePerM2;
-            }
-            
-            if (tipoDisplay) {
-                tipoDisplay.innerHTML = `
-                    <div style="text-align: left;">
-                        <div style="font-weight: 600; color: var(--primary);">${tipologiaPadre.category} - ${tipologiaPadre.type}</div>
-                        <div style="font-size: 0.8rem; color: var(--text);">${varianteSeleccionada.title}</div>
-                        <div style="font-size: 0.75rem; color: var(--success);">Q${varianteSeleccionada.pricePerM2}/m²</div>
-                    </div>
-                `;
-                tipoDisplay.dataset.tipologiaId = varianteSeleccionada.id;
-            }
-            
-            recalcularFila(row);
-            recalcularTablaConstruccion();
-            integrarValores();
-        }
-        
-       
-        delete modal.dataset.targetRow;
-    } else {
-        
-        const img = document.getElementById('selectedImage');
-        const tp = document.getElementById('selectedType');
-        const ti = document.getElementById('selectedTitle');
-        const pr = document.getElementById('selectedPrice');
-        const hd = document.getElementById('typology');
-        
-        if (img) img.src = varianteSeleccionada.img;
-        if (tp) tp.textContent = `Categoría ${tipologiaPadre.category} — ${tipologiaPadre.type}`;
-        if (ti) ti.textContent = varianteSeleccionada.title;
-        if (pr) pr.textContent = rangoTexto;
-        if (hd) hd.value = varianteSeleccionada.id;
-        
-        varianteSeleccionada.pricePerM2 = varianteSeleccionada.pricePerM2 || rango.max;
-        
-        if (document.getElementById('resultSection').classList.contains('active')) {
-            calculateRealAppraisal();
-        }
-    }
-    
-    __closeTypology();
-}
 
-
-function openTypologyForConstruction(row) {
-    const m = document.getElementById('catalogModal');
-    if(!m) return alert('No se encontró el modal (#catalogModal).');
     
-    
-    const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
-    const rowIndex = rows.indexOf(row);
-    
-    if (rowIndex !== -1) {
-        m.dataset.targetRow = rowIndex;
-        m.classList.add('active');
-        __renderTipos();
-        initTabs();
+    function __renderTipos(){
+      const t = __getTipos();
+      const b = t.reduce((a, x) => {
+        ((a[x.category] ??= []).push(x));
+        return a;
+      }, {});
+      
+      for(const k in b) b[k].sort((a, c) => a.type.localeCompare(c.type));
+      
+      const d = document.getElementById('modalCatalogContent');
+      if(!d) return;
+      
+      let h = '';
+      for(const c of ['Baja','Media','Alta']){
+        if(!b[c]) continue;
+        h += `<div class="catalog-item-modal" style="background:var(--bg)"><div class="catalog-item-content"><div class="catalog-text-modal"><div class="catalog-type-modal">Categoría ${c}</div><div class="catalog-title-modal" style="color:var(--text-light)">Seleccione Tipología - Ver rangos de precio</div></div></div></div>`;
         
-        const hb = e => {
-            if(e.target === m){
-                __closeTypology();
-                m.removeEventListener('click', hb);
-            }
-        };
-        m.addEventListener('click', hb);
+        for(const it of b[c]){
+          const rango = RANGOS_PRECIO[it.category]?.[it.type] || { min: 500, max: 1000 };
+          const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
+          
+          h += `
+          <div class="catalog-item-modal" data-id="${it.id}">
+            <div class="catalog-item-content">
+              <img class="catalog-image-modal" 
+                   src="${it.img}" 
+                   alt="${it.title}" 
+                   onclick="event.stopPropagation(); openImageModal('${it.img}', '${it.title}')"
+                   style="cursor: pointer;">
+              <div class="catalog-text-modal">
+                <div class="catalog-type-modal">${it.type}</div>
+                <div class="catalog-title-modal">${it.title}</div>
+                <div class="catalog-price-modal" style="color: var(--primary); font-weight: 600;">${rangoTexto}</div>
+                <div class="catalog-description-modal">
+                  <ul class="catalog-features-modal">${(it.bullets||[]).map(m => `<li><i class="fas fa-check"></i>${m}</li>`).join('')}</ul>
+                </div>
+                <button class="select-button" data-select="${it.id}">
+                  <i class="fas fa-hand-pointer"></i> Seleccionar esta tipología
+                </button>
+              </div>
+            </div>
+          </div>`;
+        }
+      }
+      
+      d.innerHTML = h;
+      
+      // Eventos existentes...
+      d.querySelectorAll('.catalog-item-modal').forEach(c => {
+        const id = c.getAttribute('data-id');
+        if(!id) return;
+        c.addEventListener('click', e => {
+          if(e.target.closest('button') || e.target.classList.contains('catalog-image-modal')) return;
+          __selectTipo(id);
+        });
+      });
+      
+      d.querySelectorAll('[data-select]').forEach(b => {
+        b.addEventListener('click', e => {
+          e.stopPropagation();
+          __selectTipo(b.getAttribute('data-select'));
+        });
+      });
     }
-}    
+
+    function __openTypology(){
+      const m = document.getElementById('catalogModal');
+      const t = document.getElementById('typologyTrigger');
+      if(!m) return alert('No se encontró el modal (#catalogModal).');
+      m.classList.add('active');
+      t?.classList.add('active');
+      __renderTipos();
+      const hb = e => {
+        if(e.target === m){
+          __closeTypology();
+          m.removeEventListener('click', hb);
+        }
+      };
+      m.addEventListener('click', hb);
+      const x = document.getElementById('closeModal');
+      if(x) x.onclick = __closeTypology;
+    }
+
     function __closeTypology(){
       const m = document.getElementById('catalogModal');
       const t = document.getElementById('typologyTrigger');
@@ -3090,7 +1874,7 @@ function openTypologyForConstruction(row) {
     window.__openTypology = __openTypology; 
     window.__closeTypology = __closeTypology;
 
-    
+    // Funciones para el visor de imágenes
     function openImageModal(imageSrc, imageAlt) {
       const modal = document.getElementById('image-viewer-modal');
       const fullSizeImage = document.getElementById('full-size-image');
@@ -3099,6 +1883,8 @@ function openTypologyForConstruction(row) {
         fullSizeImage.src = imageSrc;
         fullSizeImage.alt = imageAlt || 'Imagen del catálogo';
         modal.classList.add('active');
+        
+        // Prevenir scroll del body cuando el modal está abierto
         document.body.style.overflow = 'hidden';
       }
     }
@@ -3107,6 +1893,7 @@ function openTypologyForConstruction(row) {
       const modal = document.getElementById('image-viewer-modal');
       if (modal) {
         modal.classList.remove('active');
+        // Restaurar scroll del body
         document.body.style.overflow = '';
       }
     }
@@ -3121,6 +1908,7 @@ function openTypologyForConstruction(row) {
         });
       }
       
+      // Cerrar con tecla ESC
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
           closeImageViewer();
@@ -3128,14 +1916,16 @@ function openTypologyForConstruction(row) {
       });
     }
 
-    
+    // Funcionalidad para subir imágenes
     function initImageUpload() {
       const uploadArea = document.getElementById('upload-area');
       const fileInput = document.getElementById('image-upload');
       const previewContainer = document.getElementById('image-preview');
 
+      // Click en área de upload
       uploadArea.addEventListener('click', () => fileInput.click());
 
+      // Drag and drop
       uploadArea.addEventListener('dragover', (e) => {
         e.preventDefault();
         uploadArea.classList.add('dragover');
@@ -3151,6 +1941,7 @@ function openTypologyForConstruction(row) {
         handleFiles(e.dataTransfer.files);
       });
 
+      // Selección de archivos
       fileInput.addEventListener('change', (e) => {
         handleFiles(e.target.files);
       });
@@ -3186,7 +1977,6 @@ function openTypologyForConstruction(row) {
         reader.readAsDataURL(file);
       });
     }
-
   </script>
 
   
@@ -3206,112 +1996,73 @@ function openTypologyForConstruction(row) {
     }
 
     function recalcularTablaConstruccion(){
-  const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
-  let total = 0, sumaArea = 0;
-  
-  rows.forEach(tr=>{
-    total += recalcularFila(tr);
-    const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
-    sumaArea += area;
-  });
-  
-  const totalEl = document.getElementById('totalConstruccion');
-  if(totalEl) totalEl.value = total.toFixed(2);
+      const rows = Array.from(document.querySelectorAll('#tbBodyConstruccion tr'));
+      let total = 0, sumaArea = 0;
+      rows.forEach(tr=>{
+        total += recalcularFila(tr);
+        const area = parseFloat(tr.querySelector('.area-input')?.value)||0;
+        sumaArea += area;
+      });
+      const totalEl = document.getElementById('totalConstruccion');
+      if(totalEl) totalEl.value = total.toFixed(2);
 
-  if(document.getElementById('resultSection').classList.contains('active')){
-    document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(total);
-    
-    const fallbackArea = parseFloat(document.getElementById('construction-area').value)||0;
-    const areaMostrar = (sumaArea>0? sumaArea : fallbackArea).toFixed(2);
-    document.getElementById('resultArea').textContent = `${areaMostrar} m²`;
+      if(document.getElementById('resultSection').classList.contains('active')){
+        document.getElementById('resultBuildValue').textContent = formatMoneyGTQ(total);
+        
+        const fallbackArea = parseFloat(document.getElementById('construction-area').value)||0;
+        const areaMostrar = (sumaArea>0? sumaArea : fallbackArea).toFixed(2);
+        document.getElementById('resultArea').textContent = `${areaMostrar} m²`;
 
-    
-    const tipologiasSeleccionadas = [];
-    rows.forEach(tr => {
-      const select = tr.querySelector('.tipo-construccion-select');
-      const selectedOption = select?.options[select.selectedIndex];
-      if (selectedOption && selectedOption.value) {
-        tipologiasSeleccionadas.push(selectedOption.textContent.split(' (')[0]); 
+        const estado = document.getElementById('estado-inmueble').value || 'No especificado';
+        document.getElementById('resultCondition').textContent = estado;
+
+        const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
+        const antiguedad = anioConstruccion? (new Date().getFullYear()-anioConstruccion) : 0;
+        document.getElementById('resultAge').textContent = `${antiguedad} años`;
+
+        const tipId=document.getElementById('typology').value;
+        let tipText='No seleccionada';
+        try{
+          const t = (Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipId);
+          if(t) tipText = `${t.category}-${t.type}`;
+        }catch{}
+        document.getElementById('resultTypology').textContent = tipText;
+
+        const land=parseFloat(document.getElementById('totalTerreno')?.value)||0;
+        document.getElementById('resultLandValue').textContent = formatMoneyGTQ(land);
+        document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(land);
+        document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(land + total);
+        document.getElementById('resultTotal').textContent = formatMoneyGTQ(land + total);
       }
-    });
-    
-    const tipText = tipologiasSeleccionadas.length > 0 ? 
-      tipologiasSeleccionadas.join(' | ') : 'No seleccionada';
-    document.getElementById('resultTypology').textContent = tipText;
+    }
 
-    const estado = document.getElementById('estado-inmueble').value || 'No especificado';
-    document.getElementById('resultCondition').textContent = estado;
-
-    const anioConstruccion=parseInt(document.getElementById('anio-construccion').value)||0;
-    const antiguedad = anioConstruccion? (new Date().getFullYear()-anioConstruccion) : 0;
-    document.getElementById('resultAge').textContent = `${antiguedad} años`;
-
-    const land=parseFloat(document.getElementById('totalTerreno')?.value)||0;
-    document.getElementById('resultLandValue').textContent = formatMoneyGTQ(land);
-    document.getElementById('resultLandAppraisal').textContent = formatMoneyGTQ(land);
-    document.getElementById('resultGrandTotal').textContent = formatMoneyGTQ(land + total);
-    document.getElementById('resultTotal').textContent = formatMoneyGTQ(land + total);
-  }
-}
     function bindRowEvents(tr){
-  ['input','change'].forEach(evt=>{
-    tr.addEventListener(evt, e=>{
-      if(e.target.matches('.area-input,.vbase-input,.coef-input')){
-        recalcularTablaConstruccion();
-        integrarValores(); 
-      }
-    });
-  });
-}
-       // Cerrar al hacer clic fuera
-  const handleClick = e => {
-    if(e.target === m){
-      console.log("🔒 Cerrando catálogo (click fuera)");
-      __closeTypology();
-      m.removeEventListener('click', handleClick);
+      ['input','change'].forEach(evt=>{
+        tr.addEventListener(evt, e=>{
+          if(e.target.matches('.area-input,.vbase-input,.coef-input')){
+            recalcularTablaConstruccion();
+            integrarValores(); 
+          }
+        });
+      });
     }
-  };
-  m.addEventListener('click', handleClick);
-  
-  console.log("✅ Catálogo abierto correctamente"); 
-  
-  const handleClick = e => {
-    if(e.target === m){
-      console.log("🔒 Cerrando catálogo (click fuera)");
-      __closeTypology();
-      m.removeEventListener('click', handleClick);
+
+    function agregarFilaConstruccion(){
+      const tbody = document.getElementById('tbBodyConstruccion');
+      const n = tbody.querySelectorAll('tr').length + 1;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><input type="text" value="Nivel ${n}" class="planta-input"></td>
+        <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
+        <td><input type="number" min="0, step="0.01" class="vbase-input" placeholder="0"></td>
+        <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
+        <td><input type="text" class="tipo-input" placeholder="Ej.: Block y Concreto"></td>
+        <td><input type="text" class="monto-output" value="0.00" readonly></td>
+      `;
+      tbody.appendChild(tr);
+      bindRowEvents(tr);
     }
-  };
-  m.addEventListener('click', handleClick);
-  
-  console.log("✅ Catálogo abierto correctamente");
-}
-  
-  
-  const handleClick = e => {
-    if(e.target === m){
-      console.log("🔒 Cerrando catálogo (click fuera)");
-      __closeTypology();
-      m.removeEventListener('click', handleClick);
-    }
-  };
-  m.addEventListener('click', handleClick);
-  
-  console.log("✅ Catálogo abierto correctamente");
-}  
-  
-  const handleClick = e => {
-    if(e.target === m){
-      console.log("🔒 Cerrando catálogo (click fuera)");
-      __closeTypology();
-      m.removeEventListener('click', handleClick);
-    }
-  };
-  m.addEventListener('click', handleClick);
-  
-  console.log("✅ Catálogo abierto correctamente");
-}
-    
+
     function eliminarUltimaFilaConstruccion(){
       const tbody = document.getElementById('tbBodyConstruccion');
       const rows = tbody.querySelectorAll('tr');
@@ -3322,19 +2073,10 @@ function openTypologyForConstruction(row) {
       }
     }
 
-   document.addEventListener('DOMContentLoaded', () => {
-  
-  llenarSelectsTipologias();
-  
-  document.querySelectorAll('.tipo-construccion-select').forEach(select => {
-    select.addEventListener('change', function() {
-      actualizarValorBaseDesdeTipologia(this);
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const firstRow = document.querySelector('#tbBodyConstruccion tr');
+      if(firstRow) bindRowEvents(firstRow);
     });
-  });
-  
-  const firstRow = document.querySelector('#tbBodyConstruccion tr');
-  if (firstRow) bindRowEvents(firstRow);
-});
   </script>
 
   <script>
@@ -3565,14 +2307,8 @@ function openTypologyForConstruction(row) {
       const tipologiaId=document.getElementById('typology').value;
       let tipText='No seleccionada';
       try{
-        const t=__getTipos();
-        for (const tipologia of t) {
-          const variante = tipologia.variants.find(v => v.id === tipologiaId);
-          if (variante) {
-            tipText=`${tipologia.category}-${tipologia.type}`;
-            break;
-          }
-        }
+        const t=(Array.isArray(window.TIPOLOGIAS)&&window.TIPOLOGIAS.length?window.TIPOLOGIAS:__FALLBACK_TIPOLOGIAS).find(x=>x.id===tipologiaId);
+        if(t) tipText=`${t.category}-${t.type}`;
       }catch{}
 
       const formatCurrency=(v)=> new Intl.NumberFormat('es-GT',{style:'currency',currency:'GTQ',minimumFractionDigits:2}).format(v);
@@ -3592,471 +2328,64 @@ function openTypologyForConstruction(row) {
     }
 
     async function generateReport(){
-  const loadingOverlay = document.getElementById('loadingOverlay'); 
-  loadingOverlay.style.display = 'flex';
-  
-  try {
-    if(typeof window.jspdf === 'undefined') { 
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); 
-    }
-    if(typeof window.jspdfAutoTable === 'undefined') { 
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js'); 
-    }
-    
-    const { jsPDF } = window.jspdf; 
-    const doc = new jsPDF(); 
-    const pageWidth = doc.internal.pageSize.getWidth(); 
-    const margin = 20; 
-    const contentWidth = pageWidth - (margin * 2);
-    
-    let y = 0; 
+      const loadingOverlay=document.getElementById('loadingOverlay'); loadingOverlay.style.display='flex';
+      try{
+        if(typeof window.jspdf==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); }
+        if(typeof window.jspdfAutoTable==='undefined'){ await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js'); }
+        const { jsPDF }=window.jspdf; const doc=new jsPDF(); const pageWidth=doc.internal.pageSize.getWidth(); const margin=20; const contentWidth=pageWidth-(margin*2);
+        doc.setFillColor(91,123,122); doc.rect(0,0,pageWidth,60,'F');
+        doc.setTextColor(255,255,255); doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.text('REPORTE DE AVALÚO',margin,30);
+        doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')}`,margin,45); doc.text('Sistema de Avalúos Profesional', pageWidth - margin - 80, 45);
 
-    
-    doc.setFillColor(91, 123, 122); 
-    doc.rect(0, 0, pageWidth, 60, 'F');
-    doc.setTextColor(255, 255, 255); 
-    doc.setFontSize(24); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('REPORTE DE AVALÚO', pageWidth/2, 30, { align: 'center' });
-    doc.setFontSize(12); 
-    doc.setFont('helvetica', 'normal'); 
-    doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')} ${new Date().toLocaleTimeString('es-GT')}`, pageWidth/2, 45, { align: 'center' });
-    doc.text('Sistema de Avalúos Profesional', pageWidth/2, 52, { align: 'center' });
+        let y=80;
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('INFORMACIÓN DE LA PROPIEDAD',margin,y); y+=20;
+        const basicData=[
+          ['Asociado:',document.getElementById('associate-name').value||'No especificado'],
+          ['Dirección:',document.getElementById('address').value||'No especificado'],
+          ['Propietario:',document.getElementById('owner-name').value||'No especificado'],
+          ['Área Construida:',document.getElementById('resultArea').textContent||'No especificado'],
+          ['Área Terreno:',document.getElementById('land-area').value?document.getElementById('land-area').value+' m²':'No especificado']
+        ];
+        doc.setTextColor(0,0,0); doc.setFontSize(10); doc.setFont('helvetica','normal');
+        basicData.forEach(([l,v])=>{doc.setFont('helvetica','bold'); doc.text(l,margin,y); doc.setFont('helvetica','normal'); doc.text(v,margin+45,y); y+=8;}); y+=10;
 
-    y = 80;
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('RESULTADOS DEL AVALÚO',margin,y); y+=20;
+        const resultsData=[
+          ['Tipología',document.getElementById('resultTypology').textContent],
+          ['Estado',document.getElementById('resultCondition').textContent],
+          ['Antigüedad',document.getElementById('resultAge').textContent],
+          ['Valor Terreno',document.getElementById('resultLandValue').textContent],
+          ['Valor Construcción',document.getElementById('resultBuildValue').textContent],
+          ['TOTAL',document.getElementById('resultTotal').textContent]
+        ];
+        doc.autoTable({startY:y, head:[['Concepto','Valor']], body:resultsData, theme:'grid', headStyles:{fillColor:[91,123,122], textColor:255, fontStyle:'bold'}, styles:{fontSize:10, cellPadding:5}, columnStyles:{0:{fontStyle:'bold', cellWidth:100},1:{cellWidth:80}}, margin:{left:margin,right:margin}});
+        y=doc.lastAutoTable.finalY+15;
 
-    
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(16); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('1. INFORMACIÓN GENERAL', margin, y); 
-    y += 20;
+        doc.setFillColor(91,123,122); doc.rect(margin,y,contentWidth,25,'F'); doc.setTextColor(255,255,255); doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.text('VALOR TOTAL ESTIMADO',margin+10,y+15); doc.setFontSize(20); doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y+15); y+=40;
 
-    
-    const basicData = [
-      ['Asociado:', document.getElementById('associate-name').value || 'No especificado'],
-      ['Dirección:', document.getElementById('address').value || 'No especificado'],
-      ['Propietario:', document.getElementById('owner-name').value || 'No especificado'],
-      ['Área Construida:', (document.getElementById('construction-area').value || '0') + ' m²'],
-      ['Área Terreno:', (document.getElementById('land-area').value || '0') + ' m²'],
-      ['Coordenadas:', `Lat: ${document.getElementById('geo-lat').value || '0'}, Lng: ${document.getElementById('geo-lng').value || '0'}`],
-      ['Departamento:', document.getElementById('department').value || 'No especificado']
-    ];
+        if(y>240){ doc.addPage(); y=20; }
 
-    doc.setTextColor(0, 0, 0); 
-    doc.setFontSize(10); 
-    basicData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold'); 
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal'); 
-      doc.text(value, margin + 45, y);
-      y += 8;
-    });
+        doc.setFillColor(240,240,240); doc.rect(margin,y-10,contentWidth,15,'F'); doc.setTextColor(91,123,122); doc.setFontSize(14); doc.setFont('helvetica','bold'); doc.text('COLINDANCIAS',margin,y); y+=20;
+        const colData=[
+          ['Norte',document.getElementById('norte-propietario').value||'',(document.getElementById('norte-metros').value||'')+' m'],
+          ['Sur',document.getElementById('sur-propietario').value||'',(document.getElementById('sur-metros').value||'')+' m'],
+          ['Oriente',document.getElementById('oriente-propietario').value||'',(document.getElementById('oriente-metros').value||'')+' m'],
+          ['Poniente',document.getElementById('poniente-propietario').value||'',(document.getElementById('poniente-metros').value||'')+' m']
+        ];
+        doc.autoTable({startY:y, head:[['Dirección','Propietario','Metros']], body:colData, theme:'grid', headStyles:{fillColor:[91,123,122],textColor:255,fontStyle:'bold'}, styles:{fontSize:9, cellPadding:4}, margin:{left:margin,right:margin}});
 
-    y += 10;
-
-    
-    if(y > 220) { doc.addPage(); y = 20; }
-    
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(14); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('1.1 DATOS REGISTRALES', margin, y); 
-    y += 20;
-
-    const registralData = [
-      ['Finca:', document.getElementById('finca').value || 'No especificado'],
-      ['Folio:', document.getElementById('folio').value || 'No especificado'],
-      ['Libro:', document.getElementById('libro').value || 'No especificado'],
-      ['Número de Escritura:', document.getElementById('deed-number').value || 'No especificado'],
-      ['Fecha de Escritura:', document.getElementById('deed-date').value || 'No especificado'],
-      ['Notario:', document.getElementById('notary').value || 'No especificado']
-    ];
-
-    doc.setTextColor(0, 0, 0); 
-    doc.setFontSize(10); 
-    registralData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold'); 
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal'); 
-      doc.text(value, margin + 50, y);
-      y += 8;
-    });
-
-    y += 15;
-
-    
-    if(y > 200) { doc.addPage(); y = 20; }
-    
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(14); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('1.2 COLINDANCIAS', margin, y); 
-    y += 20;
-
-    const colindanciasData = [
-      ['Norte:', document.getElementById('norte-propietario').value || '', document.getElementById('norte-metros').value || '0'],
-      ['Sur:', document.getElementById('sur-propietario').value || '', document.getElementById('sur-metros').value || '0'],
-      ['Oriente:', document.getElementById('oriente-propietario').value || '', document.getElementById('oriente-metros').value || '0'],
-      ['Poniente:', document.getElementById('poniente-propietario').value || '', document.getElementById('poniente-metros').value || '0']
-    ];
-
-    doc.autoTable({
-      startY: y,
-      head: [['Dirección', 'Propietario', 'Metros']],
-      body: colindanciasData,
-      theme: 'grid',
-      headStyles: { fillColor: [91, 123, 122], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 9, cellPadding: 4 },
-      margin: { left: margin, right: margin }
-    });
-
-    y = doc.lastAutoTable.finalY + 15;
-
-    
-    if(y > 200) { doc.addPage(); y = 20; }
-    
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(14); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('1.3 INFORMACIÓN DEL SOLAR', margin, y); 
-    y += 20;
-
-    
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Calles:', margin, y);
-    y += 8;
-    
-    const callesData = [
-      ['Concreto:', document.getElementById('calle-concreto').value || ''],
-      ['Adoquín:', document.getElementById('calle-adoquin').value || ''],
-      ['Servidumbre de Paso:', document.getElementById('calle-servidumbre').value || ''],
-      ['Vereda:', document.getElementById('calle-vereda').value || ''],
-      ['Tierra:', document.getElementById('calle-tierra').value || ''],
-      ['Asfalto:', document.getElementById('calle-asfalto').value || '']
-    ];
-
-    doc.setFontSize(10);
-    callesData.forEach(([calle, valor]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'normal');
-      doc.text(calle, margin, y);
-      doc.text(valor, margin + 80, y);
-      y += 6;
-    });
-
-    y += 8;
-
-    
-    if(y > 220) { doc.addPage(); y = 20; }
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Servicios Públicos:', margin, y);
-    y += 8;
-
-    const serviciosData = [
-      ['Energía Eléctrica:', document.getElementById('servicio-electricidad').value || ''],
-      ['Red de Agua:', document.getElementById('servicio-agua').value || ''],
-      ['Ducto Teléfono:', document.getElementById('servicio-telefono').value || ''],
-      ['Drenaje:', document.getElementById('servicio-drenaje').value || ''],
-      ['Acera:', document.getElementById('servicio-acera').value || ''],
-      ['Bordillo:', document.getElementById('servicio-bordillo').value || '']
-    ];
-
-    doc.setFontSize(10);
-    serviciosData.forEach(([servicio, valor]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'normal');
-      doc.text(servicio, margin, y);
-      doc.text(valor, margin + 80, y);
-      y += 6;
-    });
-
-    y += 8;
-
-    
-    if(y > 220) { doc.addPage(); y = 20; }
-    
-    const ubicacionData = [
-      ['Ubicación del Terreno:', ''],
-      ['  Esquina:', document.getElementById('ubicacion-esquina').value || ''],
-      ['  Medial:', document.getElementById('ubicacion-medial').value || ''],
-      ['Clasificación del Terreno:', ''],
-      ['  Urbano:', document.getElementById('clasificacion-urbano').value || ''],
-      ['  Rústico:', document.getElementById('clasificacion-rustico').value || '']
-    ];
-
-    doc.setFontSize(10);
-    ubicacionData.forEach(([texto, valor]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      if(texto.includes('Ubicación') || texto.includes('Clasificación')) {
-        doc.setFont('helvetica', 'bold');
-        doc.text(texto, margin, y);
-      } else {
-        doc.setFont('helvetica', 'normal');
-        doc.text(texto, margin + 10, y);
-        doc.text(valor, margin + 80, y);
-      }
-      y += 6;
-    });
-
-    y += 15;
-
-    
-    if(y > 200) { doc.addPage(); y = 20; }
-    
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(16); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('2. CARACTERÍSTICAS CONSTRUCTIVAS', margin, y); 
-    y += 20;
-
-    const caracteristicasData = [
-      ['Uso y Destino:', document.getElementById('uso-destino').value || 'No especificado'],
-      ['Estructura:', document.getElementById('estructura').value || 'No especificado'],
-      ['Cimiento:', document.getElementById('cimiento').value || 'No especificado'],
-      ['Techos:', document.getElementById('techos').value || 'No especificado'],
-      ['Pisos:', document.getElementById('pisos').value || 'No especificado'],
-      ['Acabados Interiores:', document.getElementById('acabados').value || 'No especificado'],
-      ['Paredes:', document.getElementById('paredes').value || 'No especificado'],
-      ['Ventanas:', document.getElementById('ventanas').value || 'No especificado'],
-      ['Puertas:', document.getElementById('puertas').value || 'No especificado'],
-      ['Cielos:', document.getElementById('cielos').value || 'No especificado'],
-      ['Sanitario:', document.getElementById('sanitario').value || 'No especificado'],
-      ['Red Eléctrica:', document.getElementById('red-electric').value || 'No especificado'],
-      ['Servicio de Agua:', document.getElementById('agua').value || 'No especificado'],
-      ['Estado de Conservación:', document.getElementById('estado-inmueble').value || 'No especificado'],
-      ['Año de Construcción:', document.getElementById('anio-construccion').value || 'No especificado']
-    ];
-
-    doc.setFontSize(10);
-    caracteristicasData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold');
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal');
-      doc.text(value, margin + 60, y);
-      y += 8;
-    });
-
-    y += 10;
-
-    
-    const otrosDetalles = document.getElementById('otros-detalles').value;
-    if(otrosDetalles) {
-      if(y > 230) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold');
-      doc.text('Otros Detalles Específicos:', margin, y);
-      y += 8;
-      doc.setFont('helvetica', 'normal');
-      const lines = doc.splitTextToSize(otrosDetalles, contentWidth);
-      lines.forEach(line => {
-        if(y > 250) { doc.addPage(); y = 20; }
-        doc.text(line, margin, y);
-        y += 6;
-      });
-      y += 10;
-    }
-
-    
-    const tipologiaId = document.getElementById('typology').value;
-    let tipologiaText = 'No seleccionada';
-    if(tipologiaId) {
-      try {
-        const tipologias = __getTipos();
-        for (const tipologia of tipologias) {
-          const variante = tipologia.variants.find(v => v.id === tipologiaId);
-          if (variante) {
-            tipologiaText = `${tipologia.category} - ${tipologia.type}: ${variante.title}`;
-            break;
-          }
+        const totalPages=doc.internal.getNumberOfPages();
+        for(let i=1;i<=totalPages;i++){
+          doc.setPage(i); doc.setFontSize(8); doc.setTextColor(128,128,128);
+          doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos`, pageWidth/2, doc.internal.pageSize.getHeight()-10, {align:'center'});
         }
-      } catch(e) {
-        console.error('Error obteniendo tipología:', e);
+        const fileName=`Avaluo_${document.getElementById('associate-name').value||'Propiedad'}_${new Date().toISOString().slice(0,10)}.pdf`;
+        doc.save(fileName);
+      }catch(error){
+        console.error('Error generando PDF:',error); alert('Error al generar el PDF: '+error.message);
       }
+      finally{ loadingOverlay.style.display='none'; }
     }
-
-    if(y > 240) { doc.addPage(); y = 20; }
-    doc.setFont('helvetica', 'bold');
-    doc.text('Tipología Constructiva:', margin, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(tipologiaText, margin + 60, y);
-    y += 15;
-
-   
-    const imagePreviews = document.querySelectorAll('#image-preview .image-preview-item img');
-    if(imagePreviews.length > 0) {
-      if(y > 200) { doc.addPage(); y = 20; }
-      
-      doc.setFillColor(240, 240, 240); 
-      doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-      doc.setTextColor(91, 123, 122); 
-      doc.setFontSize(14); 
-      doc.setFont('helvetica', 'bold'); 
-      doc.text('2.1 EVIDENCIA FOTOGRÁFICA', margin, y); 
-      y += 25;
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Se adjuntan ${imagePreviews.length} imagen(es) de evidencia del inmueble.`, margin, y);
-      y += 10;
-    }
-
-    
-    if(y > 200) { doc.addPage(); y = 20; }
-    
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(16); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('3. CÁLCULOS Y VALORACIONES', margin, y); 
-    y += 20;
-
-    
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('3.1 VALOR DEL TERRENO', margin, y);
-    y += 15;
-
-    const terrenoData = [
-      ['Valor Base (Q/m²):', document.querySelector('.t-vbase')?.value || '0'],
-      ['Área (m²):', document.querySelector('.t-area')?.value || '0'],
-      ['Factor Frente:', document.querySelector('.t-ffte')?.value || '1'],
-      ['Factor Fondo:', document.querySelector('.t-ffdo')?.value || '1'],
-      ['Factor Forma:', document.querySelector('.t-ffma')?.value || '1'],
-      ['Factor Extra:', document.querySelector('.t-fext')?.value || '1'],
-      ['Otros Factores:', document.querySelector('.t-fotros')?.value || '1'],
-      ['VALOR TERRENO:', document.getElementById('totalTerreno')?.value || '0.00']
-    ];
-
-    doc.setFontSize(10);
-    terrenoData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold');
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal');
-      doc.text(value, margin + 70, y);
-      y += 8;
-    });
-
-    y += 15;
-
-    
-    if(y > 220) { doc.addPage(); y = 20; }
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('3.2 VALOR DE CONSTRUCCIÓN', margin, y);
-    y += 15;
-
-    const construccionRows = document.querySelectorAll('#tbBodyConstruccion tr');
-    const construccionData = [];
-
-    construccionRows.forEach((row, index) => {
-      const planta = row.querySelector('.planta-input')?.value || `Nivel ${index + 1}`;
-      const area = row.querySelector('.area-input')?.value || '0';
-      const vbase = row.querySelector('.vbase-input')?.value || '0';
-      const coef = row.querySelector('.coef-input')?.value || '1';
-      const monto = row.querySelector('.monto-output')?.value || '0.00';
-      
-      construccionData.push([planta, area, vbase, coef, monto]);
-    });
-
-    doc.autoTable({
-      startY: y,
-      head: [['Planta', 'Área m²', 'V/Base', '%', 'Monto']],
-      body: construccionData,
-      theme: 'grid',
-      headStyles: { fillColor: [91, 123, 122], textColor: 255, fontStyle: 'bold' },
-      styles: { fontSize: 8, cellPadding: 3 },
-      margin: { left: margin, right: margin }
-    });
-
-    y = doc.lastAutoTable.finalY + 10;
-
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('TOTAL CONSTRUCCIÓN:', margin, y);
-    doc.text(document.getElementById('totalConstruccion')?.value || '0.00', margin + 70, y);
-    y += 15;
-
-    if(y > 200) { doc.addPage(); y = 20; }
-    
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(16); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('4. RESULTADOS FINALES', margin, y); 
-    y += 25;
-
-    const resultadosData = [
-      ['Área Construida:', document.getElementById('resultArea').textContent],
-      ['Tipología:', document.getElementById('resultTypology').textContent],
-      ['Estado:', document.getElementById('resultCondition').textContent],
-      ['Antigüedad:', document.getElementById('resultAge').textContent],
-      ['Valor Terreno:', document.getElementById('resultLandValue').textContent],
-      ['Avalúo Terreno:', document.getElementById('resultLandAppraisal').textContent],
-      ['Valor Construcción:', document.getElementById('resultBuildValue').textContent],
-      ['TOTAL Terreno + Construcción:', document.getElementById('resultGrandTotal').textContent]
-    ];
-
-    doc.setFontSize(11);
-    resultadosData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold');
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal');
-      doc.text(value, margin + 80, y);
-      y += 10;
-    });
-
-    y += 15;
-
-    
-    doc.setFillColor(91, 123, 122); 
-    doc.rect(margin, y, contentWidth, 25, 'F'); 
-    doc.setTextColor(255, 255, 255); 
-    doc.setFontSize(16); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('VALOR TOTAL ESTIMADO', margin + 10, y + 15); 
-    doc.setFontSize(20); 
-    doc.text(document.getElementById('resultTotal').textContent, pageWidth - margin - 80, y + 15); 
-
-    
-    const totalPages = doc.internal.getNumberOfPages();
-    for(let i = 1; i <= totalPages; i++){
-      doc.setPage(i); 
-      doc.setFontSize(8); 
-      doc.setTextColor(128, 128, 128);
-      doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos - ${new Date().toLocaleDateString('es-GT')}`, pageWidth/2, doc.internal.pageSize.getHeight()-10, { align: 'center' });
-    }
-
-    
-    const fileName = `Avaluo_${document.getElementById('associate-name').value || 'Propiedad'}_${new Date().toISOString().slice(0, 10)}.pdf`;
-    doc.save(fileName);
-
-  } catch(error) {
-    console.error('Error generando PDF:', error); 
-    alert('Error al generar el PDF: ' + error.message);
-  } finally { 
-    loadingOverlay.style.display = 'none'; 
-  }
-}
-
     function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);});}
 
     class FormWizard{
@@ -4123,124 +2452,21 @@ function openTypologyForConstruction(row) {
     }
 
     
-  <script>
-document.addEventListener('DOMContentLoaded',function(){
-  window.formWizard=new FormWizard();
-  
-  const primeraFila = document.querySelector('#tbBodyConstruccion tr');
-  if (primeraFila) {
-    const tdTipologia = primeraFila.querySelector('td:nth-child(5)');
-    if (tdTipologia) {
-      tdTipologia.innerHTML = `
-        <div class="typology-trigger" style="margin: 0; cursor: pointer; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-card);" onclick="openTypologyForConstruction(this.parentElement.parentElement)">
-          <div class="tipo-construccion-display" style="text-align: center; color: var(--text-light);">
-            <i class="fas fa-home"></i><br>
-            <small>Click para seleccionar tipología</small>
-          </div>
-        </div>
-      `;
-    }
-  }
-  
-  // CONFIGURAR CATÁLOGO DE CARACTERÍSTICAS
-  console.log("🔧 Configurando catálogo de características...");
-  
-  const typologyTrigger = document.querySelector('.typology-trigger');
-  if (typologyTrigger) {
-      console.log("✅ Encontrado trigger del catálogo");
-      
-      typologyTrigger.onclick = function() {
-          console.log("📋 Abriendo catálogo desde características...");
-          const modal = document.getElementById('catalogModal');
-          if (modal) {
-              modal.classList.add('active');
-              
-              if (typeof __renderTipos === 'function') {
-                  __renderTipos();
-              }
-              
-              if (typeof initTabs === 'function') {
-                  initTabs();
-              }
-              
-              console.log("✅ Catálogo abierto correctamente");
-          }
-      };
-  }
-
-  // FUNCIÓN PARA AGREGAR NIVEL (NUEVA)
-  window.agregarFilaConstruccion = function() {
-      const tbody = document.getElementById('tbBodyConstruccion');
-      if (!tbody) {
-          console.error("❌ No se encontró la tabla de construcción");
-          return;
-      }
-      
-      const filaCount = tbody.querySelectorAll('tr').length;
-      const nuevaFila = document.createElement('tr');
-      
-      nuevaFila.innerHTML = `
-          <td><input type="text" value="Nivel ${filaCount + 1}" class="planta-input"></td>
-          <td><input type="number" min="0" step="0.01" class="area-input" placeholder="0"></td>
-          <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
-          <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
-          <td><input type="text" class="monto-output" value="0.00" readonly></td>
-      `;
-      
-      tbody.appendChild(nuevaFila);
-      
-      // Agregar eventos a los nuevos inputs
-      bindRowEvents(nuevaFila);
-      
-      console.log(`✅ Nivel ${filaCount + 1} agregado correctamente`);
-  };
-
-  // FUNCIÓN PARA ELIMINAR ÚLTIMO NIVEL (ACTUALIZADA)
-  window.eliminarUltimaFilaConstruccion = function(){
-      const tbody = document.getElementById('tbBodyConstruccion');
-      const rows = tbody.querySelectorAll('tr');
-      
-      if (rows.length > 1) {
-          tbody.removeChild(rows[rows.length - 1]);
-          recalcularTablaConstruccion();
-          integrarValores();
-          console.log("✅ Último nivel eliminado");
-      } else {
-          alert("Debe haber al menos un nivel de construcción");
-      }
-  };
-
-  // FUNCIÓN PARA VINCULAR EVENTOS A FILAS (NECESARIA)
-  function bindRowEvents(tr){
-      ['input','change'].forEach(evt=>{
-          tr.addEventListener(evt, e=>{
-              if(e.target.matches('.area-input,.vbase-input,.coef-input')){
-                  recalcularTablaConstruccion();
-                  integrarValores();
-              }
-          });
+    document.addEventListener('DOMContentLoaded',function(){
+      window.formWizard=new FormWizard();
+      document.getElementById('save-btn').addEventListener('click',async function(){ 
+        await saveCurrentAppraisal();
+        
       });
-  }
-
-  // VINCULAR EVENTOS A LA PRIMERA FILA
-  const firstRow = document.querySelector('#tbBodyConstruccion tr');
-  if (firstRow) bindRowEvents(firstRow);
-
-  // EVENT LISTENERS ORIGINALES
-  document.getElementById('save-btn').addEventListener('click',async function(){ 
-    await saveCurrentAppraisal();
-  });
-  document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
-  document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
-  document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
-  
-  initImageModalEvents();
-  initImageUpload();
-});
-</script>
-    
-
-</script>
+      document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
+      document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
+      document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
+      
+      // Inicializar funcionalidades adicionales
+      initImageModalEvents();
+      initImageUpload();
+    });
+  </script>
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -4258,236 +2484,131 @@ document.addEventListener('DOMContentLoaded',function(){
       const overlay = document.getElementById('auth-overlay');
       const userBox = document.getElementById('user-box');
       
-      console.log('🔄 Actualizando UI de autenticación. Logged:', isLogged);
-      console.log('📧 Usuario actual:', window.__session?.user);
-      
-      if(overlay) {
-        overlay.style.display = isLogged ? 'none' : 'flex';
-        console.log('🔧 Overlay display:', overlay.style.display);
-      }
+      if(overlay) overlay.style.display = isLogged ? 'none' : 'flex';
       
       if(userBox){
-        if(isLogged){
-          userBox.style.display = 'flex';
-          if(window.__session?.user){
-            const email = window.__session.user.email || "";
-            const username = window.__session.user.user_metadata?.username || email.split('@')[0] || "Usuario";
-            const userNameElement = userBox.querySelector('[data-user-name]');
-            const userEmailElement = userBox.querySelector('[data-user-email]');
-            
-            console.log('👤 Datos usuario:', {username, email});
-            
-            if(userNameElement) {
-              userNameElement.textContent = username;
-              console.log('✅ Nombre usuario actualizado');
-            }
-            if(userEmailElement) {
-              userEmailElement.textContent = email;
-              console.log('✅ Email usuario actualizado');
-            }
-          }
-        } else {
-          userBox.style.display = 'none';
+        userBox.style.display = isLogged ? 'flex' : 'none';
+        if(isLogged && window.__session?.user){
+          const email = window.__session.user.email || "";
+          const username = window.__session.user.user_metadata?.username || "";
+          const userNameElement = userBox.querySelector('[data-user-name]');
+          const userEmailElement = userBox.querySelector('[data-user-email]');
+          
+          if(userNameElement) userNameElement.textContent = username || "(sin username)";
+          if(userEmailElement) userEmailElement.textContent = email;
         }
-        console.log('🔧 UserBox display:', userBox.style.display);
       }
       
-      // MODIFICACIÓN APLICADA: Quitar deshabilitación del botón siguiente
       const nextBtn = document.getElementById('next-step');
-      if(nextBtn) {
-        nextBtn.disabled = false; // SIEMPRE HABILITADO
-        console.log('🔧 Botón siguiente disabled:', nextBtn.disabled);
-      }
+      if(nextBtn) nextBtn.disabled = !isLogged;
     }
 
     (async () => {
-      console.log('🔍 Iniciando verificación de sesión...');
-      const { data: { session}, error } = await window.supabase.auth.getSession();
-      if(error) console.error('❌ Error obteniendo sesión:', error);
-      
+      const { data: { session} } = await window.supabase.auth.getSession();
       window.__session = session || null;
-      console.log('✅ Sesión obtenida:', session ? 'SÍ' : 'NO');
       __updateAuthUI(!!session);
     })();
 
     window.supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('🔄 Cambio de estado de autenticación:', _event);
       window.__session = session || null;
       __updateAuthUI(!!session);
     });
 
     window.__signUpWithEmail = async (email, password, username) => {
       try {
-        console.log("📝 Intentando registro con:", email);
-        
-        if (!email || !password) {
-          alert("Por favor ingresa email y contraseña");
-          return;
-        }
-
         const { data, error } = await window.supabase.auth.signUp({
-          email: email.trim(),
-          password: password.trim(),
-          options: { 
-            data: { username: username || email.split('@')[0] },
-            emailRedirectTo: PUBLIC_APP_URL
-          }
+          email,
+          password,
+          options: { data: { username }, emailRedirectTo: PUBLIC_APP_URL }
         });
-
         if (error) {
-          console.error("❌ Error en registro:", error);
-          
-          
-          if (error.message?.includes('already registered') || error.message?.includes('user_exists')) {
-            const { data: loginData, error: loginError } = await window.supabase.auth.signInWithPassword({ 
-              email: email.trim(), 
-              password: password.trim() 
-            });
-            
-            if (loginError) {
-              if (loginError.message?.includes('Email not confirmed')) {
-                alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
-                return;
-              }
-              throw loginError;
-            }
-            
-           
-            window.__session = loginData.session;
-            __updateAuthUI(true);
-            alert("¡Bienvenido de nuevo!");
+          if (String(error.message || '').toLowerCase().includes('already')) {
+            const { error: e2 } = await window.supabase.auth.signInWithPassword({ email, password });
+            if (e2) throw e2;
             return;
           }
           throw error;
         }
-
-        if (data?.user) {
-          if (!data.session) {
-            alert("✅ ¡Cuenta creada! Revisa tu email y confirma tu cuenta antes de iniciar sesión.");
-          } else {
-            
-            window.__session = data.session;
-            __updateAuthUI(true);
-            alert("¡Cuenta creada y sesión iniciada!");
-          }
+        if (!data?.session) {
+          alert("Te enviamos un correo de confirmación. Revisa spam/promociones.\nDespués de confirmar, vuelve a esta página.");
         }
-
       } catch (e) {
-        console.error("❌ Error completo en registro:", e);
-        const errorMsg = e.message || 'Error desconocido';
-        
-        if (errorMsg.includes('Password should be at least')) {
-          alert("La contraseña debe tener al menos 6 caracteres");
-        } else if (errorMsg.includes('Invalid email')) {
-          alert("Por favor ingresa un email válido");
-        } else {
-          alert("Error al crear cuenta: " + errorMsg);
-        }
+        console.error("signUp error:", e);
+        alert("Error al crear cuenta: " + (e?.message || e));
       }
     };
 
     window.__signInWithEmail = async (email, password) => {
       try {
-        console.log("🔐 Intentando login con:", email);
-        
-        if (!email || !password) {
-          alert("Por favor ingresa email y contraseña");
-          return;
-        }
-
-        const { data, error } = await window.supabase.auth.signInWithPassword({ 
-          email: email.trim(), 
-          password: password.trim() 
-        });
-
-        if (error) {
-          console.error("❌ Error en login:", error);
-          
-          if (error.message?.includes('Invalid login credentials')) {
-            alert("Email o contraseña incorrectos");
-          } else if (error.message?.includes('Email not confirmed')) {
-            alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
-          } else if (error.message?.includes('Email rate limit exceeded')) {
-            alert("Demasiados intentos. Espera unos minutos.");
-          } else {
-            throw error;
-          }
-          return;
-        }
-
-        
-        window.__session = data.session;
-        __updateAuthUI(true);
-        console.log("✅ Login exitoso:", data.user.email);
-        
-        
-        if (data.user && !data.user.user_metadata?.username) {
-          setTimeout(() => {
-            showUsernameModal(data.user.id);
-          }, 1000);
-        }
-
+        const { error } = await window.supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
       } catch (e) {
-        console.error("❌ Error completo en login:", e);
-        alert("Error al iniciar sesión: " + (e.message || e));
+        const msg = String(e?.message || '').toLowerCase();
+        if (msg.includes('email') && msg.includes('confirm')) {
+          alert("Tu correo aún no está confirmado. Revisa tu email y confirma la cuenta.");
+        } else {
+          alert("Error al iniciar sesión: " + (e?.message || e));
+        }
+        console.error("signIn error:", e);
       }
     };
 
+    
     window.__signInWithGoogle = async () => {
       try {
-        console.log("🔐 Iniciando Google OAuth...");
         
         const currentUrl = window.location.origin + window.location.pathname;
         const redirectUrl = currentUrl.endsWith('/') ? currentUrl : currentUrl + '/';
         
-        console.log("📍 Redirect URL:", redirectUrl);
-
+        console.log("Iniciando Google OAuth con redirect:", redirectUrl);
+        
         const { data, error } = await window.supabase.auth.signInWithOAuth({
           provider: "google",
           options: { 
             redirectTo: redirectUrl,
-            skipBrowserRedirect: false,
             queryParams: {
               access_type: 'offline',
               prompt: 'consent'
             }
           }
         });
-
+        
         if (error) {
-          console.error("❌ Error Google OAuth:", error);
+          console.error("Error Google OAuth:", error);
           
-         
-          if (error.message?.includes('OAuth') || error.message?.includes('provider') || error.message?.includes('configuration')) {
-            const useEmail = confirm(
-              "Google OAuth no está configurado aún.\n\n" +
-              "Mientras el administrador configura Google OAuth, ¿quieres crear una cuenta con tu email?"
-            );
+          
+          if (error.message?.includes('provider') || error.message?.includes('configuration') || error.message?.includes('disabled')) {
+            const configSteps = `
+CONFIGURACIÓN REQUERIDA EN SUPABASE:
+
+1. Supabase Dashboard → Authentication → Settings
+2. En 'Site URL' poner: ${redirectUrl}
+3. En 'Redirect URLs' añadir: ${redirectUrl}
+4. Google Provider → Configurar Client ID y Secret
+
+CONFIGURACIÓN EN GOOGLE CLOUD:
+1. Google Cloud Console → APIs & Services → Credentials
+2. Crear OAuth 2.0 Client ID para Web Application
+3. En 'Authorized JavaScript origins' añadir: ${window.location.origin}
+4. En 'Authorized redirect URIs' añadir: 
+   https://csinbmcauuyljjqshawi.supabase.co/auth/v1/callback
+   ${redirectUrl}
+
+Mientras tanto, puede usar registro con email.`;
             
-            if (useEmail) {
-              document.getElementById('auth-email').focus();
-            }
+            alert("Google OAuth requiere configuración:\n" + configSteps);
           } else {
-            alert("Error con Google: " + (error.message || error));
+            alert("Error con Google OAuth: " + error.message);
           }
           return;
         }
-
         
-        console.log("🔄 Redirigiendo a Google...");
-
+        
+        console.log("Google OAuth iniciado correctamente, redirigiendo...");
+        
       } catch (e) {
-        console.error("❌ Error completo Google OAuth:", e);
-        
-       
-        const useEmail = confirm(
-          "Error temporal con Google.\n\n" +
-          "¿Quieres crear una cuenta con tu email en su lugar?"
-        );
-        
-        if (useEmail) {
-          document.getElementById('auth-email').focus();
-        }
+        console.error("Error completo Google OAuth:", e);
+        alert("Error al conectar con Google: " + (e.message || e));
       }
     };
 
@@ -4569,59 +2690,41 @@ document.addEventListener('DOMContentLoaded',function(){
 
     window.__resendVerification = async (email) => {
       try {
-        if (!email) {
-          alert("Por favor escribe tu correo electrónico primero");
-          return;
-        }
-
-        console.log("🔄 Reenviando verificación a:", email);
-        
-        const { error } = await window.supabase.auth.resend({ 
-          type: 'signup', 
-          email: email.trim(),
-          options: {
-            emailRedirectTo: PUBLIC_APP_URL
-          }
-        });
-
-        if (error) {
-          if (error.message?.includes('already confirmed')) {
-            alert("Este email ya fue confirmado. Puedes iniciar sesión.");
-          } else if (error.message?.includes('rate limit')) {
-            alert("Espera unos minutos antes de solicitar otro email.");
-          } else {
-            throw error;
-          }
-          return;
-        }
-
-        alert("✅ ¡Email de verificación reenviado! Revisa tu bandeja de entrada y carpeta de spam.");
-
+        if (!email) return alert("Escribe tu correo primero.");
+        const { data, error } = await window.supabase.auth.resend({ type: 'signup', email });
+        if (error) throw error;
+        alert("Listo, te reenviamos el correo. Revisa bandeja y spam.");
       } catch (e) {
-        console.error("❌ Error reenviando verificación:", e);
-        alert("Error al reenviar: " + (e.message || e));
+        console.error("resend error:", e);
+        alert("No se pudo reenviar: " + (e?.message || e));
       }
     };
 
     window.__signOut = async () => { await window.supabase.auth.signOut(); };
-    
-    // MODIFICACIÓN APLICADA: Permitir siempre el uso de la app
-    window.__canUseApp = () => true;
+    window.__canUseApp = () => !!window.__session;
 
-    // MODIFICACIÓN APLICADA: Eliminar bloqueo de navegación
     document.addEventListener('DOMContentLoaded', () => {
       const nextBtn = document.getElementById('next-step');
       if(nextBtn){
-        // ELIMINADO: El event listener que bloqueaba la navegación
-        console.log("✅ Navegación habilitada - Corrección aplicada");
+        nextBtn.addEventListener('click', (e) => {
+          if(!window.__canUseApp()){
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            document.getElementById('auth-overlay').style.display='flex';
+            alert("Inicia sesión para continuar.");
+          }
+        }, true);
       }
     });
 
-    // MODIFICACIÓN APLICADA: Quitar restricción de autenticación para cálculo
     const _origCalculate = window.calculateRealAppraisal;
     if(_origCalculate){
       window.calculateRealAppraisal = function(){
-        // ELIMINADO: La verificación de autenticación
+        if(!window.__canUseApp()){
+          document.getElementById('auth-overlay').style.display='flex';
+          alert("Inicia sesión para calcular el avalúo.");
+          return;
+        }
         return _origCalculate.apply(this, arguments);
       };
     }
@@ -4639,221 +2742,6 @@ document.addEventListener('DOMContentLoaded',function(){
         alert("Autenticación: " + msg);
       }
     })();
-  </script>
-
-  <!-- CORRECCIÓN ESPECÍFICA PARA EL BOTÓN SIGUIENTE -->
-  <script>
-    // CORRECCIÓN ESPECÍFICA PARA EL BOTÓN SIGUIENTE
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log("🔧 Aplicando corrección al botón Siguiente...");
-        
-        // Reemplazar el FormWizard original con uno funcional
-        class FormWizardFixed {
-            constructor() { 
-                this.currentStep = 1; 
-                this.totalSteps = 4; 
-                this.init(); 
-            }
-            
-            init() { 
-                this.bindEvents(); 
-                this.updateUI(); 
-            }
-            
-            bindEvents() {
-                const nextBtn = document.getElementById('next-step');
-                const prevBtn = document.getElementById('prev-step');
-                
-                if (nextBtn) {
-                    // Limpiar event listeners anteriores
-                    nextBtn.replaceWith(nextBtn.cloneNode(true));
-                    document.getElementById('next-step').addEventListener('click', () => this.next());
-                }
-                
-                if (prevBtn) {
-                    prevBtn.replaceWith(prevBtn.cloneNode(true));
-                    document.getElementById('prev-step').addEventListener('click', () => this.previous());
-                }
-                
-                // Steps click
-                document.querySelectorAll('.step').forEach(step => {
-                    step.addEventListener('click', (e) => {
-                        const stepNum = parseInt(e.currentTarget.dataset.step);
-                        if (stepNum < this.currentStep) {
-                            this.goToStep(stepNum);
-                        }
-                    });
-                });
-            }
-            
-            validateStep(step) {
-                const requiredFields = document.querySelectorAll(`[data-step="${step}"] [required]`);
-                let isValid = true;
-                
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        field.style.borderColor = 'var(--error)';
-                        isValid = false;
-                    } else {
-                        field.style.borderColor = '';
-                    }
-                });
-                
-                if (!isValid) {
-                    alert('Por favor completa todos los campos requeridos marcados con *');
-                }
-                return isValid;
-            }
-            
-            next() {
-                console.log("➡️ Botón Siguiente clickeado, paso actual:", this.currentStep);
-                
-                if (this.currentStep < this.totalSteps) {
-                    if (this.validateStep(this.currentStep)) {
-                        this.currentStep++;
-                        this.updateUI();
-                    }
-                } else {
-                    this.calculateAppraisal();
-                }
-            }
-            
-            previous() { 
-                if (this.currentStep > 1) { 
-                    this.currentStep--; 
-                    this.updateUI(); 
-                } 
-            }
-            
-            goToStep(step) { 
-                if (step >= 1 && step <= this.totalSteps) { 
-                    this.currentStep = step; 
-                    this.updateUI(); 
-                } 
-            }
-            
-            updateUI() {
-                console.log("🔄 Actualizando UI al paso:", this.currentStep);
-                
-                // Actualizar steps
-                document.querySelectorAll('.step').forEach(step => {
-                    const stepNum = parseInt(step.dataset.step);
-                    step.classList.remove('active', 'completed');
-                    if (stepNum === this.currentStep) {
-                        step.classList.add('active');
-                    } else if (stepNum < this.currentStep) {
-                        step.classList.add('completed');
-                    }
-                });
-                
-                // Actualizar secciones
-                document.querySelectorAll('.form-section').forEach(section => {
-                    section.classList.remove('active');
-                    if (parseInt(section.dataset.step) === this.currentStep) {
-                        section.classList.add('active');
-                    }
-                });
-                
-                // Actualizar botones
-                const prevBtn = document.getElementById('prev-step');
-                const nextBtn = document.getElementById('next-step');
-                
-                if (prevBtn) {
-                    prevBtn.style.display = this.currentStep > 1 ? 'flex' : 'none';
-                }
-                
-                if (nextBtn) {
-                    nextBtn.innerHTML = this.currentStep === this.totalSteps ? 
-                        '<i class="fas fa-calculator"></i> Calcular Avalúo' : 
-                        'Siguiente <i class="fas fa-arrow-right"></i>';
-                }
-                
-                // Forzar mostrar todas las secciones temporalmente para debug
-                console.log("📋 Estado de secciones:");
-                document.querySelectorAll('.form-section').forEach((section, index) => {
-                    console.log(`Sección ${index + 1}:`, section.classList.contains('active') ? 'ACTIVA' : 'oculta');
-                });
-            }
-            
-            calculateAppraisal() {
-                console.log("🧮 Iniciando cálculo de avalúo...");
-                
-                if (this.validateStep(this.currentStep)) {
-                    const nextBtn = document.getElementById('next-step');
-                    const originalHTML = nextBtn.innerHTML;
-                    
-                    nextBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
-                    nextBtn.disabled = true;
-                    
-                    setTimeout(() => {
-                        // Ejecutar función de cálculo si existe
-                        if (typeof calculateRealAppraisal === 'function') {
-                            calculateRealAppraisal();
-                        }
-                        
-                        // Mostrar sección de resultados
-                        const resultSection = document.getElementById('resultSection');
-                        if (resultSection) {
-                            resultSection.classList.add('active');
-                        }
-                        
-                        // Mostrar botones de acción
-                        const saveBtn = document.getElementById('save-btn');
-                        const pdfBtn = document.getElementById('pdf-btn');
-                        if (saveBtn) saveBtn.style.display = 'flex';
-                        if (pdfBtn) pdfBtn.style.display = 'flex';
-                        
-                        nextBtn.innerHTML = originalHTML;
-                        nextBtn.disabled = false;
-                        
-                        console.log("✅ Cálculo completado, resultados mostrados");
-                    }, 800);
-                }
-            }
-        }
-        
-        // Inicializar el wizard corregido
-        setTimeout(() => {
-            window.formWizard = new FormWizardFixed();
-            console.log("✅ FormWizard corregido inicializado");
-            
-            // Verificar que los botones estén funcionando
-            const nextBtn = document.getElementById('next-step');
-            const prevBtn = document.getElementById('prev-step');
-            
-            if (nextBtn) {
-                console.log("✅ Botón Siguiente listo:", nextBtn);
-            }
-            if (prevBtn) {
-                console.log("✅ Botón Anterior listo:", prevBtn);
-            }
-        }, 100);
-    });
-
-    // Función de respaldo para navegación manual entre pasos
-    function forceGoToStep(stepNumber) {
-        if (window.formWizard && typeof window.formWizard.goToStep === 'function') {
-            window.formWizard.goToStep(stepNumber);
-        } else {
-            // Fallback manual
-            document.querySelectorAll('.form-section').forEach(section => {
-                section.classList.remove('active');
-                if (parseInt(section.dataset.step) === stepNumber) {
-                    section.classList.add('active');
-                }
-            });
-            
-            document.querySelectorAll('.step').forEach(step => {
-                const stepNum = parseInt(step.dataset.step);
-                step.classList.remove('active', 'completed');
-                if (stepNum === stepNumber) {
-                    step.classList.add('active');
-                } else if (stepNum < stepNumber) {
-                    step.classList.add('completed');
-                }
-            });
-        }
-    }
   </script>
 </body>
 </html>
