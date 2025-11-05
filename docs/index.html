@@ -1401,7 +1401,7 @@
             <div class="upload-area" id="upload-area">
               <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: var(--primary-light); margin-bottom: 12px;"></i>
               <div style="font-weight: 500; color: var(--text); margin-bottom: 8px;">Arrastra imágenes aquí o haz clic para seleccionar</div>
-              <div style="font-size: 0.85rem; color: var(--text-light);">Formatos: JPG, PNG, GIF • Máx. 5MB por imagen</div>
+              <div style="font-size: 0.85rem; color: var(--text-light);">Formatos: JPG, PNG, GIF • Máx. 20MB por imagen</div>
               <button type="button" class="btn-secondary" onclick="document.getElementById('image-upload').click()" style="margin-top: 16px;">
                 <i class="fas fa-folder-open"></i> Seleccionar Archivos
               </button>
@@ -1468,10 +1468,17 @@
       <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
       <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
       <td>
-        <select class="tipo-construccion-select">
-          <option value="">Seleccionar tipología</option>
-          
-        </select>
+        <div class="typology-selector" onclick="__openTypologyForConstruction(this)">
+          <div class="typology-trigger">
+            <img class="selected-image" src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=200&q=60" alt="Tipología" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+            <div class="selected-text">
+              <div class="selected-type">Catálogo</div>
+              <div class="selected-title">Pulsa para elegir tipología</div>
+              <div class="selected-price">—</div>
+            </div>
+          </div>
+        </div>
+        <input type="hidden" class="typology-id-input" value="">
       </td>
       <td><input type="text" class="monto-output" value="0.00" readonly></td>
     </tr>
@@ -3141,8 +3148,8 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
           return;
         }
 
-        if (file.size > 5 * 1024 * 1024) {
-          alert('La imagen es demasiado grande. Máximo 5MB.');
+        if (file.size > 20 * 1024 * 1024) {
+          alert('La imagen es demasiado grande. Máximo 20MB.');
           return;
         }
 
@@ -3161,6 +3168,68 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         };
         reader.readAsDataURL(file);
       });
+    }
+
+    
+    function __openTypologyForConstruction(typologyElement) {
+      
+      window.currentConstructionTypologyElement = typologyElement;
+      
+      const originalSelectTipo = window.__selectTipo;
+      
+      
+      window.__selectTipo = function(id) {
+        const tipologias = __getTipos();
+        let varianteSeleccionada = null;
+        let tipologiaPadre = null;
+        
+        
+        for (const tipologia of tipologias) {
+          const variante = tipologia.variants.find(v => v.id === id);
+          if (variante) {
+            varianteSeleccionada = variante;
+            tipologiaPadre = tipologia;
+            break;
+          }
+        }
+        
+        if (!varianteSeleccionada || !tipologiaPadre) return;
+        
+       
+        const trigger = window.currentConstructionTypologyElement.querySelector('.typology-trigger');
+        const hiddenInput = window.currentConstructionTypologyElement.parentElement.querySelector('.typology-id-input');
+        const vbaseInput = window.currentConstructionTypologyElement.closest('tr').querySelector('.vbase-input');
+        
+        if (trigger && hiddenInput && vbaseInput) {
+          const img = trigger.querySelector('.selected-image');
+          const tp = trigger.querySelector('.selected-type');
+          const ti = trigger.querySelector('.selected-title');
+          const pr = trigger.querySelector('.selected-price');
+          
+          if (img) img.src = varianteSeleccionada.img;
+          if (tp) tp.textContent = `Categoría ${tipologiaPadre.category} — ${tipologiaPadre.type}`;
+          if (ti) ti.textContent = varianteSeleccionada.title;
+          if (pr) pr.textContent = `Q${varianteSeleccionada.pricePerM2}/m²`;
+          if (hiddenInput) hiddenInput.value = varianteSeleccionada.id;
+          
+          
+          vbaseInput.value = varianteSeleccionada.pricePerM2 || varianteSeleccionada.pricePerM2;
+          
+          
+          const row = window.currentConstructionTypologyElement.closest('tr');
+          recalcularFila(row);
+          recalcularTablaConstruccion();
+          integrarValores();
+        }
+        
+        
+        __closeTypology();
+        window.__selectTipo = originalSelectTipo;
+        window.currentConstructionTypologyElement = null;
+      };
+      
+      
+      __openTypology();
     }
 
   </script>
@@ -3204,10 +3273,16 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     
     const tipologiasSeleccionadas = [];
     rows.forEach(tr => {
-      const select = tr.querySelector('.tipo-construccion-select');
-      const selectedOption = select?.options[select.selectedIndex];
-      if (selectedOption && selectedOption.value) {
-        tipologiasSeleccionadas.push(selectedOption.textContent.split(' (')[0]); 
+      const hiddenInput = tr.querySelector('.typology-id-input');
+      if (hiddenInput && hiddenInput.value) {
+        const tipologias = __getTipos();
+        for (const tipologia of tipologias) {
+          const variante = tipologia.variants.find(v => v.id === hiddenInput.value);
+          if (variante) {
+            tipologiasSeleccionadas.push(`${tipologia.category}-${tipologia.type}`);
+            break;
+          }
+        }
       }
     });
     
@@ -3249,26 +3324,26 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     <td><input type="number" min="0" step="0.01" class="vbase-input" placeholder="0"></td>
     <td><input type="number" min="0" step="0.01" value="1" class="coef-input"></td>
     <td>
-      <select class="tipo-construccion-select">
-        <option value="">Seleccionar tipología</option>
-        <!-- Las opciones se llenarán dinámicamente -->
-      </select>
+      <div class="typology-selector" onclick="__openTypologyForConstruction(this)">
+        <div class="typology-trigger">
+          <img class="selected-image" src="https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=200&q=60" alt="Tipología" style="width: 40px; height: 40px; border-radius: 8px; object-fit: cover;">
+          <div class="selected-text">
+            <div class="selected-type">Catálogo</div>
+            <div class="selected-title">Pulsa para elegir tipología</div>
+            <div class="selected-price">—</div>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" class="typology-id-input" value="">
     </td>
     <td><input type="text" class="monto-output" value="0.00" readonly></td>
   `;
   tbody.appendChild(tr);
   
   
-  llenarSelectsTipologias();
-  
-  
   bindRowEvents(tr);
   
-  
-  const select = tr.querySelector('.tipo-construccion-select');
-  select.addEventListener('change', function() {
-    actualizarValorBaseDesdeTipologia(this);
-  });
+  console.log(`✅ Nivel ${n} agregado con catálogo funcional`);
 }
     
     function eliminarUltimaFilaConstruccion(){
@@ -3282,14 +3357,6 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     }
 
    document.addEventListener('DOMContentLoaded', () => {
-  
-  llenarSelectsTipologias();
-  
-  document.querySelectorAll('.tipo-construccion-select').forEach(select => {
-    select.addEventListener('change', function() {
-      actualizarValorBaseDesdeTipologia(this);
-    });
-  });
   
   const firstRow = document.querySelector('#tbBodyConstruccion tr');
   if (firstRow) bindRowEvents(firstRow);
