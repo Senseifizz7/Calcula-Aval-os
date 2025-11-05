@@ -3618,8 +3618,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       document.getElementById('resultTotal').textContent=formatCurrency(terreno + totalConstruccion);
     }
 
-    // REEMPLAZAR la función generateReport existente con esta versión COMPLETA
-async function generateReport(){
+    async function generateReport(){
   const loadingOverlay = document.getElementById('loadingOverlay'); 
   loadingOverlay.style.display = 'flex';
   
@@ -3684,7 +3683,7 @@ async function generateReport(){
 
     y += 10;
 
-    // MAPA - Capturar y agregar imagen del mapa actual
+    // MAPA - Capturar y agregar imagen del mapa actual (automático)
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
@@ -3700,14 +3699,15 @@ async function generateReport(){
         const canvas = await html2canvas(mapElement, {
           useCORS: true,
           allowTaint: true,
-          scale: 0.8,
+          scale: 0.7,
           logging: false,
           backgroundColor: '#ffffff'
         });
         
         const mapImage = canvas.toDataURL('image/jpeg', 0.8);
+        // Tamaño más pequeño para el mapa
         const mapWidth = contentWidth;
-        const mapHeight = 120;
+        const mapHeight = 100;
         doc.addImage(mapImage, 'JPEG', margin, y, mapWidth, mapHeight);
         y += mapHeight + 15;
       }
@@ -3799,69 +3799,14 @@ async function generateReport(){
     });
     y += 10;
 
-    // 2.4 INFORMACIÓN DEL SOLAR
-    if(y > 250) { doc.addPage(); y = 20; }
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('2.4 Información del Solar', margin, y);
-    y += 15;
-
-    // Calles
-    doc.setFontSize(10);
-    doc.text('Calles:', margin, y);
-    y += 8;
-    
-    const calles = [
-      ['Concreto:', document.getElementById('calle-concreto').value || ''],
-      ['Adoquín:', document.getElementById('calle-adoquin').value || ''],
-      ['Servidumbre de Paso:', document.getElementById('calle-servidumbre').value || ''],
-      ['Vereda:', document.getElementById('calle-vereda').value || ''],
-      ['Tierra:', document.getElementById('calle-tierra').value || ''],
-      ['Asfalto:', document.getElementById('calle-asfalto').value || '']
-    ];
-
-    doc.setFontSize(8);
-    calles.forEach(([tipo, valor]) => {
-      if(valor && valor.trim() !== '') {
-        doc.text(`• ${tipo}: ${valor}`, margin + 5, y);
-        y += 5;
-      }
-    });
-    y += 8;
-
-    // Servicios Públicos
-    if(y > 250) { doc.addPage(); y = 20; }
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Servicios Públicos:', margin, y);
-    y += 8;
-
-    const servicios = [
-      ['Energía Eléctrica:', document.getElementById('servicio-electricidad').value || ''],
-      ['Red de Agua:', document.getElementById('servicio-agua').value || ''],
-      ['Ducto Teléfono:', document.getElementById('servicio-telefono').value || ''],
-      ['Drenaje:', document.getElementById('servicio-drenaje').value || ''],
-      ['Acera:', document.getElementById('servicio-acera').value || ''],
-      ['Bordillo:', document.getElementById('servicio-bordillo').value || '']
-    ];
-
-    doc.setFontSize(8);
-    servicios.forEach(([servicio, valor]) => {
-      if(valor && valor.trim() !== '') {
-        doc.text(`• ${servicio}: ${valor}`, margin + 5, y);
-        y += 5;
-      }
-    });
-    y += 8;
-
-    // 2.5 CARACTERÍSTICAS CONSTRUCTIVAS
+    // 2.4 CARACTERÍSTICAS CONSTRUCTIVAS
     if(y > 250) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
     doc.setTextColor(91, 123, 122); 
     doc.setFontSize(14); 
     doc.setFont('helvetica', 'bold'); 
-    doc.text('2.5 CARACTERÍSTICAS CONSTRUCTIVAS', margin, y); 
+    doc.text('2.4 CARACTERÍSTICAS CONSTRUCTIVAS', margin, y); 
     y += 20;
 
     const caracteristicas = [
@@ -3892,32 +3837,16 @@ async function generateReport(){
       y += 5;
     });
 
-    // Otros detalles
-    const otrosDetalles = document.getElementById('otros-detalles').value;
-    if(otrosDetalles && otrosDetalles.trim() !== '') {
-      y += 8;
-      doc.setFont('helvetica', 'bold'); 
-      doc.text('Otros Detalles:', margin, y);
-      y += 6;
-      doc.setFont('helvetica', 'normal');
-      const lines = doc.splitTextToSize(otrosDetalles, contentWidth);
-      lines.forEach(line => {
-        if(y > 270) { doc.addPage(); y = 20; }
-        doc.text(line, margin, y);
-        y += 5;
-      });
-    }
-
     y += 10;
 
-    // 2.6 TIPOLOGÍA CONSTRUCTIVA SELECCIONADA
+    // 2.5 TIPOLOGÍA CONSTRUCTIVA SELECCIONADA (automática según categoría/tipología elegida)
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
     doc.setTextColor(91, 123, 122); 
     doc.setFontSize(14); 
     doc.setFont('helvetica', 'bold'); 
-    doc.text('2.6 TIPOLOGÍA CONSTRUCTIVA SELECCIONADA', margin, y); 
+    doc.text('2.5 TIPOLOGÍA CONSTRUCTIVA SELECCIONADA', margin, y); 
     y += 20;
 
     const tipologiaId = document.getElementById('typology').value;
@@ -3939,7 +3868,7 @@ async function generateReport(){
             doc.text(`Precio: Q${variante.pricePerM2.toLocaleString('es-GT')}/m²`, margin, y);
             y += 15;
 
-            // Imagen EXTERIOR
+            // Imagen EXTERIOR (automática según selección)
             if (variante.img) {
               if(y > 180) { doc.addPage(); y = 20; }
               
@@ -3948,13 +3877,14 @@ async function generateReport(){
               doc.text('Vista Exterior:', margin, y);
               y += 8;
               
-              const imgWidth = contentWidth * 0.7;
-              const imgHeight = 80;
+              // Tamaño MÁS PEQUEÑO para imágenes
+              const imgWidth = contentWidth * 0.5;
+              const imgHeight = 60;
               doc.addImage(variante.img, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
-              y += imgHeight + 12;
+              y += imgHeight + 10;
             }
 
-            // Imagen INTERIOR
+            // Imagen INTERIOR (automática según selección)
             if (variante.imgInterior) {
               if(y > 180) { doc.addPage(); y = 20; }
               
@@ -3963,8 +3893,9 @@ async function generateReport(){
               doc.text('Vista Interior:', margin, y);
               y += 8;
               
-              const imgWidth = contentWidth * 0.7;
-              const imgHeight = 80;
+              // Tamaño MÁS PEQUEÑO para imágenes
+              const imgWidth = contentWidth * 0.5;
+              const imgHeight = 60;
               doc.addImage(variante.imgInterior, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
               y += imgHeight + 15;
             }
@@ -3982,7 +3913,7 @@ async function generateReport(){
       y += 20;
     }
 
-    // 2.7 EVIDENCIA FOTOGRÁFICA
+    // 2.6 EVIDENCIA FOTOGRÁFICA
     const imagePreviews = document.querySelectorAll('#image-preview .image-preview-item img');
     if(imagePreviews.length > 0) {
       if(y > 150) { doc.addPage(); y = 20; }
@@ -3992,7 +3923,7 @@ async function generateReport(){
       doc.setTextColor(91, 123, 122); 
       doc.setFontSize(14); 
       doc.setFont('helvetica', 'bold'); 
-      doc.text('2.7 EVIDENCIA FOTOGRÁFICA', margin, y); 
+      doc.text('2.6 EVIDENCIA FOTOGRÁFICA', margin, y); 
       y += 25;
 
       doc.setFontSize(10);
@@ -4008,12 +3939,13 @@ async function generateReport(){
           
           doc.setFontSize(9);
           doc.text(`Evidencia ${i + 1}:`, margin, y);
-          y += 8;
+          y += 6;
           
-          const imgWidth = contentWidth * 0.6;
-          const imgHeight = 90;
+          // Tamaño MÁS PEQUEÑO para evidencias
+          const imgWidth = contentWidth * 0.4;
+          const imgHeight = 70;
           doc.addImage(imgSrc, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
-          y += imgHeight + 15;
+          y += imgHeight + 12;
         } catch(error) {
           console.warn(`Error cargando imagen de evidencia ${i + 1}:`, error);
           doc.text(`Error cargando imagen ${i + 1}`, margin, y);
@@ -4065,7 +3997,7 @@ async function generateReport(){
     });
     y += 10;
 
-    // 3.2 VALOR DE CONSTRUCCIÓN POR NIVEL
+    // 3.2 VALOR DE CONSTRUCCIÓN POR NIVEL (automático según categoría/tipología elegida por nivel)
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
@@ -4073,7 +4005,6 @@ async function generateReport(){
     y += 15;
 
     const construccionRows = document.querySelectorAll('#tbBodyConstruccion tr');
-    const construccionData = [];
 
     for (let i = 0; i < construccionRows.length; i++) {
       const row = construccionRows[i];
@@ -4082,8 +4013,6 @@ async function generateReport(){
       const vbase = row.querySelector('.vbase-input')?.value || '0';
       const coef = row.querySelector('.coef-input')?.value || '1';
       const monto = row.querySelector('.monto-output')?.value || '0.00';
-      
-      construccionData.push([planta, area, vbase, coef, monto]);
 
       // Información del nivel
       if(y > 200) { doc.addPage(); y = 20; }
@@ -4104,7 +4033,7 @@ async function generateReport(){
       doc.text(`Monto: Q${parseFloat(monto).toLocaleString('es-GT')}`, margin, y);
       y += 10;
 
-      // Agregar imágenes de tipología para este nivel
+      // Agregar imágenes de tipología para este nivel (automáticas según selección)
       const hiddenInput = row.querySelector('.typology-id-input');
       const tipologiaIdNivel = hiddenInput?.value;
       
@@ -4122,7 +4051,7 @@ async function generateReport(){
               doc.text(`Variante: ${variante.title}`, margin, y);
               y += 8;
 
-              // Imagen EXTERIOR del nivel
+              // Imagen EXTERIOR del nivel (automática)
               if (variante.img) {
                 if(y > 160) { doc.addPage(); y = 20; }
                 
@@ -4131,13 +4060,14 @@ async function generateReport(){
                 doc.text('Vista Exterior:', margin, y);
                 y += 6;
                 
-                const imgWidth = contentWidth * 0.6;
-                const imgHeight = 70;
+                // Tamaño MÁS PEQUEÑO para imágenes de niveles
+                const imgWidth = contentWidth * 0.4;
+                const imgHeight = 50;
                 doc.addImage(variante.img, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
-                y += imgHeight + 10;
+                y += imgHeight + 8;
               }
 
-              // Imagen INTERIOR del nivel
+              // Imagen INTERIOR del nivel (automática)
               if (variante.imgInterior) {
                 if(y > 160) { doc.addPage(); y = 20; }
                 
@@ -4146,10 +4076,11 @@ async function generateReport(){
                 doc.text('Vista Interior:', margin, y);
                 y += 6;
                 
-                const imgWidth = contentWidth * 0.6;
-                const imgHeight = 70;
+                // Tamaño MÁS PEQUEÑO para imágenes de niveles
+                const imgWidth = contentWidth * 0.4;
+                const imgHeight = 50;
                 doc.addImage(variante.imgInterior, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
-                y += imgHeight + 15;
+                y += imgHeight + 12;
               }
 
               break;
