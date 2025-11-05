@@ -3620,530 +3620,173 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     async function generateReport(){
   const loadingOverlay = document.getElementById('loadingOverlay'); 
-  loadingOverlay.style.display = 'flex';
-  
+  if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
   try {
-    // Verificar que estamos en el paso correcto antes de generar
-    if(!document.getElementById('resultSection').classList.contains('active')) {
-      alert('Primero debes calcular el avalúo antes de generar el PDF');
-      return;
+    console.log('🔄 Iniciando generación de PDF...');
+    
+    // SOLUCIÓN: Cargar jsPDF de forma más robusta
+    if (typeof window.jspdf === 'undefined') {
+      console.log('📦 Cargando jsPDF...');
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        script.onload = () => {
+          console.log('✅ jsPDF cargado');
+          resolve();
+        };
+        script.onerror = () => {
+          console.error('❌ Error cargando jsPDF');
+          reject(new Error('No se pudo cargar jsPDF'));
+        };
+        document.head.appendChild(script);
+      });
     }
 
-    if(typeof window.jspdf === 'undefined') { 
-      await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); 
+    // VERIFICAR que jsPDF se cargó correctamente
+    if (typeof window.jspdf === 'undefined') {
+      throw new Error('jsPDF no está disponible');
     }
+
+    const { jsPDF } = window.jspdf;
+    console.log('✅ jsPDF inicializado');
     
-    const { jsPDF } = window.jspdf; 
-    const doc = new jsPDF(); 
-    const pageWidth = doc.internal.pageSize.getWidth(); 
-    const margin = 20; 
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
     const contentWidth = pageWidth - (margin * 2);
     
-    let y = 0; 
+    let y = 0;
 
     // ========== ENCABEZADO ==========
-    doc.setFillColor(91, 123, 122); 
+    doc.setFillColor(91, 123, 122);
     doc.rect(0, 0, pageWidth, 60, 'F');
-    doc.setTextColor(255, 255, 255); 
-    doc.setFontSize(24); 
-    doc.setFont('helvetica', 'bold'); 
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(24);
+    doc.setFont('helvetica', 'bold');
     doc.text('REPORTE DE AVALÚO', pageWidth/2, 30, { align: 'center' });
-    doc.setFontSize(12); 
-    doc.setFont('helvetica', 'normal'); 
-    doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')} ${new Date().toLocaleTimeString('es-GT')}`, pageWidth/2, 45, { align: 'center' });
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Generado: ${new Date().toLocaleDateString('es-GT')}`, pageWidth/2, 45, { align: 'center' });
     doc.text('Sistema de Avalúos Profesional', pageWidth/2, 52, { align: 'center' });
 
-    y = 80;
+    y = 70;
 
-    // ========== PESTAÑA 1: INFORMACIÓN GENERAL ==========
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(16); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('1. INFORMACIÓN GENERAL', margin, y); 
-    y += 20;
-
-    // Datos básicos
-    const basicData = [
-      ['Asociado:', document.getElementById('associate-name').value || 'No especificado'],
-      ['Dirección:', document.getElementById('address').value || 'No especificado'],
-      ['Propietario:', document.getElementById('owner-name').value || 'No especificado'],
-      ['Área Construida:', (document.getElementById('construction-area').value || '0') + ' m²'],
-      ['Área Terreno:', (document.getElementById('land-area').value || '0') + ' m²'],
-      ['Coordenadas:', `Lat: ${document.getElementById('geo-lat').value || '0'}, Lng: ${document.getElementById('geo-lng').value || '0'}`],
-      ['Departamento:', document.getElementById('department').value || 'No especificado']
-    ];
-
-    doc.setTextColor(0, 0, 0); 
-    doc.setFontSize(10); 
-    basicData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold'); 
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal'); 
-      doc.text(value, margin + 45, y);
-      y += 8;
-    });
-
-    y += 10;
-
-    // Datos Registrales
-    if(y > 220) { doc.addPage(); y = 20; }
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(14); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('1.1 DATOS REGISTRALES', margin, y); 
-    y += 20;
-
-    const registralData = [
-      ['Número de Escritura:', document.getElementById('deed-number').value || 'No especificado'],
-      ['Fecha de Escritura:', document.getElementById('deed-date').value || 'No especificado'],
-      ['Notario:', document.getElementById('notary').value || 'No especificado'],
-      ['Finca:', document.getElementById('finca').value || 'No especificado'],
-      ['Folio:', document.getElementById('folio').value || 'No especificado'],
-      ['Libro:', document.getElementById('libro').value || 'No especificado']
-    ];
-
-    doc.setFontSize(10);
-    registralData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold'); 
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal'); 
-      doc.text(value, margin + 55, y);
-      y += 8;
-    });
-
-    // Colindancias
-    if(y > 220) { doc.addPage(); y = 20; }
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(14); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('1.2 COLINDANCIAS', margin, y); 
-    y += 20;
-
-    const colindanciasData = [
-      ['Norte - Propietario:', document.getElementById('norte-propietario').value || 'No especificado'],
-      ['Norte - Metros:', (document.getElementById('norte-metros').value || '0') + ' m'],
-      ['Sur - Propietario:', document.getElementById('sur-propietario').value || 'No especificado'],
-      ['Sur - Metros:', (document.getElementById('sur-metros').value || '0') + ' m'],
-      ['Oriente - Propietario:', document.getElementById('oriente-propietario').value || 'No especificado'],
-      ['Oriente - Metros:', (document.getElementById('oriente-metros').value || '0') + ' m'],
-      ['Poniente - Propietario:', document.getElementById('poniente-propietario').value || 'No especificado'],
-      ['Poniente - Metros:', (document.getElementById('poniente-metros').value || '0') + ' m']
-    ];
-
-    doc.setFontSize(10);
-    colindanciasData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold'); 
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal'); 
-      doc.text(value, margin + 60, y);
-      y += 8;
-    });
-
-    // Información del Solar
-    if(y > 220) { doc.addPage(); y = 20; }
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(14); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('1.3 INFORMACIÓN DEL SOLAR', margin, y); 
-    y += 20;
-
-    const solarData = [
-      ['Concreto:', document.getElementById('calle-concreto').value || ''],
-      ['Adoquín:', document.getElementById('calle-adoquin').value || ''],
-      ['Servidumbre:', document.getElementById('calle-servidumbre').value || ''],
-      ['Vereda:', document.getElementById('calle-vereda').value || ''],
-      ['Tierra:', document.getElementById('calle-tierra').value || ''],
-      ['Asfalto:', document.getElementById('calle-asfalto').value || ''],
-      ['Electricidad:', document.getElementById('servicio-electricidad').value || ''],
-      ['Agua:', document.getElementById('servicio-agua').value || ''],
-      ['Teléfono:', document.getElementById('servicio-telefono').value || ''],
-      ['Drenaje:', document.getElementById('servicio-drenaje').value || ''],
-      ['Acera:', document.getElementById('servicio-acera').value || ''],
-      ['Bordillo:', document.getElementById('servicio-bordillo').value || ''],
-      ['Esquina:', document.getElementById('ubicacion-esquina').value || ''],
-      ['Medial:', document.getElementById('ubicacion-medial').value || ''],
-      ['Urbano:', document.getElementById('clasificacion-urbano').value || ''],
-      ['Rústico:', document.getElementById('clasificacion-rustico').value || '']
-    ];
-
-    doc.setFontSize(9);
-    solarData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      if(value) {
-        doc.setFont('helvetica', 'bold'); 
-        doc.text(label, margin, y);
-        doc.setFont('helvetica', 'normal'); 
-        doc.text(value, margin + 35, y);
-        y += 7;
-      }
-    });
-
-    // Ubicación Geográfica
-    if(y > 200) { doc.addPage(); y = 20; }
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(14); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('1.4 UBICACIÓN GEOGRÁFICA', margin, y); 
-    y += 20;
-
-    const lat = document.getElementById('geo-lat').value || 'No disponible';
-    const lng = document.getElementById('geo-lng').value || 'No disponible';
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('Coordenadas:', margin, y);
-    doc.setFont('helvetica', 'normal'); 
-    doc.text(`Latitud: ${lat}, Longitud: ${lng}`, margin + 40, y);
-    y += 12;
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('Dirección:', margin, y);
-    doc.setFont('helvetica', 'normal'); 
-    const address = document.getElementById('address').value || 'No especificada';
-    const addressLines = doc.splitTextToSize(address, contentWidth - 20);
-    doc.text(addressLines, margin, y + 8);
-    y += (addressLines.length * 8) + 15;
-
-    // ========== PESTAÑA 2: CARACTERÍSTICAS ==========
-    if(y > 200) { doc.addPage(); y = 20; }
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(16); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('2. CARACTERÍSTICAS CONSTRUCTIVAS', margin, y); 
-    y += 20;
-
-    // Tipología seleccionada
-    const tipologiaId = document.getElementById('typology').value;
-    if(tipologiaId) {
-      try {
-        const tipologias = __getTipos();
-        for (const tipologia of tipologias) {
-          const variante = tipologia.variants.find(v => v.id === tipologiaId);
-          if (variante) {
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.text('2.1 TIPOLOGÍA CONSTRUCTIVA SELECCIONADA:', margin, y);
-            y += 15;
-            
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text(`${tipologia.category} - ${tipologia.type}: ${variante.title}`, margin, y);
-            y += 8;
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Precio: Q${variante.pricePerM2}/m²`, margin, y);
-            y += 15;
-            break;
-          }
-        }
-      } catch (e) {
-        console.warn('Error cargando tipología:', e);
-      }
-    }
-
-    // Características Constructivas
-    if(y > 220) { doc.addPage(); y = 20; }
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(14); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('2.2 ESPECIFICACIONES CONSTRUCTIVAS', margin, y); 
-    y += 20;
-
-    const caracteristicasData = [
-      ['Uso y Destino:', document.getElementById('uso-destino').value || 'No especificado'],
-      ['Estructura:', document.getElementById('estructura').value || 'No especificado'],
-      ['Cimiento:', document.getElementById('cimiento').value || 'No especificado'],
-      ['Techos:', document.getElementById('techos').value || 'No especificado'],
-      ['Pisos:', document.getElementById('pisos').value || 'No especificado'],
-      ['Acabados:', document.getElementById('acabados').value || 'No especificado'],
-      ['Paredes:', document.getElementById('paredes').value || 'No especificado'],
-      ['Ventanas:', document.getElementById('ventanas').value || 'No especificado'],
-      ['Puertas:', document.getElementById('puertas').value || 'No especificado'],
-      ['Cielos:', document.getElementById('cielos').value || 'No especificado'],
-      ['Sanitario:', document.getElementById('sanitario').value || 'No especificado'],
-      ['Red Eléctrica:', document.getElementById('red-electric').value || 'No especificado'],
-      ['Servicio de Agua:', document.getElementById('agua').value || 'No especificado'],
-      ['Estado de Conservación:', document.getElementById('estado-inmueble').value || 'No especificado'],
-      ['Año de Construcción:', document.getElementById('anio-construccion').value || 'No especificado']
-    ];
-
-    doc.setFontSize(9);
-    caracteristicasData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold'); 
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal'); 
-      doc.text(value, margin + 55, y);
-      y += 7;
-    });
-
-    // Otros Detalles
-    const otrosDetalles = document.getElementById('otros-detalles').value;
-    if(otrosDetalles) {
-      if(y > 220) { doc.addPage(); y = 20; }
-      doc.setFillColor(240, 240, 240); 
-      doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-      doc.setTextColor(91, 123, 122); 
-      doc.setFontSize(14); 
-      doc.setFont('helvetica', 'bold'); 
-      doc.text('2.3 OTROS DETALLES ESPECÍFICOS', margin, y); 
-      y += 20;
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      const detallesLines = doc.splitTextToSize(otrosDetalles, contentWidth - 10);
-      doc.text(detallesLines, margin, y);
-      y += (detallesLines.length * 6) + 10;
-    }
-
-    // Evidencias Fotográficas
-    const imagePreviews = document.querySelectorAll('#image-preview .image-preview-item img');
-    if(imagePreviews.length > 0) {
-      if(y > 150) { doc.addPage(); y = 20; }
-      
-      doc.setFillColor(240, 240, 240); 
-      doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-      doc.setTextColor(91, 123, 122); 
-      doc.setFontSize(14); 
-      doc.setFont('helvetica', 'bold'); 
-      doc.text('2.4 EVIDENCIA FOTOGRÁFICA', margin, y); 
-      y += 25;
-
-      doc.setFontSize(10);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Total de evidencias: ${imagePreviews.length} imagen(es)`, margin, y);
-      y += 10;
-
-      for (let i = 0; i < imagePreviews.length; i++) {
-        if(y > 180 && i % 2 === 0) { 
-          doc.addPage(); 
-          y = 20; 
-        }
-        
-        try {
-          const imgSrc = imagePreviews[i].src;
-          const imgWidth = contentWidth * 0.4;
-          const imgHeight = 60;
-          const xPos = margin + (i % 2) * (imgWidth + 10);
-          
-          doc.addImage(imgSrc, 'JPEG', xPos, y, imgWidth, imgHeight);
-          
-          doc.setFontSize(8);
-          doc.text(`Evidencia ${i + 1}`, xPos, y + imgHeight + 5);
-          
-          if ((i + 1) % 2 === 0) {
-            y += imgHeight + 15;
-          }
-        } catch (error) {
-          console.warn(`Error cargando evidencia ${i + 1}:`, error);
-        }
-      }
-      if (imagePreviews.length % 2 !== 0) {
-        y += 75;
-      }
-    }
-
-    // ========== PESTAÑA 3: CÁLCULOS ==========
-    if(y > 200) { doc.addPage(); y = 20; }
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(16); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('3. CÁLCULOS Y VALORACIONES', margin, y); 
-    y += 20;
-
-    // Valor del Terreno
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('3.1 VALOR DEL TERRENO', margin, y);
-    y += 15;
-
-    const terrenoData = [
-      ['Valor Base (Q/m²):', document.querySelector('.t-vbase')?.value || '0'],
-      ['Área (m²):', document.querySelector('.t-area')?.value || '0'],
-      ['Factor Frente:', document.querySelector('.t-ffte')?.value || '1'],
-      ['Factor Fondo:', document.querySelector('.t-ffdo')?.value || '1'],
-      ['Factor Forma:', document.querySelector('.t-ffma')?.value || '1'],
-      ['Factor Extra:', document.querySelector('.t-fext')?.value || '1'],
-      ['Otros Factores:', document.querySelector('.t-fotros')?.value || '1'],
-      ['MONTO TERRENO:', document.getElementById('totalTerreno')?.value || '0.00']
-    ];
-
-    doc.setFontSize(10);
-    terrenoData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold'); 
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal'); 
-      doc.text(value, margin + 60, y);
-      y += 8;
-    });
-
-    y += 10;
-
-    // Valor de Construcción
-    if(y > 220) { doc.addPage(); y = 20; }
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('3.2 VALOR DE CONSTRUCCIÓN - POR NIVELES', margin, y);
-    y += 15;
-
-    const construccionRows = document.querySelectorAll('#tbBodyConstruccion tr');
-    
-    for (let i = 0; i < construccionRows.length; i++) {
-      const row = construccionRows[i];
-      const planta = row.querySelector('.planta-input')?.value || `Nivel ${i + 1}`;
-      const area = row.querySelector('.area-input')?.value || '0';
-      const vbase = row.querySelector('.vbase-input')?.value || '0';
-      const coef = row.querySelector('.coef-input')?.value || '1';
-      const monto = row.querySelector('.monto-output')?.value || '0.00';
-      
-      if(y > 220) { doc.addPage(); y = 20; }
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`${planta}:`, margin, y);
-      y += 8;
-      
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Área: ${area} m² | Valor Base: Q${vbase} | Coeficiente: ${coef} | Monto: Q${monto}`, margin + 10, y);
-      y += 12;
-
-      const hiddenInput = row.querySelector('.typology-id-input');
-      const tipologiaIdNivel = hiddenInput?.value;
-      
-      if (tipologiaIdNivel) {
-        try {
-          const tipologias = __getTipos();
-          for (const tipologia of tipologias) {
-            const variante = tipologia.variants.find(v => v.id === tipologiaIdNivel);
-            if (variante) {
-              doc.setFontSize(9);
-              doc.setFont('helvetica', 'bold');
-              doc.text(`Tipología: ${tipologia.category} - ${tipologia.type}`, margin + 10, y);
-              y += 6;
-              doc.setFont('helvetica', 'normal');
-              doc.text(`Variante: ${variante.title} (Q${variante.pricePerM2}/m²)`, margin + 10, y);
-              y += 10;
-              break;
-            }
-          }
-        } catch(e) {
-          console.warn(`Error cargando tipología para nivel ${i + 1}:`, e);
-        }
-      }
-    }
-
-    // Totales
-    if(y > 220) { doc.addPage(); y = 20; }
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('TOTAL CONSTRUCCIÓN:', margin, y);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Q${document.getElementById('totalConstruccion')?.value || '0.00'}`, margin + 60, y);
-    y += 15;
-
-    // Integración de Valores
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('INTEGRACIÓN DE VALORES:', margin, y);
-    y += 8;
-    
-    const totalTerreno = parseFloat(document.getElementById('totalTerreno')?.value) || 0;
-    const totalConstruccion = parseFloat(document.getElementById('totalConstruccion')?.value) || 0;
-    const totalAvaluo = totalTerreno + totalConstruccion;
-    
-    doc.setFontSize(10);
-    doc.text(`Valor Terreno: Q${totalTerreno.toFixed(2)}`, margin + 10, y);
-    y += 6;
-    doc.text(`Valor Construcción: Q${totalConstruccion.toFixed(2)}`, margin + 10, y);
-    y += 6;
-    doc.setFont('helvetica', 'bold');
-    doc.text(`TOTAL AVALÚO: Q${totalAvaluo.toFixed(2)}`, margin + 10, y);
-    y += 15;
-
-    // ========== PESTAÑA 4: RESULTADOS ==========
-    if(y > 200) { doc.addPage(); y = 20; }
-    doc.setFillColor(91, 123, 122);
-    doc.rect(margin, y-10, contentWidth, 20, 'F');
-    doc.setTextColor(255, 255, 255);
+    // ========== INFORMACIÓN BÁSICA ==========
+    doc.setFillColor(240, 240, 240);
+    doc.rect(margin, y, contentWidth, 15, 'F');
+    doc.setTextColor(91, 123, 122);
     doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text('4. RESULTADO FINAL DEL AVALÚO', margin + 10, y + 5);
-    y += 30;
+    doc.text('INFORMACIÓN GENERAL', margin + 10, y + 10);
+    y += 25;
 
-    const resultadosData = [
-      ['Área Construida:', document.getElementById('resultArea').textContent || '0 m²'],
-      ['Tipología:', document.getElementById('resultTypology').textContent || 'No especificada'],
-      ['Estado:', document.getElementById('resultCondition').textContent || 'No especificado'],
-      ['Antigüedad:', document.getElementById('resultAge').textContent || '0 años'],
-      ['Valor Terreno (sin ajuste):', document.getElementById('resultLandValue').textContent || 'Q0.00'],
-      ['Avalúo Terreno (con ajuste):', document.getElementById('resultLandAppraisal').textContent || 'Q0.00'],
-      ['Valor Construcción:', document.getElementById('resultBuildValue').textContent || 'Q0.00'],
-      ['TOTAL Terreno + Construcción:', document.getElementById('resultGrandTotal').textContent || 'Q0.00']
-    ];
+    // OBTENER DATOS REALES del formulario
+    const associateName = document.getElementById('associate-name').value || 'No especificado';
+    const address = document.getElementById('address').value || 'No especificado';
+    const constructionArea = document.getElementById('construction-area').value || '0';
+    const landArea = document.getElementById('land-area').value || '0';
+    const totalValue = document.getElementById('resultTotal').textContent || 'Q0.00';
 
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(11);
-    resultadosData.forEach(([label, value]) => {
-      if(y > 250) { doc.addPage(); y = 20; }
+    
+    doc.setFont('helvetica', 'bold');
+    doc.text('Asociado:', margin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(associateName, margin + 25, y);
+    y += 8;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Dirección:', margin, y);
+    doc.setFont('helvetica', 'normal');
+    const addressLines = doc.splitTextToSize(address, contentWidth - 30);
+    doc.text(addressLines, margin + 25, y);
+    y += (addressLines.length * 5) + 5;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Área Construida:', margin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(constructionArea + ' m²', margin + 40, y);
+    y += 8;
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Área Terreno:', margin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(landArea + ' m²', margin + 35, y);
+    y += 8;
+
+    // ========== RESULTADOS ==========
+    y += 10;
+    doc.setFillColor(240, 240, 240);
+    doc.rect(margin, y, contentWidth, 15, 'F');
+    doc.setTextColor(91, 123, 122);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('RESULTADOS DEL AVALÚO', margin + 10, y + 10);
+    y += 25;
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    
+    // Obtener todos los resultados
+    const resultados = [
+      ['Área Construida:', document.getElementById('resultArea').textContent],
+      ['Tipología:', document.getElementById('resultTypology').textContent],
+      ['Estado:', document.getElementById('resultCondition').textContent],
+      ['Antigüedad:', document.getElementById('resultAge').textContent],
+      ['Valor Terreno:', document.getElementById('resultLandValue').textContent],
+      ['Valor Construcción:', document.getElementById('resultBuildValue').textContent],
+      ['Total:', document.getElementById('resultGrandTotal').textContent]
+    ];
+
+    resultados.forEach(([label, value]) => {
+      if (y > 250) {
+        doc.addPage();
+        y = 20;
+      }
       doc.setFont('helvetica', 'bold');
       doc.text(label, margin, y);
       doc.setFont('helvetica', 'normal');
-      doc.text(value, margin + 70, y);
+      doc.text(value || 'No disponible', margin + 45, y);
       y += 10;
     });
 
+    // ========== VALOR TOTAL ==========
     y += 10;
-
-    // Valor Total Final
-    doc.setFillColor(240, 240, 240);
+    doc.setFillColor(91, 123, 122);
     doc.rect(margin, y, contentWidth, 25, 'F');
-    doc.setTextColor(91, 123, 122);
-    doc.setFontSize(18);
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
     doc.text('VALOR TOTAL ESTIMADO:', margin + 10, y + 10);
     doc.setFontSize(20);
-    doc.text(document.getElementById('resultTotal').textContent || 'Q0.00', margin + 10, y + 25);
+    doc.text(totalValue, margin + 10, y + 25);
 
-    // Pie de página
+    // ========== PIE DE PÁGINA ==========
     const totalPages = doc.internal.getNumberOfPages();
     for(let i = 1; i <= totalPages; i++){
       doc.setPage(i);
       doc.setFontSize(8);
       doc.setTextColor(128, 128, 128);
-      doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos - ${new Date().toLocaleDateString('es-GT')}`, 
+      doc.text(`Página ${i} de ${totalPages} - ${new Date().toLocaleDateString('es-GT')}`, 
               pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
     }
 
-    // Guardar PDF
-    const fileName = `Avaluo_${document.getElementById('associate-name').value || 'Propiedad'}_${new Date().toISOString().slice(0, 10)}.pdf`;
+    // ========== GUARDAR PDF ==========
+    const fileName = `Avaluo_${associateName.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().slice(0, 10)}.pdf`;
+    console.log('💾 Guardando PDF:', fileName);
     doc.save(fileName);
+    console.log('✅ PDF generado exitosamente');
 
   } catch(error) {
-    console.error('Error generando PDF:', error); 
+    console.error('❌ Error generando PDF:', error);
     alert('Error al generar el PDF: ' + error.message);
-  } finally { 
-    loadingOverlay.style.display = 'none'; 
+  } finally {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
   }
 }
-
-function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);});}
 
     class FormWizard{
       constructor(){this.currentStep=1; this.totalSteps=4; this.init();}
