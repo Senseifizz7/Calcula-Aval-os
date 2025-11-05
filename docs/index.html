@@ -3701,19 +3701,21 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         const canvas = await html2canvas(mapElement, {
           useCORS: true,
           allowTaint: true,
-          scale: 0.7,
+          scale: 1,
           logging: false
         });
         
         const mapImage = canvas.toDataURL('image/jpeg', 0.7);
-        doc.addImage(mapImage, 'JPEG', margin, y, contentWidth, 100);
-        y += 110;
+        doc.addImage(mapImage, 'JPEG', margin, y, contentWidth, 80);
+        y += 90;
       }
     } catch (error) {
       console.warn('No se pudo capturar el mapa:', error);
       doc.text('Mapa no disponible', margin, y);
       y += 20;
     }
+
+    // ... (mantener las secciones existentes de datos registrales, colindancias, información del solar)
 
     // 2. CARACTERÍSTICAS CONSTRUCTIVAS
     if(y > 200) { doc.addPage(); y = 20; }
@@ -3745,11 +3747,11 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
             
             await new Promise((resolve) => {
               img.onload = resolve;
-              img.onerror = resolve;
+              img.onerror = resolve; // Continuar aunque falle la imagen
             });
             
-            const imgWidth = contentWidth * 0.5;
-            const imgHeight = 60;
+            const imgWidth = contentWidth * 0.6;
+            const imgHeight = 80;
             doc.addImage(variante.img, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
             y += imgHeight + 10;
             
@@ -3764,6 +3766,8 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         console.warn('Error cargando imagen de tipología:', e);
       }
     }
+
+    // ... (mantener sección de características constructivas existente)
 
     // EVIDENCIA FOTOGRÁFICA
     const imagePreviews = document.querySelectorAll('#image-preview .image-preview-item img');
@@ -3789,8 +3793,8 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         
         try {
           const imgSrc = imagePreviews[i].src;
-          const imgWidth = contentWidth * 0.4;
-          const imgHeight = 70;
+          const imgWidth = contentWidth * 0.8;
+          const imgHeight = 100;
           
           doc.addImage(imgSrc, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
           y += imgHeight + 15;
@@ -3854,8 +3858,8 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
               y += 8;
               
               // Agregar imagen de la tipología del nivel
-              const imgWidth = contentWidth * 0.4;
-              const imgHeight = 50;
+              const imgWidth = contentWidth * 0.5;
+              const imgHeight = 60;
               doc.addImage(variante.img, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
               y += imgHeight + 10;
               
@@ -3872,28 +3876,6 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       }
     }
 
-    // ... (resto del código existente de su PDF)
-    
-    // NUMERACIÓN DE PÁGINAS
-    const totalPages = doc.internal.getNumberOfPages();
-    for(let i = 1; i <= totalPages; i++){
-      doc.setPage(i); 
-      doc.setFontSize(8); 
-      doc.setTextColor(128, 128, 128);
-      doc.text(`Página ${i} de ${totalPages} - Sistema de Avalúos - ${new Date().toLocaleDateString('es-GT')}`, pageWidth/2, doc.internal.pageSize.getHeight()-10, { align: 'center' });
-    }
-
-    // GUARDAR PDF
-    const fileName = `Avaluo_${document.getElementById('associate-name').value || 'Propiedad'}_${new Date().toISOString().slice(0, 10)}.pdf`;
-    doc.save(fileName);
-
-  } catch(error) {
-    console.error('Error generando PDF:', error); 
-    alert('Error al generar el PDF: ' + error.message);
-  } finally { 
-    loadingOverlay.style.display = 'none'; 
-  }
-}
     // ... (mantener el resto de la función generateReport existente)
 
     // NUMERACIÓN DE PÁGINAS
