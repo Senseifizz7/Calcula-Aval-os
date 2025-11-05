@@ -3623,6 +3623,12 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
   loadingOverlay.style.display = 'flex';
   
   try {
+    // Verificar que estamos en el paso correcto antes de generar
+    if(!document.getElementById('resultSection').classList.contains('active')) {
+      alert('Primero debes calcular el avalúo antes de generar el PDF');
+      return;
+    }
+
     if(typeof window.jspdf === 'undefined') { 
       await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'); 
     }
@@ -3658,7 +3664,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text('1. INFORMACIÓN GENERAL', margin, y); 
     y += 20;
 
-    // Datos básicos Pestaña 1
+    // Datos básicos
     const basicData = [
       ['Asociado:', document.getElementById('associate-name').value || 'No especificado'],
       ['Dirección:', document.getElementById('address').value || 'No especificado'],
@@ -3682,7 +3688,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     y += 10;
 
-    // DATOS REGISTRALES Pestaña 1
+    // Datos Registrales
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
@@ -3711,7 +3717,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       y += 8;
     });
 
-    // COLINDANCIAS Pestaña 1
+    // Colindancias
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
@@ -3742,7 +3748,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       y += 8;
     });
 
-    // INFORMACIÓN DEL SOLAR Pestaña 1
+    // Información del Solar
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
@@ -3753,35 +3759,37 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     y += 20;
 
     const solarData = [
-      ['Calles - Concreto:', document.getElementById('calle-concreto').value || ''],
-      ['Calles - Adoquín:', document.getElementById('calle-adoquin').value || ''],
-      ['Calles - Servidumbre:', document.getElementById('calle-servidumbre').value || ''],
-      ['Calles - Vereda:', document.getElementById('calle-vereda').value || ''],
-      ['Calles - Tierra:', document.getElementById('calle-tierra').value || ''],
-      ['Calles - Asfalto:', document.getElementById('calle-asfalto').value || ''],
-      ['Servicios - Electricidad:', document.getElementById('servicio-electricidad').value || ''],
-      ['Servicios - Agua:', document.getElementById('servicio-agua').value || ''],
-      ['Servicios - Teléfono:', document.getElementById('servicio-telefono').value || ''],
-      ['Servicios - Drenaje:', document.getElementById('servicio-drenaje').value || ''],
-      ['Ubicación - Esquina:', document.getElementById('ubicacion-esquina').value || ''],
-      ['Ubicación - Medial:', document.getElementById('ubicacion-medial').value || ''],
-      ['Clasificación - Urbano:', document.getElementById('clasificacion-urbano').value || ''],
-      ['Clasificación - Rústico:', document.getElementById('clasificacion-rustico').value || '']
+      ['Concreto:', document.getElementById('calle-concreto').value || ''],
+      ['Adoquín:', document.getElementById('calle-adoquin').value || ''],
+      ['Servidumbre:', document.getElementById('calle-servidumbre').value || ''],
+      ['Vereda:', document.getElementById('calle-vereda').value || ''],
+      ['Tierra:', document.getElementById('calle-tierra').value || ''],
+      ['Asfalto:', document.getElementById('calle-asfalto').value || ''],
+      ['Electricidad:', document.getElementById('servicio-electricidad').value || ''],
+      ['Agua:', document.getElementById('servicio-agua').value || ''],
+      ['Teléfono:', document.getElementById('servicio-telefono').value || ''],
+      ['Drenaje:', document.getElementById('servicio-drenaje').value || ''],
+      ['Acera:', document.getElementById('servicio-acera').value || ''],
+      ['Bordillo:', document.getElementById('servicio-bordillo').value || ''],
+      ['Esquina:', document.getElementById('ubicacion-esquina').value || ''],
+      ['Medial:', document.getElementById('ubicacion-medial').value || ''],
+      ['Urbano:', document.getElementById('clasificacion-urbano').value || ''],
+      ['Rústico:', document.getElementById('clasificacion-rustico').value || '']
     ];
 
     doc.setFontSize(9);
     solarData.forEach(([label, value]) => {
       if(y > 250) { doc.addPage(); y = 20; }
-      if(value) { // Solo mostrar si tiene valor
+      if(value) {
         doc.setFont('helvetica', 'bold'); 
         doc.text(label, margin, y);
         doc.setFont('helvetica', 'normal'); 
-        doc.text(value, margin + 65, y);
+        doc.text(value, margin + 35, y);
         y += 7;
       }
     });
 
-    // MAPA - SOLUCIÓN CORS: Mostrar coordenadas en lugar de imagen
+    // Ubicación Geográfica
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
@@ -3807,7 +3815,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text(addressLines, margin, y + 8);
     y += (addressLines.length * 8) + 15;
 
-    // ========== PESTAÑA 2: CARACTERÍSTICAS CONSTRUCTIVAS ==========
+    // ========== PESTAÑA 2: CARACTERÍSTICAS ==========
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
@@ -3817,7 +3825,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text('2. CARACTERÍSTICAS CONSTRUCTIVAS', margin, y); 
     y += 20;
 
-    // CATÁLOGO - Información sin imágenes (por CORS)
+    // Tipología seleccionada
     const tipologiaId = document.getElementById('typology').value;
     if(tipologiaId) {
       try {
@@ -3836,23 +3844,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
             y += 8;
             doc.setFont('helvetica', 'normal');
             doc.text(`Precio: Q${variante.pricePerM2}/m²`, margin, y);
-            y += 8;
-            
-            // Mostrar descripción de características
-            if(variante.bullets && variante.bullets.length > 0) {
-              doc.text('Características principales:', margin, y);
-              y += 8;
-              doc.setFontSize(9);
-              variante.bullets.forEach(bullet => {
-                if(y > 250) { doc.addPage(); y = 20; }
-                const bulletText = bullet.replace(/^[–-]\s*/, ''); // Remover guión inicial
-                const lines = doc.splitTextToSize('• ' + bulletText, contentWidth - 10);
-                doc.text(lines, margin + 5, y);
-                y += (lines.length * 5) + 2;
-              });
-              doc.setFontSize(11);
-            }
-            y += 10;
+            y += 15;
             break;
           }
         }
@@ -3861,8 +3853,8 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       }
     }
 
-    // CARACTERÍSTICAS CONSTRUCTIVAS Pestaña 2
-    if(y > 200) { doc.addPage(); y = 20; }
+    // Características Constructivas
+    if(y > 220) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
     doc.setTextColor(91, 123, 122); 
@@ -3899,7 +3891,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       y += 7;
     });
 
-    // OTROS DETALLES Pestaña 2
+    // Otros Detalles
     const otrosDetalles = document.getElementById('otros-detalles').value;
     if(otrosDetalles) {
       if(y > 220) { doc.addPage(); y = 20; }
@@ -3918,7 +3910,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       y += (detallesLines.length * 6) + 10;
     }
 
-    // EVIDENCIAS FOTOGRÁFICAS Pestaña 2 (ESTAS SÍ FUNCIONAN)
+    // Evidencias Fotográficas
     const imagePreviews = document.querySelectorAll('#image-preview .image-preview-item img');
     if(imagePreviews.length > 0) {
       if(y > 150) { doc.addPage(); y = 20; }
@@ -3936,7 +3928,6 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       doc.text(`Total de evidencias: ${imagePreviews.length} imagen(es)`, margin, y);
       y += 10;
 
-      // Agregar imágenes de evidencia (funcionan porque son base64)
       for (let i = 0; i < imagePreviews.length; i++) {
         if(y > 180 && i % 2 === 0) { 
           doc.addPage(); 
@@ -3976,7 +3967,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text('3. CÁLCULOS Y VALORACIONES', margin, y); 
     y += 20;
 
-    // VALOR DEL TERRENO Pestaña 3
+    // Valor del Terreno
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('3.1 VALOR DEL TERRENO', margin, y);
@@ -4005,7 +3996,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     y += 10;
 
-    // VALOR DE CONSTRUCCIÓN Pestaña 3
+    // Valor de Construcción
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
@@ -4022,7 +4013,6 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       const coef = row.querySelector('.coef-input')?.value || '1';
       const monto = row.querySelector('.monto-output')?.value || '0.00';
       
-      // Información del nivel
       if(y > 220) { doc.addPage(); y = 20; }
       doc.setFontSize(11);
       doc.setFont('helvetica', 'bold');
@@ -4034,7 +4024,6 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       doc.text(`Área: ${area} m² | Valor Base: Q${vbase} | Coeficiente: ${coef} | Monto: Q${monto}`, margin + 10, y);
       y += 12;
 
-      // Información de tipología del nivel (sin imagen por CORS)
       const hiddenInput = row.querySelector('.typology-id-input');
       const tipologiaIdNivel = hiddenInput?.value;
       
@@ -4060,7 +4049,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       }
     }
 
-    // TOTALES Pestaña 3
+    // Totales
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
@@ -4069,7 +4058,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text(`Q${document.getElementById('totalConstruccion')?.value || '0.00'}`, margin + 60, y);
     y += 15;
 
-    // INTEGRACIÓN DE VALORES Pestaña 3
+    // Integración de Valores
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('INTEGRACIÓN DE VALORES:', margin, y);
@@ -4098,7 +4087,6 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text('4. RESULTADO FINAL DEL AVALÚO', margin + 10, y + 5);
     y += 30;
 
-    // Datos de resultados Pestaña 4
     const resultadosData = [
       ['Área Construida:', document.getElementById('resultArea').textContent || '0 m²'],
       ['Tipología:', document.getElementById('resultTypology').textContent || 'No especificada'],
@@ -4123,7 +4111,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     y += 10;
 
-    // VALOR TOTAL FINAL
+    // Valor Total Final
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y, contentWidth, 25, 'F');
     doc.setTextColor(91, 123, 122);
@@ -4133,7 +4121,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.setFontSize(20);
     doc.text(document.getElementById('resultTotal').textContent || 'Q0.00', margin + 10, y + 25);
 
-    // ========== PIE DE PÁGINA ==========
+    // Pie de página
     const totalPages = doc.internal.getNumberOfPages();
     for(let i = 1; i <= totalPages; i++){
       doc.setPage(i);
@@ -4143,7 +4131,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
               pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
     }
 
-    // GUARDAR PDF
+    // Guardar PDF
     const fileName = `Avaluo_${document.getElementById('associate-name').value || 'Propiedad'}_${new Date().toISOString().slice(0, 10)}.pdf`;
     doc.save(fileName);
 
@@ -4154,7 +4142,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     loadingOverlay.style.display = 'none'; 
   }
 }
-    
+
 function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement('script');s.src=src; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);});}
 
     class FormWizard{
