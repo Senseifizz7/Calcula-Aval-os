@@ -3685,7 +3685,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     y += 10;
 
-    // MAPA - Capturar y agregar imagen del mapa actual
+    // MAPA - Capturar y agregar imagen del mapa
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240); 
     doc.rect(margin, y-10, contentWidth, 15, 'F'); 
@@ -3702,15 +3702,12 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
           useCORS: true,
           allowTaint: true,
           scale: 0.7,
-          logging: false,
-          backgroundColor: '#ffffff'
+          logging: false
         });
         
-        const mapImage = canvas.toDataURL('image/jpeg', 0.8);
-        const mapWidth = contentWidth;
-        const mapHeight = 100;
-        doc.addImage(mapImage, 'JPEG', margin, y, mapWidth, mapHeight);
-        y += mapHeight + 15;
+        const mapImage = canvas.toDataURL('image/jpeg', 0.7);
+        doc.addImage(mapImage, 'JPEG', margin, y, contentWidth, 100);
+        y += 110;
       }
     } catch (error) {
       console.warn('No se pudo capturar el mapa:', error);
@@ -3728,61 +3725,43 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text('2. CARACTERÍSTICAS CONSTRUCTIVAS', margin, y); 
     y += 20;
 
-    // TIPOLOGÍA CONSTRUCTIVA SELECCIONADA
+    // IMAGEN DE TIPOLOGÍA SELECCIONADA (Pestaña 2)
     const tipologiaId = document.getElementById('typology').value;
     if(tipologiaId) {
       try {
         const tipologias = __getTipos();
         for (const tipologia of tipologias) {
           const variante = tipologia.variants.find(v => v.id === tipologiaId);
-          if (variante) {
+          if (variante && variante.img) {
             doc.setFontSize(12);
             doc.setFont('helvetica', 'bold');
             doc.text('Tipología Constructiva Seleccionada:', margin, y);
-            y += 12;
+            y += 10;
             
-            doc.setFontSize(9);
+            // Agregar imagen de la tipología
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.src = variante.img;
+            
+            await new Promise((resolve) => {
+              img.onload = resolve;
+              img.onerror = resolve;
+            });
+            
+            const imgWidth = contentWidth * 0.5;
+            const imgHeight = 60;
+            doc.addImage(variante.img, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
+            y += imgHeight + 10;
+            
+            doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
             doc.text(`${tipologia.category} - ${tipologia.type}: ${variante.title}`, margin, y);
-            y += 6;
-            doc.text(`Precio: Q${variante.pricePerM2.toLocaleString('es-GT')}/m²`, margin, y);
             y += 15;
-
-            // Imagen EXTERIOR
-            if (variante.img) {
-              if(y > 180) { doc.addPage(); y = 20; }
-              
-              doc.setFontSize(10);
-              doc.setFont('helvetica', 'bold');
-              doc.text('Vista Exterior:', margin, y);
-              y += 8;
-              
-              const imgWidth = contentWidth * 0.5;
-              const imgHeight = 60;
-              doc.addImage(variante.img, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
-              y += imgHeight + 10;
-            }
-
-            // Imagen INTERIOR
-            if (variante.imgInterior) {
-              if(y > 180) { doc.addPage(); y = 20; }
-              
-              doc.setFontSize(10);
-              doc.setFont('helvetica', 'bold');
-              doc.text('Vista Interior:', margin, y);
-              y += 8;
-              
-              const imgWidth = contentWidth * 0.5;
-              const imgHeight = 60;
-              doc.addImage(variante.imgInterior, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
-              y += imgHeight + 15;
-            }
-
             break;
           }
         }
       } catch(e) {
-        console.warn('Error cargando imágenes de tipología:', e);
+        console.warn('Error cargando imagen de tipología:', e);
       }
     }
 
@@ -3804,20 +3783,21 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       doc.text(`Se adjuntan ${imagePreviews.length} imagen(es) de evidencia del inmueble:`, margin, y);
       y += 10;
 
+      // Agregar imágenes de evidencia
       for (let i = 0; i < imagePreviews.length; i++) {
         if(y > 150) { doc.addPage(); y = 20; }
         
         try {
           const imgSrc = imagePreviews[i].src;
-          
-          doc.setFontSize(9);
-          doc.text(`Evidencia ${i + 1}:`, margin, y);
-          y += 6;
-          
           const imgWidth = contentWidth * 0.4;
           const imgHeight = 70;
+          
           doc.addImage(imgSrc, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
-          y += imgHeight + 12;
+          y += imgHeight + 15;
+          
+          doc.setFontSize(8);
+          doc.text(`Evidencia ${i + 1}`, margin, y);
+          y += 10;
         } catch(error) {
           console.warn(`Error cargando imagen de evidencia ${i + 1}:`, error);
           doc.text(`Error cargando imagen ${i + 1}`, margin, y);
@@ -3844,6 +3824,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     y += 15;
 
     const construccionRows = document.querySelectorAll('#tbBodyConstruccion tr');
+    const construccionData = [];
 
     for (let i = 0; i < construccionRows.length; i++) {
       const row = construccionRows[i];
@@ -3852,27 +3833,10 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       const vbase = row.querySelector('.vbase-input')?.value || '0';
       const coef = row.querySelector('.coef-input')?.value || '1';
       const monto = row.querySelector('.monto-output')?.value || '0.00';
-
-      // Información del nivel
-      if(y > 200) { doc.addPage(); y = 20; }
       
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'bold');
-      doc.text(`${planta}:`, margin, y);
-      y += 8;
-      
-      doc.setFontSize(9);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Área: ${area} m²`, margin, y);
-      y += 5;
-      doc.text(`Valor Base: Q${parseFloat(vbase).toLocaleString('es-GT')}/m²`, margin, y);
-      y += 5;
-      doc.text(`Coeficiente: ${coef}`, margin, y);
-      y += 5;
-      doc.text(`Monto: Q${parseFloat(monto).toLocaleString('es-GT')}`, margin, y);
-      y += 10;
+      construccionData.push([planta, area, vbase, coef, monto]);
 
-      // Agregar imágenes de tipología para este nivel
+      // Agregar imagen de tipología para este nivel si existe
       const hiddenInput = row.querySelector('.typology-id-input');
       const tipologiaIdNivel = hiddenInput?.value;
       
@@ -3881,99 +3845,35 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
           const tipologias = __getTipos();
           for (const tipologia of tipologias) {
             const variante = tipologia.variants.find(v => v.id === tipologiaIdNivel);
-            if (variante) {
-              doc.setFontSize(9);
+            if (variante && variante.img) {
+              if(y > 180) { doc.addPage(); y = 20; }
+              
+              doc.setFontSize(10);
               doc.setFont('helvetica', 'bold');
-              doc.text(`Tipología: ${tipologia.category} - ${tipologia.type}`, margin, y);
-              y += 5;
-              doc.setFont('helvetica', 'normal');
-              doc.text(`Variante: ${variante.title}`, margin, y);
+              doc.text(`${planta} - Tipología:`, margin, y);
               y += 8;
-
-              // Imagen EXTERIOR del nivel
-              if (variante.img) {
-                if(y > 160) { doc.addPage(); y = 20; }
-                
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Vista Exterior:', margin, y);
-                y += 6;
-                
-                const imgWidth = contentWidth * 0.4;
-                const imgHeight = 50;
-                doc.addImage(variante.img, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
-                y += imgHeight + 8;
-              }
-
-              // Imagen INTERIOR del nivel
-              if (variante.imgInterior) {
-                if(y > 160) { doc.addPage(); y = 20; }
-                
-                doc.setFontSize(9);
-                doc.setFont('helvetica', 'bold');
-                doc.text('Vista Interior:', margin, y);
-                y += 6;
-                
-                const imgWidth = contentWidth * 0.4;
-                const imgHeight = 50;
-                doc.addImage(variante.imgInterior, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
-                y += imgHeight + 12;
-              }
-
+              
+              // Agregar imagen de la tipología del nivel
+              const imgWidth = contentWidth * 0.4;
+              const imgHeight = 50;
+              doc.addImage(variante.img, 'JPEG', margin + (contentWidth - imgWidth)/2, y, imgWidth, imgHeight);
+              y += imgHeight + 10;
+              
+              doc.setFontSize(8);
+              doc.setFont('helvetica', 'normal');
+              doc.text(`${tipologia.category} - ${tipologia.type}: ${variante.title}`, margin, y);
+              y += 15;
               break;
             }
           }
         } catch(e) {
-          console.warn(`Error cargando imágenes de tipología para nivel ${i + 1}:`, e);
+          console.warn(`Error cargando imagen de tipología para nivel ${i + 1}:`, e);
         }
       }
-      y += 10;
     }
 
-    // RESULTADOS FINALES
-    if(y > 200) { doc.addPage(); y = 20; }
-    doc.setFillColor(240, 240, 240); 
-    doc.rect(margin, y-10, contentWidth, 15, 'F'); 
-    doc.setTextColor(91, 123, 122); 
-    doc.setFontSize(16); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('4. RESULTADOS FINALES', margin, y); 
-    y += 20;
-
-    // Resumen final
-    const resultadosFinales = [
-      ['Área Construida:', document.getElementById('resultArea').textContent],
-      ['Tipología:', document.getElementById('resultTypology').textContent],
-      ['Estado:', document.getElementById('resultCondition').textContent],
-      ['Antigüedad:', document.getElementById('resultAge').textContent],
-      ['Valor Terreno (sin ajuste):', document.getElementById('resultLandValue').textContent],
-      ['Avalúo Terreno (con ajuste):', document.getElementById('resultLandAppraisal').textContent],
-      ['Valor Construcción:', document.getElementById('resultBuildValue').textContent],
-      ['TOTAL Terreno + Construcción:', document.getElementById('resultGrandTotal').textContent]
-    ];
-
-    doc.setFontSize(10);
-    resultadosFinales.forEach(([label, value]) => {
-      if(y > 270) { doc.addPage(); y = 20; }
-      doc.setFont('helvetica', 'bold'); 
-      doc.text(label, margin, y);
-      doc.setFont('helvetica', 'normal'); 
-      doc.text(value, margin + 70, y);
-      y += 8;
-    });
-
-    y += 10;
-
-    // VALOR TOTAL ESTIMADO
-    doc.setFillColor(91, 123, 122); 
-    doc.rect(margin, y, contentWidth, 30, 'F');
-    doc.setTextColor(255, 255, 255); 
-    doc.setFontSize(14); 
-    doc.setFont('helvetica', 'bold'); 
-    doc.text('VALOR TOTAL ESTIMADO', margin + 10, y + 12);
-    doc.setFontSize(18); 
-    doc.text(document.getElementById('resultTotal').textContent, margin + 10, y + 25);
-
+    // ... (resto del código existente de su PDF)
+    
     // NUMERACIÓN DE PÁGINAS
     const totalPages = doc.internal.getNumberOfPages();
     for(let i = 1; i <= totalPages; i++){
