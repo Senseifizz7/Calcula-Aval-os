@@ -4302,7 +4302,130 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     window.supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+    // ==================== SISTEMA DE COOPERATIVAS ====================
+
+// 1. Función para obtener usuario actual con rol
+function obtenerUsuarioActual() {
+  try {
+    const session = supabase.auth.getSession();
+    if (!session) return null;
     
+    const user = session.user;
+    return {
+      ...user,
+      rol: user.user_metadata?.rol || 'asesor',
+      cooperativa_id: user.user_metadata?.cooperativa_id || null
+    };
+  } catch (error) {
+    console.error('Error obteniendo usuario:', error);
+    return null;
+  }
+}
+
+// 2. Función para crear cooperativa (solo super_admin)
+async function crearCooperativa(nombre, emailGerente) {
+  try {
+    const usuario = obtenerUsuarioActual();
+    
+    if (!usuario || usuario.rol !== 'super_admin') {
+      alert('❌ Solo Super Admin puede crear cooperativas');
+      return;
+    }
+
+    console.log('🔄 Creando cooperativa:', nombre);
+
+    // Crear cooperativa
+    const { data: coop, error: errorCoop } = await supabase
+      .from('cooperativas')
+      .insert({ 
+        nombre: nombre, 
+        email_contacto: emailGerente 
+      })
+      .select()
+      .single();
+
+    if (errorCoop) throw new Error('Error creando cooperativa: ' + errorCoop.message);
+
+    // Invitar gerente
+    const { error: errorInvite } = await supabase.auth.admin.inviteUserByEmail(emailGerente, {
+      data: {
+        rol: 'gerente',
+        cooperativa_id: coop.id
+      }
+    });
+
+    if (errorInvite) {
+      console.warn('⚠️ Error invitando gerente:', errorInvite);
+      // No lanzar error, la cooperativa ya se creó
+    }
+
+    alert(`✅ Cooperativa "${nombre}" creada exitosamente.\nInvitación enviada a: ${emailGerente}`);
+    
+  } catch (error) {
+    console.error('❌ Error completo:', error);
+    alert('Error: ' + error.message);
+  }
+}
+
+// 3. Función para mostrar/ocultar panel admin
+function togglePanelAdmin() {
+  const panel = document.getElementById('panel-admin');
+  const usuario = obtenerUsuarioActual();
+  
+  if (usuario?.rol === 'super_admin') {
+    if (panel.style.display === 'none') {
+      panel.style.display = 'block';
+      cargarCooperativas();
+    } else {
+      panel.style.display = 'none';
+    }
+  } else {
+    alert('Solo Super Admin puede acceder a este panel');
+  }
+}
+
+// 4. Función para cargar lista de cooperativas
+async function cargarCooperativas() {
+  try {
+    const { data: cooperativas, error } = await supabase
+      .from('cooperativas')
+      .select('*')
+      .order('fecha_creacion', { ascending: false });
+
+    if (error) throw error;
+
+    const lista = document.getElementById('lista-cooperativas');
+    if (lista && cooperativas) {
+      lista.innerHTML = cooperativas.map(coop => `
+        <div style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin: 8px 0;">
+          <strong>${coop.nombre}</strong><br>
+          <small>Email: ${coop.email_contacto || 'No especificado'}</small><br>
+          <small>Creada: ${new Date(coop.fecha_creacion).toLocaleDateString()}</small>
+        </div>
+      `).join('') || '<p>No hay cooperativas registradas</p>';
+    }
+  } catch (error) {
+    console.error('Error cargando cooperativas:', error);
+  }
+}
+
+// 5. Función auxiliar para el formulario
+function crearCooperativaDesdeForm() {
+  const nombre = document.getElementById('nombre-cooperativa').value;
+  const email = document.getElementById('email-gerente').value;
+  
+  if (!nombre || !email) {
+    alert('Por favor completa todos los campos');
+    return;
+  }
+  
+  crearCooperativa(nombre, email);
+  
+  // Limpiar formulario
+  document.getElementById('nombre-cooperativa').value = '';
+  document.getElementById('email-gerente').value = '';
+}
+   
     function __updateAuthUI(isLogged){
       const overlay = document.getElementById('auth-overlay');
       const userBox = document.getElementById('user-box');
@@ -4726,23 +4849,6 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         originalRenderTipos();
         setTimeout(fixTipologySelection, 100);
     };
-
-    // Función auxiliar para el formulario
-function crearCooperativaDesdeForm() {
-  const nombre = document.getElementById('nombre-cooperativa').value;
-  const email = document.getElementById('email-gerente').value;
-  
-  if (!nombre || !email) {
-    alert('Por favor completa todos los campos');
-    return;
-  }
-  
-  crearCooperativa(nombre, email);
-  
-  // Limpiar formulario
-  document.getElementById('nombre-cooperativa').value = '';
-  document.getElementById('email-gerente').value = '';
-}
   </script>
 </body>
 </html>
