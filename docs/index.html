@@ -4226,7 +4226,6 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       window.formWizard.goToStep(1);
     }
 
-    
     document.addEventListener('DOMContentLoaded', function() {
   // Tu código existente de formWizard...
   window.formWizard = new FormWizard();
@@ -4262,11 +4261,11 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
   })();
 
   
- document.getElementById('save-btn').addEventListener('click', async function(){ 
-  await saveCurrentAppraisal();
-});
-document.getElementById('pdf-btn').addEventListener('click', function(){ 
-  generateReport();
+  document.getElementById('save-btn').addEventListener('click', async function(){ 
+    await saveCurrentAppraisal();
+  });
+  document.getElementById('pdf-btn').addEventListener('click', function(){ generateReport(); });
+  
 });
 
 <script type="module">
