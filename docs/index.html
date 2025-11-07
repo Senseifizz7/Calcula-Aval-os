@@ -4262,15 +4262,14 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
   })();
 
   
-  document.getElementById('save-btn').addEventListener('click', async function(){ 
-    await saveCurrentAppraisal();
-  });
-  document.getElementById('pdf-btn').addEventListener('click', function(){ generateReport(); 
-  
+ document.getElementById('save-btn').addEventListener('click', async function(){ 
+  await saveCurrentAppraisal();
+});
+document.getElementById('pdf-btn').addEventListener('click', function(){ 
+  generateReport();
 });
 
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+<script type="module">
 
     const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
