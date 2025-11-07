@@ -4315,49 +4315,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       window.__session = session || null;
       __updateAuthUI(!!session);
     });
-function redirectByRole(rol) {
-  console.log("🔄 Redirigiendo por rol:", rol);
-  
-  
-  const elementos = document.querySelectorAll('.app-container, .gerente-dashboard, .super-admin-panel, .auth-overlay');
-  elementos.forEach(el => {
-    if (el) el.style.display = 'none';
-  });
-  
-  switch(rol) {
-    case 'asesor':
-      
-      const appContainer = document.querySelector('.app-container');
-      if (appContainer) appContainer.style.display = 'block';
-      break;
-      
-    case 'gerente':
-      
-      if (!document.querySelector('.gerente-dashboard')) {
-        crearPanelGerente();
-      }
-      const panelGerente = document.querySelector('.gerente-dashboard');
-      if (panelGerente) panelGerente.style.display = 'block';
-      break;
-      
-    case 'super_admin':
-      
-      if (!document.querySelector('.super-admin-panel')) {
-        crearPanelSuperAdmin();
-      }
-      const panelAdmin = document.querySelector('.super-admin-panel');
-      if (panelAdmin) {
-        panelAdmin.style.display = 'block';
-        cargarPanelSuperAdmin();
-      }
-      break;
-      
-    default:
-      console.error("Rol no reconocido:", rol);
-      alert("Rol no configurado: " + rol);
-      window.supabase.auth.signOut();
-  }
-}
+
     window.__signUpWithEmail = async (email, password, username) => {
       try {
         console.log("📝 Intentando registro con:", email);
@@ -4375,53 +4333,6 @@ function redirectByRole(rol) {
             emailRedirectTo: PUBLIC_APP_URL
           }
         });
-
-        function crearPanelSuperAdmin() {
-  console.log("🛠️ Creando panel Super Admin...");
-  
-  const panelHTML = `
-    <div class="super-admin-panel" style="display: none;">
-      <header class="app-header">
-        <h1><i class="fas fa-crown"></i> Panel Super Administrador</h1>
-      </header>
-
-      <div class="card">
-        <h2><i class="fas fa-plus-circle"></i> Crear Nueva Cooperativa</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="required">Nombre Cooperativa</label>
-            <input type="text" id="nombre-cooperativa" placeholder="Ej: Cooperativa La Esperanza">
-          </div>
-          <div class="form-group">
-            <label>RFC</label>
-            <input type="text" id="rfc-cooperativa" placeholder="Ej: COO123456789">
-          </div>
-          <div class="form-group">
-            <label class="required">Email del Gerente</label>
-            <input type="email" id="email-gerente" placeholder="gerente@cooperativa.com">
-          </div>
-          <div class="form-group">
-            <label class="required">Nombre del Gerente</label>
-            <input type="text" id="nombre-gerente" placeholder="Ej: Carlos Gómez">
-          </div>
-        </div>
-        <button class="btn-primary" onclick="crearCooperativaConGerente()">
-          <i class="fas fa-save"></i> Crear Cooperativa y Asignar Gerente
-        </button>
-      </div>
-
-      <div class="card">
-        <h2><i class="fas fa-building"></i> Cooperativas Existentes</h2>
-        <div id="lista-cooperativas" class="lista-cooperativas">
-          <div class="loading">Cargando cooperativas...</div>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  document.body.insertAdjacentHTML('beforeend', panelHTML);
-  console.log("✅ Panel Super Admin creado");
-}
 
         if (error) {
           console.error("❌ Error en registro:", error);
@@ -4476,70 +4387,33 @@ function redirectByRole(rol) {
     };
 
     window.__signInWithEmail = async (email, password) => {
-  try {
-    console.log("🔐 Intentando login con:", email);
-    
-    if (!email || !password) {
-      alert("Por favor ingresa email y contraseña");
-      return;
-    }
+      try {
+        console.log("🔐 Intentando login con:", email);
+        
+        if (!email || !password) {
+          alert("Por favor ingresa email y contraseña");
+          return;
+        }
 
-    const { data, error } = await window.supabase.auth.signInWithPassword({ 
-      email: email.trim(), 
-      password: password.trim() 
-    });
+        const { data, error } = await window.supabase.auth.signInWithPassword({ 
+          email: email.trim(), 
+          password: password.trim() 
+        });
 
-    if (error) {
-      console.error("❌ Error en login:", error);
-      
-      if (error.message?.includes('Invalid login credentials')) {
-        alert("Email o contraseña incorrectos");
-      } else if (error.message?.includes('Email not confirmed')) {
-        alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
-      } else if (error.message?.includes('Email rate limit exceeded')) {
-        alert("Demasiados intentos. Espera unos minutos.");
-      } else {
-        alert("Error al iniciar sesión: " + error.message);
-      }
-      return;
-    }
-
-    
-    console.log("✅ Login auth exitoso, buscando datos de usuario...");
-    const { data: usuarioData, error: userError } = await supabase
-      .from('usuarios')
-      .select('rol, cooperativa_id, nombre, activo')
-      .eq('email', email)
-      .single();
-
-    if (userError || !usuarioData) {
-      console.error("❌ Usuario no encontrado en tabla usuarios:", userError);
-      alert("Usuario no configurado en el sistema. Contacta al administrador.");
-      await supabase.auth.signOut();
-      return;
-    }
-
-    if (!usuarioData.activo) {
-      alert("Usuario desactivado. Contacta al administrador.");
-      await supabase.auth.signOut();
-      return;
-    }
-
-    
-    window.userRole = usuarioData.rol;
-    window.cooperativaId = usuarioData.cooperativa_id;
-    window.userName = usuarioData.nombre;
-
-    console.log("✅ Login completo. Rol:", usuarioData.rol, "Nombre:", usuarioData.nombre);
-
-    
-    redirectByRole(usuarioData.rol);
-
-  } catch (e) {
-    console.error("❌ Error completo en login:", e);
-    alert("Error al iniciar sesión: " + (e.message || e));
-  }
-};
+        if (error) {
+          console.error("❌ Error en login:", error);
+          
+          if (error.message?.includes('Invalid login credentials')) {
+            alert("Email o contraseña incorrectos");
+          } else if (error.message?.includes('Email not confirmed')) {
+            alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
+          } else if (error.message?.includes('Email rate limit exceeded')) {
+            alert("Demasiados intentos. Espera unos minutos.");
+          } else {
+            throw error;
+          }
+          return;
+        }
 
         
         window.__session = data.session;
@@ -4599,284 +4473,6 @@ function redirectByRole(rol) {
           return;
         }
 
-// =============================================
-// ✅ NUEVAS FUNCIONES - PEGAR DESPUÉS DE __signInWithGoogle
-// =============================================
-
-function redirectByRole(rol) {
-  console.log("🔄 Redirigiendo por rol:", rol);
-  
-  // Ocultar todo primero
-  const elementos = document.querySelectorAll('.app-container, .gerente-dashboard, .super-admin-panel, .auth-overlay');
-  elementos.forEach(el => {
-    if (el) el.style.display = 'none';
-  });
-  
-  switch(rol) {
-    case 'asesor':
-      // Mostrar formulario normal (tu app actual)
-      const appContainer = document.querySelector('.app-container');
-      if (appContainer) appContainer.style.display = 'block';
-      break;
-      
-    case 'gerente':
-      // Mostrar panel gerencial
-      if (!document.querySelector('.gerente-dashboard')) {
-        crearPanelGerente();
-      }
-      const panelGerente = document.querySelector('.gerente-dashboard');
-      if (panelGerente) panelGerente.style.display = 'block';
-      break;
-      
-    case 'super_admin':
-      // Mostrar panel super admin
-      if (!document.querySelector('.super-admin-panel')) {
-        crearPanelSuperAdmin();
-      }
-      const panelAdmin = document.querySelector('.super-admin-panel');
-      if (panelAdmin) {
-        panelAdmin.style.display = 'block';
-        cargarPanelSuperAdmin();
-      }
-      break;
-      
-    default:
-      console.error("Rol no reconocido:", rol);
-      alert("Rol no configurado: " + rol);
-      window.supabase.auth.signOut();
-  }
-}
-
-function crearPanelSuperAdmin() {
-  console.log("🛠️ Creando panel Super Admin...");
-  
-  const panelHTML = `
-    <div class="super-admin-panel" style="display: none;">
-      <header class="app-header">
-        <h1><i class="fas fa-crown"></i> Panel Super Administrador</h1>
-      </header>
-
-      <div class="card">
-        <h2><i class="fas fa-plus-circle"></i> Crear Nueva Cooperativa</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="required">Nombre Cooperativa</label>
-            <input type="text" id="nombre-cooperativa" placeholder="Ej: Cooperativa La Esperanza">
-          </div>
-          <div class="form-group">
-            <label>RFC</label>
-            <input type="text" id="rfc-cooperativa" placeholder="Ej: COO123456789">
-          </div>
-          <div class="form-group">
-            <label class="required">Email del Gerente</label>
-            <input type="email" id="email-gerente" placeholder="gerente@cooperativa.com">
-          </div>
-          <div class="form-group">
-            <label class="required">Nombre del Gerente</label>
-            <input type="text" id="nombre-gerente" placeholder="Ej: Carlos Gómez">
-          </div>
-        </div>
-        <button class="btn-primary" onclick="crearCooperativaConGerente()">
-          <i class="fas fa-save"></i> Crear Cooperativa y Asignar Gerente
-        </button>
-      </div>
-
-      <div class="card">
-        <h2><i class="fas fa-building"></i> Cooperativas Existentes</h2>
-        <div id="lista-cooperativas" class="lista-cooperativas">
-          <div class="loading">Cargando cooperativas...</div>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  document.body.insertAdjacentHTML('beforeend', panelHTML);
-  console.log("✅ Panel Super Admin creado");
-}
-
-async function crearCooperativaConGerente() {
-  const nombreCooperativa = document.getElementById('nombre-cooperativa').value;
-  const rfc = document.getElementById('rfc-cooperativa').value;
-  const emailGerente = document.getElementById('email-gerente').value;
-  const nombreGerente = document.getElementById('nombre-gerente').value;
-
-  if (!nombreCooperativa || !emailGerente || !nombreGerente) {
-    alert('❌ Por favor completa todos los campos requeridos (marcados con *)');
-    return;
-  }
-
-  const btn = document.querySelector('.btn-primary');
-  const originalText = btn.innerHTML;
-  
-  try {
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando...';
-    btn.disabled = true;
-
-    console.log("🏗️ Creando cooperativa:", nombreCooperativa);
-
-    // 1. Crear la cooperativa
-    const { data: cooperativa, error: errorCoop } = await supabase
-      .from('cooperativas')
-      .insert([{
-        nombre: nombreCooperativa,
-        rfc: rfc,
-        creado_por: window.__session.user.id
-      }])
-      .select()
-      .single();
-
-    if (errorCoop) {
-      console.error('Error creando cooperativa:', errorCoop);
-      alert('❌ Error creando cooperativa: ' + errorCoop.message);
-      return;
-    }
-
-    console.log("✅ Cooperativa creada:", cooperativa.id);
-
-    // 2. Crear usuario gerente
-    const { data: gerente, error: errorGerente } = await supabase
-      .from('usuarios')
-      .insert([{
-        email: emailGerente,
-        nombre: nombreGerente,
-        cooperativa_id: cooperativa.id,
-        rol: 'gerente',
-        creado_por: window.__session.user.id
-      }])
-      .select()
-      .single();
-
-    if (errorGerente) {
-      console.error('Error creando gerente:', errorGerente);
-      // Rollback: eliminar cooperativa si falla
-      await supabase.from('cooperativas').delete().eq('id', cooperativa.id);
-      alert('❌ Error creando gerente: ' + errorGerente.message);
-      return;
-    }
-
-    console.log("✅ Gerente creado:", gerente.id);
-
-    // 3. Éxito completo
-    alert(`✅ ¡Cooperativa creada exitosamente!\n\n` +
-          `🏢 Cooperativa: ${nombreCooperativa}\n` +
-          `👤 Gerente: ${nombreGerente}\n` +
-          `📧 Email: ${emailGerente}\n\n` +
-          `El gerente puede iniciar sesión con su email y crear su contraseña.`);
-
-    // Limpiar formulario
-    document.getElementById('nombre-cooperativa').value = '';
-    document.getElementById('rfc-cooperativa').value = '';
-    document.getElementById('email-gerente').value = '';
-    document.getElementById('nombre-gerente').value = '';
-
-    // Recargar lista
-    cargarPanelSuperAdmin();
-
-  } catch (error) {
-    console.error('❌ Error completo:', error);
-    alert('❌ Error: ' + error.message);
-  } finally {
-    btn.innerHTML = originalText;
-    btn.disabled = false;
-  }
-}
-
-async function cargarPanelSuperAdmin() {
-  try {
-    console.log("📋 Cargando lista de cooperativas...");
-    
-    const listaContainer = document.getElementById('lista-cooperativas');
-    if (!listaContainer) {
-      console.error("No se encontró el contenedor de cooperativas");
-      return;
-    }
-
-    listaContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando cooperativas...</div>';
-
-    // Cargar cooperativas con sus gerentes
-    const { data: cooperativas, error } = await supabase
-      .from('cooperativas')
-      .select(`
-        *,
-        usuarios:usuarios!cooperativa_id(
-          nombre,
-          email,
-          rol
-        )
-      `)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error cargando cooperativas:', error);
-      throw error;
-    }
-
-    console.log("✅ Cooperativas cargadas:", cooperativas);
-
-    if (!cooperativas || cooperativas.length === 0) {
-      listaContainer.innerHTML = `
-        <div class="empty-state">
-          <i class="fas fa-building" style="font-size: 3rem; opacity: 0.5; margin-bottom: 16px;"></i>
-          <h4>No hay cooperativas creadas aún</h4>
-          <p>Crea tu primera cooperativa usando el formulario superior</p>
-        </div>
-      `;
-      return;
-    }
-
-    listaContainer.innerHTML = cooperativas.map(coop => {
-      const gerente = coop.usuarios?.find(u => u.rol === 'gerente');
-      
-      return `
-        <div class="cooperativa-item" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow);">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-            <div style="flex: 1;">
-              <h3 style="color: var(--primary); margin-bottom: 8px; font-size: 1.2rem;">${coop.nombre}</h3>
-              <div style="color: var(--text-light); font-size: 0.9rem; line-height: 1.5;">
-                <div><strong>RFC:</strong> ${coop.rfc || 'No especificado'}</div>
-                <div><strong>Gerente:</strong> ${gerente ? `${gerente.nombre} (${gerente.email})` : 'No asignado'}</div>
-                <div><strong>Creada:</strong> ${new Date(coop.created_at).toLocaleDateString('es-GT')}</div>
-                <div><strong>Estado:</strong> <span style="color: var(--success); font-weight: 600;">${coop.estado}</span></div>
-              </div>
-            </div>
-            <div style="display: flex; gap: 8px; flex-shrink: 0;">
-              <button class="btn-secondary btn-small" onclick="verDetallesCooperativa('${coop.id}')">
-                <i class="fas fa-eye"></i> Ver
-              </button>
-              <button class="btn-small" style="background: var(--error); color: white; border: none; border-radius: var(--radius-sm); padding: 8px 12px;" 
-                      onclick="suspenderCooperativa('${coop.id}')">
-                <i class="fas fa-pause"></i> Suspender
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    }).join('');
-
-  } catch (error) {
-    console.error('❌ Error cargando cooperativas:', error);
-    const listaContainer = document.getElementById('lista-cooperativas');
-    if (listaContainer) {
-      listaContainer.innerHTML = `
-        <div class="error" style="color: var(--error); text-align: center; padding: 20px;">
-          <i class="fas fa-exclamation-triangle"></i>
-          <div>Error cargando cooperativas: ${error.message}</div>
-        </div>
-      `;
-    }
-  }
-}
-
-
-function verDetallesCooperativa(coopId) {
-  alert("📊 Esta función mostrará los detalles de la cooperativa. La implementaremos después.");
-}
-
-function suspenderCooperativa(coopId) {
-  if (confirm("¿Estás seguro de que quieres suspender esta cooperativa? Los usuarios no podrán acceder temporalmente.")) {
-    alert("⏸️ Función de suspensión se implementará después.");
-  }
-}
         
         console.log("🔄 Redirigiendo a Google...");
 
@@ -5010,52 +4606,78 @@ function suspenderCooperativa(coopId) {
     window.__signOut = async () => { await window.supabase.auth.signOut(); };
     window.__canUseApp = () => !!window.__session;
 
-    document.addEventListener('DOMContentLoaded', function() {
-  // Tu código existente de formWizard...
-  window.formWizard = new FormWizard();
-  
-  // ✅ NUEVO: Verificar sesión y redirigir por rol
-  (async () => {
-    console.log("🔍 Verificando sesión existente...");
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (session) {
-      console.log("✅ Sesión encontrada, verificando rol...");
-      
-      // Obtener información del usuario
-      const { data: usuarioData, error } = await supabase
-        .from('usuarios')
-        .select('rol, cooperativa_id, nombre')
-        .eq('email', session.user.email)
-        .single();
-      
-      if (usuarioData && !error) {
-        window.userRole = usuarioData.rol;
-        window.cooperativaId = usuarioData.cooperativa_id;
-        window.userName = usuarioData.nombre;
-        
-        console.log("🎯 Usuario autenticado:", usuarioData.nombre, "Rol:", usuarioData.rol);
-        redirectByRole(usuarioData.rol);
-      } else {
-        console.error("❌ Error obteniendo datos de usuario:", error);
+    document.addEventListener('DOMContentLoaded', () => {
+      const nextBtn = document.getElementById('next-step');
+      if(nextBtn){
+        nextBtn.addEventListener('click', (e) => {
+          if(!window.__canUseApp()){
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            document.getElementById('auth-overlay').style.display='flex';
+            alert("Inicia sesión para continuar.");
+          }
+        }, true);
       }
-    } else {
-      console.log("🔐 No hay sesión activa");
-    }
-  })();
+    });
 
-  
-  document.getElementById('save-btn').addEventListener('click', async function(){ 
-    await saveCurrentAppraisal();
-  });
-  document.getElementById('pdf-btn').addEventListener('click', function(){ generateReport(); });
-  document.getElementById('catalogModal').addEventListener('click', function(e){ if(e.target===this){ __closeTypology(); } });
-  document.getElementById('closeModal').addEventListener('click', function(){ __closeTypology(); });
-  
-  
-  initImageModalEvents();
-  initImageUpload();
-});
+    const _origCalculate = window.calculateRealAppraisal;
+    if(_origCalculate){
+      window.calculateRealAppraisal = function(){
+        if(!window.__canUseApp()){
+          document.getElementById('auth-overlay').style.display='flex';
+          alert("Inicia sesión para calcular el avalúo.");
+          return;
+        }
+        return _origCalculate.apply(this, arguments);
+      };
+    }
+  </script>
+
+  <script>
+    (function () {
+      const url = new URL(window.location.href);
+      const hashStr = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+      const hash = new URLSearchParams(hashStr);
+      const qs = new URLSearchParams(url.search);
+      const msg = hash.get("error_description") || hash.get("error") || qs.get("error_description") || qs.get("error");
+      if (msg) {
+        console.error("Auth callback error:", msg);
+        alert("Autenticación: " + msg);
+      }
+    })();
+  </script>
+
+  <script>
+    // Agregar esta función para solucionar el problema de selección en pestaña 2
+    function fixTipologySelection() {
+        // Re-asignar los event listeners a los botones de selección
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.select-button')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const button = e.target.closest('.select-button');
+                const variantItem = button.closest('.typology-variant');
+                const tipologyId = variantItem?.getAttribute('data-id');
+                
+                if (tipologyId) {
+                    __selectTipo(tipologyId);
+                }
+            }
+        });
+    }
+
+    // Ejecutar cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function() {
+        fixTipologySelection();
+    });
+
+    // También ejecutar cada vez que se renderizan las tipologías
+    const originalRenderTipos = __renderTipos;
+    __renderTipos = function() {
+        originalRenderTipos();
+        setTimeout(fixTipologySelection, 100);
+    };
   </script>
 </body>
 </html>
