@@ -4305,16 +4305,27 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     // ==================== SISTEMA DE COOPERATIVAS ====================
 
 // 1. Función para obtener usuario actual con rol
-function obtenerUsuarioActual() {
+async function obtenerUsuarioActual() {
   try {
-    const session = supabase.auth.getSession();
-    if (!session) return null;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session || !session.user) return null;
     
-    const user = session.user;
+    // Obtener perfil de la base de datos
+    const { data: perfil, error } = await supabase
+      .from('perfiles_usuarios')
+      .select('rol, cooperativa_id')
+      .eq('id', session.user.id)
+      .single();
+    
+    if (error) {
+      console.log('Usuario sin perfil');
+      return null;
+    }
+    
     return {
-      ...user,
-      rol: user.user_metadata?.rol || 'asesor',
-      cooperativa_id: user.user_metadata?.cooperativa_id || null
+      ...session.user,
+      rol: perfil?.rol || 'asesor',
+      cooperativa_id: perfil?.cooperativa_id || null
     };
   } catch (error) {
     console.error('Error obteniendo usuario:', error);
@@ -4325,14 +4336,12 @@ function obtenerUsuarioActual() {
 // 2. Función para crear cooperativa (solo super_admin)
 async function crearCooperativa(nombre, emailGerente) {
   try {
-    const usuario = obtenerUsuarioActual();
+    const usuario = await obtenerUsuarioActual();
     
     if (!usuario || usuario.rol !== 'super_admin') {
       alert('❌ Solo Super Admin puede crear cooperativas');
       return;
     }
-
-    console.log('🔄 Creando cooperativa:', nombre);
 
     // Crear cooperativa
     const { data: coop, error: errorCoop } = await supabase
@@ -4344,38 +4353,26 @@ async function crearCooperativa(nombre, emailGerente) {
       .select()
       .single();
 
-    if (errorCoop) throw new Error('Error creando cooperativa: ' + errorCoop.message);
+    if (errorCoop) throw errorCoop;
 
-    // Invitar gerente
-    const { error: errorInvite } = await supabase.auth.admin.inviteUserByEmail(emailGerente, {
-      data: {
-        rol: 'gerente',
-        cooperativa_id: coop.id
-      }
-    });
-
-    if (errorInvite) {
-      console.warn('⚠️ Error invitando gerente:', errorInvite);
-      // No lanzar error, la cooperativa ya se creó
-    }
-
-    alert(`✅ Cooperativa "${nombre}" creada exitosamente.\nInvitación enviada a: ${emailGerente}`);
+    alert(`✅ Cooperativa "${nombre}" creada exitosamente`);
+    if (typeof cargarCooperativas === 'function') cargarCooperativas();
     
   } catch (error) {
-    console.error('❌ Error completo:', error);
+    console.error('❌ Error:', error);
     alert('Error: ' + error.message);
   }
 }
 
 // 3. Función para mostrar/ocultar panel admin
-function togglePanelAdmin() {
+async function togglePanelAdmin() {
   const panel = document.getElementById('panel-admin');
-  const usuario = obtenerUsuarioActual();
+  const usuario = await obtenerUsuarioActual();
   
   if (usuario?.rol === 'super_admin') {
-    if (panel.style.display === 'none') {
+    if (panel.style.display === 'none' || !panel.style.display) {
       panel.style.display = 'block';
-      cargarCooperativas();
+      if (typeof cargarCooperativas === 'function') cargarCooperativas();
     } else {
       panel.style.display = 'none';
     }
