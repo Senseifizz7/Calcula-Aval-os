@@ -5442,6 +5442,7 @@ if (document.readyState === 'loading') {
 }
 }
 
+// Función para gestionar cooperativas - VERSIÓN CORREGIDA
 async function gestionarCooperativas() {
   console.log('🔄 Cargando gestión de cooperativas...');
   
@@ -5499,22 +5500,22 @@ async function gestionarCooperativas() {
       `;
     } else {
       cooperativasHTML = cooperativas.map(coop => `
-        <div class="appraisal-item" style="cursor: pointer;" onclick="verDetallesCooperativa('${coop.id}')">
+        <div class="appraisal-item" style="cursor: pointer;" data-coop-id="${coop.id}">
           <div class="appraisal-header">
             <div class="appraisal-date">
               <i class="fas fa-building"></i> ${coop.nombre}
             </div>
             <div class="appraisal-actions">
-  <button class="btn-primary btn-small" onclick="event.stopPropagation(); asignarGerente('${coop.id}', '${coop.nombre}')">
-    <i class="fas fa-user-tie"></i> Asignar Gerente
-  </button>
-  <button class="btn-secondary btn-small" onclick="event.stopPropagation(); editarCooperativa('${coop.id}')">
-    <i class="fas fa-edit"></i> Editar
-  </button>
-  <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="event.stopPropagation(); eliminarCooperativa('${coop.id}')">
-    <i class="fas fa-trash"></i>
-  </button>
-</div>
+              <button class="btn-primary btn-small btn-asignar-gerente" data-coop-id="${coop.id}" data-coop-nombre="${coop.nombre}">
+                <i class="fas fa-user-tie"></i> Asignar Gerente
+              </button>
+              <button class="btn-secondary btn-small btn-editar-coop" data-coop-id="${coop.id}">
+                <i class="fas fa-edit"></i> Editar
+              </button>
+              <button class="btn-small btn-eliminar-coop" data-coop-id="${coop.id}" style="background: var(--error); color: white; border: none;">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </div>
           <div class="appraisal-details">
             <div><strong>Teléfono:</strong> ${coop.telefono || 'No especificado'}</div>
@@ -5527,6 +5528,40 @@ async function gestionarCooperativas() {
     }
     
     document.getElementById('cooperativas-list').innerHTML = cooperativasHTML;
+    
+    // Configurar event listeners DESPUÉS de generar el HTML
+    setTimeout(() => {
+      // Botones de asignar gerente
+      document.querySelectorAll('.btn-asignar-gerente').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const coopId = btn.getAttribute('data-coop-id');
+          const coopNombre = btn.getAttribute('data-coop-nombre');
+          asignarGerente(coopId, coopNombre);
+        });
+      });
+      
+      // Botones de editar
+      document.querySelectorAll('.btn-editar-coop').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const coopId = btn.getAttribute('data-coop-id');
+          editarCooperativa(coopId);
+        });
+      });
+      
+      // Botones de eliminar
+      document.querySelectorAll('.btn-eliminar-coop').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const coopId = btn.getAttribute('data-coop-id');
+          eliminarCooperativa(coopId);
+        });
+      });
+      
+      console.log('✅ Event listeners configurados');
+    }, 100);
+    
     cooperativasModal.classList.add('active');
     
   } catch (error) {
@@ -5539,7 +5574,7 @@ async function gestionarCooperativas() {
       </div>
     `;
   }
-}    
+}   
 
     // === FORZAR EJECUCIÓN AL CARGAR === //
 
