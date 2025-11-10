@@ -5196,19 +5196,14 @@ async function guardarCooperativa() {
     alert('El nombre de la cooperativa es requerido');
     return;
   }
-  
   try {
-    console.log('🔄 Guardando nueva cooperativa:', { nombre, telefono, direccion, activo });
-    
-    const { data, error } = await window.supabase
-      .from('cooperativas')
-      .insert([
-        {
-          nombre: nombre,
-          telefono: telefono || null,
-          direccion: direccion || null,
-          activo: activo
-        }
+  const coopModal = document.getElementById('cooperativas-modal');
+  if (coopModal && coopModal.classList.contains('active')) {
+    gestionarCooperativas();
+  }
+} catch (e) {
+  console.log('Modal de cooperativas no disponible para actualizar');
+}
       ])
       .select();
     
