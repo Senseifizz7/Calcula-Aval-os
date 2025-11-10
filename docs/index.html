@@ -5193,37 +5193,46 @@ async function guardarCooperativa() {
   const activo = document.getElementById('coop-activo').value === 'true';
   
   if (!nombre) {
-    alert('El nombre de la cooperativa es requerido');
-    return;
-  }
-  try {
-  const coopModal = document.getElementById('cooperativas-modal');
-  if (coopModal && coopModal.classList.contains('active')) {
-    gestionarCooperativas();
-  }
-} catch (e) {
-  console.log('Modal de cooperativas no disponible para actualizar');
+  alert('El nombre de la cooperativa es requerido');
+  return;
 }
-      ])
-      .select();
-    
-    if (error) throw error;
-    
-    console.log('✅ Cooperativa creada:', data);
-    
-    // Cerrar modal y mostrar mensaje
-    closeModal('crear-cooperativa-modal');
-    alert(`✅ Cooperativa "${nombre}" creada exitosamente`);
-    
-    // Si el modal de cooperativas está abierto, actualizarlo
-    if (document.getElementById('cooperativas-modal').classList.contains('active')) {
+
+try {
+  console.log('🔄 Guardando nueva cooperativa:', { nombre, telefono, direccion, activo });
+  
+  const { data, error } = await window.supabase
+    .from('cooperativas')
+    .insert([
+      {
+        nombre: nombre,
+        telefono: telefono || null,
+        direccion: direccion || null,
+        activo: activo
+      }
+    ])
+    .select();
+  
+  if (error) throw error;
+  
+  console.log('✅ Cooperativa creada:', data);
+  
+  // Cerrar modal y mostrar mensaje
+  closeModal('crear-cooperativa-modal');
+  alert(`✅ Cooperativa "${nombre}" creada exitosamente`);
+  
+  // Si el modal de cooperativas está abierto, actualizarlo - VERSIÓN SEGURA
+  try {
+    const coopModal = document.getElementById('cooperativas-modal');
+    if (coopModal && coopModal.classList.contains('active')) {
       gestionarCooperativas();
     }
-    
-  } catch (error) {
-    console.error('❌ Error creando cooperativa:', error);
-    alert('Error al crear cooperativa: ' + error.message);
+  } catch (e) {
+    console.log('Modal de cooperativas no disponible para actualizar');
   }
+  
+} catch (error) {
+  console.error('❌ Error creando cooperativa:', error);
+  alert('Error al crear cooperativa: ' + error.message);
 }
 // Función para gestionar usuarios
 async function gestionarUsuarios() {
