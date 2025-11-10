@@ -5065,13 +5065,16 @@ async function gestionarCooperativas() {
               <i class="fas fa-building"></i> ${coop.nombre}
             </div>
             <div class="appraisal-actions">
-              <button class="btn-secondary btn-small" onclick="event.stopPropagation(); editarCooperativa('${coop.id}')">
-                <i class="fas fa-edit"></i> Editar
-              </button>
-              <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="event.stopPropagation(); eliminarCooperativa('${coop.id}')">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
+  <button class="btn-primary btn-small" onclick="event.stopPropagation(); asignarGerente('${coop.id}', '${coop.nombre}')">
+    <i class="fas fa-user-tie"></i> Asignar Gerente
+  </button>
+  <button class="btn-secondary btn-small" onclick="event.stopPropagation(); editarCooperativa('${coop.id}')">
+    <i class="fas fa-edit"></i> Editar
+  </button>
+  <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="event.stopPropagation(); eliminarCooperativa('${coop.id}')">
+    <i class="fas fa-trash"></i>
+  </button>
+</div>
           </div>
           <div class="appraisal-details">
             <div><strong>Teléfono:</strong> ${coop.telefono || 'No especificado'}</div>
