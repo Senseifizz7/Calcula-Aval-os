@@ -5113,15 +5113,115 @@ async function eliminarCooperativa(coopId) {
   }
 }
 // Función para crear cooperativa
+// Función para crear cooperativa - VERSIÓN COMPLETA
 async function crearCooperativa() {
-  const nombre = prompt('Nombre de la nueva cooperativa:');
-  if (nombre) {
-    alert(`🔧 PASO 1.3: Creando cooperativa "${nombre}"`);
-    console.log('🔄 Creando cooperativa:', nombre);
-    // En el PASO 1.3 implementaremos esto
+  // Cerrar modales abiertos
+  closeModal('admin-panel-modal');
+  closeModal('cooperativas-modal');
+  
+  // Crear modal de creación
+  let crearModal = document.getElementById('crear-cooperativa-modal');
+  
+  if (!crearModal) {
+    crearModal = document.createElement('div');
+    crearModal.className = 'catalog-modal';
+    crearModal.id = 'crear-cooperativa-modal';
+    crearModal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-plus-circle"></i> Crear Nueva Cooperativa</h3>
+          <button class="modal-close" onclick="closeModal('crear-cooperativa-modal')">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="required">Nombre de la Cooperativa</label>
+              <input type="text" id="coop-nombre" placeholder="Ej: Cooperativa La Esperanza" style="width: 100%;">
+            </div>
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input type="text" id="coop-telefono" placeholder="Ej: 1234-5678" style="width: 100%;">
+            </div>
+            <div class="form-group">
+              <label>Dirección</label>
+              <input type="text" id="coop-direccion" placeholder="Ej: 5ta avenida, zona 1" style="width: 100%;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Estado</label>
+            <select id="coop-activo" style="width: 100%;">
+              <option value="true">Activa</option>
+              <option value="false">Inactiva</option>
+            </select>
+          </div>
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="btn-secondary" onclick="closeModal('crear-cooperativa-modal')" style="flex: 1;">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
+            <button class="btn-primary" onclick="guardarCooperativa()" style="flex: 1;">
+              <i class="fas fa-save"></i> Guardar Cooperativa
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(crearModal);
   }
+  
+  // Limpiar campos
+  document.getElementById('coop-nombre').value = '';
+  document.getElementById('coop-telefono').value = '';
+  document.getElementById('coop-direccion').value = '';
+  document.getElementById('coop-activo').value = 'true';
+  
+  crearModal.classList.add('active');
 }
 
+// Función para guardar la cooperativa
+async function guardarCooperativa() {
+  const nombre = document.getElementById('coop-nombre').value.trim();
+  const telefono = document.getElementById('coop-telefono').value.trim();
+  const direccion = document.getElementById('coop-direccion').value.trim();
+  const activo = document.getElementById('coop-activo').value === 'true';
+  
+  if (!nombre) {
+    alert('El nombre de la cooperativa es requerido');
+    return;
+  }
+  
+  try {
+    console.log('🔄 Guardando nueva cooperativa:', { nombre, telefono, direccion, activo });
+    
+    const { data, error } = await window.supabase
+      .from('cooperativas')
+      .insert([
+        {
+          nombre: nombre,
+          telefono: telefono || null,
+          direccion: direccion || null,
+          activo: activo
+        }
+      ])
+      .select();
+    
+    if (error) throw error;
+    
+    console.log('✅ Cooperativa creada:', data);
+    
+    // Cerrar modal y mostrar mensaje
+    closeModal('crear-cooperativa-modal');
+    alert(`✅ Cooperativa "${nombre}" creada exitosamente`);
+    
+    // Si el modal de cooperativas está abierto, actualizarlo
+    if (document.getElementById('cooperativas-modal').classList.contains('active')) {
+      gestionarCooperativas();
+    }
+    
+  } catch (error) {
+    console.error('❌ Error creando cooperativa:', error);
+    alert('Error al crear cooperativa: ' + error.message);
+  }
+}
 // Función para gestionar usuarios
 async function gestionarUsuarios() {
   alert('🔧 PASO 1.4: Aquí va la gestión de usuarios');
