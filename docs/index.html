@@ -953,7 +953,7 @@
       }
     }
 
-    
+    /* === BREADCRUMBS - SOLO ESTO SE AGREGA === */
     .typology-breadcrumbs {
       padding: 16px 24px;
       background: rgba(91, 123, 122, 0.03);
@@ -1013,51 +1013,6 @@
         align-items: flex-start;
       }
     }
-
-    /* ========== ESTILOS PARA EL SISTEMA DE ROLES ========== */
-.manager-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 5px;
-}
-
-.stat-label {
-  font-size: 0.9rem;
-  color: var(--text-light);
-}
-
-.filter-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.filter-select {
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--bg-card);
-  color: var(--text);
-  font-size: 0.9rem;
-}
   </style>
 </head>
 
@@ -1065,10 +1020,7 @@
   
   <div class="app-container">
     <header class="app-header">
-      <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 200px; height: 60px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1> <!-- Esto va JUSTO después de <h1>...</h1> en el app-header -->
-<div id="role-indicator" style="display: none; margin-top: 8px; font-size: 0.9rem; color: var(--text-light);">
-  <i class="fas fa-user-shield"></i> <span id="current-role">Cargando...</span>
-</div>
+      <h1><img src="http://visione.gt/wp-content/uploads/2020/12/Logo-sitio.png" alt="Logo" style="width: 200px; height: 60px; border-radius: 12px; object-fit: contain; background: rgba(91,123,122,.1); padding: 4px;"> Sistema de Avalúos</h1>
     </header>
 
     <div class="floating-actions">
@@ -1132,12 +1084,6 @@
       </div>
     </div>
 
-    <button class="floating-btn" id="manager-panel-btn" title="Panel Gerencial" style="display: none; background: var(--accent);">
-  <i class="fas fa-users-gear"></i>
-</button>
-<button class="floating-btn" id="admin-panel-btn" title="Panel Administrativo" style="display: none; background: var(--warning);">
-  <i class="fas fa-crown"></i>
-</button>
     
     <div class="catalog-modal" id="image-viewer-modal" style="z-index: 2000;">
       <div class="modal-content" style="max-width: 90vw; max-height: 90vh; background: transparent; box-shadow: none; z-index: 2001;">
@@ -4702,9 +4648,9 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
   </script>
 
   <script>
-    
+    // Agregar esta función para solucionar el problema de selección en pestaña 2
     function fixTipologySelection() {
-        
+        // Re-asignar los event listeners a los botones de selección
         document.addEventListener('click', function(e) {
             if (e.target.closest('.select-button')) {
                 e.preventDefault();
@@ -4721,80 +4667,17 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         });
     }
 
-    
+    // Ejecutar cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
         fixTipologySelection();
     });
 
-    
+    // También ejecutar cada vez que se renderizan las tipologías
     const originalRenderTipos = __renderTipos;
     __renderTipos = function() {
         originalRenderTipos();
         setTimeout(fixTipologySelection, 100);
     };
-
-   // 1. Función para obtener permisos del usuario (CON SUPABASE)
-window.__getUserPermissions = async function() {
-    try {
-        const user = window.__session?.user;
-        if (!user) return null;
-        
-        // Verificar si ya tiene rol en Supabase
-        const { data: existingRole, error } = await window.supabase
-            .from('user_roles')
-            .select('*')
-            .eq('user_id', user.id)
-            .single();
-        
-        // Si ya existe el rol, usarlo
-        if (existingRole && !error) {
-            window.userPermissions = existingRole;
-            return existingRole;
-        }
-        
-        // Si no existe, crear rol automáticamente
-        const userEmail = user.email.toLowerCase();
-        
-        // Detectar rol y cooperativa
-        let userRole = 'asesor';
-        let cooperativaId = 'coop-' + userEmail.split('@')[1].replace(/[^a-z0-9]/gi, '');
-        let cooperativaNombre = 'Cooperativa ' + userEmail.split('@')[1].split('.')[0];
-        
-        if (userEmail.includes('gerente') || userEmail.includes('manager') || userEmail.includes('director')) {
-            userRole = 'gerente';
-        } else if (userEmail.includes('admin') || userEmail.includes('super') || userEmail === 'tu_email@ejemplo.com') {
-            userRole = 'super_admin';
-            cooperativaId = 'todas';
-            cooperativaNombre = 'Todas las cooperativas';
-        }
-        
-        // Crear el rol en Supabase
-        const { data: newRole, error: createError } = await window.supabase
-            .from('user_roles')
-            .insert([
-                {
-                    user_id: user.id,
-                    role: userRole,
-                    cooperativa_id: cooperativaId,
-                    cooperativa_nombre: cooperativaNombre
-                }
-            ])
-            .select()
-            .single();
-        
-        if (createError) {
-            console.error('Error creando rol:', createError);
-            return null;
-        }
-        
-        window.userPermissions = newRole;
-        return newRole;
-        
-    } catch (error) {
-        console.error('Error obteniendo permisos:', error);
-        return null;
-    }
-};
   </script>
 </body>
 </html>
