@@ -4733,23 +4733,29 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         setTimeout(fixTipologySelection, 100);
     };
 
-    // =============================================
-// SISTEMA DE ROLES - IMPLEMENTACIÓN COMPLETA
-// =============================================
-
-// Variables globales
-window.userPermissions = null;
-window.currentEditingAppraisalId = null;
-
-// 1. Función para obtener permisos del usuario
+   // 1. Función para obtener permisos del usuario (CON SUPABASE)
 window.__getUserPermissions = async function() {
     try {
         const user = window.__session?.user;
         if (!user) return null;
         
+        // Verificar si ya tiene rol en Supabase
+        const { data: existingRole, error } = await window.supabase
+            .from('user_roles')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+        
+        // Si ya existe el rol, usarlo
+        if (existingRole && !error) {
+            window.userPermissions = existingRole;
+            return existingRole;
+        }
+        
+        // Si no existe, crear rol automáticamente
         const userEmail = user.email.toLowerCase();
         
-        // Detectar rol y cooperativa automáticamente
+        // Detectar rol y cooperativa
         let userRole = 'asesor';
         let cooperativaId = 'coop-' + userEmail.split('@')[1].replace(/[^a-z0-9]/gi, '');
         let cooperativaNombre = 'Cooperativa ' + userEmail.split('@')[1].split('.')[0];
@@ -4762,238 +4768,33 @@ window.__getUserPermissions = async function() {
             cooperativaNombre = 'Todas las cooperativas';
         }
         
-        window.userPermissions = {
-            role: userRole,
-            cooperativa_id: cooperativaId,
-            cooperativa_nombre: cooperativaNombre,
-            user_id: user.id,
-            user_email: userEmail
-        };
+        // Crear el rol en Supabase
+        const { data: newRole, error: createError } = await window.supabase
+            .from('user_roles')
+            .insert([
+                {
+                    user_id: user.id,
+                    role: userRole,
+                    cooperativa_id: cooperativaId,
+                    cooperativa_nombre: cooperativaNombre
+                }
+            ])
+            .select()
+            .single();
         
-        return window.userPermissions;
+        if (createError) {
+            console.error('Error creando rol:', createError);
+            return null;
+        }
+        
+        window.userPermissions = newRole;
+        return newRole;
         
     } catch (error) {
         console.error('Error obteniendo permisos:', error);
         return null;
     }
 };
-
-// 2. Actualizar interfaz según rol
-window.__updateUIForRole = async function() {
-    const perms = await window.__getUserPermissions();
-    if (!perms) return;
-    
-    // Mostrar indicador de rol
-    const roleIndicator = document.getElementById('role-indicator');
-    const currentRole = document.getElementById('current-role');
-    if (roleIndicator && currentRole) {
-        roleIndicator.style.display = 'block';
-        const roleNames = {
-            'super_admin': 'Super Administrador',
-            'gerente': 'Gerente',
-            'asesor': 'Asesor'
-        };
-        currentRole.textContent = `${roleNames[perms.role]} · ${perms.cooperativa_nombre}`;
-    }
-    
-    // Mostrar/ocultar botones
-    const managerBtn = document.getElementById('manager-panel-btn');
-    const adminBtn = document.getElementById('admin-panel-btn');
-    
-    if (managerBtn) managerBtn.style.display = (perms.role === 'gerente' || perms.role === 'super_admin') ? 'flex' : 'none';
-    if (adminBtn) adminBtn.style.display = (perms.role === 'super_admin') ? 'flex' : 'none';
-};
-
-// 3. Panel Gerencial
-function showManagerPanel() {
-    const perms = window.userPermissions;
-    if (!perms || (perms.role !== 'gerente' && perms.role !== 'super_admin')) {
-        alert('No tienes permisos para acceder al panel gerencial');
-        return;
-    }
-    
-    const modalHTML = `
-    <div class="catalog-modal active" id="manager-panel-modal">
-        <div class="modal-content" style="max-width: 95vw; max-height: 90vh;">
-            <div class="modal-header">
-                <h3><i class="fas fa-users-cog"></i> Panel de Control Gerencial</h3>
-                <button class="modal-close" onclick="closeModal('manager-panel-modal')">&times;</button>
-            </div>
-            <div class="modal-body" style="padding: 20px;">
-                <div class="filter-bar">
-                    <button class="btn-primary btn-small" onclick="loadManagerData()">
-                        <i class="fas fa-sync"></i> Cargar Avalúos
-                    </button>
-                </div>
-                <div class="manager-stats">
-                    <div class="stat-card">
-                        <div class="stat-value" id="metric-total">0</div>
-                        <div class="stat-label">Total Avalúos</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="metric-promedio">Q0.00</div>
-                        <div class="stat-label">Valor Promedio</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="metric-asesores">0</div>
-                        <div class="stat-label">Asesores Activos</div>
-                    </div>
-                </div>
-                <div id="manager-appraisals-list" style="max-height: 400px; overflow-y: auto;">
-                    <div class="empty-state">
-                        <i class="fas fa-chart-bar"></i>
-                        <p>Haz clic en "Cargar Avalúos" para comenzar</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    `;
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-}
-
-// 4. Cargar datos gerenciales
-async function loadManagerData() {
-    try {
-        const container = document.getElementById('manager-appraisals-list');
-        if (container) {
-            container.innerHTML = '<div class="empty-state"><i class="fas fa-spinner fa-spin"></i><p>Cargando avalúos...</p></div>';
-        }
-        
-        // Obtener todos los avalúos
-        const allAppraisals = window.avaluosStorage.getAllAppraisals();
-        const perms = window.userPermissions;
-        
-        // Filtrar según cooperativa
-        let filteredAppraisals = allAppraisals;
-        if (perms.role === 'gerente') {
-            // Simular filtrado por dominio de email
-            const dominioCooperativa = perms.user_email.split('@')[1];
-            filteredAppraisals = allAppraisals.filter(av => 
-                av.usuario_email && av.usuario_email.includes(dominioCooperativa)
-            );
-        }
-        
-        displayManagerAppraisals(filteredAppraisals);
-        updateManagerMetrics(filteredAppraisals);
-        
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Error al cargar los avalúos');
-    }
-}
-
-function displayManagerAppraisals(avaluos) {
-    const container = document.getElementById('manager-appraisals-list');
-    if (!container) return;
-    
-    if (!avaluos || avaluos.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>No hay avalúos para mostrar</p></div>';
-        return;
-    }
-    
-    container.innerHTML = avaluos.map(avaluo => `
-        <div class="appraisal-item">
-            <div class="appraisal-header">
-                <div class="appraisal-date">
-                    <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada}
-                    <span style="margin-left: 10px; color: var(--text-light);">
-                        <i class="fas fa-user"></i> ${avaluo.usuario_nombre}
-                    </span>
-                </div>
-                <div class="appraisal-actions">
-                    <button class="btn-primary btn-small" onclick="editAppraisalAsManager('${avaluo.id}')">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
-                        <i class="fas fa-eye"></i> Ver
-                    </button>
-                </div>
-            </div>
-            <div class="appraisal-details">
-                <div><strong>Asociado:</strong> ${avaluo.datos.associateName || 'No especificado'}</div>
-                <div><strong>Dirección:</strong> ${avaluo.datos.address || 'No especificado'}</div>
-                <div><strong>Valor Total:</strong> ${avaluo.datos.totalValue || 'Q0.00'}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function updateManagerMetrics(avaluos) {
-    if (!avaluos || avaluos.length === 0) {
-        document.getElementById('metric-total').textContent = '0';
-        document.getElementById('metric-promedio').textContent = 'Q0.00';
-        document.getElementById('metric-asesores').textContent = '0';
-        return;
-    }
-    
-    const total = avaluos.length;
-    const asesoresUnicos = [...new Set(avaluos.map(a => a.usuario_id))].length;
-    
-    const totalValue = avaluos.reduce((sum, avaluo) => {
-        const value = parseFloat(avaluo.datos.totalValue?.replace(/[^\d.-]/g, '') || 0);
-        return sum + value;
-    }, 0);
-    
-    const promedio = totalValue / total;
-    
-    document.getElementById('metric-total').textContent = total;
-    document.getElementById('metric-promedio').textContent = formatMoneyGTQ(promedio);
-    document.getElementById('metric-asesores').textContent = asesoresUnicos;
-}
-
-// 5. Editar avalúo como gerente
-async function editAppraisalAsManager(appraisalId) {
-    const avaluos = window.avaluosStorage.getAllAppraisals();
-    const avaluo = avaluos.find(av => av.id === appraisalId);
-    
-    if (!avaluo) {
-        alert('No se pudo encontrar el avalúo');
-        return;
-    }
-    
-    // Llenar formulario
-    document.getElementById('associate-name').value = avaluo.datos.associateName || '';
-    document.getElementById('address').value = avaluo.datos.address || '';
-    document.getElementById('construction-area').value = avaluo.datos.constructionArea || '';
-    document.getElementById('land-area').value = avaluo.datos.landArea || '';
-    document.getElementById('owner-name').value = avaluo.datos.ownerName || '';
-    document.getElementById('department').value = avaluo.datos.department || '';
-    
-    window.currentEditingAppraisalId = appraisalId;
-    
-    // Ir al primer paso
-    if (window.formWizard) window.formWizard.goToStep(1);
-    closeModal('manager-panel-modal');
-    
-    alert(`Editando avalúo de ${avaluo.usuario_nombre}`);
-}
-
-// 6. Función de utilidad
-function formatMoneyGTQ(value) {
-    return new Intl.NumberFormat('es-GT', {
-        style: 'currency',
-        currency: 'GTQ',
-        minimumFractionDigits: 2
-    }).format(value);
-}
-
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) modal.remove();
-}
-
-// 7. Inicialización
-document.addEventListener('DOMContentLoaded', function() {
-    // Event listeners
-    document.getElementById('manager-panel-btn')?.addEventListener('click', showManagerPanel);
-    
-    // Actualizar UI al cargar
-    setTimeout(() => window.__updateUIForRole(), 1500);
-});
-
-console.log('✅ Sistema de roles listo');
   </script>
 </body>
 </html>
