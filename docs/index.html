@@ -1889,117 +1889,91 @@
     }
 
     async function saveCurrentAppraisal() {
-  if (!window.__session) {
-    alert('Debes iniciar sesión para guardar avalúos');
-    return false;
-  }
-  
-  console.log('🟡 Iniciando guardado DUAL (Supabase + LocalStorage)...');
-  
-  const loadingOverlay = document.getElementById('loadingOverlay');
-  if (loadingOverlay) loadingOverlay.style.display = 'flex';
-  
-  try {
-    // Recolectar datos del formulario
-    const appraisalData = {
-      associate_name: document.getElementById('associate-name').value || 'No especificado',
-      address: document.getElementById('address').value || 'No especificado',
-      construction_area: parseFloat(document.getElementById('construction-area').value) || 0,
-      land_area: parseFloat(document.getElementById('land-area').value) || 0,
-      total_value: document.getElementById('resultTotal').textContent.replace('Q', '').replace(',', '') || '0.00',
-      owner_name: document.getElementById('owner-name').value || '',
-      typology: document.getElementById('typology').value || '',
-      department: document.getElementById('department').value || '',
-      estado_inmueble: document.getElementById('estado-inmueble').value || '',
-      anio_construccion: document.getElementById('anio-construccion').value || '',
-      total_construccion: document.getElementById('totalConstruccion').value || '0',
-      total_terreno: document.getElementById('totalTerreno').value || '0',
-      datos_completos: {
-        associateName: document.getElementById('associate-name').value || 'No especificado',
-        address: document.getElementById('address').value || 'No especificado',
-        constructionArea: parseFloat(document.getElementById('construction-area').value) || 0,
-        landArea: parseFloat(document.getElementById('land-area').value) || 0,
-        totalValue: document.getElementById('resultTotal').textContent || 'Q0.00',
-        ownerName: document.getElementById('owner-name').value || '',
-        typology: document.getElementById('typology').value || '',
-        department: document.getElementById('department').value || '',
-        estadoInmueble: document.getElementById('estado-inmueble').value || '',
-        anioConstruccion: document.getElementById('anio-construccion').value || '',
-        totalConstruccion: document.getElementById('totalConstruccion').value || '0',
-        totalTerreno: document.getElementById('totalTerreno').value || '0'
+      if (!window.__session) {
+        alert('Debes iniciar sesión para guardar avalúos');
+        return false;
       }
-    };
-
-    console.log('📦 Datos preparados para guardado dual');
-
-    // VERIFICAR SESIÓN
-    if (!window.__session?.user?.id) {
-      throw new Error('No hay sesión de usuario activa');
-    }
-
-    // === PASO 1: GUARDAR EN LOCALSTORAGE (SIEMPRE) ===
-    console.log('💾 Guardando en LocalStorage...');
-    const savedInLocal = window.avaluosStorage.saveAppraisal(appraisalData.datos_completos);
-    console.log('✅ Guardado en LocalStorage:', savedInLocal);
-
-    // === PASO 2: INTENTAR GUARDAR EN SUPABASE ===
-    let supabaseSuccess = false;
-    let supabaseError = null;
-    let supabaseData = null;
-
-    try {
-      console.log('🔄 Intentando guardar en Supabase...');
       
-      const { data, error } = await window.supabase
-        .from('avaluos')
-        .insert([
-          {
-            usuario_id: window.__session.user.id,
-            usuario_email: window.__session.user.email,
-            usuario_nombre: window.__session.user.user_metadata?.username || 'Usuario',
-            fecha_creacion: new Date().toISOString(),
-            ...appraisalData
-          }
-        ])
-        .select();
-
-      if (error) {
-        supabaseError = error;
-        console.error('❌ Error de Supabase:', error);
-      } else {
-        supabaseSuccess = true;
-        supabaseData = data;
-        console.log('✅ Éxito - Datos guardados en Supabase:', data);
-      }
-    } catch (supabaseError) {
-      console.error('❌ Error inesperado en Supabase:', supabaseError);
-    }
-
-    // === PASO 3: MOSTRAR RESULTADO AL USUARIO ===
-    if (supabaseSuccess) {
-      alert('✅ Avalúo guardado EXITOSAMENTE:\n\n• 📊 En tu base de datos (Supabase)\n• 💾 En este navegador (LocalStorage)');
+      console.log('🟡 Iniciando guardado en ambos sistemas...');
       
-      // Actualizar modales si están abiertos
-      if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
-        showAllAppraisals();
-      }
-      if (document.getElementById('my-appraisals-modal').classList.contains('active')) {
-        showMyAppraisals();
-      }
-    } else {
-      alert('⚠️ Avalúo guardado PARCIALMENTE:\n\n• ✅ En este navegador (LocalStorage)\n• ❌ No se pudo guardar en la base de datos\n\nError: ' + (supabaseError?.message || 'Desconocido'));
-    }
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      if (loadingOverlay) loadingOverlay.style.display = 'flex';
+      
+      try {
+        const appraisalData = {
+          associateName: document.getElementById('associate-name').value || 'No especificado',
+          address: document.getElementById('address').value || 'No especificado',
+          constructionArea: parseFloat(document.getElementById('construction-area').value) || 0,
+          landArea: parseFloat(document.getElementById('land-area').value) || 0,
+          totalValue: document.getElementById('resultTotal').textContent || 'Q0.00',
+          ownerName: document.getElementById('owner-name').value || '',
+          typology: document.getElementById('typology').value || '',
+          department: document.getElementById('department').value || '',
+          estadoInmueble: document.getElementById('estado-inmueble').value || '',
+          anioConstruccion: document.getElementById('anio-construccion').value || '',
+          totalConstruccion: document.getElementById('totalConstruccion').value || '0',
+          totalTerreno: document.getElementById('totalTerreno').value || '0'
+        };
 
-    return supabaseSuccess;
-    
-  } catch (error) {
-    console.error('❌ Error CRÍTICO al guardar:', error);
-    alert('❌ Error crítico: No se pudo guardar el avalúo en ningún sistema.');
-    return false;
-  } finally {
-    if (loadingOverlay) loadingOverlay.style.display = 'none';
-  }
-}
+        console.log('📦 Datos a guardar:', appraisalData);
+
+        const savedInLocal = window.avaluosStorage.saveAppraisal(appraisalData);
+        console.log('✅ Guardado en localStorage:', savedInLocal);
+
+        console.log('🔄 Enviando a Supabase...');
+        
+        const { data, error } = await window.supabase
+          .from('avaluos')
+          .insert([
+            {
+              usuario_id: window.__session.user.id,
+              usuario_email: window.__session.user.email,
+              usuario_nombre: window.__session.user.user_metadata?.username || 'Usuario',
+              fecha_creacion: new Date().toISOString(),
+              fecha_formateada: new Date().toLocaleDateString('es-GT'),
+              associate_name: appraisalData.associateName,
+              address: appraisalData.address,
+              construction_area: appraisalData.constructionArea,
+              land_area: appraisalData.landArea,
+              total_value: appraisalData.totalValue,
+              owner_name: appraisalData.ownerName,
+              typology: appraisalData.typology,
+              department: appraisalData.department,
+              estado_inmueble: appraisalData.estadoInmueble,
+              anio_construccion: appraisalData.anioConstruccion,
+              total_construccion: appraisalData.totalConstruccion,
+              total_terreno: appraisalData.totalTerreno,
+              datos_completos: appraisalData
+            }
+          ])
+          .select();
+
+        if (error) {
+          console.error('❌ Error Supabase:', error);
+          console.warn('Avalúo guardado en web pero no en base de datos');
+        } else {
+          console.log('✅ Éxito - Datos guardados en Supabase:', data);
+        }
+
+        alert('✅ Avalúo guardado EXITOSAMENTE\n\n• En la web: Disponible en "Lista de Avalúos"\n• En base de datos: Para tu seguimiento');
+        
+        if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
+          showAllAppraisals();
+        }
+        if (document.getElementById('my-appraisals-modal').classList.contains('active')) {
+          showMyAppraisals();
+        }
+        
+        return true;
+        
+      } catch (error) {
+        console.error('❌ Error completo al guardar:', error);
+        alert('❌ Error al guardar: ' + error.message + '\n\nEl avalúo se guardó en la web pero no en la base de datos.');
+        return false;
+      } finally {
+        if (loadingOverlay) loadingOverlay.style.display = 'none';
+      }
+    }
 
     document.getElementById('all-appraisals-btn').addEventListener('click', showAllAppraisals);
     document.getElementById('my-appraisals-btn').addEventListener('click', showMyAppraisals);
@@ -4674,9 +4648,9 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
   </script>
 
   <script>
-    // Agregar esta función para solucionar el problema de selección en pestaña 2
+    
     function fixTipologySelection() {
-        // Re-asignar los event listeners a los botones de selección
+        
         document.addEventListener('click', function(e) {
             if (e.target.closest('.select-button')) {
                 e.preventDefault();
@@ -4693,12 +4667,10 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         });
     }
 
-    // Ejecutar cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', function() {
         fixTipologySelection();
     });
 
-    // También ejecutar cada vez que se renderizan las tipologías
     const originalRenderTipos = __renderTipos;
     __renderTipos = function() {
         originalRenderTipos();
