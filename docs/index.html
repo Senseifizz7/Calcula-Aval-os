@@ -4645,65 +4645,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         alert("Autenticación: " + msg);
       }
     })();
-  <script>
-// === SISTEMA DE PERFILES EXTENDIDOS - PASO 4 ===
-window.__loadCooperativas = async () => {
-  try {
-    const { data, error } = await window.supabase.from('cooperativas').select('id, nombre').eq('estado', 'activa').order('nombre');
-    if (error) throw error;
-    return data || [];
-  } catch (error) {
-    console.error('Error cargando cooperativas:', error);
-    return [];
-  }
-};
-
-window.__signUpWithEmailExtended = async (email, password, username, rol, cooperativa_id, nombreCompleto) => {
-  try {
-    if (!email || !password || !rol || !cooperativa_id) throw new Error("Todos los campos requeridos deben estar completos");
-    if (password.length < 6) throw new Error("La contraseña debe tener al menos 6 caracteres");
-
-    const { data: authData, error: authError } = await window.supabase.auth.signUp({
-      email: email.trim(), password: password.trim(), options: { data: { username: username || email.split('@')[0] } }
-    });
-    if (authError) throw authError;
-
-    if (authData.user) {
-      const { error: profileError } = await window.supabase.from('perfiles_usuario').insert({
-        usuario_id: authData.user.id, cooperativa_id: cooperativa_id, rol: rol, nombre_completo: nombreCompleto || username, estado: 'activo'
-      });
-      if (profileError) throw profileError;
-      return authData;
-    }
-  } catch (error) {
-    console.error("Error en registro extendido:", error);
-    throw error;
-  }
-};
-</script>
-
-<script>
-// === ADAPTACIÓN DEL LOGIN - PASO 5 ===
-window.__loadUserProfile = async (userId) => {
-  try {
-    const { data: profile, error } = await window.supabase.from('perfiles_usuario').select('*, cooperativas (id, nombre, email)').eq('usuario_id', userId).single();
-    if (error) return null;
-    return profile;
-  } catch (error) {
-    return null;
-  }
-};
-
-window.supabase.auth.onAuthStateChange(async (event, session) => {
-  window.__session = session || null;
-  window.__userProfile = null;
-  if (session?.user) {
-    const userProfile = await window.__loadUserProfile(session.user.id);
-    window.__userProfile = userProfile;
-  }
-  if (typeof __updateAuthUI === 'function') __updateAuthUI(!!session);
-});
-</script>
+  </script>
 
   <script>
     // Agregar esta función para solucionar el problema de selección en pestaña 2
