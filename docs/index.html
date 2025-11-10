@@ -4825,17 +4825,18 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 let adminSystemInitialized = false;
 
-// Función segura para mostrar/ocultar botón de admin
 function updateAdminButton() {
+  console.log('🔄 Actualizando botón admin...');
+  
   const floatingActions = document.querySelector('.floating-actions');
   if (!floatingActions) {
-    console.log('🔄 Floating actions no encontrado');
+    console.log('❌ Floating actions no encontrado');
     return;
   }
   
   const user = window.__session?.user;
   if (!user) {
-    console.log('🔄 Usuario no logueado');
+    console.log('❌ Usuario no logueado');
     return;
   }
   
@@ -4844,18 +4845,46 @@ function updateAdminButton() {
   
   let adminBtn = document.getElementById('admin-panel-btn');
   
-  if (userRole !== 'asesor' && !adminBtn) {
-    adminBtn = document.createElement('button');
-    adminBtn.className = 'floating-btn';
-    adminBtn.id = 'admin-panel-btn';
-    adminBtn.title = 'Panel de Administración';
-    adminBtn.innerHTML = '<i class="fas fa-cog"></i>';
-    adminBtn.onclick = showAdminPanel;
-    floatingActions.appendChild(adminBtn);
-    console.log('✅ Botón de admin agregado');
-  } else if (userRole === 'asesor' && adminBtn) {
-    adminBtn.remove();
-    console.log('❌ Botón de admin removido');
+  if (userRole !== 'asesor') {
+    if (!adminBtn) {
+      console.log('🔄 Creando nuevo botón admin...');
+      adminBtn = document.createElement('button');
+      adminBtn.className = 'floating-btn';
+      adminBtn.id = 'admin-panel-btn';
+      adminBtn.title = 'Panel de Administración';
+      adminBtn.innerHTML = '<i class="fas fa-cog"></i>';
+      adminBtn.onclick = showAdminPanel;
+      
+      // Estilos para asegurar visibilidad
+      adminBtn.style.cssText = `
+        position: fixed !important;
+        top: 160px !important;
+        right: 24px !important;
+        width: 56px !important;
+        height: 56px !important;
+        border-radius: 50% !important;
+        background: var(--primary) !important;
+        color: white !important;
+        border: 2px solid white !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+        z-index: 9999 !important;
+        font-size: 1.2rem !important;
+      `;
+      
+      floatingActions.appendChild(adminBtn);
+      console.log('✅ Botón de admin CREADO EXITOSAMENTE');
+    } else {
+      console.log('✅ Botón de admin ya existe');
+    }
+  } else {
+    if (adminBtn) {
+      adminBtn.remove();
+      console.log('❌ Botón de admin removido (usuario es asesor)');
+    }
   }
 }
 
