@@ -5046,16 +5046,27 @@ async function aprobarPendientes() {
   showAllAppraisals();
 }
 
-// Actualizar botón de admin cuando cambia la sesión
-window.supabase.auth.onAuthStateChange((_event, session) => {
-  setTimeout(updateAdminButton, 1000);
-});
+// Actualizar botón de admin cuando cambia la sesión - VERSIÓN SEGURA
+function setupAuthListener() {
+  const checkAuth = setInterval(() => {
+    if (window.supabase && window.supabase.auth) {
+      console.log('✅ Supabase.auth listo, configurando listener...');
+      clearInterval(checkAuth);
+      
+      window.supabase.auth.onAuthStateChange((_event, session) => {
+        console.log('🔄 Cambio de sesión detectado');
+        setTimeout(updateAdminButton, 1000);
+      });
+    }
+  }, 500);
+}
 
-// Ejecutar al cargar la página
+// Ejecutar al cargar la página - VERSIÓN SEGURA  
 document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(updateAdminButton, 2000);
+  console.log('🚀 DOM cargado, iniciando admin system...');
+  setupAuthListener();
+  setTimeout(updateAdminButton, 3000);
 });
-
     function updateAdminButton() {
   const floatingActions = document.querySelector('.floating-actions');
   if (!floatingActions) return;
