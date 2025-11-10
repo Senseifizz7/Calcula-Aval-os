@@ -953,7 +953,7 @@
       }
     }
 
-    
+    /* === BREADCRUMBS - SOLO ESTO SE AGREGA === */
     .typology-breadcrumbs {
       padding: 16px 24px;
       background: rgba(91, 123, 122, 0.03);
@@ -4094,7 +4094,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text(`TOTAL AVALÚO: Q${totalAvaluo.toFixed(2)}`, margin + 10, y);
     y += 15;
 
-    
+   
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(91, 123, 122);
     doc.rect(margin, y-10, contentWidth, 20, 'F');
@@ -4226,25 +4226,48 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       window.formWizard.goToStep(1);
     }
 
+    document.addEventListener('DOMContentLoaded', function() {
+  // Tu código existente de formWizard...
+  window.formWizard = new FormWizard();
+  
+  // ✅ NUEVO: Verificar sesión y redirigir por rol
+  (async () => {
+    console.log("🔍 Verificando sesión existente...");
+    const { data: { session } } = await supabase.auth.getSession();
     
-    document.addEventListener('DOMContentLoaded',function(){
-      window.formWizard=new FormWizard();
-      document.getElementById('save-btn').addEventListener('click',async function(){ 
-        await saveCurrentAppraisal();
+    if (session) {
+      console.log("✅ Sesión encontrada, verificando rol...");
+      
+      // Obtener información del usuario
+      const { data: usuarioData, error } = await supabase
+        .from('usuarios')
+        .select('rol, cooperativa_id, nombre')
+        .eq('email', session.user.email)
+        .single();
+      
+      if (usuarioData && !error) {
+        window.userRole = usuarioData.rol;
+        window.cooperativaId = usuarioData.cooperativa_id;
+        window.userName = usuarioData.nombre;
         
-      });
-      document.getElementById('pdf-btn').addEventListener('click',function(){ generateReport(); });
-      document.getElementById('catalogModal').addEventListener('click',function(e){ if(e.target===this){ __closeTypology(); } });
-      document.getElementById('closeModal').addEventListener('click',function(){ __closeTypology(); });
-      
-      
-      initImageModalEvents();
-      initImageUpload();
-    });
-  </script>
+        console.log("🎯 Usuario autenticado:", usuarioData.nombre, "Rol:", usuarioData.rol);
+        redirectByRole(usuarioData.rol);
+      } else {
+        console.error("❌ Error obteniendo datos de usuario:", error);
+      }
+    } else {
+      console.log("🔐 No hay sesión activa");
+    }
+  })();
 
-  <script type="module">
-    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+  
+  document.getElementById('save-btn').addEventListener('click', async function(){ 
+    await saveCurrentAppraisal();
+  });
+  document.getElementById('pdf-btn').addEventListener('click', function(){ generateReport(); });
+  
+});
+<script type="module">
 
     const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
@@ -4386,41 +4409,74 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       }
     };
 
-   
-console.log("✅ Login auth exitoso, buscando datos de usuario...");
-console.log("🔍 DEBUG - Email a buscar:", email);
+    window.__signInWithEmail = async (email, password) => {
+  try {
+    console.log("🔐 Intentando login con:", email);
+    
+    if (!email || !password) {
+      alert("Por favor ingresa email y contraseña");
+      return;
+    }
 
+    const { data, error } = await window.supabase.auth.signInWithPassword({ 
+      email: email.trim(), 
+      password: password.trim() 
+    });
 
-const { data: usuarioData, error: userError } = await supabase
-  .from('usuarios')
-  .select('rol, cooperativa_id, nombre, activo')
-  .eq('email', email.trim().toLowerCase())
-  .single();
+    if (error) {
+      console.error("❌ Error en login:", error);
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        alert("Email o contraseña incorrectos");
+      } else if (error.message?.includes('Email not confirmed')) {
+        alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
+      } else if (error.message?.includes('Email rate limit exceeded')) {
+        alert("Demasiados intentos. Espera unos minutos.");
+      } else {
+        alert("Error al iniciar sesión: " + error.message);
+      }
+      return;
+    }
 
-console.log("🔍 DEBUG - Resultado consulta:", usuarioData);
-console.log("🔍 DEBUG - Error consulta:", userError);
+    
+    console.log("✅ Login auth exitoso, buscando datos de usuario...");
+    const { data: usuarioData, error: userError } = await supabase
+      .from('usuarios')
+      .select('rol, cooperativa_id, nombre, activo')
+      .eq('email', email)
+      .single();
 
-if (userError) {
-  console.error("❌ Error en consulta usuario:", userError);
-  
-  
-  if (email.toLowerCase().includes('batztzunu@gmail.com')) {
-    console.log("🎯 Asignando super_admin manualmente...");
-    window.userRole = 'super_admin';
-    window.cooperativaId = null;
-    window.userName = 'Jeremiah';
-    redirectByRole('super_admin');
-    return;
+    if (userError || !usuarioData) {
+      console.error("❌ Usuario no encontrado en tabla usuarios:", userError);
+      alert("Usuario no configurado en el sistema. Contacta al administrador.");
+      await supabase.auth.signOut();
+      return;
+    }
+
+    if (!usuarioData.activo) {
+      alert("Usuario desactivado. Contacta al administrador.");
+      await supabase.auth.signOut();
+      return;
+    }
+
+    
+    window.userRole = usuarioData.rol;
+    window.cooperativaId = usuarioData.cooperativa_id;
+    window.userName = usuarioData.nombre;
+
+    console.log("✅ Login completo. Rol:", usuarioData.rol, "Nombre:", usuarioData.nombre);
+
+    
+    redirectByRole(usuarioData.rol);
+
+  } catch (e) {
+    console.error("❌ Error completo en login:", e);
+    alert("Error al iniciar sesión: " + (e.message || e));
   }
-  
-  alert("Usuario no encontrado en el sistema. Contacta al administrador.");
-  await supabase.auth.signOut();
-  return;
-}
+};
 
     function redirectByRole(rol) {
   console.log("🔄 Redirigiendo por rol:", rol);
-  
   
   const elementos = document.querySelectorAll('.app-container, .gerente-dashboard, .super-admin-panel, .auth-overlay');
   elementos.forEach(el => {
@@ -4461,89 +4517,81 @@ if (userError) {
       window.supabase.auth.signOut();
   }
 }
-    
-    window.__signInWithEmail = async (email, password) => {
-  try {
-    console.log("🔐 Intentando login con:", email);
-    
-    if (!email || !password) {
-      alert("Por favor ingresa email y contraseña");
-      return;
-    }
+        
+        window.__session = data.session;
+        __updateAuthUI(true);
+        console.log("✅ Login exitoso:", data.user.email);
+        
+        
+        if (data.user && !data.user.user_metadata?.username) {
+          setTimeout(() => {
+            showUsernameModal(data.user.id);
+          }, 1000);
+        }
 
-    const { data, error } = await window.supabase.auth.signInWithPassword({ 
-      email: email.trim(), 
-      password: password.trim() 
-    });
-
-    if (error) {
-      console.error("❌ Error en login:", error);
-      
-      if (error.message?.includes('Invalid login credentials')) {
-        alert("Email o contraseña incorrectos");
-      } else if (error.message?.includes('Email not confirmed')) {
-        alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
-      } else if (error.message?.includes('Email rate limit exceeded')) {
-        alert("Demasiados intentos. Espera unos minutos.");
-      } else {
-        alert("Error al iniciar sesión: " + error.message);
+      } catch (e) {
+        console.error("❌ Error completo en login:", e);
+        alert("Error al iniciar sesión: " + (e.message || e));
       }
-      return;
-    }
+    };
 
-    // ✅ LOGIN EXITOSO - VERIFICAR ROL
-    console.log("✅ Login auth exitoso, buscando datos de usuario...");
-    console.log("🔍 DEBUG - Email a buscar:", email);
+    window.__signInWithGoogle = async () => {
+      try {
+        console.log("🔐 Iniciando Google OAuth...");
+        
+        const currentUrl = window.location.origin + window.location.pathname;
+        const redirectUrl = currentUrl.endsWith('/') ? currentUrl : currentUrl + '/';
+        
+        console.log("📍 Redirect URL:", redirectUrl);
 
-    const { data: usuarioData, error: userError } = await supabase
-      .from('usuarios')
-      .select('rol, cooperativa_id, nombre, activo')
-      .eq('email', email.trim().toLowerCase())
-      .single();
+        const { data, error } = await window.supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { 
+            redirectTo: redirectUrl,
+            skipBrowserRedirect: false,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent'
+            }
+          }
+        });
 
-    console.log("🔍 DEBUG - Resultado consulta:", usuarioData);
-    console.log("🔍 DEBUG - Error consulta:", userError);
+        if (error) {
+          console.error("❌ Error Google OAuth:", error);
+          
+         
+          if (error.message?.includes('OAuth') || error.message?.includes('provider') || error.message?.includes('configuration')) {
+            const useEmail = confirm(
+              "Google OAuth no está configurado aún.\n\n" +
+              "Mientras el administrador configura Google OAuth, ¿quieres crear una cuenta con tu email?"
+            );
+            
+            if (useEmail) {
+              document.getElementById('auth-email').focus();
+            }
+          } else {
+            alert("Error con Google: " + (error.message || error));
+          }
+          return;
+        }
 
-    if (userError || !usuarioData) {
-      console.error("❌ Error en consulta usuario:", userError);
-      
-      // SI ES TU EMAIL, ASIGNAR SUPER_ADMIN MANUALMENTE
-      if (email.toLowerCase().includes('batztzunu@gmail.com')) {
-        console.log("🎯 Asignando super_admin manualmente...");
-        window.userRole = 'super_admin';
-        window.cooperativaId = null;
-        window.userName = 'Jeremiah';
-        redirectByRole('super_admin');
-        return;
+        
+        console.log("🔄 Redirigiendo a Google...");
+
+      } catch (e) {
+        console.error("❌ Error completo Google OAuth:", e);
+        
+       
+        const useEmail = confirm(
+          "Error temporal con Google.\n\n" +
+          "¿Quieres crear una cuenta con tu email en su lugar?"
+        );
+        
+        if (useEmail) {
+          document.getElementById('auth-email').focus();
+        }
       }
-      
-      alert("Usuario no encontrado en el sistema. Contacta al administrador.");
-      await supabase.auth.signOut();
-      return;
-    }
-
-    if (!usuarioData.activo) {
-      alert("Usuario desactivado. Contacta al administrador.");
-      await supabase.auth.signOut();
-      return;
-    }
-
-    // GUARDAR DATOS DE USUARIO
-    window.userRole = usuarioData.rol;
-    window.cooperativaId = usuarioData.cooperativa_id;
-    window.userName = usuarioData.nombre;
-
-    console.log("✅ Login completo. Rol:", usuarioData.rol, "Nombre:", usuarioData.nombre);
-
-    // REDIRIGIR SEGÚN ROL
-    redirectByRole(usuarioData.rol);
-
-  } catch (e) {
-    console.error("❌ Error completo en login:", e);
-    alert("Error al iniciar sesión: " + (e.message || e));
-  }
-};
-      
+    };
 
     function showUsernameModal(userId) {
       const modal = document.getElementById('username-modal');
@@ -4657,83 +4705,12 @@ if (userError) {
       }
     };
 
-    window.__signOut = async () => { await window.supabase.auth.signOut(); };
-    window.__canUseApp = () => !!window.__session;
+window.__signOut = async () => { 
+  await window.supabase.auth.signOut(); 
+  window.location.reload();
+};
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const nextBtn = document.getElementById('next-step');
-      if(nextBtn){
-        nextBtn.addEventListener('click', (e) => {
-          if(!window.__canUseApp()){
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            document.getElementById('auth-overlay').style.display='flex';
-            alert("Inicia sesión para continuar.");
-          }
-        }, true);
-      }
-    });
-
-    const _origCalculate = window.calculateRealAppraisal;
-    if(_origCalculate){
-      window.calculateRealAppraisal = function(){
-        if(!window.__canUseApp()){
-          document.getElementById('auth-overlay').style.display='flex';
-          alert("Inicia sesión para calcular el avalúo.");
-          return;
-        }
-        return _origCalculate.apply(this, arguments);
-      };
-    }
-  </script>
-
-  <script>
-    (function () {
-      const url = new URL(window.location.href);
-      const hashStr = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
-      const hash = new URLSearchParams(hashStr);
-      const qs = new URLSearchParams(url.search);
-      const msg = hash.get("error_description") || hash.get("error") || qs.get("error_description") || qs.get("error");
-      if (msg) {
-        console.error("Auth callback error:", msg);
-        alert("Autenticación: " + msg);
-      }
-    })();
-  </script>
-
-  <script>
-   
-    function fixTipologySelection() {
-        
-        document.addEventListener('click', function(e) {
-            if (e.target.closest('.select-button')) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const button = e.target.closest('.select-button');
-                const variantItem = button.closest('.typology-variant');
-                const tipologyId = variantItem?.getAttribute('data-id');
-                
-                if (tipologyId) {
-                    __selectTipo(tipologyId);
-                }
-            }
-        });
-    }
-
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        fixTipologySelection();
-    });
-
-    
-    const originalRenderTipos = __renderTipos;
-    __renderTipos = function() {
-        originalRenderTipos();
-        setTimeout(fixTipologySelection, 100);
-    };
-
-    function crearPanelSuperAdmin() {
+  function crearPanelSuperAdmin() {
   console.log("🛠️ Creando panel Super Admin...");
   
   const panelHTML = `
@@ -4835,7 +4812,6 @@ if (userError) {
     if (errorGerente) {
       console.error('Error creando gerente:', errorGerente);
       
-      
       await supabase.from('cooperativas').delete().eq('id', cooperativa.id);
       alert('❌ Error creando gerente: ' + errorGerente.message);
       return;
@@ -4850,6 +4826,7 @@ if (userError) {
           `📧 Email: ${emailGerente}\n\n` +
           `El gerente puede iniciar sesión con su email y crear su contraseña.`);
 
+    
     document.getElementById('nombre-cooperativa').value = '';
     document.getElementById('rfc-cooperativa').value = '';
     document.getElementById('email-gerente').value = '';
@@ -4862,12 +4839,12 @@ if (userError) {
     console.error('❌ Error completo:', error);
     alert('❌ Error: ' + error.message);
   } finally {
-    btn.innerHTML = '<i class="fas fa-save"></i> Crear Cooperativa y Asignar Gerente';
+    btn.innerHTML = originalText;
     btn.disabled = false;
   }
 }
 
-    async function cargarPanelSuperAdmin() {
+async function cargarPanelSuperAdmin() {
   try {
     console.log("📋 Cargando lista de cooperativas...");
     
@@ -4910,7 +4887,6 @@ if (userError) {
       return;
     }
 
-    
     listaContainer.innerHTML = cooperativas.map(coop => {
       const gerente = coop.usuarios?.find(u => u.rol === 'gerente');
       
@@ -4954,6 +4930,16 @@ if (userError) {
   }
 }
 
+    function crearPanelGerente() {
+  console.log("👔 Panel gerente en desarrollo...");
+  
+  alert("Panel Gerencial en desarrollo. Por ahora usa el formulario normal.");
+  
+  
+  const appContainer = document.querySelector('.app-container');
+  if (appContainer) appContainer.style.display = 'block';
+}
+
     function verDetallesCooperativa(coopId) {
   alert("📊 Detalles de cooperativa en desarrollo - ID: " + coopId);
 }
@@ -4963,747 +4949,79 @@ function suspenderCooperativa(coopId) {
     alert("⏸️ Función de suspensión en desarrollo - ID: " + coopId);
   }
 }
-
-    function crearPanelGerente() {
-  console.log("👔 Creando Panel Gerente...");
-  
-  const panelHTML = `
-    <div class="gerente-dashboard" style="display: none;">
-      <header class="app-header">
-        <h1><i class="fas fa-chart-line"></i> Dashboard Gerente - ${window.userName || 'Gerente'}</h1>
-      </header>
-
-      <!-- ESTADÍSTICAS RÁPIDAS -->
-      <div class="card">
-        <h2><i class="fas fa-tachometer-alt"></i> Resumen General</h2>
-        <div class="result-grid" id="estadisticas-gerente">
-          <div class="result-item">
-            <div class="label">Total Avalúos</div>
-            <div class="value" id="total-avaluos">0</div>
-          </div>
-          <div class="result-item">
-            <div class="label">Pendientes</div>
-            <div class="value" id="pendientes-avaluos">0</div>
-          </div>
-          <div class="result-item">
-            <div class="label">Aprobados</div>
-            <div class="value" id="aprobados-avaluos">0</div>
-          </div>
-          <div class="result-item">
-            <div class="label">Asesores Activos</div>
-            <div class="value" id="total-asesores">0</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- FILTROS -->
-      <div class="card">
-        <h2><i class="fas fa-filter"></i> Filtros</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Asesor</label>
-            <select id="filtro-asesor" onchange="cargarAvaluosGerente()">
-              <option value="">Todos los asesores</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Estado</label>
-            <select id="filtro-estado" onchange="cargarAvaluosGerente()">
-              <option value="">Todos los estados</option>
-              <option value="borrador">Borrador</option>
-              <option value="pendiente_revision">Pendientes</option>
-              <option value="aprobado">Aprobados</option>
-              <option value="rechazado">Rechazados</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Fecha desde</label>
-            <input type="date" id="filtro-fecha-desde" onchange="cargarAvaluosGerente()">
-          </div>
-          <div class="form-group">
-            <label>Fecha hasta</label>
-            <input type="date" id="filtro-fecha-hasta" onchange="cargarAvaluosGerente()">
-          </div>
-        </div>
-        <button class="btn-secondary" onclick="descargarReporteGerente()">
-          <i class="fas fa-download"></i> Descargar Reporte
-        </button>
-      </div>
-
-      <!-- LISTA DE AVALÚOS -->
-      <div class="card">
-        <h2><i class="fas fa-list"></i> Avalúos de la Cooperativa</h2>
-        <div id="lista-avaluos-gerente" style="max-height: 600px; overflow-y: auto;">
-          <div class="loading">Cargando avalúos...</div>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  document.body.insertAdjacentHTML('beforeend', panelHTML);
-  console.log("✅ Panel Gerente creado");
-  
-  
-  cargarEstadisticasGerente();
-  cargarSelectAsesores();
-  cargarAvaluosGerente();
-}
-
-    async function cargarEstadisticasGerente() {
-  try {
     
-    const { count: totalAvaluos } = await supabase
-      .from('avaluos')
-      .select('*', { count: 'exact', head: true })
-      .eq('cooperativa_id', window.cooperativaId);
-
-    
-    const { count: pendientes } = await supabase
-      .from('avaluos')
-      .select('*', { count: 'exact', head: true })
-      .eq('cooperativa_id', window.cooperativaId)
-      .eq('estado', 'pendiente_revision');
-
-    
-    const { count: aprobados } = await supabase
-      .from('avaluos')
-      .select('*', { count: 'exact', head: true })
-      .eq('cooperativa_id', window.cooperativaId)
-      .eq('estado', 'aprobado');
-
-    
-    const { count: totalAsesores } = await supabase
-      .from('usuarios')
-      .select('*', { count: 'exact', head: true })
-      .eq('cooperativa_id', window.cooperativaId)
-      .eq('rol', 'asesor')
-      .eq('activo', true);
-
-    
-    document.getElementById('total-avaluos').textContent = totalAvaluos || 0;
-    document.getElementById('pendientes-avaluos').textContent = pendientes || 0;
-    document.getElementById('aprobados-avaluos').textContent = aprobados || 0;
-    document.getElementById('total-asesores').textContent = totalAsesores || 0;
-
-  } catch (error) {
-    console.error('Error cargando estadísticas:', error);
-  }
-}
-
-async function cargarSelectAsesores() {
-  try {
-    const { data: asesores, error } = await supabase
-      .from('usuarios')
-      .select('id, nombre, email')
-      .eq('cooperativa_id', window.cooperativaId)
-      .eq('rol', 'asesor')
-      .eq('activo', true)
-      .order('nombre');
-
-    if (error) throw error;
-
-    const select = document.getElementById('filtro-asesor');
-    select.innerHTML = '<option value="">Todos los asesores</option>';
-    
-    asesores.forEach(asesor => {
-      const option = document.createElement('option');
-      option.value = asesor.id;
-      option.textContent = `${asesor.nombre} (${asesor.email})`;
-      select.appendChild(option);
+    document.addEventListener('DOMContentLoaded', () => {
+      const nextBtn = document.getElementById('next-step');
+      if(nextBtn){
+        nextBtn.addEventListener('click', (e) => {
+          if(!window.__canUseApp()){
+            e.stopImmediatePropagation();
+            e.preventDefault();
+            document.getElementById('auth-overlay').style.display='flex';
+            alert("Inicia sesión para continuar.");
+          }
+        }, true);
+      }
     });
 
-  } catch (error) {
-    console.error('Error cargando asesores:', error);
-  }
-}
-
-async function cargarAvaluosGerente() {
-  try {
-    const listaContainer = document.getElementById('lista-avaluos-gerente');
-    if (!listaContainer) return;
-
-    listaContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Cargando avalúos...</div>';
-
-    
-    let query = supabase
-      .from('avaluos')
-      .select('*')
-      .eq('cooperativa_id', window.cooperativaId)
-      .order('fecha_creacion', { ascending: false });
-
-    
-    const asesorId = document.getElementById('filtro-asesor').value;
-    const estado = document.getElementById('filtro-estado').value;
-    const fechaDesde = document.getElementById('filtro-fecha-desde').value;
-    const fechaHasta = document.getElementById('filtro-fecha-hasta').value;
-
-    if (asesorId) query = query.eq('usuario_id', asesorId);
-    if (estado) query = query.eq('estado', estado);
-    if (fechaDesde) query = query.gte('fecha_creacion', fechaDesde);
-    if (fechaHasta) query = query.lte('fecha_creacion', fechaHasta + 'T23:59:59');
-
-    const { data: avaluos, error } = await query;
-
-    if (error) throw error;
-
-    if (!avaluos || avaluos.length === 0) {
-      listaContainer.innerHTML = `
-        <div class="empty-state">
-          <i class="fas fa-file-contract"></i>
-          <h4>No hay avalúos que coincidan con los filtros</h4>
-          <p>Intenta con otros criterios de búsqueda</p>
-        </div>
-      `;
-      return;
-    }
-
-    
-    listaContainer.innerHTML = avaluos.map(avaluo => {
-      const fecha = new Date(avaluo.fecha_creacion).toLocaleDateString('es-GT');
-      const estadoColor = {
-        'borrador': 'var(--text-light)',
-        'pendiente_revision': 'var(--warning)',
-        'aprobado': 'var(--success)',
-        'rechazado': 'var(--error)'
-      }[avaluo.estado] || 'var(--text-light)';
-
-      return `
-        <div class="appraisal-item" style="border-left: 4px solid ${estadoColor};">
-          <div class="appraisal-header">
-            <div class="appraisal-date">
-              <i class="fas fa-calendar"></i> ${fecha}
-              <span style="margin-left: 12px; color: ${estadoColor}; font-weight: 600; text-transform: capitalize;">
-                ${avaluo.estado.replace('_', ' ')}
-              </span>
-            </div>
-            <div class="appraisal-actions">
-              <button class="btn-primary btn-small" onclick="editarAvaluoGerente('${avaluo.id}')">
-                <i class="fas fa-edit"></i> Editar
-              </button>
-              ${avaluo.estado === 'pendiente_revision' ? `
-                <button class="btn-small" style="background: var(--success); color: white; border: none;" onclick="aprobarAvaluo('${avaluo.id}')">
-                  <i class="fas fa-check"></i> Aprobar
-                </button>
-                <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="rechazarAvaluo('${avaluo.id}')">
-                  <i class="fas fa-times"></i> Rechazar
-                </button>
-              ` : ''}
-              <button class="btn-secondary btn-small" onclick="verAvaluoCompleto('${avaluo.id}')">
-                <i class="fas fa-eye"></i> Ver
-              </button>
-            </div>
-          </div>
-          <div class="appraisal-details">
-            <div><strong>Asesor:</strong> ${avaluo.usuario_nombre} (${avaluo.usuario_email})</div>
-            <div><strong>Asociado:</strong> ${avaluo.associate_name || 'No especificado'}</div>
-            <div><strong>Dirección:</strong> ${avaluo.address || 'No especificado'}</div>
-            <div><strong>Valor Total:</strong> ${avaluo.total_value || 'Q0.00'}</div>
-            ${avaluo.comentarios_revision ? `<div><strong>Comentarios:</strong> ${avaluo.comentarios_revision}</div>` : ''}
-          </div>
-        </div>
-      `;
-    }).join('');
-
-  } catch (error) {
-    console.error('Error cargando avalúos:', error);
-    const listaContainer = document.getElementById('lista-avaluos-gerente');
-    if (listaContainer) {
-      listaContainer.innerHTML = `
-        <div class="error" style="color: var(--error); text-align: center; padding: 20px;">
-          <i class="fas fa-exclamation-triangle"></i>
-          <div>Error cargando avalúos: ${error.message}</div>
-        </div>
-      `;
-    }
-  }
-}
-
-    
-async function aprobarAvaluo(avaluoId) {
-  if (!confirm('¿Estás seguro de aprobar este avalúo?')) return;
-
-  try {
-    const { error } = await supabase
-      .from('avaluos')
-      .update({
-        estado: 'aprobado',
-        revisado_por: window.__session.user.id,
-        fecha_revision: new Date().toISOString(),
-        comentarios_revision: 'Aprobado por gerente'
-      })
-      .eq('id', avaluoId);
-
-    if (error) throw error;
-
-    alert('✅ Avalúo aprobado correctamente');
-    cargarAvaluosGerente();
-    cargarEstadisticasGerente();
-
-  } catch (error) {
-    console.error('Error aprobando avalúo:', error);
-    alert('❌ Error al aprobar avalúo: ' + error.message);
-  }
-}
-
-
-async function rechazarAvaluo(avaluoId) {
-  const comentarios = prompt('Ingresa los comentarios de por qué se rechaza este avalúo:');
-  if (comentarios === null) return; 
-
-  try {
-    const { error } = await supabase
-      .from('avaluos')
-      .update({
-        estado: 'rechazado',
-        revisado_por: window.__session.user.id,
-        fecha_revision: new Date().toISOString(),
-        comentarios_revision: comentarios
-      })
-      .eq('id', avaluoId);
-
-    if (error) throw error;
-
-    alert('✅ Avalúo rechazado correctamente');
-    cargarAvaluosGerente();
-    cargarEstadisticasGerente();
-
-  } catch (error) {
-    console.error('Error rechazando avalúo:', error);
-    alert('❌ Error al rechazar avalúo: ' + error.message);
-  }
-}
-
-
-async function editarAvaluoGerente(avaluoId) {
-  try {
-    
-    const { data: avaluo, error } = await supabase
-      .from('avaluos')
-      .select('*')
-      .eq('id', avaluoId)
-      .single();
-
-    if (error) throw error;
-
-    
-    const modalHTML = `
-      <div class="catalog-modal active" id="editar-avaluo-modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3><i class="fas fa-edit"></i> Editar Avalúo</h3>
-            <button class="modal-close" onclick="cerrarModalEdicion()">&times;</button>
-          </div>
-          <div class="modal-body" style="padding: 20px; max-height: 70vh; overflow-y: auto;">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Asociado</label>
-                <input type="text" id="editar-associate-name" value="${avaluo.associate_name || ''}">
-              </div>
-              <div class="form-group">
-                <label>Dirección</label>
-                <input type="text" id="editar-address" value="${avaluo.address || ''}">
-              </div>
-              <div class="form-group">
-                <label>Área Construida (m²)</label>
-                <input type="number" id="editar-construction-area" value="${avaluo.construction_area || ''}">
-              </div>
-              <div class="form-group">
-                <label>Área Terreno (m²)</label>
-                <input type="number" id="editar-land-area" value="${avaluo.land_area || ''}">
-              </div>
-              <div class="form-group">
-                <label>Valor Total</label>
-                <input type="text" id="editar-total-value" value="${avaluo.total_value || ''}">
-              </div>
-              <div class="form-group">
-                <label>Estado</label>
-                <select id="editar-estado">
-                  <option value="borrador" ${avaluo.estado === 'borrador' ? 'selected' : ''}>Borrador</option>
-                  <option value="pendiente_revision" ${avaluo.estado === 'pendiente_revision' ? 'selected' : ''}>Pendiente Revisión</option>
-                  <option value="aprobado" ${avaluo.estado === 'aprobado' ? 'selected' : ''}>Aprobado</option>
-                  <option value="rechazado" ${avaluo.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
-                </select>
-              </div>
-              <div class="form-group" style="grid-column: 1 / -1;">
-                <label>Comentarios de Revisión</label>
-                <textarea id="editar-comentarios" rows="3">${avaluo.comentarios_revision || ''}</textarea>
-              </div>
-            </div>
-            <div style="display: flex; gap: 12px; margin-top: 20px;">
-              <button class="btn-primary" onclick="guardarEdicionAvaluo('${avaluoId}')" style="flex: 1;">
-                <i class="fas fa-save"></i> Guardar Cambios
-              </button>
-              <button class="btn-secondary" onclick="cerrarModalEdicion()" style="flex: 1;">
-                <i class="fas fa-times"></i> Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    
-    if (document.getElementById('editar-avaluo-modal')) {
-      document.getElementById('editar-avaluo-modal').remove();
-    }
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-  } catch (error) {
-    console.error('Error cargando avalúo para edición:', error);
-    alert('❌ Error al cargar avalúo: ' + error.message);
-  }
-}
-
-
-async function guardarEdicionAvaluo(avaluoId) {
-  try {
-    const datosActualizados = {
-      associate_name: document.getElementById('editar-associate-name').value,
-      address: document.getElementById('editar-address').value,
-      construction_area: parseFloat(document.getElementById('editar-construction-area').value) || 0,
-      land_area: parseFloat(document.getElementById('editar-land-area').value) || 0,
-      total_value: document.getElementById('editar-total-value').value,
-      estado: document.getElementById('editar-estado').value,
-      comentarios_revision: document.getElementById('editar-comentarios').value,
-      revisado_por: window.__session.user.id,
-      fecha_revision: new Date().toISOString(),
-      fecha_actualizacion: new Date().toISOString()
-    };
-
-    const { error } = await supabase
-      .from('avaluos')
-      .update(datosActualizados)
-      .eq('id', avaluoId);
-
-    if (error) throw error;
-
-    alert('✅ Avalúo actualizado correctamente');
-    cerrarModalEdicion();
-    cargarAvaluosGerente();
-    cargarEstadisticasGerente();
-
-  } catch (error) {
-    console.error('Error guardando edición:', error);
-    alert('❌ Error al guardar cambios: ' + error.message);
-  }
-}
-
-
-function cerrarModalEdicion() {
-  const modal = document.getElementById('editar-avaluo-modal');
-  if (modal) modal.remove();
-}
-
-
-function verAvaluoCompleto(avaluoId) {
-  alert(`📋 Función de vista completa en desarrollo\nAvalúo ID: ${avaluoId}\n\nEsta función mostrará todos los detalles del avalúo en un formato de reporte.`);
-}
-
-
-function descargarReporteGerente() {
-  alert('📊 Función de descarga de reporte en desarrollo\n\nEsta función generará un Excel/PDF con todos los avalúos filtrados.');
-}
-
-  
-async function aprobarAvaluo(avaluoId) {
-  if (!confirm('¿Estás seguro de aprobar este avalúo?')) return;
-
-  try {
-    const { error } = await supabase
-      .from('avaluos')
-      .update({
-        estado: 'aprobado',
-        revisado_por: window.__session.user.id,
-        fecha_revision: new Date().toISOString(),
-        comentarios_revision: 'Aprobado por gerente'
-      })
-      .eq('id', avaluoId);
-
-    if (error) throw error;
-
-    alert('✅ Avalúo aprobado correctamente');
-    cargarAvaluosGerente();
-    cargarEstadisticasGerente();
-
-  } catch (error) {
-    console.error('Error aprobando avalúo:', error);
-    alert('❌ Error al aprobar avalúo: ' + error.message);
-  }
-}
-
-
-async function rechazarAvaluo(avaluoId) {
-  const comentarios = prompt('Ingresa los comentarios de por qué se rechaza este avalúo:');
-  if (comentarios === null) return; 
-
-  try {
-    const { error } = await supabase
-      .from('avaluos')
-      .update({
-        estado: 'rechazado',
-        revisado_por: window.__session.user.id,
-        fecha_revision: new Date().toISOString(),
-        comentarios_revision: comentarios
-      })
-      .eq('id', avaluoId);
-
-    if (error) throw error;
-
-    alert('✅ Avalúo rechazado correctamente');
-    cargarAvaluosGerente();
-    cargarEstadisticasGerente();
-
-  } catch (error) {
-    console.error('Error rechazando avalúo:', error);
-    alert('❌ Error al rechazar avalúo: ' + error.message);
-  }
-}
-
-
-async function editarAvaluoGerente(avaluoId) {
-  try {
-    
-    const { data: avaluo, error } = await supabase
-      .from('avaluos')
-      .select('*')
-      .eq('id', avaluoId)
-      .single();
-
-    if (error) throw error;
-
-    
-    const modalHTML = `
-      <div class="catalog-modal active" id="editar-avaluo-modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h3><i class="fas fa-edit"></i> Editar Avalúo</h3>
-            <button class="modal-close" onclick="cerrarModalEdicion()">&times;</button>
-          </div>
-          <div class="modal-body" style="padding: 20px; max-height: 70vh; overflow-y: auto;">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Asociado</label>
-                <input type="text" id="editar-associate-name" value="${avaluo.associate_name || ''}">
-              </div>
-              <div class="form-group">
-                <label>Dirección</label>
-                <input type="text" id="editar-address" value="${avaluo.address || ''}">
-              </div>
-              <div class="form-group">
-                <label>Área Construida (m²)</label>
-                <input type="number" id="editar-construction-area" value="${avaluo.construction_area || ''}">
-              </div>
-              <div class="form-group">
-                <label>Área Terreno (m²)</label>
-                <input type="number" id="editar-land-area" value="${avaluo.land_area || ''}">
-              </div>
-              <div class="form-group">
-                <label>Valor Total</label>
-                <input type="text" id="editar-total-value" value="${avaluo.total_value || ''}">
-              </div>
-              <div class="form-group">
-                <label>Estado</label>
-                <select id="editar-estado">
-                  <option value="borrador" ${avaluo.estado === 'borrador' ? 'selected' : ''}>Borrador</option>
-                  <option value="pendiente_revision" ${avaluo.estado === 'pendiente_revision' ? 'selected' : ''}>Pendiente Revisión</option>
-                  <option value="aprobado" ${avaluo.estado === 'aprobado' ? 'selected' : ''}>Aprobado</option>
-                  <option value="rechazado" ${avaluo.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
-                </select>
-              </div>
-              <div class="form-group" style="grid-column: 1 / -1;">
-                <label>Comentarios de Revisión</label>
-                <textarea id="editar-comentarios" rows="3">${avaluo.comentarios_revision || ''}</textarea>
-              </div>
-            </div>
-            <div style="display: flex; gap: 12px; margin-top: 20px;">
-              <button class="btn-primary" onclick="guardarEdicionAvaluo('${avaluoId}')" style="flex: 1;">
-                <i class="fas fa-save"></i> Guardar Cambios
-              </button>
-              <button class="btn-secondary" onclick="cerrarModalEdicion()" style="flex: 1;">
-                <i class="fas fa-times"></i> Cancelar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    
-    if (document.getElementById('editar-avaluo-modal')) {
-      document.getElementById('editar-avaluo-modal').remove();
-    }
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-  } catch (error) {
-    console.error('Error cargando avalúo para edición:', error);
-    alert('❌ Error al cargar avalúo: ' + error.message);
-  }
-}
-
-
-async function guardarEdicionAvaluo(avaluoId) {
-  try {
-    const datosActualizados = {
-      associate_name: document.getElementById('editar-associate-name').value,
-      address: document.getElementById('editar-address').value,
-      construction_area: parseFloat(document.getElementById('editar-construction-area').value) || 0,
-      land_area: parseFloat(document.getElementById('editar-land-area').value) || 0,
-      total_value: document.getElementById('editar-total-value').value,
-      estado: document.getElementById('editar-estado').value,
-      comentarios_revision: document.getElementById('editar-comentarios').value,
-      revisado_por: window.__session.user.id,
-      fecha_revision: new Date().toISOString(),
-      fecha_actualizacion: new Date().toISOString()
-    };
-
-    const { error } = await supabase
-      .from('avaluos')
-      .update(datosActualizados)
-      .eq('id', avaluoId);
-
-    if (error) throw error;
-
-    alert('✅ Avalúo actualizado correctamente');
-    cerrarModalEdicion();
-    cargarAvaluosGerente();
-    cargarEstadisticasGerente();
-
-  } catch (error) {
-    console.error('Error guardando edición:', error);
-    alert('❌ Error al guardar cambios: ' + error.message);
-  }
-}
-
-
-function cerrarModalEdicion() {
-  const modal = document.getElementById('editar-avaluo-modal');
-  if (modal) modal.remove();
-}
-
-
-function verAvaluoCompleto(avaluoId) {
-  alert(`📋 Función de vista completa en desarrollo\nAvalúo ID: ${avaluoId}\n\nEsta función mostrará todos los detalles del avalúo en un formato de reporte.`);
-}
-
-
-function descargarReporteGerente() {
-  alert('📊 Función de descarga de reporte en desarrollo\n\nEsta función generará un Excel/PDF con todos los avalúos filtrados.');
-}
-
-  
-async function saveCurrentAppraisal() {
-  if (!window.__session) {
-    alert('Debes iniciar sesión para guardar avalúos');
-    return false;
-  }
-  
-  console.log('🟡 Guardando avalúo con sistema de roles...');
-  
-  const loadingOverlay = document.getElementById('loadingOverlay');
-  if (loadingOverlay) loadingOverlay.style.display = 'flex';
-  
-  try {
-    const appraisalData = {
-      associateName: document.getElementById('associate-name').value || 'No especificado',
-      address: document.getElementById('address').value || 'No especificado',
-      constructionArea: parseFloat(document.getElementById('construction-area').value) || 0,
-      landArea: parseFloat(document.getElementById('land-area').value) || 0,
-      totalValue: document.getElementById('resultTotal').textContent || 'Q0.00',
-      ownerName: document.getElementById('owner-name').value || '',
-      typology: document.getElementById('typology').value || '',
-      department: document.getElementById('department').value || '',
-      estadoInmueble: document.getElementById('estado-inmueble').value || '',
-      anioConstruccion: document.getElementById('anio-construccion').value || '',
-      totalConstruccion: document.getElementById('totalConstruccion').value || '0',
-      totalTerreno: document.getElementById('totalTerreno').value || '0'
-    };
-
-    console.log('📦 Datos del avalúo:', appraisalData);
-
-    
-    let estado = 'borrador';
-    if (window.userRole === 'asesor') {
-      estado = 'pendiente_revision'; 
-    }
-
-    
-    const { data, error } = await window.supabase
-      .from('avaluos')
-      .insert([
-        {
-          usuario_id: window.__session.user.id,
-          usuario_email: window.__session.user.email,
-          usuario_nombre: window.userName || window.__session.user.email,
-          cooperativa_id: window.cooperativaId,
-          associate_name: appraisalData.associateName,
-          address: appraisalData.address,
-          construction_area: appraisalData.constructionArea,
-          land_area: appraisalData.landArea,
-          total_value: appraisalData.totalValue,
-          owner_name: appraisalData.ownerName,
-          typology: appraisalData.typology,
-          department: appraisalData.department,
-          estado_inmueble: appraisalData.estadoInmueble,
-          anio_construccion: appraisalData.anioConstruccion,
-          total_construccion: appraisalData.totalConstruccion,
-          total_terreno: appraisalData.totalTerreno,
-          estado: estado,
-          datos_completos: appraisalData
+    const _origCalculate = window.calculateRealAppraisal;
+    if(_origCalculate){
+      window.calculateRealAppraisal = function(){
+        if(!window.__canUseApp()){
+          document.getElementById('auth-overlay').style.display='flex';
+          alert("Inicia sesión para calcular el avalúo.");
+          return;
         }
-      ])
-      .select();
+        return _origCalculate.apply(this, arguments);
+      };
+    }
+  </script>
 
-    if (error) {
-      console.error('❌ Error Supabase:', error);
-      throw error;
+  <script>
+    (function () {
+      const url = new URL(window.location.href);
+      const hashStr = url.hash.startsWith('#') ? url.hash.slice(1) : url.hash;
+      const hash = new URLSearchParams(hashStr);
+      const qs = new URLSearchParams(url.search);
+      const msg = hash.get("error_description") || hash.get("error") || qs.get("error_description") || qs.get("error");
+      if (msg) {
+        console.error("Auth callback error:", msg);
+        alert("Autenticación: " + msg);
+      }
+    })();
+  </script>
+
+  <script>
+    
+    function fixTipologySelection() {
+        
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.select-button')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const button = e.target.closest('.select-button');
+                const variantItem = button.closest('.typology-variant');
+                const tipologyId = variantItem?.getAttribute('data-id');
+                
+                if (tipologyId) {
+                    __selectTipo(tipologyId);
+                }
+            }
+        });
     }
 
-    console.log('✅ Avalúo guardado en Supabase:', data);
-
     
-    const savedInLocal = window.avaluosStorage.saveAppraisal(appraisalData);
-    console.log('✅ Backup en localStorage:', savedInLocal);
-
-    alert(`✅ Avalúo ${estado === 'pendiente_revision' ? 'enviado a revisión' : 'guardado'} exitosamente`);
-    
-    
-    if (document.getElementById('all-appraisals-modal')?.classList.contains('active')) {
-      showAllAppraisals();
-    }
-    if (document.getElementById('my-appraisals-modal')?.classList.contains('active')) {
-      showMyAppraisals();
-    }
-    
-    return true;
-    
-  } catch (error) {
-    console.error('❌ Error completo al guardar:', error);
-    alert('❌ Error al guardar avalúo: ' + error.message);
-    return false;
-  } finally {
-    if (loadingOverlay) loadingOverlay.style.display = 'none';
-  }
-}
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  const saveBtn = document.getElementById('save-btn');
-  if (saveBtn) {
-    saveBtn.addEventListener('click', async function() { 
-      await saveCurrentAppraisal();
+    document.addEventListener('DOMContentLoaded', function() {
+        fixTipologySelection();
     });
-  }
-});
 
     
-document.addEventListener('DOMContentLoaded', function() {
-  const saveBtn = document.getElementById('save-btn');
-  if (saveBtn) {
-    saveBtn.addEventListener('click', async function() { 
-      await saveCurrentAppraisal();
-    });
-  }
-});
+    const originalRenderTipos = __renderTipos;
+    __renderTipos = function() {
+        originalRenderTipos();
+        setTimeout(fixTipologySelection, 100);
+    };
   </script>
 </body>
 </html>
