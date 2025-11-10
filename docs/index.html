@@ -4462,63 +4462,86 @@ if (userError) {
   }
 }
     
-    window.__signInWithGoogle = async () => {
-      try {
-        console.log("🔐 Iniciando Google OAuth...");
-        
-        const currentUrl = window.location.origin + window.location.pathname;
-        const redirectUrl = currentUrl.endsWith('/') ? currentUrl : currentUrl + '/';
-        
-        console.log("📍 Redirect URL:", redirectUrl);
+    window.__signInWithEmail = async (email, password) => {
+  try {
+    console.log("🔐 Intentando login con:", email);
+    
+    if (!email || !password) {
+      alert("Por favor ingresa email y contraseña");
+      return;
+    }
 
-        const { data, error } = await window.supabase.auth.signInWithOAuth({
-          provider: "google",
-          options: { 
-            redirectTo: redirectUrl,
-            skipBrowserRedirect: false,
-            queryParams: {
-              access_type: 'offline',
-              prompt: 'consent'
-            }
-          }
-        });
+    const { data, error } = await window.supabase.auth.signInWithPassword({ 
+      email: email.trim(), 
+      password: password.trim() 
+    });
 
-        if (error) {
-          console.error("❌ Error Google OAuth:", error);
-          
-         
-          if (error.message?.includes('OAuth') || error.message?.includes('provider') || error.message?.includes('configuration')) {
-            const useEmail = confirm(
-              "Google OAuth no está configurado aún.\n\n" +
-              "Mientras el administrador configura Google OAuth, ¿quieres crear una cuenta con tu email?"
-            );
-            
-            if (useEmail) {
-              document.getElementById('auth-email').focus();
-            }
-          } else {
-            alert("Error con Google: " + (error.message || error));
-          }
-          return;
-        }
-
-        
-        console.log("🔄 Redirigiendo a Google...");
-
-      } catch (e) {
-        console.error("❌ Error completo Google OAuth:", e);
-        
-       
-        const useEmail = confirm(
-          "Error temporal con Google.\n\n" +
-          "¿Quieres crear una cuenta con tu email en su lugar?"
-        );
-        
-        if (useEmail) {
-          document.getElementById('auth-email').focus();
-        }
+    if (error) {
+      console.error("❌ Error en login:", error);
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        alert("Email o contraseña incorrectos");
+      } else if (error.message?.includes('Email not confirmed')) {
+        alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
+      } else if (error.message?.includes('Email rate limit exceeded')) {
+        alert("Demasiados intentos. Espera unos minutos.");
+      } else {
+        alert("Error al iniciar sesión: " + error.message);
       }
-    };
+      return;
+    }
+
+    // ========== AQUÍ DEBE IR EL CÓDIGO DE VERIFICACIÓN DE ROLES ==========
+    
+    console.log("✅ Login auth exitoso, buscando datos de usuario...");
+    console.log("🔍 DEBUG - Email a buscar:", email);
+
+    const { data: usuarioData, error: userError } = await supabase
+      .from('usuarios')
+      .select('rol, cooperativa_id, nombre, activo')
+      .eq('email', email.trim().toLowerCase())
+      .single();
+
+    console.log("🔍 DEBUG - Resultado consulta:", usuarioData);
+    console.log("🔍 DEBUG - Error consulta:", userError);
+
+    if (userError) {
+      console.error("❌ Error en consulta usuario:", userError);
+      
+      if (email.toLowerCase().includes('batztzunu@gmail.com')) {
+        console.log("🎯 Asignando super_admin manualmente...");
+        window.userRole = 'super_admin';
+        window.cooperativaId = null;
+        window.userName = 'Jeremiah';
+        redirectByRole('super_admin');
+        return;
+      }
+      
+      alert("Usuario no encontrado en el sistema. Contacta al administrador.");
+      await supabase.auth.signOut();
+      return;
+    }
+
+    if (!usuarioData.activo) {
+      alert("Usuario desactivado. Contacta al administrador.");
+      await supabase.auth.signOut();
+      return;
+    }
+
+    window.userRole = usuarioData.rol;
+    window.cooperativaId = usuarioData.cooperativa_id;
+    window.userName = usuarioData.nombre;
+
+    console.log("✅ Login completo. Rol:", usuarioData.rol, "Nombre:", usuarioData.nombre);
+    redirectByRole(usuarioData.rol);
+    
+
+  } catch (e) {
+    console.error("❌ Error completo en login:", e);
+    alert("Error al iniciar sesión: " + (e.message || e));
+  }
+};
+      
 
     function showUsernameModal(userId) {
       const modal = document.getElementById('username-modal');
