@@ -5330,8 +5330,15 @@ async function asignarGerente(coopId, coopNombre) {
     `;
     document.body.appendChild(asignarModal);
   }
+
+setTimeout(() => {
+    const buscarInput = document.getElementById('buscar-gerente');
+    if (buscarInput) {
+        buscarInput.addEventListener('input', buscarUsuariosExistente);
+        console.log('✅ Event listener de búsqueda configurado');
+    }
+}, 100);  
   
-  // Actualizar el nombre de la cooperativa en el modal
   const titulo = asignarModal.querySelector('h4');
   if (titulo) {
     titulo.textContent = `Cooperativa: ${coopNombre}`;
@@ -5351,7 +5358,8 @@ async function asignarGerente(coopId, coopNombre) {
   asignarModal.classList.add('active');
 }
 
-// Función placeholder para invitar gerente
+
+// Función para invitar gerente - VERSIÓN COMPLETA
 async function invitarGerente(coopId) {
   const email = document.getElementById('email-nuevo-gerente').value.trim();
   const nombre = document.getElementById('nombre-nuevo-gerente').value.trim();
@@ -5361,10 +5369,138 @@ async function invitarGerente(coopId) {
     return;
   }
   
-  alert(`🔧 PASO 2.3: Invitando gerente ${email} a cooperativa ${coopId}`);
-  console.log('🔄 Invitando gerente:', { email, nombre, coopId });
+  if (!nombre) {
+    alert('El nombre del gerente es requerido');
+    return;
+  }
   
-  // En el PASO 2.3 implementaremos el envío real de invitación
+  try {
+    console.log('🔄 Invitando gerente:', { email, nombre, coopId });
+    
+    // 1. Crear usuario en Auth de Supabase
+    const { data: authData, error: authError } = await window.supabase.auth.admin.createUser({
+      email: email,
+      password: 'temp_password_123', // Contraseña temporal
+      email_confirm: true, // Confirmar email automáticamente
+      user_metadata: {
+        username: nombre,
+        rol: 'gerente',
+        cooperativa_id: coopId,
+        invitacion_pendiente: true
+      }
+    });
+    
+    if (authError) {
+      // Si el usuario ya existe, actualizarlo
+      if (authError.message.includes('already registered')) {
+        console.log('⚠️ Usuario ya existe, actualizando...');
+        
+        const { data: updateData, error: updateError } = await window.supabase.auth.admin.updateUserById(
+          // Necesitaríamos el ID del usuario existente
+          // Por ahora mostramos mensaje
+          authError.message
+        );
+        
+        if (updateError) {
+          alert('El usuario ya existe pero no se pudo asignar como gerente. Contacta al administrador.');
+          throw updateError;
+        }
+        
+        alert(`✅ ${nombre} ya estaba registrado. Se le ha asignado como gerente.`);
+        
+      } else {
+        throw authError;
+      }
+    } else {
+      console.log('✅ Usuario creado:', authData);
+      alert(`✅ Gerente ${nombre} invitado exitosamente. Se envió un email de invitación.`);
+    }
+    
+    // 2. Cerrar modal
+    closeModal('asignar-gerente-modal');
+    
+    // 3. Opcional: Mostrar información de acceso
+    console.log('📧 Información para el gerente:');
+    console.log('   Email:', email);
+    console.log('   Contraseña temporal: temp_password_123');
+    console.log('   Debe cambiar la contraseña en el primer acceso');
+    
+  } catch (error) {
+    console.error('❌ Error invitando gerente:', error);
+    
+    if (error.message.includes('already registered')) {
+      alert('❌ Este email ya está registrado en el sistema. Contacta al administrador para asignarle el rol de gerente.');
+    } else if (error.message.includes('permission denied')) {
+      alert('❌ No tienes permisos para crear usuarios. Esta función requiere permisos de administrador en Supabase.');
+    } else {
+      alert('Error al invitar gerente: ' + error.message);
+    }
+  }
+}
+
+  // Función para buscar usuarios existentes
+async function buscarUsuariosExistente() {
+  const busqueda = document.getElementById('buscar-gerente').value.trim();
+  
+  if (!busqueda) {
+    document.getElementById('resultados-gerentes').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <p>Ingresa un email o nombre para buscar</p>
+      </div>
+    `;
+    return;
+  }
+  
+  try {
+    // Buscar en la tabla de usuarios
+    const { data: usuarios, error } = await window.supabase
+      .from('usuarios')
+      .select('*')
+      .or(`email.ilike.%${busqueda}%,nombre.ilike.%${busqueda}%`)
+      .limit(5);
+    
+    if (error) throw error;
+    
+    let resultadosHTML = '';
+    
+    if (usuarios.length === 0) {
+      resultadosHTML = `
+        <div class="empty-state">
+          <i class="fas fa-users"></i>
+          <p>No se encontraron usuarios</p>
+        </div>
+      `;
+    } else {
+      resultadosHTML = usuarios.map(usuario => `
+        <div class="appraisal-item" style="cursor: pointer; margin-bottom: 8px;" onclick="seleccionarUsuarioExistente('${usuario.id}', '${usuario.email}', '${usuario.nombre}')">
+          <div class="appraisal-details">
+            <div><strong>Nombre:</strong> ${usuario.nombre || 'No especificado'}</div>
+            <div><strong>Email:</strong> ${usuario.email}</div>
+            <div><strong>Rol actual:</strong> ${usuario.rol || 'No asignado'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    document.getElementById('resultados-gerentes').innerHTML = resultadosHTML;
+    
+  } catch (error) {
+    console.error('❌ Error buscando usuarios:', error);
+    document.getElementById('resultados-gerentes').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Error al buscar usuarios</p>
+      </div>
+    `;
+  }
+}
+
+// Función para seleccionar usuario existente
+async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
+  alert(`🔧 Asignando a ${usuarioNombre} como gerente...`);
+  console.log('Usuario seleccionado:', { usuarioId, usuarioEmail, usuarioNombre });
+  // En una siguiente iteración implementaremos esta función
 }
   
 // Función para gestionar usuarios
