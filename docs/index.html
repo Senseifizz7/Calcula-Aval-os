@@ -4647,6 +4647,142 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     })();
   </script>
 
+  // === SISTEMA DE PERFILES EXTENDIDOS - PASO 4 ===
+window.__loadCooperativas = async () => {
+  try {
+    console.log("🔄 Cargando cooperativas...");
+    const { data, error } = await window.supabase
+      .from('cooperativas')
+      .select('id, nombre')
+      .eq('estado', 'activa')
+      .order('nombre');
+    
+    if (error) throw error;
+    console.log(`✅ ${data?.length || 0} cooperativas cargadas`);
+    return data || [];
+  } catch (error) {
+    console.error('❌ Error cargando cooperativas:', error);
+    return [];
+  }
+};
+
+window.__signUpWithEmailExtended = async (email, password, username, rol, cooperativa_id, nombreCompleto) => {
+  try {
+    console.log("📝 Iniciando registro extendido...", { email, rol, cooperativa_id });
+    
+    if (!email || !password || !rol || !cooperativa_id) {
+      throw new Error("Todos los campos requeridos deben estar completos");
+    }
+    if (password.length < 6) {
+      throw new Error("La contraseña debe tener al menos 6 caracteres");
+    }
+
+    const { data: authData, error: authError } = await window.supabase.auth.signUp({
+      email: email.trim(),
+      password: password.trim(),
+      options: { 
+        data: { username: username || email.split('@')[0] },
+        emailRedirectTo: window.location.origin + window.location.pathname
+      }
+    });
+
+    if (authError) throw authError;
+
+    if (authData.user) {
+      console.log("✅ Usuario auth creado, creando perfil extendido...");
+      
+      const { error: profileError } = await window.supabase
+        .from('perfiles_usuario')
+        .insert({
+          usuario_id: authData.user.id,
+          cooperativa_id: cooperativa_id,
+          rol: rol,
+          nombre_completo: nombreCompleto || username,
+          estado: 'activo'
+        });
+
+      if (profileError) throw profileError;
+      console.log("✅ Registro extendido completado");
+      return authData;
+    }
+  } catch (error) {
+    console.error("❌ Error en registro extendido:", error);
+    throw error;
+  }
+};
+
+      // === ADAPTACIÓN DEL LOGIN - PASO 5 ===
+window.__loadUserProfile = async (userId) => {
+  try {
+    console.log("🔄 Cargando perfil para usuario:", userId);
+    
+    const { data: profile, error } = await window.supabase
+      .from('perfiles_usuario')
+      .select(`
+        *,
+        cooperativas (id, nombre, email)
+      `)
+      .eq('usuario_id', userId)
+      .single();
+
+    if (error) {
+      console.error("❌ Error cargando perfil:", error);
+      return null;
+    }
+    
+    console.log("✅ Perfil cargado:", profile);
+    return profile;
+  } catch (error) {
+    console.error("❌ Error en loadUserProfile:", error);
+    return null;
+  }
+};
+
+const originalAuthStateChange = window.supabase.auth.onAuthStateChange;
+window.supabase.auth.onAuthStateChange(async (event, session) => {
+  console.log("🔐 Auth state change:", event);
+  
+  window.__session = session || null;
+  window.__userProfile = null;
+  
+  if (session?.user) {
+    try {
+      const userProfile = await window.__loadUserProfile(session.user.id);
+      window.__userProfile = userProfile;
+      
+      if (!userProfile) {
+        console.warn("⚠️ Usuario autenticado pero sin perfil extendido");
+      } else {
+        console.log("🎯 Perfil de usuario cargado:", {
+          nombre: userProfile.nombre_completo,
+          rol: userProfile.rol,
+          cooperativa: userProfile.cooperativas?.nombre
+        });
+      }
+    } catch (error) {
+      console.error("❌ Error cargando perfil en auth change:", error);
+    }
+  }
+  
+  if (typeof __updateAuthUI === 'function') {
+    __updateAuthUI(!!session);
+  }
+});
+
+window.__checkPermission = (requiredRole = null, requiredCoop = null) => {
+  if (!window.__userProfile) return false;
+  
+  if (window.__userProfile.rol === 'super_admin') return true;
+  
+  if (requiredRole && window.__userProfile.rol !== requiredRole) return false;
+  
+  if (requiredCoop && window.__userProfile.cooperativa_id !== requiredCoop) return false;
+  
+  return true;
+};
+
+console.log("✅ Sistema de perfiles extendido cargado");
+
   <script>
     // Agregar esta función para solucionar el problema de selección en pestaña 2
     function fixTipologySelection() {
