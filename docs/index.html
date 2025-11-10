@@ -5112,17 +5112,23 @@ async function eliminarCooperativa(coopId) {
     alert(`🔧 Eliminar cooperativa: ${coopId}`);
   }
 }
-// Función para crear cooperativa - VERSIÓN COMPLETA
+// Función para crear cooperativa - VERSIÓN CORREGIDA
 async function crearCooperativa() {
-    // Función segura para cerrar modales
-function closeModal(modalId) {
-  const modal = document.getElementById(modalId);
-  if (modal && modal.classList) {
-    modal.classList.remove('active');
-  } else {
-    console.log(`Modal ${modalId} no encontrado`);
-  }
-}
+  // Cerrar modales abiertos - VERSIÓN SEGURA
+  try {
+    if (document.getElementById('admin-panel-modal')) {
+      closeModal('admin-panel-modal');
+    }
+  } catch (e) { console.log('Modal admin no estaba abierto'); }
+  
+  try {
+    if (document.getElementById('cooperativas-modal')) {
+      closeModal('cooperativas-modal');
+    }
+  } catch (e) { console.log('Modal cooperativas no estaba abierto'); }
+  
+  // Crear modal de creación
+  let crearModal = document.getElementById('crear-cooperativa-modal');
   
   if (!crearModal) {
     crearModal = document.createElement('div');
