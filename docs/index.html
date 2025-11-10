@@ -4491,8 +4491,7 @@ if (userError) {
       return;
     }
 
-    // ========== AQUÍ DEBE IR EL CÓDIGO DE VERIFICACIÓN DE ROLES ==========
-    
+    // ✅ LOGIN EXITOSO - VERIFICAR ROL
     console.log("✅ Login auth exitoso, buscando datos de usuario...");
     console.log("🔍 DEBUG - Email a buscar:", email);
 
@@ -4505,9 +4504,10 @@ if (userError) {
     console.log("🔍 DEBUG - Resultado consulta:", usuarioData);
     console.log("🔍 DEBUG - Error consulta:", userError);
 
-    if (userError) {
+    if (userError || !usuarioData) {
       console.error("❌ Error en consulta usuario:", userError);
       
+      // SI ES TU EMAIL, ASIGNAR SUPER_ADMIN MANUALMENTE
       if (email.toLowerCase().includes('batztzunu@gmail.com')) {
         console.log("🎯 Asignando super_admin manualmente...");
         window.userRole = 'super_admin';
@@ -4528,13 +4528,15 @@ if (userError) {
       return;
     }
 
+    // GUARDAR DATOS DE USUARIO
     window.userRole = usuarioData.rol;
     window.cooperativaId = usuarioData.cooperativa_id;
     window.userName = usuarioData.nombre;
 
     console.log("✅ Login completo. Rol:", usuarioData.rol, "Nombre:", usuarioData.nombre);
+
+    // REDIRIGIR SEGÚN ROL
     redirectByRole(usuarioData.rol);
-    
 
   } catch (e) {
     console.error("❌ Error completo en login:", e);
