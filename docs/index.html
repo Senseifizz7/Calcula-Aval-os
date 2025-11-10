@@ -4872,17 +4872,28 @@ function updateAdminButton() {
   }
 }
 
-// Función segura para el event listener
 function safeAuthStateChange() {
-  if (window.supabase && window.supabase.auth) {
-    window.supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('🔄 Cambio de estado de autenticación detectado');
-      setTimeout(updateAdminButton, 2000);
-    });
-  } else {
-    console.log('🔄 Supabase.auth no disponible, reintentando...');
-    setTimeout(safeAuthStateChange, 1000);
-  }
+  console.log('🔍 Verificando Supabase...');
+  
+  const checkSupabase = setInterval(() => {
+    if (window.supabase && window.supabase.auth) {
+      console.log('✅ Supabase.auth disponible, configurando listener...');
+      clearInterval(checkSupabase);
+      
+      window.supabase.auth.onAuthStateChange((_event, session) => {
+        console.log('🔄 Cambio de estado de autenticación detectado');
+        setTimeout(updateAdminButton, 2000);
+      });
+    } else {
+      console.log('⏳ Esperando a que Supabase se cargue...');
+    }
+  }, 500); // Verificar cada 500ms
+  
+  // Timeout de seguridad después de 10 segundos
+  setTimeout(() => {
+    clearInterval(checkSupabase);
+    console.log('⏰ Timeout: Supabase no se cargó en 10 segundos');
+  }, 10000);
 }
 
 // Ejecutar cuando todo esté listo
