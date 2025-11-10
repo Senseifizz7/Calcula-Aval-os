@@ -1894,7 +1894,7 @@
     return false;
   }
   
-  console.log('🟡 Iniciando guardado en Supabase...');
+  console.log('🟡 Iniciando guardado DUAL (Supabase + LocalStorage)...');
   
   const loadingOverlay = document.getElementById('loadingOverlay');
   if (loadingOverlay) loadingOverlay.style.display = 'flex';
@@ -1930,62 +1930,71 @@
       }
     };
 
-    console.log('📦 Datos a guardar en Supabase:', appraisalData);
+    console.log('📦 Datos preparados para guardado dual');
 
     // VERIFICAR SESIÓN
     if (!window.__session?.user?.id) {
       throw new Error('No hay sesión de usuario activa');
     }
 
-    // INTENTAR GUARDAR EN SUPABASE
-    console.log('🔄 Enviando a Supabase...');
-    
-    const { data, error } = await window.supabase
-      .from('avaluos')
-      .insert([
-        {
-          usuario_id: window.__session.user.id,
-          usuario_email: window.__session.user.email,
-          usuario_nombre: window.__session.user.user_metadata?.username || 'Usuario',
-          fecha_creacion: new Date().toISOString(),
-          fecha_formateada: new Date().toLocaleDateString('es-GT'),
-          ...appraisalData
-        }
-      ])
-      .select();
-
-    if (error) {
-      console.error('❌ Error COMPLETO de Supabase:', error);
-      console.error('🔍 Detalles del error:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code
-      });
-      throw new Error(`Error Supabase: ${error.message} - ${error.details || ''}`);
-    }
-
-    console.log('✅ Éxito - Datos guardados en Supabase:', data);
-
-    // Guardar también en localStorage como respaldo
+    // === PASO 1: GUARDAR EN LOCALSTORAGE (SIEMPRE) ===
+    console.log('💾 Guardando en LocalStorage...');
     const savedInLocal = window.avaluosStorage.saveAppraisal(appraisalData.datos_completos);
-    console.log('✅ Guardado en localStorage:', savedInLocal);
+    console.log('✅ Guardado en LocalStorage:', savedInLocal);
 
-    alert('✅ Avalúo guardado EXITOSAMENTE en Supabase y en la web');
-    
-    // Actualizar modales si están abiertos
-    if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
-      showAllAppraisals();
+    // === PASO 2: INTENTAR GUARDAR EN SUPABASE ===
+    let supabaseSuccess = false;
+    let supabaseError = null;
+    let supabaseData = null;
+
+    try {
+      console.log('🔄 Intentando guardar en Supabase...');
+      
+      const { data, error } = await window.supabase
+        .from('avaluos')
+        .insert([
+          {
+            usuario_id: window.__session.user.id,
+            usuario_email: window.__session.user.email,
+            usuario_nombre: window.__session.user.user_metadata?.username || 'Usuario',
+            fecha_creacion: new Date().toISOString(),
+            ...appraisalData
+          }
+        ])
+        .select();
+
+      if (error) {
+        supabaseError = error;
+        console.error('❌ Error de Supabase:', error);
+      } else {
+        supabaseSuccess = true;
+        supabaseData = data;
+        console.log('✅ Éxito - Datos guardados en Supabase:', data);
+      }
+    } catch (supabaseError) {
+      console.error('❌ Error inesperado en Supabase:', supabaseError);
     }
-    if (document.getElementById('my-appraisals-modal').classList.contains('active')) {
-      showMyAppraisals();
+
+    // === PASO 3: MOSTRAR RESULTADO AL USUARIO ===
+    if (supabaseSuccess) {
+      alert('✅ Avalúo guardado EXITOSAMENTE:\n\n• 📊 En tu base de datos (Supabase)\n• 💾 En este navegador (LocalStorage)');
+      
+      // Actualizar modales si están abiertos
+      if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
+        showAllAppraisals();
+      }
+      if (document.getElementById('my-appraisals-modal').classList.contains('active')) {
+        showMyAppraisals();
+      }
+    } else {
+      alert('⚠️ Avalúo guardado PARCIALMENTE:\n\n• ✅ En este navegador (LocalStorage)\n• ❌ No se pudo guardar en la base de datos\n\nError: ' + (supabaseError?.message || 'Desconocido'));
     }
-    
-    return true;
+
+    return supabaseSuccess;
     
   } catch (error) {
-    console.error('❌ Error completo al guardar:', error);
-    alert('❌ Error al guardar en Supabase: ' + error.message + '\n\nEl avalúo se guardó en la web pero no en la base de datos.');
+    console.error('❌ Error CRÍTICO al guardar:', error);
+    alert('❌ Error crítico: No se pudo guardar el avalúo en ningún sistema.');
     return false;
   } finally {
     if (loadingOverlay) loadingOverlay.style.display = 'none';
