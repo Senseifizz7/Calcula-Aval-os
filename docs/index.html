@@ -4388,238 +4388,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     });
   </script>
   
-function updateAdminButton() {
-  const floatingActions = document.querySelector('.floating-actions');
-  if (!floatingActions) return;
-  
-  const user = window.__session?.user;
-  const userRole = user?.user_metadata?.rol || 'asesor';
-  
-  // Buscar si ya existe el botón de admin
-  let adminBtn = document.getElementById('admin-panel-btn');
-  
-  if (userRole !== 'asesor' && !adminBtn) {
-    // Crear botón de administración para gerentes/super_admin
-    adminBtn = document.createElement('button');
-    adminBtn.className = 'floating-btn';
-    adminBtn.id = 'admin-panel-btn';
-    adminBtn.title = 'Panel de Administración';
-    adminBtn.innerHTML = '<i class="fas fa-cog"></i>';
-    adminBtn.onclick = showAdminPanel;
-    
-    // Insertar después del botón de "Mis Avalúos"
-    floatingActions.appendChild(adminBtn);
-    console.log('✅ Botón de admin agregado para rol:', userRole);
-    
-  } else if (userRole === 'asesor' && adminBtn) {
-    // Remover botón si es asesor
-    adminBtn.remove();
-    console.log('❌ Botón de admin removido para asesor');
-  }
-}
-
-// Panel de administración
-async function showAdminPanel() {
-  const user = window.__session?.user;
-  const userRole = user?.user_metadata?.rol || 'asesor';
-  const userCooperativaId = user?.user_metadata?.cooperativa_id;
-  
-  console.log('🛠️ Abriendo panel admin para:', { userRole, userCooperativaId });
-  
-  // Crear modal de administración dinámicamente
-  let adminModal = document.getElementById('admin-panel-modal');
-  
-  if (!adminModal) {
-    adminModal = document.createElement('div');
-    adminModal.className = 'catalog-modal';
-    adminModal.id = 'admin-panel-modal';
-    adminModal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3><i class="fas fa-cog"></i> Panel de Administración</h3>
-          <button class="modal-close" onclick="closeModal('admin-panel-modal')">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 20px;">
-          <div id="admin-panel-content">
-            <div class="loading-spinner"></div>
-            <p>Cargando panel de administración...</p>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(adminModal);
-  }
-  
-  try {
-    // Cargar contenido según rol
-    let adminContent = '';
-    
-    if (userRole === 'super_admin') {
-      adminContent = await loadSuperAdminPanel();
-    } else if (userRole === 'gerente') {
-      adminContent = await loadGerentePanel();
-    }
-    
-    document.getElementById('admin-panel-content').innerHTML = adminContent;
-    adminModal.classList.add('active');
-    
-  } catch (error) {
-    console.error('❌ Error cargando panel admin:', error);
-    document.getElementById('admin-panel-content').innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-exclamation-triangle"></i>
-        <h4>Error al cargar panel</h4>
-        <p>${error.message}</p>
-      </div>
-    `;
-  }
-}
-
-// Panel para SUPER ADMIN
-async function loadSuperAdminPanel() {
-  // Obtener estadísticas
-  const { data: avaluos, error: avaluosError } = await window.supabase
-    .from('avaluos')
-    .select('*');
-  
-  const { data: cooperativas, error: coopError } = await window.supabase
-    .from('cooperativas')
-    .select('*');
-  
-  if (avaluosError) throw avaluosError;
-  if (coopError) throw coopError;
-  
-  const totalAvaluos = avaluos?.length || 0;
-  const totalCooperativas = cooperativas?.length || 0;
-  const avaluosPendientes = avaluos?.filter(a => a.estado_aprobacion === 'pendiente').length || 0;
-  
-  return `
-    <div class="admin-panel">
-      <h4 style="color: var(--primary); margin-bottom: 20px;">Super Admin - Vista Global</h4>
-      
-      <div class="result-grid" style="margin-bottom: 20px;">
-        <div class="result-item">
-          <div class="label">Total Cooperativas</div>
-          <div class="value">${totalCooperativas}</div>
-        </div>
-        <div class="result-item">
-          <div class="label">Total Avalúos</div>
-          <div class="value">${totalAvaluos}</div>
-        </div>
-        <div class="result-item">
-          <div class="label">Pendientes</div>
-          <div class="value">${avaluosPendientes}</div>
-        </div>
-      </div>
-      
-      <div style="margin-bottom: 20px;">
-        <button class="btn-primary" onclick="manageCooperativas()" style="width: 100%; margin-bottom: 10px;">
-          <i class="fas fa-building"></i> Gestionar Cooperativas
-        </button>
-        <button class="btn-secondary" onclick="manageUsuarios()" style="width: 100%;">
-          <i class="fas fa-users"></i> Gestionar Usuarios
-        </button>
-      </div>
-      
-      <div class="form-group">
-        <label>Acciones Rápidas</label>
-        <button class="btn-secondary btn-small" onclick="showAllAppraisals()" style="width: 100%; margin-bottom: 8px;">
-          <i class="fas fa-list"></i> Ver Todos los Avalúos
-        </button>
-        <button class="btn-secondary btn-small" onclick="exportReport()" style="width: 100%;">
-          <i class="fas fa-download"></i> Exportar Reporte General
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-// Panel para GERENTE
-async function loadGerentePanel() {
-  const user = window.__session?.user;
-  const userCooperativaId = user?.user_metadata?.cooperativa_id;
-  
-  // Obtener estadísticas de la cooperativa
-  const { data: avaluos, error: avaluosError } = await window.supabase
-    .from('avaluos')
-    .select('*')
-    .eq('cooperativa_id', userCooperativaId);
-  
-  const { data: usuarios, error: usuariosError } = await window.supabase
-    .from('usuarios')
-    .select('*')
-    .eq('cooperativa_id', userCooperativaId)
-    .eq('activo', true);
-  
-  if (avaluosError) throw avaluosError;
-  if (usuariosError) throw usuariosError;
-  
-  const totalAvaluos = avaluos?.length || 0;
-  const totalAsesores = usuarios?.filter(u => u.rol === 'asesor').length || 0;
-  const avaluosPendientes = avaluos?.filter(a => a.estado_aprobacion === 'pendiente').length || 0;
-  
-  return `
-    <div class="admin-panel">
-      <h4 style="color: var(--primary); margin-bottom: 20px;">Panel Gerencial</h4>
-      
-      <div class="result-grid" style="margin-bottom: 20px;">
-        <div class="result-item">
-          <div class="label">Total Asesores</div>
-          <div class="value">${totalAsesores}</div>
-        </div>
-        <div class="result-item">
-          <div class="label">Total Avalúos</div>
-          <div class="value">${totalAvaluos}</div>
-        </div>
-        <div class="result-item">
-          <div class="label">Pendientes</div>
-          <div class="value">${avaluosPendientes}</div>
-        </div>
-      </div>
-      
-      <div style="margin-bottom: 20px;">
-        <button class="btn-primary" onclick="showAllAppraisals()" style="width: 100%; margin-bottom: 10px;">
-          <i class="fas fa-list"></i> Revisar Todos los Avalúos
-        </button>
-        <button class="btn-secondary" onclick="gestionarAsesores()" style="width: 100%;">
-          <i class="fas fa-user-plus"></i> Gestionar Asesores
-        </button>
-      </div>
-      
-      <div class="form-group">
-        <label>Acciones Rápidas</label>
-        <button class="btn-secondary btn-small" onclick="aprobarPendientes()" style="width: 100%; margin-bottom: 8px;">
-          <i class="fas fa-check-circle"></i> Revisar Pendientes (${avaluosPendientes})
-        </button>
-        <button class="btn-secondary btn-small" onclick="exportReportCooperativa()" style="width: 100%;">
-          <i class="fas fa-download"></i> Exportar Reporte
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-// Función para gestionar asesores (placeholder)
-async function gestionarAsesores() {
-  alert('🔧 Función en desarrollo: Aquí podrás invitar y gestionar asesores');
-  closeModal('admin-panel-modal');
-}
-
-// Función para aprobar pendientes
-async function aprobarPendientes() {
-  closeModal('admin-panel-modal');
-  showAllAppraisals();
-}
-
-// Actualizar botón de admin cuando cambia la sesión
-window.supabase.auth.onAuthStateChange((_event, session) => {
-  setTimeout(updateAdminButton, 1000);
-});
-
-// Ejecutar al cargar la página
-document.addEventListener('DOMContentLoaded', function() {
-  setTimeout(updateAdminButton, 2000);
-  });<script type="module">
+<script type="module">
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     const SUPABASE_URL = "https://csinbmcauuyljjqshawi.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzaW5ibWNhdXV5bGpqcXNoYXdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MjMyNTcsImV4cCI6MjA3NTA5OTI1N30._0cV_TgcHMjkixigFEMcS34MGbtz7pcupog5-LuKoPA";
@@ -5287,6 +5056,239 @@ window.supabase.auth.onAuthStateChange((_event, session) => {
 document.addEventListener('DOMContentLoaded', function() {
   setTimeout(updateAdminButton, 2000);
 });
+
+    function updateAdminButton() {
+  const floatingActions = document.querySelector('.floating-actions');
+  if (!floatingActions) return;
+  
+  const user = window.__session?.user;
+  const userRole = user?.user_metadata?.rol || 'asesor';
+  
+  // Buscar si ya existe el botón de admin
+  let adminBtn = document.getElementById('admin-panel-btn');
+  
+  if (userRole !== 'asesor' && !adminBtn) {
+    // Crear botón de administración para gerentes/super_admin
+    adminBtn = document.createElement('button');
+    adminBtn.className = 'floating-btn';
+    adminBtn.id = 'admin-panel-btn';
+    adminBtn.title = 'Panel de Administración';
+    adminBtn.innerHTML = '<i class="fas fa-cog"></i>';
+    adminBtn.onclick = showAdminPanel;
+    
+    // Insertar después del botón de "Mis Avalúos"
+    floatingActions.appendChild(adminBtn);
+    console.log('✅ Botón de admin agregado para rol:', userRole);
+    
+  } else if (userRole === 'asesor' && adminBtn) {
+    // Remover botón si es asesor
+    adminBtn.remove();
+    console.log('❌ Botón de admin removido para asesor');
+  }
+}
+
+// Panel de administración
+async function showAdminPanel() {
+  const user = window.__session?.user;
+  const userRole = user?.user_metadata?.rol || 'asesor';
+  const userCooperativaId = user?.user_metadata?.cooperativa_id;
+  
+  console.log('🛠️ Abriendo panel admin para:', { userRole, userCooperativaId });
+  
+  // Crear modal de administración dinámicamente
+  let adminModal = document.getElementById('admin-panel-modal');
+  
+  if (!adminModal) {
+    adminModal = document.createElement('div');
+    adminModal.className = 'catalog-modal';
+    adminModal.id = 'admin-panel-modal';
+    adminModal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-cog"></i> Panel de Administración</h3>
+          <button class="modal-close" onclick="closeModal('admin-panel-modal')">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <div id="admin-panel-content">
+            <div class="loading-spinner"></div>
+            <p>Cargando panel de administración...</p>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(adminModal);
+  }
+  
+  try {
+    // Cargar contenido según rol
+    let adminContent = '';
+    
+    if (userRole === 'super_admin') {
+      adminContent = await loadSuperAdminPanel();
+    } else if (userRole === 'gerente') {
+      adminContent = await loadGerentePanel();
+    }
+    
+    document.getElementById('admin-panel-content').innerHTML = adminContent;
+    adminModal.classList.add('active');
+    
+  } catch (error) {
+    console.error('❌ Error cargando panel admin:', error);
+    document.getElementById('admin-panel-content').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar panel</h4>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+// Panel para SUPER ADMIN
+async function loadSuperAdminPanel() {
+  // Obtener estadísticas
+  const { data: avaluos, error: avaluosError } = await window.supabase
+    .from('avaluos')
+    .select('*');
+  
+  const { data: cooperativas, error: coopError } = await window.supabase
+    .from('cooperativas')
+    .select('*');
+  
+  if (avaluosError) throw avaluosError;
+  if (coopError) throw coopError;
+  
+  const totalAvaluos = avaluos?.length || 0;
+  const totalCooperativas = cooperativas?.length || 0;
+  const avaluosPendientes = avaluos?.filter(a => a.estado_aprobacion === 'pendiente').length || 0;
+  
+  return `
+    <div class="admin-panel">
+      <h4 style="color: var(--primary); margin-bottom: 20px;">Super Admin - Vista Global</h4>
+      
+      <div class="result-grid" style="margin-bottom: 20px;">
+        <div class="result-item">
+          <div class="label">Total Cooperativas</div>
+          <div class="value">${totalCooperativas}</div>
+        </div>
+        <div class="result-item">
+          <div class="label">Total Avalúos</div>
+          <div class="value">${totalAvaluos}</div>
+        </div>
+        <div class="result-item">
+          <div class="label">Pendientes</div>
+          <div class="value">${avaluosPendientes}</div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <button class="btn-primary" onclick="manageCooperativas()" style="width: 100%; margin-bottom: 10px;">
+          <i class="fas fa-building"></i> Gestionar Cooperativas
+        </button>
+        <button class="btn-secondary" onclick="manageUsuarios()" style="width: 100%;">
+          <i class="fas fa-users"></i> Gestionar Usuarios
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label>Acciones Rápidas</label>
+        <button class="btn-secondary btn-small" onclick="showAllAppraisals()" style="width: 100%; margin-bottom: 8px;">
+          <i class="fas fa-list"></i> Ver Todos los Avalúos
+        </button>
+        <button class="btn-secondary btn-small" onclick="exportReport()" style="width: 100%;">
+          <i class="fas fa-download"></i> Exportar Reporte General
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Panel para GERENTE
+async function loadGerentePanel() {
+  const user = window.__session?.user;
+  const userCooperativaId = user?.user_metadata?.cooperativa_id;
+  
+  // Obtener estadísticas de la cooperativa
+  const { data: avaluos, error: avaluosError } = await window.supabase
+    .from('avaluos')
+    .select('*')
+    .eq('cooperativa_id', userCooperativaId);
+  
+  const { data: usuarios, error: usuariosError } = await window.supabase
+    .from('usuarios')
+    .select('*')
+    .eq('cooperativa_id', userCooperativaId)
+    .eq('activo', true);
+  
+  if (avaluosError) throw avaluosError;
+  if (usuariosError) throw usuariosError;
+  
+  const totalAvaluos = avaluos?.length || 0;
+  const totalAsesores = usuarios?.filter(u => u.rol === 'asesor').length || 0;
+  const avaluosPendientes = avaluos?.filter(a => a.estado_aprobacion === 'pendiente').length || 0;
+  
+  return `
+    <div class="admin-panel">
+      <h4 style="color: var(--primary); margin-bottom: 20px;">Panel Gerencial</h4>
+      
+      <div class="result-grid" style="margin-bottom: 20px;">
+        <div class="result-item">
+          <div class="label">Total Asesores</div>
+          <div class="value">${totalAsesores}</div>
+        </div>
+        <div class="result-item">
+          <div class="label">Total Avalúos</div>
+          <div class="value">${totalAvaluos}</div>
+        </div>
+        <div class="result-item">
+          <div class="label">Pendientes</div>
+          <div class="value">${avaluosPendientes}</div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <button class="btn-primary" onclick="showAllAppraisals()" style="width: 100%; margin-bottom: 10px;">
+          <i class="fas fa-list"></i> Revisar Todos los Avalúos
+        </button>
+        <button class="btn-secondary" onclick="gestionarAsesores()" style="width: 100%;">
+          <i class="fas fa-user-plus"></i> Gestionar Asesores
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label>Acciones Rápidas</label>
+        <button class="btn-secondary btn-small" onclick="aprobarPendientes()" style="width: 100%; margin-bottom: 8px;">
+          <i class="fas fa-check-circle"></i> Revisar Pendientes (${avaluosPendientes})
+        </button>
+        <button class="btn-secondary btn-small" onclick="exportReportCooperativa()" style="width: 100%;">
+          <i class="fas fa-download"></i> Exportar Reporte
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Función para gestionar asesores (placeholder)
+async function gestionarAsesores() {
+  alert('🔧 Función en desarrollo: Aquí podrás invitar y gestionar asesores');
+  closeModal('admin-panel-modal');
+}
+
+// Función para aprobar pendientes
+async function aprobarPendientes() {
+  closeModal('admin-panel-modal');
+  showAllAppraisals();
+}
+
+// Actualizar botón de admin cuando cambia la sesión
+window.supabase.auth.onAuthStateChange((_event, session) => {
+  setTimeout(updateAdminButton, 1000);
+});
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(updateAdminButton, 2000);
+  });
   </script>
 </body>
 </html>
