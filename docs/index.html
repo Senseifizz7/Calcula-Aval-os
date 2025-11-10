@@ -4821,15 +4821,33 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
         setTimeout(fixTipologySelection, 100);
     };
 
-    // === SISTEMA DE ADMINISTRACIÓN === //
+    // === SISTEMA DE ADMINISTRACIÓN - VERSIÓN SEGURA === //
 
-// Función para mostrar/ocultar botón de admin según rol
+// Función segura para mostrar/ocultar botón de admin
 function updateAdminButton() {
   const floatingActions = document.querySelector('.floating-actions');
-  if (!floatingActions) return;
+  if (!floatingActions) {
+    console.log('🔄 Floating actions no encontrado, reintentando...');
+    setTimeout(updateAdminButton, 1000);
+    return;
+  }
+  
+  // Verificar si Supabase está listo
+  if (!window.supabase) {
+    console.log('🔄 Supabase no está listo, reintentando...');
+    setTimeout(updateAdminButton, 1000);
+    return;
+  }
   
   const user = window.__session?.user;
+  if (!user) {
+    console.log('🔄 Usuario no logueado, reintentando...');
+    setTimeout(updateAdminButton, 1000);
+    return;
+  }
+  
   const userRole = user?.user_metadata?.rol || 'asesor';
+  console.log('✅ Usuario detectado con rol:', userRole);
   
   // Buscar si ya existe el botón de admin
   let adminBtn = document.getElementById('admin-panel-btn');
@@ -4854,61 +4872,31 @@ function updateAdminButton() {
   }
 }
 
-// Panel de administración
-async function showAdminPanel() {
-  const user = window.__session?.user;
-  const userRole = user?.user_metadata?.rol || 'asesor';
-  const userCooperativaId = user?.user_metadata?.cooperativa_id;
-  
-  console.log('🛠️ Abriendo panel admin para:', { userRole, userCooperativaId });
-  
-  // Crear modal de administración dinámicamente
-  let adminModal = document.getElementById('admin-panel-modal');
-  
-  if (!adminModal) {
-    adminModal = document.createElement('div');
-    adminModal.className = 'catalog-modal';
-    adminModal.id = 'admin-panel-modal';
-    adminModal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3><i class="fas fa-cog"></i> Panel de Administración</h3>
-          <button class="modal-close" onclick="closeModal('admin-panel-modal')">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 20px;">
-          <div id="admin-panel-content">
-            <div class="loading-spinner"></div>
-            <p>Cargando panel de administración...</p>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(adminModal);
+// Función segura para el event listener
+function safeAuthStateChange() {
+  if (window.supabase && window.supabase.auth) {
+    window.supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('🔄 Cambio de estado de autenticación detectado');
+      setTimeout(updateAdminButton, 2000);
+    });
+  } else {
+    console.log('🔄 Supabase.auth no disponible, reintentando...');
+    setTimeout(safeAuthStateChange, 1000);
   }
-  
-  try {
-    // Cargar contenido según rol
-    let adminContent = '';
-    
-    if (userRole === 'super_admin') {
-      adminContent = await loadSuperAdminPanel();
-    } else if (userRole === 'gerente') {
-      adminContent = await loadGerentePanel();
-    }
-    
-    document.getElementById('admin-panel-content').innerHTML = adminContent;
-    adminModal.classList.add('active');
-    
-  } catch (error) {
-    console.error('❌ Error cargando panel admin:', error);
-    document.getElementById('admin-panel-content').innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-exclamation-triangle"></i>
-        <h4>Error al cargar panel</h4>
-        <p>${error.message}</p>
-      </div>
-    `;
-  }
+}
+
+// Ejecutar cuando todo esté listo
+function initAdminSystem() {
+  console.log('🔄 Iniciando sistema de administración...');
+  safeAuthStateChange();
+  setTimeout(updateAdminButton, 3000);
+}
+
+// Iniciar cuando el DOM esté listo
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAdminSystem);
+} else {
+  initAdminSystem();
 }
 
 // Panel para SUPER ADMIN
