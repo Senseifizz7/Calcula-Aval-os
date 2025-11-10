@@ -953,7 +953,7 @@
       }
     }
 
-    /* === BREADCRUMBS - SOLO ESTO SE AGREGA === */
+    
     .typology-breadcrumbs {
       padding: 16px 24px;
       background: rgba(91, 123, 122, 0.03);
@@ -5411,6 +5411,307 @@ function verAvaluoCompleto(avaluoId) {
 function descargarReporteGerente() {
   alert('📊 Función de descarga de reporte en desarrollo\n\nEsta función generará un Excel/PDF con todos los avalúos filtrados.');
 }
+
+  
+async function aprobarAvaluo(avaluoId) {
+  if (!confirm('¿Estás seguro de aprobar este avalúo?')) return;
+
+  try {
+    const { error } = await supabase
+      .from('avaluos')
+      .update({
+        estado: 'aprobado',
+        revisado_por: window.__session.user.id,
+        fecha_revision: new Date().toISOString(),
+        comentarios_revision: 'Aprobado por gerente'
+      })
+      .eq('id', avaluoId);
+
+    if (error) throw error;
+
+    alert('✅ Avalúo aprobado correctamente');
+    cargarAvaluosGerente();
+    cargarEstadisticasGerente();
+
+  } catch (error) {
+    console.error('Error aprobando avalúo:', error);
+    alert('❌ Error al aprobar avalúo: ' + error.message);
+  }
+}
+
+
+async function rechazarAvaluo(avaluoId) {
+  const comentarios = prompt('Ingresa los comentarios de por qué se rechaza este avalúo:');
+  if (comentarios === null) return; 
+
+  try {
+    const { error } = await supabase
+      .from('avaluos')
+      .update({
+        estado: 'rechazado',
+        revisado_por: window.__session.user.id,
+        fecha_revision: new Date().toISOString(),
+        comentarios_revision: comentarios
+      })
+      .eq('id', avaluoId);
+
+    if (error) throw error;
+
+    alert('✅ Avalúo rechazado correctamente');
+    cargarAvaluosGerente();
+    cargarEstadisticasGerente();
+
+  } catch (error) {
+    console.error('Error rechazando avalúo:', error);
+    alert('❌ Error al rechazar avalúo: ' + error.message);
+  }
+}
+
+
+async function editarAvaluoGerente(avaluoId) {
+  try {
+    
+    const { data: avaluo, error } = await supabase
+      .from('avaluos')
+      .select('*')
+      .eq('id', avaluoId)
+      .single();
+
+    if (error) throw error;
+
+    
+    const modalHTML = `
+      <div class="catalog-modal active" id="editar-avaluo-modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3><i class="fas fa-edit"></i> Editar Avalúo</h3>
+            <button class="modal-close" onclick="cerrarModalEdicion()">&times;</button>
+          </div>
+          <div class="modal-body" style="padding: 20px; max-height: 70vh; overflow-y: auto;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Asociado</label>
+                <input type="text" id="editar-associate-name" value="${avaluo.associate_name || ''}">
+              </div>
+              <div class="form-group">
+                <label>Dirección</label>
+                <input type="text" id="editar-address" value="${avaluo.address || ''}">
+              </div>
+              <div class="form-group">
+                <label>Área Construida (m²)</label>
+                <input type="number" id="editar-construction-area" value="${avaluo.construction_area || ''}">
+              </div>
+              <div class="form-group">
+                <label>Área Terreno (m²)</label>
+                <input type="number" id="editar-land-area" value="${avaluo.land_area || ''}">
+              </div>
+              <div class="form-group">
+                <label>Valor Total</label>
+                <input type="text" id="editar-total-value" value="${avaluo.total_value || ''}">
+              </div>
+              <div class="form-group">
+                <label>Estado</label>
+                <select id="editar-estado">
+                  <option value="borrador" ${avaluo.estado === 'borrador' ? 'selected' : ''}>Borrador</option>
+                  <option value="pendiente_revision" ${avaluo.estado === 'pendiente_revision' ? 'selected' : ''}>Pendiente Revisión</option>
+                  <option value="aprobado" ${avaluo.estado === 'aprobado' ? 'selected' : ''}>Aprobado</option>
+                  <option value="rechazado" ${avaluo.estado === 'rechazado' ? 'selected' : ''}>Rechazado</option>
+                </select>
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label>Comentarios de Revisión</label>
+                <textarea id="editar-comentarios" rows="3">${avaluo.comentarios_revision || ''}</textarea>
+              </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+              <button class="btn-primary" onclick="guardarEdicionAvaluo('${avaluoId}')" style="flex: 1;">
+                <i class="fas fa-save"></i> Guardar Cambios
+              </button>
+              <button class="btn-secondary" onclick="cerrarModalEdicion()" style="flex: 1;">
+                <i class="fas fa-times"></i> Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    
+    if (document.getElementById('editar-avaluo-modal')) {
+      document.getElementById('editar-avaluo-modal').remove();
+    }
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  } catch (error) {
+    console.error('Error cargando avalúo para edición:', error);
+    alert('❌ Error al cargar avalúo: ' + error.message);
+  }
+}
+
+
+async function guardarEdicionAvaluo(avaluoId) {
+  try {
+    const datosActualizados = {
+      associate_name: document.getElementById('editar-associate-name').value,
+      address: document.getElementById('editar-address').value,
+      construction_area: parseFloat(document.getElementById('editar-construction-area').value) || 0,
+      land_area: parseFloat(document.getElementById('editar-land-area').value) || 0,
+      total_value: document.getElementById('editar-total-value').value,
+      estado: document.getElementById('editar-estado').value,
+      comentarios_revision: document.getElementById('editar-comentarios').value,
+      revisado_por: window.__session.user.id,
+      fecha_revision: new Date().toISOString(),
+      fecha_actualizacion: new Date().toISOString()
+    };
+
+    const { error } = await supabase
+      .from('avaluos')
+      .update(datosActualizados)
+      .eq('id', avaluoId);
+
+    if (error) throw error;
+
+    alert('✅ Avalúo actualizado correctamente');
+    cerrarModalEdicion();
+    cargarAvaluosGerente();
+    cargarEstadisticasGerente();
+
+  } catch (error) {
+    console.error('Error guardando edición:', error);
+    alert('❌ Error al guardar cambios: ' + error.message);
+  }
+}
+
+
+function cerrarModalEdicion() {
+  const modal = document.getElementById('editar-avaluo-modal');
+  if (modal) modal.remove();
+}
+
+
+function verAvaluoCompleto(avaluoId) {
+  alert(`📋 Función de vista completa en desarrollo\nAvalúo ID: ${avaluoId}\n\nEsta función mostrará todos los detalles del avalúo en un formato de reporte.`);
+}
+
+
+function descargarReporteGerente() {
+  alert('📊 Función de descarga de reporte en desarrollo\n\nEsta función generará un Excel/PDF con todos los avalúos filtrados.');
+}
+
+  // ==================== FUNCIÓN GUARDAR AVALÚO ====================
+async function saveCurrentAppraisal() {
+  if (!window.__session) {
+    alert('Debes iniciar sesión para guardar avalúos');
+    return false;
+  }
+  
+  console.log('🟡 Guardando avalúo con sistema de roles...');
+  
+  const loadingOverlay = document.getElementById('loadingOverlay');
+  if (loadingOverlay) loadingOverlay.style.display = 'flex';
+  
+  try {
+    const appraisalData = {
+      associateName: document.getElementById('associate-name').value || 'No especificado',
+      address: document.getElementById('address').value || 'No especificado',
+      constructionArea: parseFloat(document.getElementById('construction-area').value) || 0,
+      landArea: parseFloat(document.getElementById('land-area').value) || 0,
+      totalValue: document.getElementById('resultTotal').textContent || 'Q0.00',
+      ownerName: document.getElementById('owner-name').value || '',
+      typology: document.getElementById('typology').value || '',
+      department: document.getElementById('department').value || '',
+      estadoInmueble: document.getElementById('estado-inmueble').value || '',
+      anioConstruccion: document.getElementById('anio-construccion').value || '',
+      totalConstruccion: document.getElementById('totalConstruccion').value || '0',
+      totalTerreno: document.getElementById('totalTerreno').value || '0'
+    };
+
+    console.log('📦 Datos del avalúo:', appraisalData);
+
+    // DETERMINAR ESTADO SEGÚN ROL
+    let estado = 'borrador';
+    if (window.userRole === 'asesor') {
+      estado = 'pendiente_revision'; // Asesores envían directo a revisión
+    }
+
+    // GUARDAR EN SUPABASE CON DATOS DE ROL
+    const { data, error } = await window.supabase
+      .from('avaluos')
+      .insert([
+        {
+          usuario_id: window.__session.user.id,
+          usuario_email: window.__session.user.email,
+          usuario_nombre: window.userName || window.__session.user.email,
+          cooperativa_id: window.cooperativaId,
+          associate_name: appraisalData.associateName,
+          address: appraisalData.address,
+          construction_area: appraisalData.constructionArea,
+          land_area: appraisalData.landArea,
+          total_value: appraisalData.totalValue,
+          owner_name: appraisalData.ownerName,
+          typology: appraisalData.typology,
+          department: appraisalData.department,
+          estado_inmueble: appraisalData.estadoInmueble,
+          anio_construccion: appraisalData.anioConstruccion,
+          total_construccion: appraisalData.totalConstruccion,
+          total_terreno: appraisalData.totalTerreno,
+          estado: estado,
+          datos_completos: appraisalData
+        }
+      ])
+      .select();
+
+    if (error) {
+      console.error('❌ Error Supabase:', error);
+      throw error;
+    }
+
+    console.log('✅ Avalúo guardado en Supabase:', data);
+
+    // GUARDAR TAMBIÉN EN LOCALSTORAGE (backup)
+    const savedInLocal = window.avaluosStorage.saveAppraisal(appraisalData);
+    console.log('✅ Backup en localStorage:', savedInLocal);
+
+    alert(`✅ Avalúo ${estado === 'pendiente_revision' ? 'enviado a revisión' : 'guardado'} exitosamente`);
+    
+    // RECARGAR LISTAS SI ESTÁN ABIERTAS
+    if (document.getElementById('all-appraisals-modal')?.classList.contains('active')) {
+      showAllAppraisals();
+    }
+    if (document.getElementById('my-appraisals-modal')?.classList.contains('active')) {
+      showMyAppraisals();
+    }
+    
+    return true;
+    
+  } catch (error) {
+    console.error('❌ Error completo al guardar:', error);
+    alert('❌ Error al guardar avalúo: ' + error.message);
+    return false;
+  } finally {
+    if (loadingOverlay) loadingOverlay.style.display = 'none';
+  }
+}
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const saveBtn = document.getElementById('save-btn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', async function() { 
+      await saveCurrentAppraisal();
+    });
+  }
+});
+
+    
+document.addEventListener('DOMContentLoaded', function() {
+  const saveBtn = document.getElementById('save-btn');
+  if (saveBtn) {
+    saveBtn.addEventListener('click', async function() { 
+      await saveCurrentAppraisal();
+    });
+  }
+});
   </script>
 </body>
 </html>
