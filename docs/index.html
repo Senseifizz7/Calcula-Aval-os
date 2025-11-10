@@ -5407,6 +5407,57 @@ if (document.readyState === 'loading') {
   initAdminSystem();
 }
 }
+
+    // === FORZAR EJECUCIÓN AL CARGAR === //
+
+// Función para verificar y crear el botón inmediatamente
+function initAdminButton() {
+  console.log('🚀 INICIANDO BOTÓN ADMIN...');
+  
+  // Verificar requisitos
+  if (!window.supabase) {
+    console.log('⏳ Esperando Supabase...');
+    setTimeout(initAdminButton, 500);
+    return;
+  }
+  
+  const user = window.__session?.user;
+  if (!user) {
+    console.log('⏳ Esperando usuario...');
+    setTimeout(initAdminButton, 500);
+    return;
+  }
+  
+  console.log('✅ Condiciones listas, ejecutando updateAdminButton...');
+  updateAdminButton();
+}
+
+// Ejecutar inmediatamente y en intervalos
+console.log('🔧 Iniciando sistema de botón admin...');
+
+// 1. Ejecutar ahora
+initAdminButton();
+
+// 2. Ejecutar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('📄 DOM cargado, ejecutando admin button...');
+  initAdminButton();
+});
+
+// 3. Ejecutar cada 2 segundos por si acaso
+setInterval(() => {
+  const adminBtn = document.getElementById('admin-panel-btn');
+  if (!adminBtn && window.__session?.user) {
+    console.log('🔄 Reintentando crear botón admin...');
+    updateAdminButton();
+  }
+}, 2000);
+
+// 4. Ejecutar cuando la página termine de cargar
+window.addEventListener('load', function() {
+  console.log('🖼️ Página completamente cargada, ejecutando admin button...');
+  setTimeout(initAdminButton, 1000);
+});
   </script>
 </body>
 </html>
