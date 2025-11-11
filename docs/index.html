@@ -4958,7 +4958,6 @@ async function showAdminPanel() {
   }
 }
 
-    // FUNCIÓN PARA CARGAR USUARIOS - AGREGAR ESTO
 async function cargarUsuarios() {
   try {
     console.log('🔄 Cargando usuarios...');
@@ -5020,7 +5019,6 @@ async function cargarUsuarios() {
   }
 }
 
-// FUNCIONES AUXILIARES - AGREGAR ESTO TAMBIÉN
 function editarUsuario(usuarioId) {
   alert(`🔧 Editar usuario: ${usuarioId}`);
 }
@@ -5031,17 +5029,138 @@ function eliminarUsuario(usuarioId) {
   }
 }
 
-// ========== GESTIÓN DE USUARIOS - DEFINITIVA ==========
 async function gestionarUsuarios() {
   console.log('🔄 Abriendo gestión de usuarios...');
   
   try {
-    // Cerrar panel de admin primero
     if (document.getElementById('admin-panel-modal')) {
       document.getElementById('admin-panel-modal').classList.remove('active');
     }
     
-    // Crear modal de gestión de usuarios
+    let usuariosModal = document.getElementById('gestion-usuarios-modal');
+    
+    if (!usuariosModal) {
+      usuariosModal = document.createElement('div');
+      usuariosModal.className = 'catalog-modal';
+      usuariosModal.id = 'gestion-usuarios-modal';
+      usuariosModal.innerHTML = `
+  <div class="modal-content" style="max-width: 900px; max-height: 80vh; overflow: hidden;">
+    <div class="modal-header" style="position: sticky; top: 0; background: var(--bg-card); z-index: 10;">
+      <h3><i class="fas fa-users"></i> Gestionar Usuarios</h3>
+      <button class="modal-close" onclick="closeModal('gestion-usuarios-modal')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 20px; overflow-y: auto; max-height: calc(80vh - 80px);">
+      <div style="margin-bottom: 20px;">
+        <h4 style="color: var(--primary); margin: 0;">Usuarios del Sistema</h4>
+      </div>
+      
+      <div id="lista-usuarios">
+        <div class="loading-spinner"></div>
+        <p>Cargando usuarios...</p>
+      </div>
+    </div>
+  </div>
+`;
+      document.body.appendChild(usuariosModal);
+    }
+    
+    await cargarUsuarios();
+    usuariosModal.classList.add('active');
+    
+  } catch (error) {
+    console.error('❌ Error en gestión de usuarios:', error);
+    alert('Error al cargar gestión de usuarios: ' + error.message);
+  }
+}
+
+
+async function cargarUsuarios() {
+  try {
+    console.log('🔄 Cargando usuarios...');
+    const user = window.__session?.user;
+    const userRole = user?.user_metadata?.rol;
+    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+
+    let query = window.supabase.from('usuarios').select('*');
+    
+    if (userRole === 'gerente') {
+      query = query.eq('cooperativa_id', userCooperativaId);
+    }
+    
+    const { data: usuarios, error } = await query.order('nombre', { ascending: true });
+    
+    if (error) throw error;
+    
+    let usuariosHTML = '';
+    
+    if (!usuarios || usuarios.length === 0) {
+      usuariosHTML = `
+        <div class="empty-state">
+          <i class="fas fa-users"></i>
+          <h4>No hay usuarios registrados</h4>
+          <p>Los usuarios aparecerán aquí cuando se registren</p>
+        </div>
+      `;
+    } else {
+      usuariosHTML = usuarios.map(usuario => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-user"></i> ${usuario.nombre || usuario.email}
+              ${usuario.rol ? `<span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${usuario.rol === 'gerente' ? 'var(--primary)' : 'var(--secondary)'}; color: white;">${usuario.rol.toUpperCase()}</span>` : ''}
+            </div>
+            <div class="appraisal-actions">
+              ${userRole === 'super_admin' ? `
+                <button class="btn-secondary btn-small" onclick="cambiarRolUsuario('${usuario.id}', '${usuario.rol}')">
+                  <i class="fas fa-user-edit"></i> Rol
+                </button>
+                <button class="btn-secondary btn-small" onclick="asignarCooperativa('${usuario.id}')">
+                  <i class="fas fa-building"></i> Cooperativa
+                </button>
+              ` : ''}
+              <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="eliminarUsuario('${usuario.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Email:</strong> ${usuario.email}</div>
+            <div><strong>Rol:</strong> ${usuario.rol || 'No asignado'}</div>
+            <div><strong>Cooperativa:</strong> ${usuario.cooperativa_id || 'No asignada'}</div>
+            <div><strong>Estado:</strong> <span style="color: ${usuario.activo ? 'var(--success)' : 'var(--error)'};">${usuario.activo ? 'ACTIVO' : 'INACTIVO'}</span></div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    document.getElementById('lista-usuarios').innerHTML = usuariosHTML;
+    
+  } catch (error) {
+    console.error('❌ Error cargando usuarios:', error);
+    document.getElementById('lista-usuarios').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar usuarios</h4>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
+}    
+
+
+window.gestionarUsuarios = gestionarUsuarios;    
+
+    
+async function gestionarUsuarios() {
+  console.log('🔄 Abriendo gestión de usuarios...');
+  
+  try {
+    
+    if (document.getElementById('admin-panel-modal')) {
+      document.getElementById('admin-panel-modal').classList.remove('active');
+    }
+    
+   
     let usuariosModal = document.getElementById('gestion-usuarios-modal');
     
     if (!usuariosModal) {
@@ -5070,7 +5189,6 @@ async function gestionarUsuarios() {
       document.body.appendChild(usuariosModal);
     }
     
-    // Cargar datos
     await cargarUsuarios();
     usuariosModal.classList.add('active');
     
@@ -5080,10 +5198,9 @@ async function gestionarUsuarios() {
   }
 }
 
-// HACER DISPONIBLE GLOBALMENTE
+
 window.gestionarUsuarios = gestionarUsuarios;
 
-// Panel para SUPER ADMIN - VERSIÓN MEJORADA
 async function loadSuperAdminPanel() {
   if (!window.supabase) {
     return '<p>Error: Supabase no disponible</p>';
@@ -5135,7 +5252,7 @@ async function loadSuperAdminPanel() {
   }
 }
     
-// Panel para GERENTE
+
 async function loadGerentePanel() {
   if (!window.supabase) {
     return '<p>Error: Supabase no disponible</p>';
@@ -5185,9 +5302,9 @@ async function eliminarCooperativa(coopId) {
     alert(`🔧 Eliminar cooperativa: ${coopId}`);
   }
 }
-// Función para crear cooperativa - VERSIÓN CORREGIDA
+
 async function crearCooperativa() {
-  // Cerrar modales abiertos - VERSIÓN SEGURA
+  
   try {
     if (document.getElementById('admin-panel-modal')) {
       closeModal('admin-panel-modal');
@@ -5200,7 +5317,6 @@ async function crearCooperativa() {
     }
   } catch (e) { console.log('Modal cooperativas no estaba abierto'); }
   
-  // Crear modal de creación
   let crearModal = document.getElementById('crear-cooperativa-modal');
   
   if (!crearModal) {
@@ -5249,7 +5365,6 @@ async function crearCooperativa() {
     document.body.appendChild(crearModal);
   }
   
-  // Limpiar campos
   document.getElementById('coop-nombre').value = '';
   document.getElementById('coop-telefono').value = '';
   document.getElementById('coop-direccion').value = '';
@@ -5258,7 +5373,6 @@ async function crearCooperativa() {
   crearModal.classList.add('active');
 }
 
-// Función para guardar la cooperativa
 async function guardarCooperativa() {
   const nombre = document.getElementById('coop-nombre').value.trim();
   const telefono = document.getElementById('coop-telefono').value.trim();
@@ -5293,7 +5407,7 @@ try {
   closeModal('crear-cooperativa-modal');
   alert(`✅ Cooperativa "${nombre}" creada exitosamente`);
   
-  // Si el modal de cooperativas está abierto, actualizarlo - VERSIÓN SEGURA
+  
   try {
     const coopModal = document.getElementById('cooperativas-modal');
     if (coopModal && coopModal.classList.contains('active')) {
@@ -5309,21 +5423,12 @@ try {
 }
 
 
-
-// Función para seleccionar usuario existente
 async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
   alert(`🔧 Asignando a ${usuarioNombre} como gerente...`);
   console.log('Usuario seleccionado:', { usuarioId, usuarioEmail, usuarioNombre });
-  // En una siguiente iteración implementaremos esta función
+  
 }
 
-// ... aquí termina seleccionarUsuarioExistente ...
-
-
-
-// ... aquí empieza initAdminSystem ...
-  
-// INICIALIZACIÓN SEGURA
 function initAdminSystem() {
   if (adminSystemInitialized) return;
   adminSystemInitialized = true;
