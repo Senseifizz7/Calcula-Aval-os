@@ -4958,6 +4958,58 @@ async function showAdminPanel() {
   }
 }
 
+// ========== GESTIÓN DE USUARIOS - DEFINITIVA ==========
+async function gestionarUsuarios() {
+  console.log('🔄 Abriendo gestión de usuarios...');
+  
+  try {
+    // Cerrar panel de admin primero
+    if (document.getElementById('admin-panel-modal')) {
+      document.getElementById('admin-panel-modal').classList.remove('active');
+    }
+    
+    // Crear modal de gestión de usuarios
+    let usuariosModal = document.getElementById('gestion-usuarios-modal');
+    
+    if (!usuariosModal) {
+      usuariosModal = document.createElement('div');
+      usuariosModal.className = 'catalog-modal';
+      usuariosModal.id = 'gestion-usuarios-modal';
+      usuariosModal.innerHTML = `
+  <div class="modal-content" style="max-width: 900px; max-height: 80vh; overflow: hidden;">
+    <div class="modal-header" style="position: sticky; top: 0; background: var(--bg-card); z-index: 10;">
+      <h3><i class="fas fa-users"></i> Gestionar Usuarios</h3>
+      <button class="modal-close" onclick="closeModal('gestion-usuarios-modal')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 20px; overflow-y: auto; max-height: calc(80vh - 80px);">
+      <div style="margin-bottom: 20px;">
+        <h4 style="color: var(--primary); margin: 0;">Usuarios del Sistema</h4>
+      </div>
+      
+      <!-- Lista de usuarios -->
+      <div id="lista-usuarios">
+        <div class="loading-spinner"></div>
+        <p>Cargando usuarios...</p>
+      </div>
+    </div>
+  </div>
+`;
+      document.body.appendChild(usuariosModal);
+    }
+    
+    // Cargar datos
+    await cargarUsuarios();
+    usuariosModal.classList.add('active');
+    
+  } catch (error) {
+    console.error('❌ Error en gestión de usuarios:', error);
+    alert('Error al cargar gestión de usuarios: ' + error.message);
+  }
+}
+
+// HACER DISPONIBLE GLOBALMENTE
+window.gestionarUsuarios = gestionarUsuarios;
+
 // Panel para SUPER ADMIN - VERSIÓN MEJORADA
 async function loadSuperAdminPanel() {
   if (!window.supabase) {
@@ -5194,57 +5246,7 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
 
 // ... aquí termina seleccionarUsuarioExistente ...
 
-// ========== GESTIÓN DE USUARIOS - DEFINITIVA ==========
-async function gestionarUsuarios() {
-  console.log('🔄 Abriendo gestión de usuarios...');
-  
-  try {
-    // Cerrar panel de admin primero
-    if (document.getElementById('admin-panel-modal')) {
-      document.getElementById('admin-panel-modal').classList.remove('active');
-    }
-    
-    // Crear modal de gestión de usuarios
-    let usuariosModal = document.getElementById('gestion-usuarios-modal');
-    
-    if (!usuariosModal) {
-      usuariosModal = document.createElement('div');
-      usuariosModal.className = 'catalog-modal';
-      usuariosModal.id = 'gestion-usuarios-modal';
-      usuariosModal.innerHTML = `
-  <div class="modal-content" style="max-width: 900px; max-height: 80vh; overflow: hidden;">
-    <div class="modal-header" style="position: sticky; top: 0; background: var(--bg-card); z-index: 10;">
-      <h3><i class="fas fa-users"></i> Gestionar Usuarios</h3>
-      <button class="modal-close" onclick="closeModal('gestion-usuarios-modal')">&times;</button>
-    </div>
-    <div class="modal-body" style="padding: 20px; overflow-y: auto; max-height: calc(80vh - 80px);">
-      <div style="margin-bottom: 20px;">
-        <h4 style="color: var(--primary); margin: 0;">Usuarios del Sistema</h4>
-      </div>
-      
-      <!-- Lista de usuarios -->
-      <div id="lista-usuarios">
-        <div class="loading-spinner"></div>
-        <p>Cargando usuarios...</p>
-      </div>
-    </div>
-  </div>
-`;
-      document.body.appendChild(usuariosModal);
-    }
-    
-    // Cargar datos
-    await cargarUsuarios();
-    usuariosModal.classList.add('active');
-    
-  } catch (error) {
-    console.error('❌ Error en gestión de usuarios:', error);
-    alert('Error al cargar gestión de usuarios: ' + error.message);
-  }
-}
 
-// HACER DISPONIBLE GLOBALMENTE
-window.gestionarUsuarios = gestionarUsuarios;
 
 // ... aquí empieza initAdminSystem ...
   
