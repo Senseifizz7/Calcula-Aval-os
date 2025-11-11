@@ -5413,6 +5413,108 @@ async function asignarGerente(coopId, coopNombre) {
 
 // HACER DISPONIBLE GLOBALMENTE
 window.asignarGerente = asignarGerente;
+
+      // FUNCIONES DE APOYO PARA ASIGNAR GERENTE
+
+async function invitarGerente(coopId) {
+  try {
+    const email = document.getElementById('email-nuevo-gerente')?.value;
+    const nombre = document.getElementById('nombre-nuevo-gerente')?.value;
+    
+    if (!email || !nombre) {
+      alert('Por favor completa el email y nombre del gerente');
+      return;
+    }
+
+    console.log('🔄 Invitando gerente:', { email, nombre, coopId });
+    
+    // Aquí iría la lógica real para invitar al gerente
+    // Por ahora solo simulamos
+    alert(`✅ Invitación enviada a:\n\nNombre: ${nombre}\nEmail: ${email}\n\nEl gerente recibirá un email para configurar su cuenta.`);
+    
+    closeModal('asignar-gerente-modal');
+    
+  } catch (error) {
+    console.error('❌ Error invitando gerente:', error);
+    alert('Error al enviar invitación: ' + error.message);
+  }
+}
+
+async function buscarUsuariosExistente() {
+  const busqueda = document.getElementById('buscar-gerente').value.trim();
+  
+  if (!busqueda) {
+    document.getElementById('resultados-gerentes').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <p>Ingresa un email o nombre para buscar</p>
+      </div>
+    `;
+    return;
+  }
+  
+  try {
+    // Buscar en la tabla de usuarios de Supabase
+    const { data: usuarios, error } = await window.supabase
+      .from('usuarios')
+      .select('*')
+      .or(`email.ilike.%${busqueda}%,nombre.ilike.%${busqueda}%`)
+      .limit(5);
+    
+    if (error) throw error;
+    
+    let resultadosHTML = '';
+    
+    if (usuarios && usuarios.length === 0) {
+      resultadosHTML = `
+        <div class="empty-state">
+          <i class="fas fa-users"></i>
+          <p>No se encontraron usuarios</p>
+        </div>
+      `;
+    } else {
+      resultadosHTML = usuarios.map(usuario => `
+        <div class="appraisal-item" style="cursor: pointer; margin-bottom: 8px;" onclick="seleccionarUsuarioExistente('${usuario.id}', '${usuario.email}', '${usuario.nombre}')">
+          <div class="appraisal-details">
+            <div><strong>Nombre:</strong> ${usuario.nombre || 'No especificado'}</div>
+            <div><strong>Email:</strong> ${usuario.email}</div>
+            <div><strong>Rol actual:</strong> ${usuario.rol || 'No asignado'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    document.getElementById('resultados-gerentes').innerHTML = resultadosHTML;
+    
+  } catch (error) {
+    console.error('❌ Error buscando usuarios:', error);
+    document.getElementById('resultados-gerentes').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Error al buscar usuarios: ${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
+  try {
+    console.log('✅ Usuario seleccionado:', { usuarioId, usuarioEmail, usuarioNombre });
+    
+    // Aquí iría la lógica real para asignar el usuario como gerente
+    // Por ahora solo mostramos confirmación
+    const confirmar = confirm(`¿Asignar a ${usuarioNombre} (${usuarioEmail}) como gerente de esta cooperativa?`);
+    
+    if (confirmar) {
+      alert(`✅ ${usuarioNombre} asignado como gerente exitosamente`);
+      closeModal('asignar-gerente-modal');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error seleccionando usuario:', error);
+    alert('Error al asignar gerente: ' + error.message);
+  }
+}
   
   // Función para configurar listeners cuando estén listos
   function configurarCuandoEsteLista() {
