@@ -4958,6 +4958,79 @@ async function showAdminPanel() {
   }
 }
 
+    // FUNCIÓN PARA CARGAR USUARIOS - AGREGAR ESTO
+async function cargarUsuarios() {
+  try {
+    console.log('🔄 Cargando usuarios...');
+    
+    const { data: usuarios, error } = await window.supabase
+      .from('usuarios')
+      .select('*')
+      .order('nombre', { ascending: true });
+    
+    if (error) throw error;
+    
+    let usuariosHTML = '';
+    
+    if (usuarios && usuarios.length === 0) {
+      usuariosHTML = `
+        <div class="empty-state">
+          <i class="fas fa-users"></i>
+          <h4>No hay usuarios registrados</h4>
+          <p>Los usuarios aparecerán aquí cuando se registren</p>
+        </div>
+      `;
+    } else {
+      usuariosHTML = usuarios.map(usuario => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-user"></i> ${usuario.nombre || 'Sin nombre'}
+            </div>
+            <div class="appraisal-actions">
+              <button class="btn-secondary btn-small" onclick="editarUsuario('${usuario.id}')">
+                <i class="fas fa-edit"></i> Editar
+              </button>
+              <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="eliminarUsuario('${usuario.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Email:</strong> ${usuario.email}</div>
+            <div><strong>Rol:</strong> ${usuario.rol || 'No asignado'}</div>
+            <div><strong>Cooperativa:</strong> ${usuario.cooperativa_id || 'No asignada'}</div>
+            <div><strong>Estado:</strong> <span style="color: ${usuario.activo ? 'var(--success)' : 'var(--error)'};">${usuario.activo ? 'ACTIVO' : 'INACTIVO'}</span></div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    document.getElementById('lista-usuarios').innerHTML = usuariosHTML;
+    
+  } catch (error) {
+    console.error('❌ Error cargando usuarios:', error);
+    document.getElementById('lista-usuarios').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar usuarios</h4>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+// FUNCIONES AUXILIARES - AGREGAR ESTO TAMBIÉN
+function editarUsuario(usuarioId) {
+  alert(`🔧 Editar usuario: ${usuarioId}`);
+}
+
+function eliminarUsuario(usuarioId) {
+  if (confirm('¿Estás seguro de eliminar este usuario?')) {
+    alert(`🔧 Eliminar usuario: ${usuarioId}`);
+  }
+}
+
 // ========== GESTIÓN DE USUARIOS - DEFINITIVA ==========
 async function gestionarUsuarios() {
   console.log('🔄 Abriendo gestión de usuarios...');
