@@ -4964,31 +4964,29 @@ async function cargarUsuarios() {
     const userRole = user?.user_metadata?.rol;
     const userCooperativaId = user?.user_metadata?.cooperativa_id;
 
-    let query = window.supabase.from('usuarios').select('*');
+    // CARGAR TODOS LOS USUARIOS (RLS simple lo permite)
+    const { data: usuarios, error } = await window.supabase
+      .from('usuarios')
+      .select('*')
+      .order('nombre', { ascending: true });
     
-    console.log('🔍 Filtros:', { userRole, userCooperativaId });
-    
-    // FILTRAR SEGÚN ROL - IMPORTANTE para RLS
-    if (userRole === 'gerente') {
-      query = query.eq('cooperativa_id', userCooperativaId);
-    } else if (userRole === 'asesor') {
-      // Asesor solo se ve a sí mismo
-      query = query.eq('id', user.id);
-    }
-    // SUPER_ADMIN ve todos sin filtro
-    
-    const { data: usuarios, error } = await query.order('nombre', { ascending: true });
-    
-    if (error) {
-      console.error('❌ Error Supabase:', error);
-      throw error;
-    }
+    if (error) throw error;
     
     console.log('✅ Usuarios cargados:', usuarios?.length);
     
+    // FILTRAR EN EL FRONTEND según el rol
+    let usuariosFiltrados = usuarios || [];
+    
+    if (userRole === 'gerente') {
+      usuariosFiltrados = usuarios.filter(u => u.cooperativa_id === userCooperativaId);
+    } else if (userRole === 'asesor') {
+      usuariosFiltrados = usuarios.filter(u => u.id === user.id);
+    }
+    // SUPER_ADMIN ve todos
+    
     let usuariosHTML = '';
     
-    if (!usuarios || usuarios.length === 0) {
+    if (usuariosFiltrados.length === 0) {
       usuariosHTML = `
         <div class="empty-state">
           <i class="fas fa-users"></i>
@@ -4997,7 +4995,7 @@ async function cargarUsuarios() {
         </div>
       `;
     } else {
-      usuariosHTML = usuarios.map(usuario => `
+      usuariosHTML = usuariosFiltrados.map(usuario => `
         <div class="appraisal-item">
           <div class="appraisal-header">
             <div class="appraisal-date">
@@ -5013,11 +5011,9 @@ async function cargarUsuarios() {
                   <i class="fas fa-building"></i> Cooperativa
                 </button>
               ` : ''}
-              ${(userRole === 'super_admin' || usuario.id === user.id) ? `
-                <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="eliminarUsuario('${usuario.id}')">
-                  <i class="fas fa-trash"></i>
-                </button>
-              ` : ''}
+              <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="eliminarUsuario('${usuario.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
             </div>
           </div>
           <div class="appraisal-details">
@@ -5039,9 +5035,9 @@ async function cargarUsuarios() {
         <i class="fas fa-exclamation-triangle"></i>
         <h4>Error al cargar usuarios</h4>
         <p>${error.message}</p>
-        <p style="font-size: 0.8rem; margin-top: 10px;">
-          Verifica que la tabla 'usuarios' exista y tenga políticas RLS configuradas.
-        </p>
+        <button class="btn-primary" onclick="desactivarRLS()" style="margin-top: 10px;">
+          <i class="fas fa-cog"></i> Solucionar Automáticamente
+        </button>
       </div>
     `;
   }
