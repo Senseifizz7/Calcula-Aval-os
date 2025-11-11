@@ -5267,14 +5267,14 @@ async function asignarGerente(coopId, coopNombre) {
   asignarModal.classList.add('active');
 }
 
-  // Forzar disponibilidad global INMEDIATAMENTE
-console.log('🚀 FORZANDO asignarGerente a window...');
-window.asignarGerente = async function(coopId, coopNombre) {
-  console.log('✅ asignarGerente ejecutada via window');
+  async function asignarGerente(coopId, coopNombre) {
+  console.log('✅ asignarGerente ejecutada', coopId, coopNombre);
   
-};
-  
-// Función para invitar gerente - VERSIÓN COMPLETA
+
+}
+
+window.asignarGerente = asignarGerente;  
+
 async function invitarGerente(coopId) {
   const email = document.getElementById('email-nuevo-gerente').value.trim();
   const nombre = document.getElementById('nombre-nuevo-gerente').value.trim();
