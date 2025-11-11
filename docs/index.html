@@ -5212,26 +5212,24 @@ async function gestionarUsuarios() {
       usuariosModal.className = 'catalog-modal';
       usuariosModal.id = 'gestion-usuarios-modal';
       usuariosModal.innerHTML = `
-        <div class="modal-content" style="max-width: 900px; max-height: 80vh;">
-          <div class="modal-header">
-            <h3><i class="fas fa-users"></i> Gestionar Usuarios del Sistema</h3>
-            <button class="modal-close" onclick="closeModal('gestion-usuarios-modal')">&times;</button>
-          </div>
-          <div class="modal-body" style="padding: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-              <h4 style="color: var(--primary);">Lista de Usuarios</h4>
-              <button class="btn-primary btn-small" onclick="mostrarFormularioNuevoUsuario()">
-                <i class="fas fa-user-plus"></i> Nuevo Usuario
-              </button>
-            </div>
-            
-            <!-- Lista de usuarios -->
-            <div id="lista-usuarios" style="max-height: 400px; overflow-y: auto;">
-              <div class="loading-spinner"></div>
-              <p>Cargando usuarios...</p>
-            </div>
-          </div>
-        </div>
+  <div class="modal-content" style="max-width: 900px; max-height: 80vh; overflow: hidden;">
+    <div class="modal-header" style="position: sticky; top: 0; background: var(--bg-card); z-index: 10;">
+      <h3><i class="fas fa-users"></i> Gestionar Usuarios</h3>
+      <button class="modal-close" onclick="closeModal('gestion-usuarios-modal')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 20px; overflow-y: auto; max-height: calc(80vh - 80px);">
+      <div style="margin-bottom: 20px;">
+        <h4 style="color: var(--primary); margin: 0;">Usuarios del Sistema</h4>
+      </div>
+      
+      <!-- Lista de usuarios -->
+      <div id="lista-usuarios">
+        <div class="loading-spinner"></div>
+        <p>Cargando usuarios...</p>
+      </div>
+    </div>
+  </div>
+`;
       `;
       document.body.appendChild(usuariosModal);
     }
