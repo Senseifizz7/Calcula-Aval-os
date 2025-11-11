@@ -5192,7 +5192,9 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
   // En una siguiente iteración implementaremos esta función
 }
 
-// FUNCIÓN GESTIÓN DE USUARIOS - COMPLETA Y CORREGIDA
+// ... aquí termina seleccionarUsuarioExistente ...
+
+// ========== GESTIÓN DE USUARIOS - DEFINITIVA ==========
 async function gestionarUsuarios() {
   console.log('🔄 Abriendo gestión de usuarios...');
   
@@ -5213,7 +5215,7 @@ async function gestionarUsuarios() {
         <div class="modal-content" style="max-width: 900px; max-height: 80vh;">
           <div class="modal-header">
             <h3><i class="fas fa-users"></i> Gestionar Usuarios del Sistema</h3>
-            <button class="modal-close" onclick="cerrarGestionUsuarios()">&times;</button>
+            <button class="modal-close" onclick="closeModal('gestion-usuarios-modal')">&times;</button>
           </div>
           <div class="modal-body" style="padding: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -5223,81 +5225,10 @@ async function gestionarUsuarios() {
               </button>
             </div>
             
-            <!-- Filtros -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; margin-bottom: 20px;">
-              <div>
-                <label style="display: block; margin-bottom: 4px; font-size: 0.9rem;">Buscar</label>
-                <input type="text" id="buscar-usuario" placeholder="Nombre, email..." style="width: 100%; padding: 8px;" oninput="filtrarUsuarios()">
-              </div>
-              <div>
-                <label style="display: block; margin-bottom: 4px; font-size: 0.9rem;">Rol</label>
-                <select id="filtro-rol" style="width: 100%; padding: 8px;" onchange="filtrarUsuarios()">
-                  <option value="">Todos los roles</option>
-                  <option value="super_admin">Super Admin</option>
-                  <option value="gerente">Gerente</option>
-                  <option value="asesor">Asesor</option>
-                </select>
-              </div>
-              <div>
-                <label style="display: block; margin-bottom: 4px; font-size: 0.9rem;">Cooperativa</label>
-                <select id="filtro-cooperativa" style="width: 100%; padding: 8px;" onchange="filtrarUsuarios()">
-                  <option value="">Todas las cooperativas</option>
-                </select>
-              </div>
-              <div>
-                <label style="display: block; margin-bottom: 4px; font-size: 0.9rem;">&nbsp;</label>
-                <button class="btn-secondary btn-small" onclick="resetearFiltrosUsuarios()" style="padding: 8px 12px;">
-                  <i class="fas fa-refresh"></i>
-                </button>
-              </div>
-            </div>
-            
             <!-- Lista de usuarios -->
             <div id="lista-usuarios" style="max-height: 400px; overflow-y: auto;">
               <div class="loading-spinner"></div>
               <p>Cargando usuarios...</p>
-            </div>
-            
-            <!-- Formulario nuevo usuario (oculto inicialmente) -->
-            <div id="formulario-nuevo-usuario" style="display: none; margin-top: 20px; padding: 20px; background: var(--bg-hover); border-radius: var(--radius);">
-              <h4 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-user-plus"></i> Crear Nuevo Usuario</h4>
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-                <div>
-                  <label style="display: block; margin-bottom: 4px; font-weight: 500;">Nombre completo</label>
-                  <input type="text" id="nuevo-usuario-nombre" placeholder="Ej: Juan Pérez" style="width: 100%; padding: 8px;">
-                </div>
-                <div>
-                  <label style="display: block; margin-bottom: 4px; font-weight: 500;">Email</label>
-                  <input type="email" id="nuevo-usuario-email" placeholder="ejemplo@correo.com" style="width: 100%; padding: 8px;">
-                </div>
-                <div>
-                  <label style="display: block; margin-bottom: 4px; font-weight: 500;">Rol</label>
-                  <select id="nuevo-usuario-rol" style="width: 100%; padding: 8px;">
-                    <option value="asesor">Asesor</option>
-                    <option value="gerente">Gerente</option>
-                    <option value="super_admin">Super Admin</option>
-                  </select>
-                </div>
-                <div>
-                  <label style="display: block; margin-bottom: 4px; font-weight: 500;">Cooperativa</label>
-                  <select id="nuevo-usuario-cooperativa" style="width: 100%; padding: 8px;">
-                    <option value="">Sin cooperativa</option>
-                  </select>
-                </div>
-              </div>
-              <div style="margin-bottom: 12px;">
-                <label style="display: block; margin-bottom: 4px; font-weight: 500;">Contraseña temporal</label>
-                <input type="password" id="nuevo-usuario-password" placeholder="Mínimo 6 caracteres" style="width: 100%; padding: 8px;">
-                <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 4px;">El usuario deberá cambiar su contraseña al primer inicio</div>
-              </div>
-              <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-secondary" onclick="ocultarFormularioNuevoUsuario()" style="flex: 1; padding: 10px;">
-                  <i class="fas fa-times"></i> Cancelar
-                </button>
-                <button class="btn-primary" onclick="crearNuevoUsuario()" style="flex: 1; padding: 10px;">
-                  <i class="fas fa-save"></i> Crear Usuario
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -5305,10 +5236,8 @@ async function gestionarUsuarios() {
       document.body.appendChild(usuariosModal);
     }
     
-    // Cargar datos iniciales
+    // Cargar datos
     await cargarUsuarios();
-    await cargarCooperativasFiltro();
-    
     usuariosModal.classList.add('active');
     
   } catch (error) {
@@ -5317,158 +5246,10 @@ async function gestionarUsuarios() {
   }
 }
 
-// FUNCIONES DE APOYO
-function cerrarGestionUsuarios() {
-  const modal = document.getElementById('gestion-usuarios-modal');
-  if (modal) modal.classList.remove('active');
-}
-
-async function cargarUsuarios() {
-  try {
-    // Simular carga de usuarios
-    const usuarios = [
-      {
-        id: '1',
-        nombre: 'Administrador Principal',
-        email: 'admin@sistema.com',
-        rol: 'super_admin',
-        cooperativa_nombre: 'Sistema',
-        estado: 'activo',
-        fecha_creacion: new Date().toISOString()
-      }
-    ];
-    
-    mostrarUsuarios(usuarios);
-    
-  } catch (error) {
-    console.error('❌ Error cargando usuarios:', error);
-    document.getElementById('lista-usuarios').innerHTML = `
-      <div style="text-align: center; padding: 40px 20px; color: var(--text-light);">
-        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 16px;"></i>
-        <h4>Error al cargar usuarios</h4>
-        <p>${error.message}</p>
-      </div>
-    `;
-  }
-}
-
-function mostrarUsuarios(usuarios) {
-  const lista = document.getElementById('lista-usuarios');
-  
-  if (!usuarios || usuarios.length === 0) {
-    lista.innerHTML = `
-      <div style="text-align: center; padding: 40px 20px; color: var(--text-light);">
-        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 16px;"></i>
-        <h4>No hay usuarios registrados</h4>
-        <p>Crea el primer usuario para empezar</p>
-      </div>
-    `;
-    return;
-  }
-  
-  lista.innerHTML = usuarios.map(usuario => `
-    <div class="appraisal-item">
-      <div class="appraisal-header">
-        <div class="appraisal-date">
-          <i class="fas fa-user"></i> ${usuario.nombre}
-          <span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; 
-                background: ${usuario.rol === 'super_admin' ? 'var(--primary)' : usuario.rol === 'gerente' ? 'var(--secondary)' : 'var(--accent)'}; 
-                color: white;">
-            ${usuario.rol.toUpperCase()}
-          </span>
-        </div>
-        <div class="appraisal-actions">
-          <button class="btn-secondary btn-small" onclick="editarUsuario('${usuario.id}')">
-            <i class="fas fa-edit"></i> Editar
-          </button>
-          <button class="btn-small" style="background: var(--error); color: white; border: none;" 
-                  onclick="eliminarUsuario('${usuario.id}', '${usuario.nombre}')">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-      <div class="appraisal-details">
-        <div><strong>Email:</strong> ${usuario.email}</div>
-        <div><strong>Cooperativa:</strong> ${usuario.cooperativa_nombre || 'No asignada'}</div>
-        <div><strong>Estado:</strong> <span style="color: ${usuario.estado === 'activo' ? 'var(--success)' : 'var(--error)'}">
-          ${usuario.estado?.toUpperCase() || 'ACTIVO'}
-        </span></div>
-        <div><strong>Registro:</strong> ${new Date(usuario.fecha_creacion).toLocaleDateString('es-GT')}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-async function cargarCooperativasFiltro() {
-  try {
-    const selectFiltro = document.getElementById('filtro-cooperativa');
-    const selectNuevo = document.getElementById('nuevo-usuario-cooperativa');
-    
-    // Simular carga de cooperativas
-    const cooperativas = [
-      { id: '1', nombre: 'Cooperativa La Esperanza' },
-      { id: '2', nombre: 'Cooperativa El Progreso' }
-    ];
-    
-    const options = cooperativas.map(coop => 
-      `<option value="${coop.id}">${coop.nombre}</option>`
-    ).join('');
-    
-    if (selectFiltro) selectFiltro.innerHTML = '<option value="">Todas las cooperativas</option>' + options;
-    if (selectNuevo) selectNuevo.innerHTML = '<option value="">Sin cooperativa</option>' + options;
-    
-  } catch (error) {
-    console.error('❌ Error cargando cooperativas:', error);
-  }
-}
-
-function mostrarFormularioNuevoUsuario() {
-  const formulario = document.getElementById('formulario-nuevo-usuario');
-  const lista = document.getElementById('lista-usuarios');
-  if (formulario) formulario.style.display = 'block';
-  if (lista) lista.style.display = 'none';
-}
-
-function ocultarFormularioNuevoUsuario() {
-  const formulario = document.getElementById('formulario-nuevo-usuario');
-  const lista = document.getElementById('lista-usuarios');
-  if (formulario) formulario.style.display = 'none';
-  if (lista) lista.style.display = 'block';
-}
-
-function crearNuevoUsuario() {
-  alert('🔄 Función crearNuevoUsuario() - Aquí se integraría con Supabase Auth');
-}
-
-function filtrarUsuarios() {
-  console.log('🔍 Filtrando usuarios...');
-}
-
-function resetearFiltrosUsuarios() {
-  const buscar = document.getElementById('buscar-usuario');
-  const rol = document.getElementById('filtro-rol');
-  const cooperativa = document.getElementById('filtro-cooperativa');
-  
-  if (buscar) buscar.value = '';
-  if (rol) rol.value = '';
-  if (cooperativa) cooperativa.value = '';
-  
-  filtrarUsuarios();
-}
-
-function editarUsuario(usuarioId) {
-  alert(`✏️ Editar usuario: ${usuarioId} - Aquí se abriría formulario de edición`);
-}
-
-function eliminarUsuario(usuarioId, usuarioNombre) {
-  if (confirm(`¿Estás seguro de eliminar al usuario "${usuarioNombre}"?`)) {
-    alert(`🗑️ Eliminar usuario: ${usuarioId} - Aquí se integraría con Supabase`);
-  }
-}
-
-// FORZAR CARGA GLOBAL - AGREGA ESTO AL FINAL
+// HACER DISPONIBLE GLOBALMENTE
 window.gestionarUsuarios = gestionarUsuarios;
-console.log('✅ gestionarUsuarios cargada globalmente');
+
+// ... aquí empieza initAdminSystem ...
   
 // INICIALIZACIÓN SEGURA
 function initAdminSystem() {
