@@ -5466,8 +5466,9 @@ function eliminarUsuario(usuarioId, usuarioNombre) {
   }
 }
 
-// HACER DISPONIBLE GLOBALMENTE
+// FORZAR CARGA GLOBAL - AGREGA ESTO AL FINAL
 window.gestionarUsuarios = gestionarUsuarios;
+console.log('✅ gestionarUsuarios cargada globalmente');
   
 // INICIALIZACIÓN SEGURA
 function initAdminSystem() {
