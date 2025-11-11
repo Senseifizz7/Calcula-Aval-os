@@ -5230,7 +5230,6 @@ async function gestionarUsuarios() {
     </div>
   </div>
 `;
-      `;
       document.body.appendChild(usuariosModal);
     }
     
@@ -5689,6 +5688,32 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ Botón gestión usuarios configurado');
   }
 });
+
+    // FORZAR INICIALIZACIÓN DEL BOTÓN ADMIN
+setTimeout(() => {
+  console.log('🔧 Forzando inicialización del botón admin...');
+  console.log('📊 Estado actual:', {
+    supabase: !!window.supabase,
+    session: !!window.__session,
+    user: window.__session?.user,
+    userRole: window.__session?.user?.user_metadata?.rol
+  });
+  
+  // Ejecutar updateAdminButton directamente
+  if (typeof updateAdminButton === 'function') {
+    updateAdminButton();
+  } else {
+    console.error('❌ updateAdminButton no está definida');
+  }
+}, 3000);
+
+// También verificar después de 5 segundos por si acaso
+setTimeout(() => {
+  console.log('🔄 Verificación final del botón admin...');
+  if (typeof updateAdminButton === 'function') {
+    updateAdminButton();
+  }
+}, 5000);
   </script>
 </body>
 </html>
