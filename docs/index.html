@@ -4960,17 +4960,35 @@ async function showAdminPanel() {
 async function cargarUsuarios() {
   try {
     console.log('🔄 Cargando usuarios...');
+    const user = window.__session?.user;
+    const userRole = user?.user_metadata?.rol;
+    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+
+    let query = window.supabase.from('usuarios').select('*');
     
-    const { data: usuarios, error } = await window.supabase
-      .from('usuarios')
-      .select('*')
-      .order('nombre', { ascending: true });
+    console.log('🔍 Filtros:', { userRole, userCooperativaId });
     
-    if (error) throw error;
+    // FILTRAR SEGÚN ROL - IMPORTANTE para RLS
+    if (userRole === 'gerente') {
+      query = query.eq('cooperativa_id', userCooperativaId);
+    } else if (userRole === 'asesor') {
+      // Asesor solo se ve a sí mismo
+      query = query.eq('id', user.id);
+    }
+    // SUPER_ADMIN ve todos sin filtro
+    
+    const { data: usuarios, error } = await query.order('nombre', { ascending: true });
+    
+    if (error) {
+      console.error('❌ Error Supabase:', error);
+      throw error;
+    }
+    
+    console.log('✅ Usuarios cargados:', usuarios?.length);
     
     let usuariosHTML = '';
     
-    if (usuarios && usuarios.length === 0) {
+    if (!usuarios || usuarios.length === 0) {
       usuariosHTML = `
         <div class="empty-state">
           <i class="fas fa-users"></i>
@@ -4983,15 +5001,23 @@ async function cargarUsuarios() {
         <div class="appraisal-item">
           <div class="appraisal-header">
             <div class="appraisal-date">
-              <i class="fas fa-user"></i> ${usuario.nombre || 'Sin nombre'}
+              <i class="fas fa-user"></i> ${usuario.nombre || usuario.email}
+              ${usuario.rol ? `<span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${usuario.rol === 'gerente' ? 'var(--primary)' : 'var(--secondary)'}; color: white;">${usuario.rol.toUpperCase()}</span>` : ''}
             </div>
             <div class="appraisal-actions">
-              <button class="btn-secondary btn-small" onclick="editarUsuario('${usuario.id}')">
-                <i class="fas fa-edit"></i> Editar
-              </button>
-              <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="eliminarUsuario('${usuario.id}')">
-                <i class="fas fa-trash"></i>
-              </button>
+              ${userRole === 'super_admin' ? `
+                <button class="btn-secondary btn-small" onclick="cambiarRolUsuario('${usuario.id}', '${usuario.rol}')">
+                  <i class="fas fa-user-edit"></i> Rol
+                </button>
+                <button class="btn-secondary btn-small" onclick="asignarCooperativa('${usuario.id}')">
+                  <i class="fas fa-building"></i> Cooperativa
+                </button>
+              ` : ''}
+              ${(userRole === 'super_admin' || usuario.id === user.id) ? `
+                <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="eliminarUsuario('${usuario.id}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              ` : ''}
             </div>
           </div>
           <div class="appraisal-details">
@@ -5013,6 +5039,9 @@ async function cargarUsuarios() {
         <i class="fas fa-exclamation-triangle"></i>
         <h4>Error al cargar usuarios</h4>
         <p>${error.message}</p>
+        <p style="font-size: 0.8rem; margin-top: 10px;">
+          Verifica que la tabla 'usuarios' exista y tenga políticas RLS configuradas.
+        </p>
       </div>
     `;
   }
