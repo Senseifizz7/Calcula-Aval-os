@@ -5266,6 +5266,13 @@ async function asignarGerente(coopId, coopNombre) {
   
   asignarModal.classList.add('active');
 }
+
+  // Forzar disponibilidad global INMEDIATAMENTE
+console.log('🚀 FORZANDO asignarGerente a window...');
+window.asignarGerente = async function(coopId, coopNombre) {
+  console.log('✅ asignarGerente ejecutada via window');
+  
+};
   
 // Función para invitar gerente - VERSIÓN COMPLETA
 async function invitarGerente(coopId) {
@@ -5538,42 +5545,58 @@ async function gestionarCooperativas() {
     
     document.getElementById('cooperativas-list').innerHTML = cooperativasHTML;
     
-    
-    // Configurar event listeners DESPUÉS de generar el HTML
-setTimeout(() => {
-  // VERIFICAR antes de usar las funciones
-  if (typeof asignarGerente === 'undefined') {
-    console.error('❌ asignarGerente no está definida, reintentando...');
     setTimeout(() => {
-      // Reconfigurar listeners después de 1 segundo
-      document.querySelectorAll('.btn-asignar-gerente').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const coopId = btn.getAttribute('data-coop-id');
-          const coopNombre = btn.getAttribute('data-coop-nombre');
-          if (typeof asignarGerente !== 'undefined') {
-            asignarGerente(coopId, coopNombre);
-          } else {
-            console.error('❌ asignarGerente aún no disponible');
-          }
-        });
+  console.log('🔧 Intentando configurar event listeners...');
+  
+  // Función para configurar listeners cuando estén listos
+  function configurarCuandoEsteLista() {
+    if (typeof window.asignarGerente === 'undefined') {
+      console.log('⏳ asignarGerente no lista, reintentando...');
+      setTimeout(configurarCuandoEsteLista, 500);
+      return;
+    }
+    
+    console.log('✅ asignarGerente lista, configurando listeners...');
+    
+    // Botones de asignar gerente
+    document.querySelectorAll('.btn-asignar-gerente').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const coopId = btn.getAttribute('data-coop-id');
+        const coopNombre = btn.getAttribute('data-coop-nombre');
+        console.log('🔄 Ejecutando asignarGerente...');
+        window.asignarGerente(coopId, coopNombre);
       });
-    }, 1000);
-    return;
+    });
+    
+    // Botones de editar
+    document.querySelectorAll('.btn-editar-coop').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const coopId = btn.getAttribute('data-coop-id');
+        if (typeof editarCooperativa !== 'undefined') {
+          editarCooperativa(coopId);
+        }
+      });
+    });
+    
+    // Botones de eliminar
+    document.querySelectorAll('.btn-eliminar-coop').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const coopId = btn.getAttribute('data-coop-id');
+        if (typeof eliminarCooperativa !== 'undefined') {
+          eliminarCooperativa(coopId);
+        }
+      });
+    });
+    
+    console.log('✅ Todos los event listeners configurados');
   }
   
-  // Si está definida, configurar normalmente
-  document.querySelectorAll('.btn-asignar-gerente').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const coopId = btn.getAttribute('data-coop-id');
-      const coopNombre = btn.getAttribute('data-coop-nombre');
-      asignarGerente(coopId, coopNombre);
-    });
-  });
-  
-      console.log('✅ Event listeners configurados');
-    }, 100);
+  // Iniciar la configuración
+  configurarCuandoEsteLista();
+}, 1000); // ← Aumenté a 1 segundo para dar más tiempo
     
     cooperativasModal.classList.add('active');
     
