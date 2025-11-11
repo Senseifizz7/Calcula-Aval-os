@@ -5198,12 +5198,12 @@ async function asignarGerente(coopId, coopNombre) {
     asignarModal.className = 'catalog-modal';
     asignarModal.id = 'asignar-gerente-modal';
     asignarModal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3><i class="fas fa-user-tie"></i> Asignar Gerente</h3>
-          <button class="modal-close" onclick="closeModal('asignar-gerente-modal')">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 20px;">
+      <div class="modal-content" style="max-width: 500px; max-height: 80vh;"> <!-- ← AGREGAR ESTE STYLE -->
+    <div class="modal-header">
+      <h3><i class="fas fa-user-tie"></i> Asignar Gerente</h3>
+      <button class="modal-close" onclick="closeModal('asignar-gerente-modal')">&times;</button>
+    </div>
+    <div class="modal-body" style="padding: 20px;">
           <div style="margin-bottom: 20px;">
             <h4 style="color: var(--primary);">Cooperativa: ${coopNombre}</h4>
             <p>Selecciona un gerente existente o invita uno nuevo</p>
