@@ -3770,7 +3770,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
   try {
     console.log('🔄 Iniciando generación de PDF COMPLETO...');
     
-    // Cargar jsPDF de forma robusta
+    
     if (typeof window.jspdf === 'undefined') {
       console.log('📦 Cargando jsPDF...');
       await new Promise((resolve, reject) => {
@@ -3799,7 +3799,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     
     let y = 0;
 
-    // ========== ENCABEZADO ==========
+    
     doc.setFillColor(91, 123, 122);
     doc.rect(0, 0, pageWidth, 60, 'F');
     doc.setTextColor(255, 255, 255);
@@ -3813,7 +3813,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     y = 80;
 
-    // ========== PESTAÑA 1: INFORMACIÓN GENERAL ==========
+    
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y-10, contentWidth, 15, 'F');
     doc.setTextColor(91, 123, 122);
@@ -3822,7 +3822,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text('1. INFORMACIÓN GENERAL', margin, y);
     y += 20;
 
-    // Datos básicos
+   
     const basicData = [
       ['Asociado:', document.getElementById('associate-name').value || 'No especificado'],
       ['Dirección:', document.getElementById('address').value || 'No especificado'],
@@ -3846,7 +3846,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     y += 10;
 
-    // Datos Registrales
+    
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y-10, contentWidth, 15, 'F');
@@ -3875,7 +3875,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       y += 8;
     });
 
-    // Colindancias
+    
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y-10, contentWidth, 15, 'F');
@@ -3906,7 +3906,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       y += 8;
     });
 
-    // Información del Solar
+    
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y-10, contentWidth, 15, 'F');
@@ -3947,7 +3947,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       }
     });
 
-    // Ubicación Geográfica
+   
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y-10, contentWidth, 15, 'F');
@@ -3973,7 +3973,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text(addressLines, margin, y + 8);
     y += (addressLines.length * 8) + 15;
 
-    // ========== PESTAÑA 2: CARACTERÍSTICAS ==========
+    
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y-10, contentWidth, 15, 'F');
@@ -3983,7 +3983,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text('2. CARACTERÍSTICAS CONSTRUCTIVAS', margin, y);
     y += 20;
 
-    // CATÁLOGO - Información de tipología
+    
     const tipologiaId = document.getElementById('typology').value;
     if(tipologiaId) {
       try {
@@ -4011,7 +4011,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       }
     }
 
-    // Características Constructivas
+    
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y-10, contentWidth, 15, 'F');
@@ -4049,7 +4049,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       y += 7;
     });
 
-    // Otros Detalles
+    
     const otrosDetalles = document.getElementById('otros-detalles').value;
     if(otrosDetalles) {
       if(y > 220) { doc.addPage(); y = 20; }
@@ -4068,7 +4068,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       y += (detallesLines.length * 6) + 10;
     }
 
-    // EVIDENCIAS FOTOGRÁFICAS - CON TAMAÑOS MÁS PEQUEÑOS
+    
     const imagePreviews = document.querySelectorAll('#image-preview .image-preview-item img');
     if(imagePreviews.length > 0) {
       if(y > 150) { doc.addPage(); y = 20; }
@@ -4086,9 +4086,9 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       doc.text(`Total de evidencias: ${imagePreviews.length} imagen(es)`, margin, y);
       y += 10;
 
-      // Agregar imágenes de evidencia CON TAMAÑO MÁS PEQUEÑO
+      
       for (let i = 0; i < imagePreviews.length; i++) {
-        if(y > 150 && i % 3 === 0) { // Cambié a 3 columnas para imágenes más pequeñas
+        if(y > 150 && i % 3 === 0) { 
           doc.addPage(); 
           y = 20; 
         }
@@ -4096,10 +4096,10 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
         try {
           const imgSrc = imagePreviews[i].src;
           
-          // TAMAÑOS MÁS PEQUEÑOS - 3 columnas
-          const imgWidth = contentWidth * 0.28; // Más pequeño
-          const imgHeight = 45; // Más pequeño
-          const xPos = margin + (i % 3) * (imgWidth + 8); // 3 columnas
+          
+          const imgWidth = contentWidth * 0.28;
+          const imgHeight = 45; 
+          const xPos = margin + (i % 3) * (imgWidth + 8); 
           
           doc.addImage(imgSrc, 'JPEG', xPos, y, imgWidth, imgHeight);
           
@@ -4118,7 +4118,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       }
     }
 
-    // ========== PESTAÑA 3: CÁLCULOS ==========
+  
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y-10, contentWidth, 15, 'F');
@@ -4128,7 +4128,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text('3. CÁLCULOS Y VALORACIONES', margin, y);
     y += 20;
 
-    // Valor del Terreno
+    
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('3.1 VALOR DEL TERRENO', margin, y);
@@ -4157,7 +4157,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     y += 10;
 
-    // Valor de Construcción
+   
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
@@ -4185,7 +4185,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       doc.text(`Área: ${area} m² | Valor Base: Q${vbase} | Coeficiente: ${coef} | Monto: Q${monto}`, margin + 10, y);
       y += 12;
 
-      // Información de tipología del nivel
+      
       const hiddenInput = row.querySelector('.typology-id-input');
       const tipologiaIdNivel = hiddenInput?.value;
       
@@ -4211,7 +4211,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       }
     }
 
-    // Totales
+    
     if(y > 220) { doc.addPage(); y = 20; }
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
@@ -4220,7 +4220,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text(`Q${document.getElementById('totalConstruccion')?.value || '0.00'}`, margin + 60, y);
     y += 15;
 
-    // Integración de Valores
+    
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.text('INTEGRACIÓN DE VALORES:', margin, y);
@@ -4239,7 +4239,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.text(`TOTAL AVALÚO: Q${totalAvaluo.toFixed(2)}`, margin + 10, y);
     y += 15;
 
-    // ========== PESTAÑA 4: RESULTADOS ==========
+    
     if(y > 200) { doc.addPage(); y = 20; }
     doc.setFillColor(91, 123, 122);
     doc.rect(margin, y-10, contentWidth, 20, 'F');
@@ -4273,7 +4273,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
 
     y += 10;
 
-    // Valor Total Final
+    
     doc.setFillColor(240, 240, 240);
     doc.rect(margin, y, contentWidth, 25, 'F');
     doc.setTextColor(91, 123, 122);
@@ -4283,7 +4283,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     doc.setFontSize(20);
     doc.text(document.getElementById('resultTotal').textContent || 'Q0.00', margin + 10, y + 25);
 
-    // ========== PIE DE PÁGINA ==========
+    
     const totalPages = doc.internal.getNumberOfPages();
     for(let i = 1; i <= totalPages; i++){
       doc.setPage(i);
@@ -4293,7 +4293,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
               pageWidth / 2, doc.internal.pageSize.getHeight() - 10, { align: 'center' });
     }
 
-    // ========== GUARDAR PDF ==========
+    
     const fileName = `Avaluo_${document.getElementById('associate-name').value || 'Propiedad'}_${new Date().toISOString().slice(0, 10)}.pdf`;
     console.log('💾 Guardando PDF:', fileName);
     doc.save(fileName);
@@ -4821,7 +4821,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
         setTimeout(fixTipologySelection, 100);
     };
 
-// Verificar que todas las funciones estén definidas
+
 function verificarFuncionesAdmin() {
   const funcionesRequeridas = [
     'asignarGerente', 'invitarGerente', 'buscarUsuariosExistente', 
@@ -4839,8 +4839,7 @@ function verificarFuncionesAdmin() {
   return true;
 }
     
-    // === SISTEMA DE ADMINISTRACIÓN - VERSIÓN 100% SEGURA === //
-
+  
 let adminSystemInitialized = false;
 
 function updateAdminButton() {
@@ -4873,7 +4872,7 @@ function updateAdminButton() {
       adminBtn.innerHTML = '<i class="fas fa-cog"></i>';
       adminBtn.onclick = showAdminPanel;
       
-      // Estilos para asegurar visibilidad
+      
       adminBtn.style.cssText = `
         position: fixed !important;
         top: 235px !important;
@@ -5023,6 +5022,174 @@ function editarUsuario(usuarioId) {
   alert(`🔧 Editar usuario: ${usuarioId}`);
 }
 
+
+async function cambiarRolUsuario(usuarioId, rolActual) {
+  const nuevoRol = rolActual === 'asesor' ? 'gerente' : 'asesor';
+  
+  if (confirm(`¿Cambiar rol de este usuario a ${nuevoRol.toUpperCase()}?`)) {
+    try {
+      const { error } = await window.supabase
+        .from('usuarios')
+        .update({ rol: nuevoRol })
+        .eq('id', usuarioId);
+      
+      if (error) throw error;
+      
+      alert(`✅ Rol cambiado a ${nuevoRol}`);
+      cargarUsuarios();
+      
+    } catch (error) {
+      console.error('Error cambiando rol:', error);
+      alert('Error al cambiar rol: ' + error.message);
+    }
+  }
+}
+
+async function asignarCooperativa(usuarioId) {
+  const { data: cooperativas, error } = await window.supabase
+    .from('cooperativas')
+    .select('*')
+    .eq('activo', true);
+  
+  if (error) {
+    alert('Error cargando cooperativas: ' + error.message);
+    return;
+  }
+  
+  const cooperativaId = prompt(
+    `Selecciona cooperativa:\n\n${cooperativas.map(coop => `${coop.id} - ${coop.nombre}`).join('\n')}\n\nIngresa el ID:`
+  );
+  
+  if (cooperativaId) {
+    try {
+      const { error } = await window.supabase
+        .from('usuarios')
+        .update({ cooperativa_id: cooperativaId })
+        .eq('id', usuarioId);
+      
+      if (error) throw error;
+      
+      alert('✅ Cooperativa asignada');
+      cargarUsuarios();
+      
+    } catch (error) {
+      alert('Error asignando cooperativa: ' + error.message);
+    }
+  }
+}
+
+
+async function eliminarUsuario(usuarioId) {
+  if (confirm('¿Estás seguro de eliminar este usuario?')) {
+    try {
+      const { error } = await window.supabase
+        .from('usuarios')
+        .delete()
+        .eq('id', usuarioId);
+      
+      if (error) throw error;
+      
+      alert('✅ Usuario eliminado');
+      cargarUsuarios();
+      
+    } catch (error) {
+      alert('Error eliminando usuario: ' + error.message);
+    }
+  }
+}
+
+
+async function invitarAsesor() {
+  const email = prompt('Email del nuevo asesor:');
+  const nombre = prompt('Nombre del nuevo asesor:');
+  
+  if (!email || !nombre) {
+    alert('Email y nombre son requeridos');
+    return;
+  }
+  
+  try {
+    const user = window.__session.user;
+    const cooperativaId = user?.user_metadata?.cooperativa_id;
+    
+    const { error } = await window.supabase
+      .from('usuarios')
+      .insert([{
+        email: email,
+        nombre: nombre,
+        rol: 'asesor',
+        cooperativa_id: cooperativaId,
+        activo: true
+      }]);
+    
+    if (error) throw error;
+    
+    alert(`✅ Asesor ${nombre} invitado. Se le enviará un email para configurar su cuenta.`);
+    
+  } catch (error) {
+    alert('Error invitando asesor: ' + error.message);
+  }
+}
+
+async function asignarCooperativa(usuarioId) {
+  try {
+    
+    const { data: cooperativas, error } = await window.supabase
+      .from('cooperativas')
+      .select('*')
+      .eq('activo', true);
+    
+    if (error) {
+      alert('Error cargando cooperativas: ' + error.message);
+      return;
+    }
+    
+    if (!cooperativas || cooperativas.length === 0) {
+      alert('No hay cooperativas activas. Crea una cooperativa primero.');
+      return;
+    }
+    
+    r
+    const listaCooperativas = cooperativas.map(coop => 
+      `${coop.id} - ${coop.nombre}`
+    ).join('\n');
+    
+    const cooperativaId = prompt(
+      `ASIGNAR COOPERATIVA:\n\n${listaCooperativas}\n\nIngresa el ID de la cooperativa:`
+    );
+    
+    if (!cooperativaId) return; 
+    
+    
+    const cooperativaValida = cooperativas.find(coop => coop.id === cooperativaId);
+    if (!cooperativaValida) {
+      alert('❌ ID de cooperativa no válido');
+      return;
+    }
+    
+    
+    const { error: updateError } = await window.supabase
+      .from('usuarios')
+      .update({ 
+        cooperativa_id: cooperativaId,
+        actualizado_en: new Date().toISOString()
+      })
+      .eq('id', usuarioId);
+    
+    if (updateError) throw updateError;
+    
+    alert(`✅ Usuario asignado a: ${cooperativaValida.nombre}`);
+    cargarUsuarios(); 
+    
+  } catch (error) {
+    console.error('❌ Error asignando cooperativa:', error);
+    alert('Error al asignar cooperativa: ' + error.message);
+  }
+}
+
+
+window.asignarCooperativa = asignarCooperativa;
+    
 function eliminarUsuario(usuarioId) {
   if (confirm('¿Estás seguro de eliminar este usuario?')) {
     alert(`🔧 Eliminar usuario: ${usuarioId}`);
@@ -5403,7 +5570,7 @@ try {
   
   console.log('✅ Cooperativa creada:', data);
   
-  // Cerrar modal y mostrar mensaje
+  
   closeModal('crear-cooperativa-modal');
   alert(`✅ Cooperativa "${nombre}" creada exitosamente`);
   
@@ -5435,26 +5602,26 @@ function initAdminSystem() {
   
   console.log('🚀 Iniciando sistema de administración...');
   
-  // Esperar a que Supabase esté listo
+ 
   const waitForSupabase = setInterval(() => {
     if (window.supabase) {
       clearInterval(waitForSupabase);
       console.log('✅ Supabase listo');
       
-      // Configurar listener de auth solo cuando esté disponible
+      
       if (window.supabase.auth) {
         window.supabase.auth.onAuthStateChange(() => {
           setTimeout(updateAdminButton, 1000);
         });
       }
       
-      // Actualizar botón inicial
+      
       setTimeout(updateAdminButton, 2000);
     }
   }, 500);
 }
 
-// Iniciar cuando esté listo
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initAdminSystem);
 } else {
@@ -5462,14 +5629,14 @@ if (document.readyState === 'loading') {
 }
 }
 
-// Función para gestionar cooperativas - VERSIÓN CORREGIDA
+
 async function gestionarCooperativas() {
   console.log('🔄 Cargando gestión de cooperativas...');
   
-  // Cerrar panel de admin primero
+  
   closeModal('admin-panel-modal');
   
-  // Crear modal de cooperativas
+  
   let cooperativasModal = document.getElementById('cooperativas-modal');
   
   if (!cooperativasModal) {
@@ -5500,7 +5667,7 @@ async function gestionarCooperativas() {
   }
   
   try {
-    // Cargar cooperativas desde Supabase
+    
     const { data: cooperativas, error } = await window.supabase
       .from('cooperativas')
       .select('*')
@@ -5552,17 +5719,17 @@ async function gestionarCooperativas() {
     setTimeout(() => {
   console.log('🔧 Intentando configurar event listeners...');
 
-      // FUNCIÓN ASIGNAR GERENTE - VERSIÓN COMPLETA Y DEFINITIVA
+      
 async function asignarGerente(coopId, coopNombre) {
   console.log(`🔄 Asignando gerente a cooperativa: ${coopNombre} (${coopId})`);
   
   try {
-    // Cerrar modal de cooperativas
+    
     if (document.getElementById('cooperativas-modal')) {
       closeModal('cooperativas-modal');
     }
     
-    // Crear modal para asignar gerente
+    
     let asignarModal = document.getElementById('asignar-gerente-modal');
     
     if (!asignarModal) {
@@ -5619,12 +5786,12 @@ async function asignarGerente(coopId, coopNombre) {
       document.body.appendChild(asignarModal);
     }
     
-    // Limpiar campos
+    
     document.getElementById('buscar-gerente').value = '';
     document.getElementById('email-nuevo-gerente').value = '';
     document.getElementById('nombre-nuevo-gerente').value = '';
     
-    // Limpiar resultados de búsqueda
+    
     document.getElementById('resultados-gerentes').innerHTML = `
       <div class="empty-state">
         <i class="fas fa-search"></i>
@@ -5640,10 +5807,9 @@ async function asignarGerente(coopId, coopNombre) {
   }
 }
 
-// HACER DISPONIBLE GLOBALMENTE
+
 window.asignarGerente = asignarGerente;
 
-      // FUNCIONES DE APOYO PARA ASIGNAR GERENTE
 
 async function invitarGerente(coopId) {
   try {
@@ -5657,8 +5823,7 @@ async function invitarGerente(coopId) {
 
     console.log('🔄 Invitando gerente:', { email, nombre, coopId });
     
-    // Aquí iría la lógica real para invitar al gerente
-    // Por ahora solo simulamos
+   
     alert(`✅ Invitación enviada a:\n\nNombre: ${nombre}\nEmail: ${email}\n\nEl gerente recibirá un email para configurar su cuenta.`);
     
     closeModal('asignar-gerente-modal');
@@ -5683,7 +5848,7 @@ async function buscarUsuariosExistente() {
   }
   
   try {
-    // Buscar en la tabla de usuarios de Supabase
+   
     const { data: usuarios, error } = await window.supabase
       .from('usuarios')
       .select('*')
@@ -5730,8 +5895,7 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
   try {
     console.log('✅ Usuario seleccionado:', { usuarioId, usuarioEmail, usuarioNombre });
     
-    // Aquí iría la lógica real para asignar el usuario como gerente
-    // Por ahora solo mostramos confirmación
+    
     const confirmar = confirm(`¿Asignar a ${usuarioNombre} (${usuarioEmail}) como gerente de esta cooperativa?`);
     
     if (confirmar) {
@@ -5745,7 +5909,7 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
   }
 }
   
-  // Función para configurar listeners cuando estén listos
+  
   function configurarCuandoEsteLista() {
     if (typeof window.asignarGerente === 'undefined') {
       console.log('⏳ asignarGerente no lista, reintentando...');
@@ -5755,7 +5919,7 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
     
     console.log('✅ asignarGerente lista, configurando listeners...');
     
-    // Botones de asignar gerente
+   
     document.querySelectorAll('.btn-asignar-gerente').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -5766,7 +5930,7 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
       });
     });
     
-    // Botones de editar
+    
     document.querySelectorAll('.btn-editar-coop').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -5777,7 +5941,6 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
       });
     });
     
-    // Botones de eliminar
     document.querySelectorAll('.btn-eliminar-coop').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -5791,9 +5954,8 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
     console.log('✅ Todos los event listeners configurados');
   }
   
-  // Iniciar la configuración
   configurarCuandoEsteLista();
-}, 1000); // ← Aumenté a 1 segundo para dar más tiempo
+}, 1000); 
     
     cooperativasModal.classList.add('active');
     
@@ -5809,13 +5971,11 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
   }
 }   
 
-    // === FORZAR EJECUCIÓN AL CARGAR === //
-
-// Función para verificar y crear el botón inmediatamente
+  
 function initAdminButton() {
   console.log('🚀 INICIANDO BOTÓN ADMIN...');
   
-  // Verificar requisitos
+  
   if (!window.supabase) {
     console.log('⏳ Esperando Supabase...');
     setTimeout(initAdminButton, 500);
@@ -5833,19 +5993,19 @@ function initAdminButton() {
   updateAdminButton();
 }
 
-// Ejecutar inmediatamente y en intervalos
+
 console.log('🔧 Iniciando sistema de botón admin...');
 
-// 1. Ejecutar ahora
+
 initAdminButton();
 
-// 2. Ejecutar cuando el DOM esté listo
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('📄 DOM cargado, ejecutando admin button...');
   initAdminButton();
 });
 
-// 3. Ejecutar cada 2 segundos por si acaso
+
 setInterval(() => {
   const adminBtn = document.getElementById('admin-panel-btn');
   if (!adminBtn && window.__session?.user) {
@@ -5854,7 +6014,7 @@ setInterval(() => {
   }
 }, 2000);
 
-// 4. Ejecutar cuando la página termine de cargar
+
 window.addEventListener('load', function() {
   console.log('🖼️ Página completamente cargada, ejecutando admin button...');
   setTimeout(initAdminButton, 1000);
@@ -5869,7 +6029,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-    // FORZAR INICIALIZACIÓN DEL BOTÓN ADMIN
+    
 setTimeout(() => {
   console.log('🔧 Forzando inicialización del botón admin...');
   console.log('📊 Estado actual:', {
@@ -5879,7 +6039,7 @@ setTimeout(() => {
     userRole: window.__session?.user?.user_metadata?.rol
   });
   
-  // Ejecutar updateAdminButton directamente
+  
   if (typeof updateAdminButton === 'function') {
     updateAdminButton();
   } else {
@@ -5887,7 +6047,7 @@ setTimeout(() => {
   }
 }, 3000);
 
-// También verificar después de 5 segundos por si acaso
+
 setTimeout(() => {
   console.log('🔄 Verificación final del botón admin...');
   if (typeof updateAdminButton === 'function') {
