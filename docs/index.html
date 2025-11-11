@@ -4821,6 +4821,24 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
         setTimeout(fixTipologySelection, 100);
     };
 
+// Verificar que todas las funciones estén definidas
+function verificarFuncionesAdmin() {
+  const funcionesRequeridas = [
+    'asignarGerente', 'invitarGerente', 'buscarUsuariosExistente', 
+    'seleccionarUsuarioExistente', 'gestionarCooperativas'
+  ];
+  
+  const faltantes = funcionesRequeridas.filter(fn => typeof window[fn] === 'undefined');
+  
+  if (faltantes.length > 0) {
+    console.error('❌ Funciones faltantes:', faltantes);
+    return false;
+  }
+  
+  console.log('✅ Todas las funciones admin están definidas');
+  return true;
+}
+    
     // === SISTEMA DE ADMINISTRACIÓN - VERSIÓN 100% SEGURA === //
 
 let adminSystemInitialized = false;
@@ -4888,7 +4906,7 @@ function updateAdminButton() {
   }
 }
 
-// Panel de administración
+
 async function showAdminPanel() {
   const user = window.__session?.user;
   const userRole = user?.user_metadata?.rol || 'asesor';
@@ -5294,8 +5312,7 @@ async function invitarGerente(coopId) {
         console.log('⚠️ Usuario ya existe, actualizando...');
         
         const { data: updateData, error: updateError } = await window.supabase.auth.admin.updateUserById(
-          // Necesitaríamos el ID del usuario existente
-          // Por ahora mostramos mensaje
+          
           authError.message
         );
         
@@ -5529,36 +5546,40 @@ async function gestionarCooperativas() {
     
     document.getElementById('cooperativas-list').innerHTML = cooperativasHTML;
     
+    
     // Configurar event listeners DESPUÉS de generar el HTML
+setTimeout(() => {
+  // VERIFICAR antes de usar las funciones
+  if (typeof asignarGerente === 'undefined') {
+    console.error('❌ asignarGerente no está definida, reintentando...');
     setTimeout(() => {
-      // Botones de asignar gerente
+      // Reconfigurar listeners después de 1 segundo
       document.querySelectorAll('.btn-asignar-gerente').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           const coopId = btn.getAttribute('data-coop-id');
           const coopNombre = btn.getAttribute('data-coop-nombre');
-          asignarGerente(coopId, coopNombre);
+          if (typeof asignarGerente !== 'undefined') {
+            asignarGerente(coopId, coopNombre);
+          } else {
+            console.error('❌ asignarGerente aún no disponible');
+          }
         });
       });
-      
-      // Botones de editar
-      document.querySelectorAll('.btn-editar-coop').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const coopId = btn.getAttribute('data-coop-id');
-          editarCooperativa(coopId);
-        });
-      });
-      
-      // Botones de eliminar
-      document.querySelectorAll('.btn-eliminar-coop').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const coopId = btn.getAttribute('data-coop-id');
-          eliminarCooperativa(coopId);
-        });
-      });
-      
+    }, 1000);
+    return;
+  }
+  
+  // Si está definida, configurar normalmente
+  document.querySelectorAll('.btn-asignar-gerente').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const coopId = btn.getAttribute('data-coop-id');
+      const coopNombre = btn.getAttribute('data-coop-nombre');
+      asignarGerente(coopId, coopNombre);
+    });
+  });
+  
       console.log('✅ Event listeners configurados');
     }, 100);
     
