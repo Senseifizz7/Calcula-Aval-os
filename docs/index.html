@@ -5183,173 +5183,113 @@ try {
   alert('Error al crear cooperativa: ' + error.message);
 }
 
-// Función para asignar gerente a cooperativa - VERSIÓN COMPLETA
+// FUNCIÓN ASIGNAR GERENTE - VERSIÓN COMPLETA
 async function asignarGerente(coopId, coopNombre) {
   console.log(`🔄 Asignando gerente a cooperativa: ${coopNombre} (${coopId})`);
   
-  // Cerrar modal de cooperativas
-  closeModal('cooperativas-modal');
-  
-  // Crear modal para asignar gerente
-  let asignarModal = document.getElementById('asignar-gerente-modal');
-  
-  if (!asignarModal) {
-    asignarModal = document.createElement('div');
-    asignarModal.className = 'catalog-modal';
-    asignarModal.id = 'asignar-gerente-modal';
-    asignarModal.innerHTML = `
-      <div class="modal-content" style="max-width: 500px; max-height: 80vh;"> <!-- ← AGREGAR ESTE STYLE -->
-    <div class="modal-header">
-      <h3><i class="fas fa-user-tie"></i> Asignar Gerente</h3>
-      <button class="modal-close" onclick="closeModal('asignar-gerente-modal')">&times;</button>
-    </div>
-    <div class="modal-body" style="padding: 20px;">
-          <div style="margin-bottom: 20px;">
-            <h4 style="color: var(--primary);">Cooperativa: ${coopNombre}</h4>
-            <p>Selecciona un gerente existente o invita uno nuevo</p>
+  try {
+    // Cerrar modal de cooperativas
+    if (document.getElementById('cooperativas-modal')) {
+      closeModal('cooperativas-modal');
+    }
+    
+    // Crear modal para asignar gerente
+    let asignarModal = document.getElementById('asignar-gerente-modal');
+    
+    if (!asignarModal) {
+      asignarModal = document.createElement('div');
+      asignarModal.className = 'catalog-modal';
+      asignarModal.id = 'asignar-gerente-modal';
+      asignarModal.innerHTML = `
+        <div class="modal-content" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
+          <div class="modal-header">
+            <h3><i class="fas fa-user-tie"></i> Asignar Gerente</h3>
+            <button class="modal-close" onclick="closeModal('asignar-gerente-modal')">&times;</button>
           </div>
-          
-          <div class="form-group">
-            <label>Buscar Usuario Existente</label>
-            <input type="text" id="buscar-gerente" placeholder="Buscar por email o nombre..." style="width: 100%;">
-          </div>
-          
-          <div id="resultados-gerentes" style="max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
-            <div class="empty-state">
-              <i class="fas fa-search"></i>
-              <p>Busca usuarios para asignar como gerente</p>
+          <div class="modal-body" style="padding: 20px;">
+            <div style="margin-bottom: 20px;">
+              <h4 style="color: var(--primary);">Cooperativa: ${coopNombre}</h4>
+              <p>Selecciona un gerente existente o invita uno nuevo</p>
             </div>
-          </div>
-          
-          <div style="border-top: 1px solid var(--border); padding-top: 20px;">
-            <h4 style="color: var(--primary); margin-bottom: 10px;">O Invitar Nuevo Gerente</h4>
+            
             <div class="form-group">
-              <label>Email del nuevo gerente</label>
-              <input type="email" id="email-nuevo-gerente" placeholder="gerente@cooperativa.com" style="width: 100%;">
+              <label>Buscar Usuario Existente</label>
+              <input type="text" id="buscar-gerente" placeholder="Buscar por email o nombre..." style="width: 100%;">
             </div>
-            <div class="form-group">
-              <label>Nombre del gerente</label>
-              <input type="text" id="nombre-nuevo-gerente" placeholder="Nombre completo" style="width: 100%;">
+            
+            <div id="resultados-gerentes" style="max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
+              <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <p>Busca usuarios para asignar como gerente</p>
+              </div>
             </div>
-          </div>
-          
-          <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-secondary" onclick="closeModal('asignar-gerente-modal')" style="flex: 1;">
-              <i class="fas fa-times"></i> Cancelar
-            </button>
-            <button class="btn-primary" onclick="invitarGerente('${coopId}')" style="flex: 1;">
-              <i class="fas fa-paper-plane"></i> Invitar Gerente
-            </button>
+            
+            <div style="border-top: 1px solid var(--border); padding-top: 20px;">
+              <h4 style="color: var(--primary); margin-bottom: 10px;">O Invitar Nuevo Gerente</h4>
+              <div class="form-group">
+                <label>Email del nuevo gerente</label>
+                <input type="email" id="email-nuevo-gerente" placeholder="gerente@cooperativa.com" style="width: 100%;">
+              </div>
+              <div class="form-group">
+                <label>Nombre del gerente</label>
+                <input type="text" id="nombre-nuevo-gerente" placeholder="Nombre completo" style="width: 100%;">
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+              <button class="btn-secondary" onclick="closeModal('asignar-gerente-modal')" style="flex: 1;">
+                <i class="fas fa-times"></i> Cancelar
+              </button>
+              <button class="btn-primary" onclick="invitarGerente('${coopId}')" style="flex: 1;">
+                <i class="fas fa-paper-plane"></i> Invitar Gerente
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    `;
-    document.body.appendChild(asignarModal);
-  }
-  
-  // Actualizar el nombre de la cooperativa en el modal
-  const titulo = asignarModal.querySelector('h4');
-  if (titulo) {
-    titulo.textContent = `Cooperativa: ${coopNombre}`;
-  }
-  
-  // Guardar el ID de la cooperativa en el botón
-  const botonInvitar = asignarModal.querySelector('.btn-primary');
-  if (botonInvitar) {
-    botonInvitar.setAttribute('onclick', `invitarGerente('${coopId}')`);
-  }
-  
-  // Limpiar campos
-  document.getElementById('buscar-gerente').value = '';
-  document.getElementById('email-nuevo-gerente').value = '';
-  document.getElementById('nombre-nuevo-gerente').value = '';
-  
-  asignarModal.classList.add('active');
-}
-
-  async function asignarGerente(coopId, coopNombre) {
-  console.log('✅ asignarGerente ejecutada', coopId, coopNombre);
-  
-
-}
-
-window.asignarGerente = asignarGerente;  
-
-async function invitarGerente(coopId) {
-  const email = document.getElementById('email-nuevo-gerente').value.trim();
-  const nombre = document.getElementById('nombre-nuevo-gerente').value.trim();
-  
-  if (!email) {
-    alert('El email es requerido');
-    return;
-  }
-  
-  if (!nombre) {
-    alert('El nombre del gerente es requerido');
-    return;
-  }
-  
-  try {
-    console.log('🔄 Invitando gerente:', { email, nombre, coopId });
-    
-    // 1. Crear usuario en Auth de Supabase
-    const { data: authData, error: authError } = await window.supabase.auth.admin.createUser({
-      email: email,
-      password: 'temp_password_123', // Contraseña temporal
-      email_confirm: true, // Confirmar email automáticamente
-      user_metadata: {
-        username: nombre,
-        rol: 'gerente',
-        cooperativa_id: coopId,
-        invitacion_pendiente: true
-      }
-    });
-    
-    if (authError) {
-      // Si el usuario ya existe, actualizarlo
-      if (authError.message.includes('already registered')) {
-        console.log('⚠️ Usuario ya existe, actualizando...');
-        
-        const { data: updateData, error: updateError } = await window.supabase.auth.admin.updateUserById(
-          
-          authError.message
-        );
-        
-        if (updateError) {
-          alert('El usuario ya existe pero no se pudo asignar como gerente. Contacta al administrador.');
-          throw updateError;
-        }
-        
-        alert(`✅ ${nombre} ya estaba registrado. Se le ha asignado como gerente.`);
-        
-      } else {
-        throw authError;
-      }
-    } else {
-      console.log('✅ Usuario creado:', authData);
-      alert(`✅ Gerente ${nombre} invitado exitosamente. Se envió un email de invitación.`);
+      `;
+      document.body.appendChild(asignarModal);
     }
     
-    // 2. Cerrar modal
-    closeModal('asignar-gerente-modal');
+    // Limpiar campos
+    if (document.getElementById('buscar-gerente')) {
+      document.getElementById('buscar-gerente').value = '';
+    }
+    if (document.getElementById('email-nuevo-gerente')) {
+      document.getElementById('email-nuevo-gerente').value = '';
+    }
+    if (document.getElementById('nombre-nuevo-gerente')) {
+      document.getElementById('nombre-nuevo-gerente').value = '';
+    }
     
-    // 3. Opcional: Mostrar información de acceso
-    console.log('📧 Información para el gerente:');
-    console.log('   Email:', email);
-    console.log('   Contraseña temporal: temp_password_123');
-    console.log('   Debe cambiar la contraseña en el primer acceso');
+    asignarModal.classList.add('active');
     
   } catch (error) {
-    console.error('❌ Error invitando gerente:', error);
-    
-    if (error.message.includes('already registered')) {
-      alert('❌ Este email ya está registrado en el sistema. Contacta al administrador para asignarle el rol de gerente.');
-    } else if (error.message.includes('permission denied')) {
-      alert('❌ No tienes permisos para crear usuarios. Esta función requiere permisos de administrador en Supabase.');
-    } else {
-      alert('Error al invitar gerente: ' + error.message);
-    }
+    console.error('❌ Error en asignarGerente:', error);
+    alert('Error al abrir el panel de asignación: ' + error.message);
   }
+}
+
+// HACER DISPONIBLE GLOBALMENTE
+window.asignarGerente = asignarGerente;
+console.log('✅ asignarGerente definida y disponible globalmente'); 
+
+// FUNCIONES BÁSICAS DE APOYO
+async function invitarGerente(coopId) {
+  const email = document.getElementById('email-nuevo-gerente')?.value || 'test@test.com';
+  const nombre = document.getElementById('nombre-nuevo-gerente')?.value || 'Gerente Test';
+  
+  alert(`🔧 Invitando gerente: ${nombre} (${email}) a cooperativa ${coopId}`);
+  console.log('Gerente invitado:', { email, nombre, coopId });
+  
+  closeModal('asignar-gerente-modal');
+}
+
+async function buscarUsuariosExistente() {
+  console.log('Buscando usuarios...');
+}
+
+async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
+  console.log('Usuario seleccionado:', { usuarioId, usuarioEmail, usuarioNombre });
 }
 
   // Función para buscar usuarios existentes
