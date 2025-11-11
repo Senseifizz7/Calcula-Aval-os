@@ -5183,17 +5183,14 @@ try {
   alert('Error al crear cooperativa: ' + error.message);
 }
 
-// FUNCIÓN ASIGNAR GERENTE - VERSIÓN COMPLETA
 async function asignarGerente(coopId, coopNombre) {
   console.log(`🔄 Asignando gerente a cooperativa: ${coopNombre} (${coopId})`);
   
   try {
-    // Cerrar modal de cooperativas
     if (document.getElementById('cooperativas-modal')) {
       closeModal('cooperativas-modal');
     }
     
-    // Crear modal para asignar gerente
     let asignarModal = document.getElementById('asignar-gerente-modal');
     
     if (!asignarModal) {
@@ -5214,7 +5211,7 @@ async function asignarGerente(coopId, coopNombre) {
             
             <div class="form-group">
               <label>Buscar Usuario Existente</label>
-              <input type="text" id="buscar-gerente" placeholder="Buscar por email o nombre..." style="width: 100%;">
+              <input type="text" id="buscar-gerente" placeholder="Buscar por email o nombre..." style="width: 100%;" oninput="buscarUsuariosExistente()">
             </div>
             
             <div id="resultados-gerentes" style="max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
@@ -5250,28 +5247,14 @@ async function asignarGerente(coopId, coopNombre) {
       document.body.appendChild(asignarModal);
     }
     
-    // Limpiar campos
-    if (document.getElementById('buscar-gerente')) {
-      document.getElementById('buscar-gerente').value = '';
-    }
-    if (document.getElementById('email-nuevo-gerente')) {
-      document.getElementById('email-nuevo-gerente').value = '';
-    }
-    if (document.getElementById('nombre-nuevo-gerente')) {
-      document.getElementById('nombre-nuevo-gerente').value = '';
-    }
-    
     asignarModal.classList.add('active');
     
   } catch (error) {
     console.error('❌ Error en asignarGerente:', error);
-    alert('Error al abrir el panel de asignación: ' + error.message);
+    alert('Error: ' + error.message);
   }
 }
-
-// HACER DISPONIBLE GLOBALMENTE
 window.asignarGerente = asignarGerente;
-console.log('✅ asignarGerente definida y disponible globalmente');
 
 // FUNCIONES BÁSICAS DE APOYO
 async function invitarGerente(coopId) {
