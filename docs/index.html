@@ -5682,6 +5682,15 @@ window.addEventListener('load', function() {
   console.log('🖼️ Página completamente cargada, ejecutando admin button...');
   setTimeout(initAdminButton, 1000);
 });
+
+   
+document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('btn-gestion-usuarios');
+  if (btn) {
+    btn.addEventListener('click', gestionarUsuarios);
+    console.log('✅ Botón gestión usuarios configurado');
+  }
+});
   </script>
 </body>
 </html>
