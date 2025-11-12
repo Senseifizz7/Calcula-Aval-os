@@ -5749,82 +5749,85 @@ async function asignarGerente(coopId, coopNombre) {
   console.log(`🔄 Asignando gerente a cooperativa: ${coopNombre} (${coopId})`);
   
   try {
-    
+    // Cerrar modales anteriores
     if (document.getElementById('cooperativas-modal')) {
       closeModal('cooperativas-modal');
     }
-    
-    
+
+    // Crear o actualizar modal
     let asignarModal = document.getElementById('asignar-gerente-modal');
     
     if (!asignarModal) {
       asignarModal = document.createElement('div');
       asignarModal.className = 'catalog-modal';
       asignarModal.id = 'asignar-gerente-modal';
-      asignarModal.innerHTML = `
-        <div class="modal-content" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
-          <div class="modal-header">
-            <h3><i class="fas fa-user-tie"></i> Asignar Gerente</h3>
-            <button class="modal-close" onclick="closeModal('asignar-gerente-modal')">&times;</button>
+      document.body.appendChild(asignarModal);
+    }
+
+    // CONTENIDO COMPLETO DEL MODAL (CON BOTÓN DE INVITAR NUEVO)
+    asignarModal.innerHTML = `
+      <div class="modal-content" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
+        <div class="modal-header">
+          <h3><i class="fas fa-user-tie"></i> Asignar Gerente</h3>
+          <button class="modal-close" onclick="closeModal('asignar-gerente-modal')">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <div style="margin-bottom: 20px;">
+            <h4 style="color: var(--primary);">Cooperativa: ${coopNombre}</h4>
+            <p>Selecciona un gerente existente o invita uno nuevo</p>
           </div>
-          <div class="modal-body" style="padding: 20px;">
-            <div style="margin-bottom: 20px;">
-              <h4 style="color: var(--primary);">Cooperativa: ${coopNombre}</h4>
-              <p>Selecciona un gerente existente o invita uno nuevo</p>
+          
+          <!-- BÚSQUEDA DE USUARIOS EXISTENTES -->
+          <div class="form-group">
+            <label>Buscar Usuario Existente</label>
+            <input type="text" id="buscar-gerente" placeholder="Buscar por email o nombre..." style="width: 100%;" oninput="buscarUsuariosExistente()">
+          </div>
+          
+          <div id="resultados-gerentes" style="max-height: 200px; overflow-y: auto; margin-bottom: 20px; border: 1px solid var(--border); padding: 10px; border-radius: var(--radius);">
+            <div class="empty-state">
+              <i class="fas fa-search"></i>
+              <p>Busca usuarios para asignar como gerente</p>
+            </div>
+          </div>
+          
+          <!-- SECCIÓN DE INVITAR NUEVO GERENTE -->
+          <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px;">
+            <h4 style="color: var(--primary); margin-bottom: 15px;">
+              <i class="fas fa-envelope"></i> Invitar Nuevo Gerente
+            </h4>
+            
+            <div class="form-group">
+              <label class="required">Email del nuevo gerente</label>
+              <input type="email" id="email-nuevo-gerente" placeholder="gerente@cooperativa.com" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius);">
             </div>
             
             <div class="form-group">
-              <label>Buscar Usuario Existente</label>
-              <input type="text" id="buscar-gerente" placeholder="Buscar por email o nombre..." style="width: 100%;" oninput="buscarUsuariosExistente()">
+              <label class="required">Nombre del gerente</label>
+              <input type="text" id="nombre-nuevo-gerente" placeholder="Nombre completo" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius);">
             </div>
             
-            <div id="resultados-gerentes" style="max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
-              <div class="empty-state">
-                <i class="fas fa-search"></i>
-                <p>Busca usuarios para asignar como gerente</p>
-              </div>
-            </div>
-            
-            <div style="border-top: 1px solid var(--border); padding-top: 20px;">
-              <h4 style="color: var(--primary); margin-bottom: 10px;">O Invitar Nuevo Gerente</h4>
-              <div class="form-group">
-                <label>Email del nuevo gerente</label>
-                <input type="email" id="email-nuevo-gerente" placeholder="gerente@cooperativa.com" style="width: 100%;">
-              </div>
-              <div class="form-group">
-                <label>Nombre del gerente</label>
-                <input type="text" id="nombre-nuevo-gerente" placeholder="Nombre completo" style="width: 100%;">
-              </div>
-            </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-              <button class="btn-secondary" onclick="closeModal('asignar-gerente-modal')" style="flex: 1;">
-                <i class="fas fa-times"></i> Cancelar
-              </button>
-              <button class="btn-primary" onclick="invitarGerente('${coopId}')" style="flex: 1;">
-                <i class="fas fa-paper-plane"></i> Invitar Gerente
-              </button>
-            </div>
+            <button class="btn-primary" onclick="invitarGerente('${coopId}')" style="width: 100%; margin-top: 10px;">
+              <i class="fas fa-paper-plane"></i> Invitar Gerente
+            </button>
+          </div>
+          
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="btn-secondary" onclick="closeModal('asignar-gerente-modal')" style="flex: 1;">
+              <i class="fas fa-times"></i> Cancelar
+            </button>
           </div>
         </div>
-      `;
-      document.body.appendChild(asignarModal);
-    }
-    
-    
-    document.getElementById('buscar-gerente').value = '';
-    document.getElementById('email-nuevo-gerente').value = '';
-    document.getElementById('nombre-nuevo-gerente').value = '';
-    
-    
-    document.getElementById('resultados-gerentes').innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-search"></i>
-        <p>Busca usuarios para asignar como gerente</p>
       </div>
     `;
     
     asignarModal.classList.add('active');
+    
+    // Limpiar campos
+    setTimeout(() => {
+      document.getElementById('buscar-gerente').value = '';
+      document.getElementById('email-nuevo-gerente').value = '';
+      document.getElementById('nombre-nuevo-gerente').value = '';
+    }, 100);
     
   } catch (error) {
     console.error('❌ Error en asignarGerente:', error);
