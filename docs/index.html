@@ -5616,42 +5616,77 @@ try {
 
 
 async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
-  alert(`🔧 Asignando a ${usuarioNombre} como gerente...`);
-  console.log('Usuario seleccionado:', { usuarioId, usuarioEmail, usuarioNombre });
-  
-}
-
-function initAdminSystem() {
-  if (adminSystemInitialized) return;
-  adminSystemInitialized = true;
-  
-  console.log('🚀 Iniciando sistema de administración...');
-  
- 
-  const waitForSupabase = setInterval(() => {
-    if (window.supabase) {
-      clearInterval(waitForSupabase);
-      console.log('✅ Supabase listo');
-      
-      
-      if (window.supabase.auth) {
-        window.supabase.auth.onAuthStateChange(() => {
-          setTimeout(updateAdminButton, 1000);
-        });
-      }
-      
-      
-      setTimeout(updateAdminButton, 2000);
+    try {
+        
+        const modal = document.getElementById('asignar-gerente-modal');
+        const titulo = modal.querySelector('h4');
+        const coopNombre = titulo.textContent.replace('Cooperativa: ', '');
+        
+        
+        const { data: cooperativas, error } = await window.supabase
+            .from('cooperativas')
+            .select('id')
+            .eq('nombre', coopNombre)
+            .single();
+            
+        if (error) throw error;
+        
+        const confirmar = confirm(
+            `¿Asignar a ${usuarioNombre} (${usuarioEmail}) como gerente de ${coopNombre}?\n\n` +
+            `Esto le dará acceso completo a todos los avalúos de esta cooperativa.`
+        );
+        
+        if (confirmar) {
+            await asignarRolGerente(usuarioId, cooperativas.id, coopNombre);
+        }
+        
+    } catch (error) {
+        console.error('❌ Error seleccionando usuario:', error);
+        alert('Error al asignar gerente: ' + error.message);
     }
-  }, 500);
 }
 
+  
+async function asignarRolGerente(usuarioId, cooperativaId, cooperativaNombre) {
+    try {
+        console.log(`🔄 Asignando rol de gerente a usuario ${usuarioId} para cooperativa ${cooperativaId}`);
+        
+        
+        const { error: userError } = await window.supabase
+            .from('usuarios')
+            .update({ 
+                rol: 'gerente',
+                cooperativa_id: cooperativaId
+            })
+            .eq('id', usuarioId);
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAdminSystem);
-} else {
-  initAdminSystem();
-}
+        if (userError) throw userError;
+
+        
+        const { error: authError } = await window.supabase.auth.updateUser({
+            data: { 
+                rol: 'gerente',
+                cooperativa_id: cooperativaId
+            }
+        });
+
+        if (authError) {
+            console.warn('No se pudieron actualizar metadata de auth:', authError);
+        }
+
+        console.log('✅ Rol de gerente asignado exitosamente');
+        alert(`✅ Usuario asignado como gerente de ${cooperativaNombre}`);
+        
+        
+        closeModal('asignar-gerente-modal');
+        if (document.getElementById('cooperativas-modal')) {
+            gestionarCooperativas(); 
+        }
+
+    } catch (error) {
+        console.error('❌ Error asignando rol de gerente:', error);
+        alert('Error al asignar rol de gerente: ' + error.message);
+    }
 }
 
 
