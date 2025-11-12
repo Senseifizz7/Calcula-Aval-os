@@ -5895,60 +5895,77 @@ async function invitarGerente(coopId) {
 }
 
 async function buscarUsuariosExistente() {
-  const busqueda = document.getElementById('buscar-gerente').value.trim();
-  
-  if (!busqueda) {
-    document.getElementById('resultados-gerentes').innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-search"></i>
-        <p>Ingresa un email o nombre para buscar</p>
-      </div>
-    `;
-    return;
-  }
-  
-  try {
-   
-    const { data: usuarios, error } = await window.supabase
-      .from('usuarios')
-      .select('*')
-      .or(`email.ilike.%${busqueda}%,nombre.ilike.%${busqueda}%`)
-      .limit(5);
+    const busqueda = document.getElementById('buscar-gerente').value.trim();
     
-    if (error) throw error;
-    
-    let resultadosHTML = '';
-    
-    if (usuarios && usuarios.length === 0) {
-      resultadosHTML = `
-        <div class="empty-state">
-          <i class="fas fa-users"></i>
-          <p>No se encontraron usuarios</p>
-        </div>
-      `;
-    } else {
-      resultadosHTML = usuarios.map(usuario => `
-        <div class="appraisal-item" style="cursor: pointer; margin-bottom: 8px;" onclick="seleccionarUsuarioExistente('${usuario.id}', '${usuario.email}', '${usuario.nombre}')">
-          <div class="appraisal-details">
-            <div><strong>Nombre:</strong> ${usuario.nombre || 'No especificado'}</div>
-            <div><strong>Email:</strong> ${usuario.email}</div>
-            <div><strong>Rol actual:</strong> ${usuario.rol || 'No asignado'}</div>
-          </div>
-        </div>
-      `).join('');
+    if (!busqueda) {
+        document.getElementById('resultados-gerentes').innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <p>Ingresa un email o nombre para buscar usuarios</p>
+            </div>
+        `;
+        return;
     }
     
-    document.getElementById('resultados-gerentes').innerHTML = resultadosHTML;
-    
-  } catch (error) {
-    console.error('❌ Error buscando usuarios:', error);
-    document.getElementById('resultados-gerentes').innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-exclamation-triangle"></i>
-        <p>Error al buscar usuarios: ${error.message}</p>
-      </div>
-    `;
-  }
+    try {
+        // Buscar usuarios que no sean super_admin
+        const { data: usuarios, error } = await window.supabase
+            .from('usuarios')
+            .select('*')
+            .or(`email.ilike.%${busqueda}%,nombre.ilike.%${busqueda}%`)
+            .neq('rol', 'super_admin') // Excluir super admins
+            .limit(10);
+        
+        if (error) throw error;
+        
+        let resultadosHTML = '';
+        
+        if (!usuarios || usuarios.length === 0) {
+            resultadosHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <p>No se encontraron usuarios</p>
+                </div>
+            `;
+        } else {
+            resultadosHTML = usuarios.map(usuario => `
+                <div class="appraisal-item" style="cursor: pointer; margin-bottom: 8px;">
+                    <div class="appraisal-header">
+                        <div class="appraisal-date">
+                            <i class="fas fa-user"></i> ${usuario.nombre || 'Sin nombre'}
+                            <span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; 
+                                background: ${usuario.rol === 'gerente' ? 'var(--primary)' : 'var(--secondary)'}; 
+                                color: white;">
+                                ${usuario.rol?.toUpperCase() || 'SIN ROL'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="appraisal-details">
+                        <div><strong>Email:</strong> ${usuario.email}</div>
+                        <div><strong>Rol actual:</strong> ${usuario.rol || 'No asignado'}</div>
+                        <div><strong>Cooperativa actual:</strong> ${usuario.cooperativa_id || 'No asignada'}</div>
+                    </div>
+                    <div class="appraisal-actions">
+                        <button class="btn-primary btn-small" 
+                            onclick="seleccionarUsuarioExistente('${usuario.id}', '${usuario.email}', '${usuario.nombre}')">
+                            <i class="fas fa-user-tie"></i> Asignar como Gerente
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        document.getElementById('resultados-gerentes').innerHTML = resultadosHTML;
+        
+    } catch (error) {
+        console.error('❌ Error buscando usuarios:', error);
+        document.getElementById('resultados-gerentes').innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Error al buscar usuarios: ${error.message}</p>
+            </div>
+        `;
+    }
 }
 
 async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
