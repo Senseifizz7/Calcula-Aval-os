@@ -5870,243 +5870,34 @@ async function asignarGerente(coopId, coopNombre) {
 
 window.asignarGerente = asignarGerente;
 
-// =============================================
-// SISTEMA DE BOTÓN ADMIN - ARREGLADO (VERSIÓN CORREGIDA)
-// =============================================
-
-let adminSystemInitialized = false;
-
-function updateAdminButton() {
-  console.log('🔄 Actualizando botón admin...');
-  
-  const floatingActions = document.querySelector('.floating-actions');
-  if (!floatingActions) {
-    console.log('❌ Floating actions no encontrado');
-    return;
-  }
-  
-  const user = window.__session?.user;
-  if (!user) {
-    console.log('❌ Usuario no logueado');
-    return;
-  }
-  
-  const userRole = user?.user_metadata?.rol || 'asesor';
-  console.log('✅ Usuario detectado con rol:', userRole);
-  
-  let adminBtn = document.getElementById('admin-panel-btn');
-  
-  // SOLO mostrar botón si es SUPER_ADMIN o GERENTE
-  if (userRole === 'super_admin' || userRole === 'gerente') {
-    if (!adminBtn) {
-      console.log('🔄 Creando nuevo botón admin...');
-      adminBtn = document.createElement('button');
-      adminBtn.className = 'floating-btn';
-      adminBtn.id = 'admin-panel-btn';
-      adminBtn.title = 'Panel de Administración';
-      adminBtn.innerHTML = '<i class="fas fa-cog"></i>';
-      adminBtn.onclick = showAdminPanel;
-      
-      // Estilos para posicionarlo correctamente
-      adminBtn.style.cssText = `
-        position: fixed !important;
-        top: 170px !important;
-        right: 24px !important;
-        width: 56px !important;
-        height: 56px !important;
-        border-radius: 50% !important;
-        background: var(--warning) !important;
-        color: white !important;
-        border: 2px solid white !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        cursor: pointer !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-        z-index: 9999 !important;
-        font-size: 1.2rem !important;
-        transition: all 0.3s ease !important;
-      `;
-      
-      floatingActions.appendChild(adminBtn);
-      console.log('✅ Botón de admin CREADO EXITOSAMENTE');
-    } else {
-      console.log('✅ Botón de admin ya existe');
-      adminBtn.style.display = 'flex';
-    }
-  } else {
-    // OCULTAR botón si es asesor
-    if (adminBtn) {
-      adminBtn.style.display = 'none';
-      console.log('❌ Botón de admin ocultado (usuario es asesor)');
-    }
-  }
-}
-
-// Función mejorada para mostrar panel admin
-async function showAdminPanel() {
-  const user = window.__session?.user;
-  const userRole = user?.user_metadata?.rol || 'asesor';
-  
-  console.log('🎯 Abriendo panel admin para rol:', userRole);
-  
-  let adminModal = document.getElementById('admin-panel-modal');
-  
-  if (!adminModal) {
-    adminModal = document.createElement('div');
-    adminModal.className = 'catalog-modal';
-    adminModal.id = 'admin-panel-modal';
-    adminModal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3><i class="fas fa-cog"></i> Panel de Administración</h3>
-          <button class="modal-close" onclick="closeModal('admin-panel-modal')">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 20px;">
-          <div id="admin-panel-content">
-            <div class="loading-spinner"></div>
-            <p>Cargando panel de administración...</p>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(adminModal);
-  }
-  
-  try {
-    let adminContent = '';
+// ==================== BOTÓN ADMIN ====================
+function crearBotonAdmin() {
+    const user = window.__session?.user;
+    const userRole = user?.user_metadata?.rol;
     
-    if (userRole === 'super_admin') {
-      adminContent = await loadSuperAdminPanel();
-    } else if (userRole === 'gerente') {
-      adminContent = await loadGerentePanel();
-    } else {
-      adminContent = '<p>No tienes permisos de administración</p>';
+    if ((userRole === 'super_admin' || userRole === 'gerente') && !document.getElementById('admin-panel-btn')) {
+        const btn = document.createElement('button');
+        btn.id = 'admin-panel-btn';
+        btn.innerHTML = '<i class="fas fa-cog"></i>';
+        btn.title = 'Panel de Administración';
+        btn.className = 'floating-btn';
+        btn.style.cssText = 'position:fixed; top:170px; right:24px; width:56px; height:56px; border-radius:50%; background:#F59E0B; color:white; border:2px solid white; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:9999; font-size:1.2rem;';
+        
+        btn.onclick = function() {
+            if (userRole === 'super_admin') {
+                gestionarCooperativas();
+            } else {
+                showAllAppraisals();
+            }
+        };
+        
+        document.querySelector('.floating-actions').appendChild(btn);
     }
-    
-    document.getElementById('admin-panel-content').innerHTML = adminContent;
-    adminModal.classList.add('active');
-    
-  } catch (error) {
-    console.error('❌ Error cargando panel admin:', error);
-    document.getElementById('admin-panel-content').innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-exclamation-triangle"></i>
-        <h4>Error al cargar panel</h4>
-        <p>${error.message}</p>
-      </div>
-    `;
-  }
 }
 
-// Panel para SUPER_ADMIN
-async function loadSuperAdminPanel() {
-  return `
-    <div class="admin-panel">
-      <h4 style="color: var(--primary); margin-bottom: 20px;">Super Admin - Vista Global</h4>
+// Iniciar después de 2 segundos
+setTimeout(crearBotonAdmin, 2000);
       
-      <div style="margin-bottom: 20px;">
-        <button class="btn-primary" onclick="gestionarCooperativas()" style="width: 100%; margin-bottom: 10px;">
-          <i class="fas fa-building"></i> Gestionar Cooperativas
-        </button>
-        <button class="btn-primary" onclick="gestionarUsuarios()" style="width: 100%; margin-bottom: 10px;">
-          <i class="fas fa-users"></i> Gestionar Usuarios
-        </button>
-        <button class="btn-secondary" onclick="showAllAppraisals()" style="width: 100%;">
-          <i class="fas fa-list"></i> Ver Todos los Avalúos
-        </button>
-      </div>
-      
-      <div class="form-group">
-        <label>Acciones Rápidas</label>
-        <button class="btn-secondary btn-small" onclick="crearCooperativa()" style="width: 100%; margin-bottom: 8px;">
-          <i class="fas fa-plus"></i> Crear Nueva Cooperativa
-        </button>
-      </div>
-    </div>
-  `;
-}
-
-// Panel para GERENTE
-async function loadGerentePanel() {
-  return `
-    <div class="admin-panel">
-      <h4 style="color: var(--primary); margin-bottom: 20px;">Panel Gerencial</h4>
-      <p style="margin-bottom: 20px; color: var(--text-light);">
-        Gestión de tu cooperativa
-      </p>
-      <button class="btn-primary" onclick="showAllAppraisals()" style="width: 100%; margin-bottom: 10px;">
-        <i class="fas fa-list"></i> Revisar Avalúos de la Cooperativa
-      </button>
-      <button class="btn-secondary" onclick="gestionarUsuarios()" style="width: 100%;">
-        <i class="fas fa-users"></i> Ver Usuarios de mi Cooperativa
-      </button>
-    </div>
-  `;
-}
-
-// Inicialización automática
-function initAdminSystem() {
-  if (adminSystemInitialized) return;
-  adminSystemInitialized = true;
-  
-  console.log('🚀 Iniciando sistema de administración...');
-  
-  // Esperar a que Supabase esté listo
-  const waitForSupabase = setInterval(() => {
-    if (window.supabase) {
-      clearInterval(waitForSupabase);
-      console.log('✅ Supabase listo, inicializando botón admin...');
-      
-      // Escuchar cambios de autenticación
-      if (window.supabase.auth) {
-        window.supabase.auth.onAuthStateChange((event, session) => {
-          console.log('🔐 Cambio de autenticación:', event);
-          setTimeout(updateAdminButton, 500);
-        });
-      }
-      
-      // Inicializar ahora
-      setTimeout(updateAdminButton, 1000);
-    }
-  }, 500);
-}
-
-// =============================================
-// INICIALIZACIÓN AUTOMÁTICA
-// =============================================
-
-// Iniciar cuando el DOM esté listo
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAdminSystem);
-} else {
-  initAdminSystem();
-}
-
-// También iniciar cuando la página termine de cargar
-window.addEventListener('load', function() {
-  console.log('🖼️ Página completamente cargada, verificando botón admin...');
-  setTimeout(initAdminSystem, 1500);
-});
-
-// Verificación periódica por si falla la inicialización
-setInterval(() => {
-  const user = window.__session?.user;
-  const userRole = user?.user_metadata?.rol;
-  const adminBtn = document.getElementById('admin-panel-btn');
-  
-  if ((userRole === 'super_admin' || userRole === 'gerente') && !adminBtn) {
-    console.log('🔄 Reintentando crear botón admin...');
-    updateAdminButton();
-  }
-}, 3000);
-
-// Hacer funciones globales
-window.updateAdminButton = updateAdminButton;
-window.showAdminPanel = showAdminPanel;
-window.loadSuperAdminPanel = loadSuperAdminPanel;
-window.loadGerentePanel = loadGerentePanel;
-
 async function invitarGerente(coopId) {
   try {
     const email = document.getElementById('email-nuevo-gerente')?.value;
