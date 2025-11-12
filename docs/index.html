@@ -5616,77 +5616,42 @@ try {
 
 
 async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
-    try {
-        
-        const modal = document.getElementById('asignar-gerente-modal');
-        const titulo = modal.querySelector('h4');
-        const coopNombre = titulo.textContent.replace('Cooperativa: ', '');
-        
-        
-        const { data: cooperativas, error } = await window.supabase
-            .from('cooperativas')
-            .select('id')
-            .eq('nombre', coopNombre)
-            .single();
-            
-        if (error) throw error;
-        
-        const confirmar = confirm(
-            `¿Asignar a ${usuarioNombre} (${usuarioEmail}) como gerente de ${coopNombre}?\n\n` +
-            `Esto le dará acceso completo a todos los avalúos de esta cooperativa.`
-        );
-        
-        if (confirmar) {
-            await asignarRolGerente(usuarioId, cooperativas.id, coopNombre);
-        }
-        
-    } catch (error) {
-        console.error('❌ Error seleccionando usuario:', error);
-        alert('Error al asignar gerente: ' + error.message);
-    }
+  alert(`🔧 Asignando a ${usuarioNombre} como gerente...`);
+  console.log('Usuario seleccionado:', { usuarioId, usuarioEmail, usuarioNombre });
+  
 }
 
+function initAdminSystem() {
+  if (adminSystemInitialized) return;
+  adminSystemInitialized = true;
   
-async function asignarRolGerente(usuarioId, cooperativaId, cooperativaNombre) {
-    try {
-        console.log(`🔄 Asignando rol de gerente a usuario ${usuarioId} para cooperativa ${cooperativaId}`);
-        
-        
-        const { error: userError } = await window.supabase
-            .from('usuarios')
-            .update({ 
-                rol: 'gerente',
-                cooperativa_id: cooperativaId
-            })
-            .eq('id', usuarioId);
-
-        if (userError) throw userError;
-
-        
-        const { error: authError } = await window.supabase.auth.updateUser({
-            data: { 
-                rol: 'gerente',
-                cooperativa_id: cooperativaId
-            }
+  console.log('🚀 Iniciando sistema de administración...');
+  
+ 
+  const waitForSupabase = setInterval(() => {
+    if (window.supabase) {
+      clearInterval(waitForSupabase);
+      console.log('✅ Supabase listo');
+      
+      
+      if (window.supabase.auth) {
+        window.supabase.auth.onAuthStateChange(() => {
+          setTimeout(updateAdminButton, 1000);
         });
-
-        if (authError) {
-            console.warn('No se pudieron actualizar metadata de auth:', authError);
-        }
-
-        console.log('✅ Rol de gerente asignado exitosamente');
-        alert(`✅ Usuario asignado como gerente de ${cooperativaNombre}`);
-        
-        
-        closeModal('asignar-gerente-modal');
-        if (document.getElementById('cooperativas-modal')) {
-            gestionarCooperativas(); 
-        }
-
-    } catch (error) {
-        console.error('❌ Error asignando rol de gerente:', error);
-        alert('Error al asignar rol de gerente: ' + error.message);
+      }
+      
+      
+      setTimeout(updateAdminButton, 2000);
     }
+  }, 500);
+}
+
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAdminSystem);
+} else {
+  initAdminSystem();
+}
 }
 
 
@@ -5836,9 +5801,9 @@ async function asignarGerente(coopId, coopNombre) {
               <button class="btn-secondary" onclick="closeModal('asignar-gerente-modal')" style="flex: 1;">
                 <i class="fas fa-times"></i> Cancelar
               </button>
-             <button class="btn-primary" onclick="invitarGerente('${coopId}')" style="flex: 1;">
-    <i class="fas fa-user-plus"></i> Invitar Nuevo Gerente
-            </button>
+              <button class="btn-primary" onclick="invitarGerente('${coopId}')" style="flex: 1;">
+                <i class="fas fa-paper-plane"></i> Invitar Gerente
+              </button>
             </div>
           </div>
         </div>
@@ -5870,34 +5835,7 @@ async function asignarGerente(coopId, coopNombre) {
 
 window.asignarGerente = asignarGerente;
 
-// ==================== BOTÓN ADMIN ====================
-function crearBotonAdmin() {
-    const user = window.__session?.user;
-    const userRole = user?.user_metadata?.rol;
-    
-    if ((userRole === 'super_admin' || userRole === 'gerente') && !document.getElementById('admin-panel-btn')) {
-        const btn = document.createElement('button');
-        btn.id = 'admin-panel-btn';
-        btn.innerHTML = '<i class="fas fa-cog"></i>';
-        btn.title = 'Panel de Administración';
-        btn.className = 'floating-btn';
-        btn.style.cssText = 'position:fixed; top:170px; right:24px; width:56px; height:56px; border-radius:50%; background:#F59E0B; color:white; border:2px solid white; display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:9999; font-size:1.2rem;';
-        
-        btn.onclick = function() {
-            if (userRole === 'super_admin') {
-                gestionarCooperativas();
-            } else {
-                showAllAppraisals();
-            }
-        };
-        
-        document.querySelector('.floating-actions').appendChild(btn);
-    }
-}
 
-// Iniciar después de 2 segundos
-setTimeout(crearBotonAdmin, 2000);
-      
 async function invitarGerente(coopId) {
   try {
     const email = document.getElementById('email-nuevo-gerente')?.value;
@@ -5922,77 +5860,60 @@ async function invitarGerente(coopId) {
 }
 
 async function buscarUsuariosExistente() {
-    const busqueda = document.getElementById('buscar-gerente').value.trim();
+  const busqueda = document.getElementById('buscar-gerente').value.trim();
+  
+  if (!busqueda) {
+    document.getElementById('resultados-gerentes').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-search"></i>
+        <p>Ingresa un email o nombre para buscar</p>
+      </div>
+    `;
+    return;
+  }
+  
+  try {
+   
+    const { data: usuarios, error } = await window.supabase
+      .from('usuarios')
+      .select('*')
+      .or(`email.ilike.%${busqueda}%,nombre.ilike.%${busqueda}%`)
+      .limit(5);
     
-    if (!busqueda) {
-        document.getElementById('resultados-gerentes').innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-search"></i>
-                <p>Ingresa un email o nombre para buscar usuarios</p>
-            </div>
-        `;
-        return;
+    if (error) throw error;
+    
+    let resultadosHTML = '';
+    
+    if (usuarios && usuarios.length === 0) {
+      resultadosHTML = `
+        <div class="empty-state">
+          <i class="fas fa-users"></i>
+          <p>No se encontraron usuarios</p>
+        </div>
+      `;
+    } else {
+      resultadosHTML = usuarios.map(usuario => `
+        <div class="appraisal-item" style="cursor: pointer; margin-bottom: 8px;" onclick="seleccionarUsuarioExistente('${usuario.id}', '${usuario.email}', '${usuario.nombre}')">
+          <div class="appraisal-details">
+            <div><strong>Nombre:</strong> ${usuario.nombre || 'No especificado'}</div>
+            <div><strong>Email:</strong> ${usuario.email}</div>
+            <div><strong>Rol actual:</strong> ${usuario.rol || 'No asignado'}</div>
+          </div>
+        </div>
+      `).join('');
     }
     
-    try {
-        // Buscar usuarios que no sean super_admin
-        const { data: usuarios, error } = await window.supabase
-            .from('usuarios')
-            .select('*')
-            .or(`email.ilike.%${busqueda}%,nombre.ilike.%${busqueda}%`)
-            .neq('rol', 'super_admin') // Excluir super admins
-            .limit(10);
-        
-        if (error) throw error;
-        
-        let resultadosHTML = '';
-        
-        if (!usuarios || usuarios.length === 0) {
-            resultadosHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-users"></i>
-                    <p>No se encontraron usuarios</p>
-                </div>
-            `;
-        } else {
-            resultadosHTML = usuarios.map(usuario => `
-                <div class="appraisal-item" style="cursor: pointer; margin-bottom: 8px;">
-                    <div class="appraisal-header">
-                        <div class="appraisal-date">
-                            <i class="fas fa-user"></i> ${usuario.nombre || 'Sin nombre'}
-                            <span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; 
-                                background: ${usuario.rol === 'gerente' ? 'var(--primary)' : 'var(--secondary)'}; 
-                                color: white;">
-                                ${usuario.rol?.toUpperCase() || 'SIN ROL'}
-                            </span>
-                        </div>
-                    </div>
-                    <div class="appraisal-details">
-                        <div><strong>Email:</strong> ${usuario.email}</div>
-                        <div><strong>Rol actual:</strong> ${usuario.rol || 'No asignado'}</div>
-                        <div><strong>Cooperativa actual:</strong> ${usuario.cooperativa_id || 'No asignada'}</div>
-                    </div>
-                    <div class="appraisal-actions">
-                        <button class="btn-primary btn-small" 
-                            onclick="seleccionarUsuarioExistente('${usuario.id}', '${usuario.email}', '${usuario.nombre}')">
-                            <i class="fas fa-user-tie"></i> Asignar como Gerente
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        document.getElementById('resultados-gerentes').innerHTML = resultadosHTML;
-        
-    } catch (error) {
-        console.error('❌ Error buscando usuarios:', error);
-        document.getElementById('resultados-gerentes').innerHTML = `
-            <div class="empty-state">
-                <i class="fas fa-exclamation-triangle"></i>
-                <p>Error al buscar usuarios: ${error.message}</p>
-            </div>
-        `;
-    }
+    document.getElementById('resultados-gerentes').innerHTML = resultadosHTML;
+    
+  } catch (error) {
+    console.error('❌ Error buscando usuarios:', error);
+    document.getElementById('resultados-gerentes').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Error al buscar usuarios: ${error.message}</p>
+      </div>
+    `;
+  }
 }
 
 async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
@@ -6158,6 +6079,6 @@ setTimeout(() => {
     updateAdminButton();
   }
 }, 5000);
-</script>
+  </script>
 </body>
 </html>
