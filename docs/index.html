@@ -5689,26 +5689,39 @@ function initAdminSystem() {
   if (adminSystemInitialized) return;
   adminSystemInitialized = true;
   
-  console.log('🚀 Iniciando sistema de administración...');
+  console.log('🚀 INICIANDO SISTEMA ADMIN...');
   
- 
-  const waitForSupabase = setInterval(() => {
-    if (window.supabase) {
-      clearInterval(waitForSupabase);
-      console.log('✅ Supabase listo');
-      
-      
-      if (window.supabase.auth) {
-        window.supabase.auth.onAuthStateChange(() => {
-          setTimeout(updateAdminButton, 1000);
-        });
-      }
-      
-      
-      setTimeout(updateAdminButton, 2000);
+  // Inicialización inmediata y forzada
+  const initAdmin = () => {
+    if (window.supabase && window.__session) {
+      console.log('✅ Condiciones listas, ejecutando admin...');
+      updateAdminButton();
+    } else {
+      console.log('⏳ Esperando Supabase o sesión...');
+      setTimeout(initAdmin, 500);
     }
-  }, 500);
+  };
+  
+  // Múltiples métodos de inicialización
+  initAdmin();
+  
+  // También por eventos de auth
+  if (window.supabase?.auth) {
+    window.supabase.auth.onAuthStateChange(() => {
+      setTimeout(updateAdminButton, 1000);
+    });
+  }
+  
+  
+  setTimeout(updateAdminButton, 2000);
+  setTimeout(updateAdminButton, 5000);
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('📄 DOM cargado - inicializando admin');
+  initAdminSystem();
+});
 
 
 if (document.readyState === 'loading') {
@@ -5716,8 +5729,12 @@ if (document.readyState === 'loading') {
 } else {
   initAdminSystem();
 }
-}
 
+
+window.addEventListener('load', function() {
+  console.log('🖼️ Página cargada - inicializando admin');
+  setTimeout(initAdminSystem, 1000);
+});
 
 async function gestionarCooperativas() {
   console.log('🔄 Cargando gestión de cooperativas...');
