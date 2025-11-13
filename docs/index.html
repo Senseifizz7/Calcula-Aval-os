@@ -4487,51 +4487,70 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     };
 
     window.__signInWithEmail = async (email, password) => {
-      try {
-        console.log("🔐 Intentando login con:", email);
-        
-        if (!email || !password) {
-          alert("Por favor ingresa email y contraseña");
-          return;
-        }
+  try {
+    console.log("🔐 Intentando login con:", email);
+    
+    if (!email || !password) {
+      alert("Por favor ingresa email y contraseña");
+      return;
+    }
 
-        const { data, error } = await window.supabase.auth.signInWithPassword({ 
-          email: email.trim(), 
-          password: password.trim() 
-        });
+    // MOSTRAR ESTADO DE CARGA
+    const loginBtn = document.querySelector('.btn-primary[onclick*="__signInWithEmail"]');
+    const originalText = loginBtn?.innerHTML;
+    if (loginBtn) {
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
+      loginBtn.disabled = true;
+    }
 
-        if (error) {
-          console.error("❌ Error en login:", error);
-          
-          if (error.message?.includes('Invalid login credentials')) {
-            alert("Email o contraseña incorrectos");
-          } else if (error.message?.includes('Email not confirmed')) {
-            alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
-          } else if (error.message?.includes('Email rate limit exceeded')) {
-            alert("Demasiados intentos. Espera unos minutos.");
-          } else {
-            throw error;
-          }
-          return;
-        }
+    const { data, error } = await window.supabase.auth.signInWithPassword({ 
+      email: email.trim(), 
+      password: password.trim() 
+    });
 
-        
-        window.__session = data.session;
-        __updateAuthUI(true);
-        console.log("✅ Login exitoso:", data.user.email);
-        
-        
-        if (data.user && !data.user.user_metadata?.username) {
-          setTimeout(() => {
-            showUsernameModal(data.user.id);
-          }, 1000);
-        }
-
-      } catch (e) {
-        console.error("❌ Error completo en login:", e);
-        alert("Error al iniciar sesión: " + (e.message || e));
+    if (error) {
+      console.error("❌ Error en login:", error);
+      
+      if (loginBtn) {
+        loginBtn.innerHTML = originalText;
+        loginBtn.disabled = false;
       }
-    };
+      
+      if (error.message?.includes('Invalid login credentials')) {
+        alert("❌ Email o contraseña incorrectos");
+      } else if (error.message?.includes('Email not confirmed')) {
+        alert("📧 Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
+      } else if (error.message?.includes('Email rate limit exceeded')) {
+        alert("⏰ Demasiados intentos. Espera unos minutos.");
+      } else {
+        alert("❌ Error al iniciar sesión: " + error.message);
+      }
+      return;
+    }
+
+    
+    console.log("✅ Login exitoso:", data.user.email);
+    
+    
+    document.getElementById('auth-overlay').style.display = 'none';
+    
+    
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+    
+  } catch (e) {
+    console.error("❌ Error completo en login:", e);
+    alert("Error al iniciar sesión: " + (e.message || e));
+    
+    
+    const loginBtn = document.querySelector('.btn-primary[onclick*="__signInWithEmail"]');
+    if (loginBtn) {
+      loginBtn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Iniciar sesión';
+      loginBtn.disabled = false;
+    }
+  }
+};
 
     window.__signInWithGoogle = async () => {
       try {
