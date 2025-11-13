@@ -5942,8 +5942,7 @@ async function asignarGerente(coopId, coopNombre) {
 
 window.asignarGerente = asignarGerente;
 
-
-async function invitarGerente(coopId) {
+async function invitarGerente(coopId, coopNombre) {
     try {
         const email = document.getElementById('email-nuevo-gerente')?.value.trim();
         const nombre = document.getElementById('nombre-nuevo-gerente')?.value.trim();
@@ -5953,65 +5952,102 @@ async function invitarGerente(coopId) {
             return;
         }
 
-        console.log('🔄 Invitando gerente:', { email, nombre, coopId });
+        console.log('🔄 Procesando gerente:', { email, nombre, coopId, coopNombre });
 
-       
-        const { data: existingUsers, error: searchError } = await window.supabase
-            .from('usuarios')
-            .select('*')
-            .eq('email', email);
+        
+        const { data: { users }, error: authError } = await window.supabase.auth.admin.listUsers();
+        if (authError) throw authError;
 
-        if (searchError) throw searchError;
+        const usuarioExistente = users.find(user => user.email === email);
 
-        if (existingUsers && existingUsers.length > 0) {
-           
-            const { error: updateError } = await window.supabase
-                .from('usuarios')
-                .update({
-                    rol: 'gerente',
-                    cooperativa_id: coopId,
-                    nombre: nombre,
-                    actualizado_en: new Date().toISOString()
-                })
-                .eq('email', email);
-
-            if (updateError) throw updateError;
+        if (usuarioExistente) {
             
-            alert(`✅ ${nombre} actualizado como gerente de esta cooperativa`);
+            const { error: upsertError } = await window.supabase
+                .from('usuarios')
+                .upsert({
+                    id: usuarioExistente.id,
+                    email: email,
+                    nombre: nombre,
+                    rol: 'gerente',
+                    cooperativa_id: coopId,  
+                    activo: true,
+                    actualizado_en: new Date().toISOString()
+                }, {
+                    onConflict: 'id',
+                    ignoreDuplicates: false
+                });
+
+            if (upsertError) throw upsertError;
+
+            alert(`✅ ${nombre} asignado como gerente de:\n"${cooperativaNombre}"`);
+
         } else {
             
             const { data: inviteData, error: inviteError } = await window.supabase.auth.admin.inviteUserByEmail(email, {
                 data: {
                     rol: 'gerente',
                     cooperativa_id: coopId,
-                    nombre: nombre
+                    nombre: nombre,
+                    cooperativa_nombre: coopNombre  /
                 }
             });
 
-            if (inviteError) throw inviteError;
-
-           
-            const { error: userError } = await window.supabase
-                .from('usuarios')
-                .insert([{
-                    id: inviteData.user.id,
+            if (inviteError) {
+                
+                console.warn('Invitación falló, creando usuario directo:', inviteError);
+                
+                const { data: signUpData, error: signUpError } = await window.supabase.auth.admin.createUser({
                     email: email,
-                    nombre: nombre,
-                    rol: 'gerente',
-                    cooperativa_id: coopId,
-                    activo: true
-                }]);
+                    password: 'tempPassword123', 
+                    email_confirm: true,
+                    user_metadata: {
+                        nombre: nombre,
+                        rol: 'gerente',
+                        cooperativa_id: coopId
+                    }
+                });
 
-            if (userError) throw userError;
-            
-            alert(`✅ Invitación enviada a ${nombre}\n\nRevisa tu email para activar la cuenta.`);
+                if (signUpError) throw signUpError;
+
+                
+                const { error: userError } = await window.supabase
+                    .from('usuarios')
+                    .insert([{
+                        id: signUpData.user.id,
+                        email: email,
+                        nombre: nombre,
+                        rol: 'gerente',
+                        cooperativa_id: coopId,
+                        activo: true
+                    }]);
+
+                if (userError) throw userError;
+
+                alert(`✅ ${nombre} creado como gerente de:\n"${coopNombre}"\n\nContraseña temporal: tempPassword123`);
+            } else {
+                
+                const { error: userError } = await window.supabase
+                    .from('usuarios')
+                    .insert([{
+                        id: inviteData.user.id,
+                        email: email,
+                        nombre: nombre,
+                        rol: 'gerente',
+                        cooperativa_id: coopId,
+                        activo: true
+                    }]);
+
+                if (userError) throw userError;
+
+                alert(`✅ Invitación enviada a ${nombre}\n\nSerá gerente de: "${coopNombre}"`);
+            }
         }
         
         closeModal('asignar-gerente-modal');
         
     } catch (error) {
-        console.error('❌ Error invitando gerente:', error);
-        alert('Error al enviar invitación: ' + error.message);
+        console.error('❌ Error en invitación gerente:', error);
+        alert('Error: ' + error.message);
     }
 }
 
