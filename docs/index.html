@@ -6249,7 +6249,8 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-    
+  
+
 setTimeout(() => {
   console.log('🔧 Forzando inicialización del botón admin...');
   console.log('📊 Estado actual:', {
@@ -6258,15 +6259,14 @@ setTimeout(() => {
     user: window.__session?.user,
     userRole: window.__session?.user?.user_metadata?.rol
   });
-
-if (typeof updateAdminButton === 'function') {
-  updateAdminButton();
-} else {
-  console.error('❌ updateAdminButton no está definida');
-}
-}, 3000);
   
-});
+  if (typeof updateAdminButton === 'function') {
+    updateAdminButton();
+  } else {
+    console.error('❌ updateAdminButton no está definida');
+  }
+}, 3000);
+
 </script>
 </body>
 </html>
