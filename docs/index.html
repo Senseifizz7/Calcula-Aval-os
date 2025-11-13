@@ -5726,39 +5726,31 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
   
 }
 
+
 function initAdminSystem() {
-  if (adminSystemInitialized) return;
-  adminSystemInitialized = true;
+  if (window.adminSystemInitialized) return;
+  window.adminSystemInitialized = true;
   
   console.log('🚀 Iniciando sistema de administración...');
   
- 
-  const waitForSupabase = setInterval(() => {
-    if (window.supabase) {
-      clearInterval(waitForSupabase);
-      console.log('✅ Supabase listo');
+  
+  const waitForAuth = setInterval(() => {
+    if (window.supabase && window.__session !== undefined) {
+      clearInterval(waitForAuth);
+      console.log('✅ Supabase y sesión listos');
+      
+      
+      updateAdminButton();
       
       
       if (window.supabase.auth) {
         window.supabase.auth.onAuthStateChange(() => {
-          setTimeout(updateAdminButton, 1000);
+          setTimeout(updateAdminButton, 500);
         });
       }
-      
-      
-      setTimeout(updateAdminButton, 2000);
     }
   }, 500);
 }
-
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initAdminSystem);
-} else {
-  initAdminSystem();
-}
-}
-
 
 async function gestionarCooperativas() {
   console.log('🔄 Cargando gestión de cooperativas...');
