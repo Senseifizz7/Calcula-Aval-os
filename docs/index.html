@@ -2959,104 +2959,107 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     integrarValores();
   }
 }
+
     function __renderTipos(){
-      const tipologias = __getTipos();
-      
-      
-      const grouped = tipologias.reduce((acc, tipologia) => {
-        if (!acc[tipologia.category]) {
-          acc[tipologia.category] = {};
-        }
-        if (!acc[tipologia.category][tipologia.type]) {
-          acc[tipologia.category][tipologia.type] = [];
-        }
-        acc[tipologia.category][tipologia.type].push(tipologia);
-        return acc;
-      }, {});
+  try {
+    const tipologias = __getTipos();
+    
+    // Agrupar por categoría y tipo
+    const grouped = tipologias.reduce((acc, tipologia) => {
+      if (!acc[tipologia.category]) {
+        acc[tipologia.category] = {};
+      }
+      if (!acc[tipologia.category][tipologia.type]) {
+        acc[tipologia.category][tipologia.type] = [];
+      }
+      acc[tipologia.category][tipologia.type].push(tipologia);
+      return acc;
+    }, {});
 
-      
-      ['baja', 'media', 'alta'].forEach(categoria => {
-        const tabContent = document.getElementById(`tab-${categoria}`);
-        if (!tabContent) return;
+    // Renderizar cada categoría
+    ['baja', 'media', 'alta'].forEach(categoria => {
+      const tabContent = document.getElementById(`tab-${categoria}`);
+      if (!tabContent) return;
 
-        let html = '';
-        const tipos = grouped[categoria.charAt(0).toUpperCase() + categoria.slice(1)];
-        
-        if (!tipos) {
-          html = '<div style="padding: 40px; text-align: center; color: var(--text-light);"><i class="fas fa-home" style="font-size: 3rem; margin-bottom: 16px;"></i><p>No hay tipologías disponibles para esta categoría</p></div>';
-        } else {
-          
-          const tipoOrder = ['Baja', 'Media', 'Alta'];
-          tipoOrder.forEach(tipo => {
-            if (tipos[tipo]) {
-              const tipologia = tipos[tipo][0]; 
-              const rango = RANGOS_PRECIO[categoria.charAt(0).toUpperCase() + categoria.slice(1)]?.[tipo] || { min: 0, max: 0 };
-              const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
-              
-              html += `
-                <div class="typology-accordion">
-                  <button class="typology-accordion-header" onclick="__updateBreadcrumbs('${categoria.charAt(0).toUpperCase() + categoria.slice(1)}', '${tipo}')">
-                    <span>Tipología ${tipo} - ${rangoTexto}</span>
-                    <i class="fas fa-chevron-down typology-accordion-icon"></i>
-                  </button>
-                  <div class="typology-accordion-content">
-                    <!-- DESCRIPCIÓN GENERAL DE LA TIPOLOGÍA -->
-                    <div style="padding: 20px; background: rgba(91, 123, 122, 0.03); border-bottom: 1px solid var(--border-light);">
-                      <div style="font-weight: 600; color: var(--primary); margin-bottom: 12px; font-size: 1.1rem;">
-                        Descripción General - Tipología ${tipo}
-                      </div>
-                      <div style="white-space: pre-line; font-size: 0.9rem; line-height: 1.5; color: var(--text);">
-                        ${tipologia.generalDescription}
-                      </div>
+      let html = '';
+      const tipos = grouped[categoria.charAt(0).toUpperCase() + categoria.slice(1)];
+      
+      if (!tipos) {
+        html = '<div style="padding: 40px; text-align: center; color: var(--text-light);"><i class="fas fa-home" style="font-size: 3rem; margin-bottom: 16px;"></i><p>No hay tipologías disponibles para esta categoría</p></div>';
+      } else {
+        const tipoOrder = ['Baja', 'Media', 'Alta'];
+        tipoOrder.forEach(tipo => {
+          if (tipos[tipo]) {
+            const tipologia = tipos[tipo][0]; 
+            const rango = RANGOS_PRECIO[categoria.charAt(0).toUpperCase() + categoria.slice(1)]?.[tipo] || { min: 0, max: 0 };
+            const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
+            
+            html += `
+              <div class="typology-accordion">
+                <button class="typology-accordion-header" onclick="__updateBreadcrumbs('${categoria.charAt(0).toUpperCase() + categoria.slice(1)}', '${tipo}')">
+                  <span>Tipología ${tipo} - ${rangoTexto}</span>
+                  <i class="fas fa-chevron-down typology-accordion-icon"></i>
+                </button>
+                <div class="typology-accordion-content">
+                  <div style="padding: 20px; background: rgba(91, 123, 122, 0.03); border-bottom: 1px solid var(--border-light);">
+                    <div style="font-weight: 600; color: var(--primary); margin-bottom: 12px; font-size: 1.1rem;">
+                      Descripción General - Tipología ${tipo}
                     </div>
-                    
-                    <div class="typology-variants">
-              `;
-              
-              
-              tipologia.variants.forEach((variante, index) => {
-                html += `
-                  <div class="typology-variant" data-id="${variante.id}">
-                    <div class="variant-images">
-                      <img class="variant-image" src="${variante.img}" alt="${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.img}', '${variante.title}')">
-                      ${variante.imgInterior ? `<img class="variant-image" src="${variante.imgInterior}" alt="Interior ${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.imgInterior}', 'Interior ${variante.title}')">` : ''}
-                    </div>
-                    <div class="variant-content">
-                      <div class="variant-details">
-                        <div class="variant-title">${variante.title}</div>
-                        <div class="variant-price">Q${variante.pricePerM2.toLocaleString('es-GT')}/m²</div>
-                        
-                        <ul class="variant-features">
-                          ${variante.bullets.map(bullet => `<li><i class="fas fa-check"></i>${bullet}</li>`).join('')}
-                        </ul>
-                        
-                        <button class="select-button" onclick="event.stopPropagation(); __selectTipo('${variante.id}')">
-                          <i class="fas fa-hand-pointer"></i> Seleccionar esta variante
-                        </button>
-                      </div>
+                    <div style="white-space: pre-line; font-size: 0.9rem; line-height: 1.5; color: var(--text);">
+                      ${tipologia.generalDescription}
                     </div>
                   </div>
-                `;
-              });
-              
+                  
+                  <div class="typology-variants">
+            `;
+            
+            tipologia.variants.forEach((variante, index) => {
               html += `
+                <div class="typology-variant" data-id="${variante.id}">
+                  <div class="variant-images">
+                    <img class="variant-image" src="${variante.img}" alt="${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.img}', '${variante.title}')">
+                    ${variante.imgInterior ? `<img class="variant-image" src="${variante.imgInterior}" alt="Interior ${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.imgInterior}', 'Interior ${variante.title}')">` : ''}
+                  </div>
+                  <div class="variant-content">
+                    <div class="variant-details">
+                      <div class="variant-title">${variante.title}</div>
+                      <div class="variant-price">Q${variante.pricePerM2.toLocaleString('es-GT')}/m²</div>
+                      
+                      <ul class="variant-features">
+                        ${variante.bullets.map(bullet => `<li><i class="fas fa-check"></i>${bullet}</li>`).join('')}
+                      </ul>
+                      
+                      <button class="select-button" onclick="event.stopPropagation(); __selectTipo('${variante.id}')">
+                        <i class="fas fa-hand-pointer"></i> Seleccionar esta variante
+                      </button>
                     </div>
                   </div>
                 </div>
               `;
-            }
-          });
-        }
-        
-        tabContent.innerHTML = html;
-      });
+            });
+            
+            html += `
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        });
+      }
+      
+      tabContent.innerHTML = html;
+    });
 
-      
-      initAccordions();
-      
-      
-      __updateBreadcrumbs('Baja', '');
-    }
+    initAccordions();
+    __updateBreadcrumbs('Baja', '');
+    
+  } catch (error) {
+    console.error('Error en __renderTipos:', error);
+  }
+}
+
+
+window.__renderTipos = __renderTipos;
 
     function initAccordions() {
       document.querySelectorAll('.typology-accordion-header').forEach(header => {
