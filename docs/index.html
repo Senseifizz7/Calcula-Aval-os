@@ -219,32 +219,24 @@
     .auth-input{ width:100%; margin-bottom:8px; padding:10px; border:1px solid var(--border); border-radius:8px; }
     .auth-close{ position:absolute; top:18px; right:18px; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; }
     
-   @media (max-width:768px){
-  .app-container{ padding:0 var(--space-sm); }
-  .card{ padding: var(--space-md); margin: var(--space-md) 0; }
-  .form-grid,.characteristics-grid,.result-grid{ grid-template-columns:1fr; }
-  .form-steps{ flex-direction:column; gap: var(--space-md); }
-  .form-steps::before{ display:none; }
-  .step{ flex-direction:row; gap: var(--space-sm); }
-  .step-label{ text-align:left; }
-  #save-btn,#pdf-btn{ right:16px; bottom:80px; }
-  #pdf-btn{ bottom:140px; }
-  
-  #admin-panel-btn {
-    top: 148px !important;
-    right: 16px !important;
-    width: 50px !important;
-    height: 50px !important;
-    font-size: 1.1rem !important;
-  }
-}
+    @media (max-width:768px){
+      .app-container{ padding:0 var(--space-sm); }
+      .card{ padding: var(--space-md); margin: var(--space-md) 0; }
+      .form-grid,.characteristics-grid,.result-grid{ grid-template-columns:1fr; }
+      .form-steps{ flex-direction:column; gap: var(--space-md); }
+      .form-steps::before{ display:none; }
+      .step{ flex-direction:row; gap: var(--space-sm); }
+      .step-label{ text-align:left; }
+      #save-btn,#pdf-btn{ right:16px; bottom:80px; }
+      #pdf-btn{ bottom:140px; }
+    }
 
-#username-modal .modal-content {
-  max-width: 400px;
-}
-#username-modal .form-group {
-  margin-bottom: 0;
-}
+    #username-modal .modal-content {
+      max-width: 400px;
+    }
+    #username-modal .form-group {
+      margin-bottom: 0;
+    }
 
     .appraisal-item {
       background: var(--bg-card);
@@ -4850,7 +4842,6 @@ function verificarFuncionesAdmin() {
   
 let adminSystemInitialized = false;
 
-// REEMPLAZAR la función updateAdminButton completa (líneas ~2830-2880)
 function updateAdminButton() {
   console.log('🔄 Actualizando botón admin...');
   
@@ -4884,34 +4875,32 @@ function updateAdminButton() {
       
       adminBtn.style.cssText = `
         position: fixed !important;
-        top: 172px !important;  // 100px (header) + 56px (primer botón) + 16px (gap)
+        top: 235px !important;
         right: 24px !important;
         width: 56px !important;
         height: 56px !important;
         border-radius: 50% !important;
         background: var(--primary) !important;
         color: white !important;
-        border: none !important;
+        border: 2px solid white !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         cursor: pointer !important;
-        box-shadow: var(--shadow-lg) !important;
-        z-index: 99 !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+        z-index: 9999 !important;
         font-size: 1.2rem !important;
-        transition: all 0.3s ease !important;
       `;
       
       floatingActions.appendChild(adminBtn);
       console.log('✅ Botón de admin CREADO EXITOSAMENTE');
     } else {
-      adminBtn.style.display = 'flex';
-      console.log('✅ Botón de admin ya existe - mostrando');
+      console.log('✅ Botón de admin ya existe');
     }
   } else {
     if (adminBtn) {
-      adminBtn.style.display = 'none';
-      console.log('❌ Botón de admin oculto (usuario es asesor)');
+      adminBtn.remove();
+      console.log('❌ Botón de admin removido (usuario es asesor)');
     }
   }
 }
@@ -5734,31 +5723,39 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
   
 }
 
-
 function initAdminSystem() {
-  if (window.adminSystemInitialized) return;
-  window.adminSystemInitialized = true;
+  if (adminSystemInitialized) return;
+  adminSystemInitialized = true;
   
   console.log('🚀 Iniciando sistema de administración...');
   
-  
-  const waitForAuth = setInterval(() => {
-    if (window.supabase && window.__session !== undefined) {
-      clearInterval(waitForAuth);
-      console.log('✅ Supabase y sesión listos');
-      
-      
-      updateAdminButton();
+ 
+  const waitForSupabase = setInterval(() => {
+    if (window.supabase) {
+      clearInterval(waitForSupabase);
+      console.log('✅ Supabase listo');
       
       
       if (window.supabase.auth) {
         window.supabase.auth.onAuthStateChange(() => {
-          setTimeout(updateAdminButton, 500);
+          setTimeout(updateAdminButton, 1000);
         });
       }
+      
+      
+      setTimeout(updateAdminButton, 2000);
     }
   }, 500);
 }
+
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initAdminSystem);
+} else {
+  initAdminSystem();
+}
+}
+
 
 async function gestionarCooperativas() {
   console.log('🔄 Cargando gestión de cooperativas...');
@@ -6249,8 +6246,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-  
-
+    
 setTimeout(() => {
   console.log('🔧 Forzando inicialización del botón admin...');
   console.log('📊 Estado actual:', {
@@ -6260,6 +6256,7 @@ setTimeout(() => {
     userRole: window.__session?.user?.user_metadata?.rol
   });
   
+  
   if (typeof updateAdminButton === 'function') {
     updateAdminButton();
   } else {
@@ -6267,6 +6264,13 @@ setTimeout(() => {
   }
 }, 3000);
 
-</script>
+
+setTimeout(() => {
+  console.log('🔄 Verificación final del botón admin...');
+  if (typeof updateAdminButton === 'function') {
+    updateAdminButton();
+  }
+}, 5000);
+  </script>
 </body>
 </html>
