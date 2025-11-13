@@ -4842,6 +4842,7 @@ function verificarFuncionesAdmin() {
   
 let adminSystemInitialized = false;
 
+// REEMPLAZAR la función updateAdminButton completa (líneas ~2830-2880)
 function updateAdminButton() {
   console.log('🔄 Actualizando botón admin...');
   
@@ -4875,32 +4876,34 @@ function updateAdminButton() {
       
       adminBtn.style.cssText = `
         position: fixed !important;
-        top: 235px !important;
+        top: 172px !important;  // 100px (header) + 56px (primer botón) + 16px (gap)
         right: 24px !important;
         width: 56px !important;
         height: 56px !important;
         border-radius: 50% !important;
         background: var(--primary) !important;
         color: white !important;
-        border: 2px solid white !important;
+        border: none !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         cursor: pointer !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-        z-index: 9999 !important;
+        box-shadow: var(--shadow-lg) !important;
+        z-index: 99 !important;
         font-size: 1.2rem !important;
+        transition: all 0.3s ease !important;
       `;
       
       floatingActions.appendChild(adminBtn);
       console.log('✅ Botón de admin CREADO EXITOSAMENTE');
     } else {
-      console.log('✅ Botón de admin ya existe');
+      adminBtn.style.display = 'flex';
+      console.log('✅ Botón de admin ya existe - mostrando');
     }
   } else {
     if (adminBtn) {
-      adminBtn.remove();
-      console.log('❌ Botón de admin removido (usuario es asesor)');
+      adminBtn.style.display = 'none';
+      console.log('❌ Botón de admin oculto (usuario es asesor)');
     }
   }
 }
