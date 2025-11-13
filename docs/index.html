@@ -4802,7 +4802,7 @@ function updateAdminButton() {
       
       adminBtn.style.cssText = `
         position: fixed !important;
-        top: 170px !important;
+        top: 235px !important;
         right: 24px !important;
         width: 56px !important;
         height: 56px !important;
@@ -5689,39 +5689,26 @@ function initAdminSystem() {
   if (adminSystemInitialized) return;
   adminSystemInitialized = true;
   
-  console.log('🚀 INICIANDO SISTEMA ADMIN...');
+  console.log('🚀 Iniciando sistema de administración...');
   
-  // Inicialización inmediata y forzada
-  const initAdmin = () => {
-    if (window.supabase && window.__session) {
-      console.log('✅ Condiciones listas, ejecutando admin...');
-      updateAdminButton();
-    } else {
-      console.log('⏳ Esperando Supabase o sesión...');
-      setTimeout(initAdmin, 500);
+ 
+  const waitForSupabase = setInterval(() => {
+    if (window.supabase) {
+      clearInterval(waitForSupabase);
+      console.log('✅ Supabase listo');
+      
+      
+      if (window.supabase.auth) {
+        window.supabase.auth.onAuthStateChange(() => {
+          setTimeout(updateAdminButton, 1000);
+        });
+      }
+      
+      
+      setTimeout(updateAdminButton, 2000);
     }
-  };
-  
-  // Múltiples métodos de inicialización
-  initAdmin();
-  
-  // También por eventos de auth
-  if (window.supabase?.auth) {
-    window.supabase.auth.onAuthStateChange(() => {
-      setTimeout(updateAdminButton, 1000);
-    });
-  }
-  
-  
-  setTimeout(updateAdminButton, 2000);
-  setTimeout(updateAdminButton, 5000);
+  }, 500);
 }
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('📄 DOM cargado - inicializando admin');
-  initAdminSystem();
-});
 
 
 if (document.readyState === 'loading') {
@@ -5729,12 +5716,8 @@ if (document.readyState === 'loading') {
 } else {
   initAdminSystem();
 }
+}
 
-
-window.addEventListener('load', function() {
-  console.log('🖼️ Página cargada - inicializando admin');
-  setTimeout(initAdminSystem, 1000);
-});
 
 async function gestionarCooperativas() {
   console.log('🔄 Cargando gestión de cooperativas...');
@@ -5793,35 +5776,34 @@ async function gestionarCooperativas() {
       `;
     } else {
       cooperativasHTML = cooperativas.map(coop => `
-  <div class="appraisal-item">
-    <div class="appraisal-header">
-      <div class="appraisal-date">
-        <i class="fas fa-building"></i> ${coop.nombre}
-        <span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${coop.activo ? 'var(--success)' : 'var(--error)'}; color: white;">${coop.activo ? 'ACTIVA' : 'INACTIVA'}</span>
-      </div>
-      <div class="appraisal-actions">
-        <button class="btn-secondary btn-small" onclick="verDetallesCooperativa('${coop.id}')">
-          <i class="fas fa-eye"></i> Ver
-        </button>
-        <button class="btn-secondary btn-small" onclick="editarCooperativa('${coop.id}')">
-          <i class="fas fa-edit"></i> Editar
-        </button>
-        <button class="btn-primary btn-small" onclick="asignarGerente('${coop.id}', '${coop.nombre}')">
-          <i class="fas fa-user-tie"></i> Gerente
-        </button>
-        <button class="btn-small" onclick="eliminarCooperativa('${coop.id}')" style="background: var(--error); color: white; border: none;">
-          <i class="fas fa-trash"></i> Eliminar
-        </button>
-      </div>
-    </div>
-    <div class="appraisal-details">
-      <div><strong>Teléfono:</strong> ${coop.telefono || 'No especificado'}</div>
-      <div><strong>Dirección:</strong> ${coop.direccion || 'No especificada'}</div>
-      <div><strong>Estado:</strong> <span style="color: ${coop.activo ? 'var(--success)' : 'var(--error)'};">${coop.activo ? 'ACTIVA' : 'INACTIVA'}</span></div>
-      <div><strong>Creada:</strong> ${new Date(coop.creado_en).toLocaleDateString('es-GT')}</div>
-    </div>
-  </div>
-`).join('');
+        <div class="appraisal-actions">
+  <button class="btn-secondary btn-small" onclick="verDetallesCooperativa('${coop.id}')">
+    <i class="fas fa-eye"></i> Ver
+  </button>
+  
+  <button class="btn-secondary btn-small" onclick="editarCooperativa('${coop.id}')">
+    <i class="fas fa-edit"></i> Editar
+  </button>
+  
+  <button class="btn-primary btn-small" onclick="asignarGerente('${coop.id}', '${coop.nombre}')">
+    <i class="fas fa-user-tie"></i> Gerente
+  </button>
+  
+  <button class="btn-small" onclick="eliminarCooperativa('${coop.id}')" 
+          style="background: var(--error); color: white; border: none;">
+    <i class="fas fa-trash"></i> Eliminar
+  </button>
+</div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Teléfono:</strong> ${coop.telefono || 'No especificado'}</div>
+            <div><strong>Dirección:</strong> ${coop.direccion || 'No especificada'}</div>
+            <div><strong>Estado:</strong> <span style="color: ${coop.activo ? 'var(--success)' : 'var(--error)'};">${coop.activo ? 'ACTIVA' : 'INACTIVA'}</span></div>
+            <div><strong>Creada:</strong> ${new Date(coop.creado_en).toLocaleDateString('es-GT')}</div>
+          </div>
+        </div>
+      `).join('');
+    }
     
     document.getElementById('cooperativas-list').innerHTML = cooperativasHTML;
     
