@@ -1969,61 +1969,77 @@
   
   try {
     const user = window.__session?.user;
-    const userEmail = user?.email;
+    const userEmail = user?.email || 'usuario@ejemplo.com';
     const userName = user?.user_metadata?.username || userEmail?.split('@')[0] || 'Usuario';
 
-    // DATOS SIMPLIFICADOS - SOLO LO ESENCIAL
+    // VALIDAR CAMPOS REQUERIDOS
+    const associateName = document.getElementById('associate-name').value;
+    const address = document.getElementById('address').value;
+    
+    if (!associateName || !address) {
+      alert('❌ Los campos "Nombre del Asociado" y "Dirección" son obligatorios');
+      return false;
+    }
+
+    // PREPARAR DATOS CON VALORES POR DEFECTO
     const appraisalData = {
-      associateName: document.getElementById('associate-name').value || 'No especificado',
-      address: document.getElementById('address').value || 'No especificado',
+      associateName: associateName,
+      address: address,
       constructionArea: parseFloat(document.getElementById('construction-area').value) || 0,
       landArea: parseFloat(document.getElementById('land-area').value) || 0,
       totalValue: document.getElementById('resultTotal').textContent || 'Q0.00',
-      ownerName: document.getElementById('owner-name').value || '',
-      typology: document.getElementById('typology').value || '',
-      department: document.getElementById('department').value || '',
-      estadoInmueble: document.getElementById('estado-inmueble').value || '',
-      anioConstruccion: document.getElementById('anio-construccion').value || '',
-      totalConstruccion: document.getElementById('totalConstruccion').value || '0',
-      totalTerreno: document.getElementById('totalTerreno').value || '0'
+      ownerName: document.getElementById('owner-name').value || 'No especificado',
+      typology: document.getElementById('typology').value || 'No especificada',
+      department: document.getElementById('department').value || 'No especificado',
+      estadoInmueble: document.getElementById('estado-inmueble').value || 'No especificado',
+      anioConstruccion: parseInt(document.getElementById('anio-construccion').value) || null,
+      totalConstruccion: parseFloat(document.getElementById('totalConstruccion').value) || 0,
+      totalTerreno: parseFloat(document.getElementById('totalTerreno').value) || 0
     };
 
-    // GUARDAR EN SUPABASE - VERSIÓN SIMPLIFICADA
+    // PREPARAR DATOS PARA SUPABASE
+    const supabaseData = {
+      usuario_id: user.id,
+      usuario_email: userEmail,
+      usuario_nombre: userName,
+      fecha_creacion: new Date().toISOString(),
+      fecha_formateada: new Date().toLocaleDateString('es-GT'),
+      associate_name: appraisalData.associateName,
+      address: appraisalData.address,
+      construction_area: appraisalData.constructionArea,
+      land_area: appraisalData.landArea,
+      total_value: appraisalData.totalValue,
+      owner_name: appraisalData.ownerName,
+      typology: appraisalData.typology,
+      department: appraisalData.department,
+      estado_inmueble: appraisalData.estadoInmueble,
+      anio_construccion: appraisalData.anioConstruccion,
+      total_construccion: appraisalData.totalConstruccion,
+      total_terreno: appraisalData.totalTerreno,
+      datos_completos: appraisalData,
+      estado_aprobacion: 'aprobado',
+      cooperativa_id: null // Valor por defecto
+    };
+
+    console.log('📤 Enviando a Supabase:', supabaseData);
+
+    // INSERTAR EN BASE DE DATOS
     const { data, error } = await window.supabase
       .from('avaluos')
-      .insert([
-        {
-          usuario_id: user.id,
-          usuario_email: userEmail,
-          usuario_nombre: userName,
-          fecha_creacion: new Date().toISOString(),
-          fecha_formateada: new Date().toLocaleDateString('es-GT'),
-          associate_name: appraisalData.associateName,
-          address: appraisalData.address,
-          construction_area: appraisalData.constructionArea,
-          land_area: appraisalData.landArea,
-          total_value: appraisalData.totalValue,
-          owner_name: appraisalData.ownerName,
-          typology: appraisalData.typology,
-          department: appraisalData.department,
-          estado_inmueble: appraisalData.estadoInmueble,
-          anio_construccion: appraisalData.anioConstruccion,
-          total_construccion: appraisalData.totalConstruccion,
-          total_terreno: appraisalData.totalTerreno,
-          datos_completos: appraisalData,
-          estado_aprobacion: 'aprobado' // APROBACIÓN AUTOMÁTICA POR AHORA
-        }
-      ])
+      .insert([supabaseData])
       .select();
 
-    if (error) throw error;
+    if (error) {
+      console.error('❌ Error de Supabase:', error);
+      throw new Error(`Error al guardar: ${error.message} (Código: ${error.code})`);
+    }
 
     alert('✅ Avalúo guardado EXITOSAMENTE\n\n• Estado: APROBADO\n• Disponible en "Lista de Avalúos"');
     
     return true;
     
   } catch (error) {
-    console.error('Error al guardar:', error);
+    console.error('Error completo al guardar:', error);
     alert('❌ Error al guardar: ' + error.message);
     return false;
   } finally {
