@@ -1753,47 +1753,16 @@
   const modal = document.getElementById('all-appraisals-modal');
   const listContainer = document.getElementById('all-appraisals-list');
   
-  // OBTENER DATOS DEL USUARIO ACTUAL
-  const user = window.__session?.user;
-  const userRole = user?.user_metadata?.rol || 'asesor';
-  const userCooperativaId = user?.user_metadata?.cooperativa_id;
-  
-  console.log('👤 Mostrando avalúos para:', { userRole, userCooperativaId });
-
   try {
-    let allAppraisals = [];
-    
-    // DIFERENTES CONSULTAS SEGÚN ROL
-    if (userRole === 'super_admin') {
-      // SUPER ADMIN: Ve TODOS los avalúos de TODAS las cooperativas
-      const { data, error } = await window.supabase
-        .from('avaluos')
-        .select('*')
-        .order('fecha_creacion', { ascending: false });
-      
-      if (error) throw error;
-      allAppraisals = data || [];
-      
-    } else if (userRole === 'gerente') {
-      // GERENTE: Ve todos los avalúos de SU cooperativa
-      const { data, error } = await window.supabase
-        .from('avaluos')
-        .select('*')
-        .eq('cooperativa_id', userCooperativaId)
-        .order('fecha_creacion', { ascending: false });
-      
-      if (error) throw error;
-      allAppraisals = data || [];
-      
-    } else {
-      // ASESOR: Ve solo SUS avalúos (comportamiento original)
-      allAppraisals = window.avaluosStorage.getMyAppraisals();
-    }
+    // SIMPLIFICAR: Mostrar todos los avalúos sin filtros complejos
+    const { data: allAppraisals, error } = await window.supabase
+      .from('avaluos')
+      .select('*')
+      .order('fecha_creacion', { ascending: false });
 
-    console.log(`📊 Total avalúos encontrados: ${allAppraisals.length} para rol: ${userRole}`);
+    if (error) throw error;
 
-    // MOSTRAR EN LA INTERFAZ
-    if (allAppraisals.length === 0) {
+    if (!allAppraisals || allAppraisals.length === 0) {
       listContainer.innerHTML = `
         <div class="empty-state">
           <i class="fas fa-inbox"></i>
@@ -1806,28 +1775,19 @@
         <div class="appraisal-item">
           <div class="appraisal-header">
             <div class="appraisal-date">
-              <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada || new Date(avaluo.fecha_creacion).toLocaleDateString('es-GT')}
-              ${avaluo.estado_aprobacion ? `<span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${avaluo.estado_aprobacion === 'aprobado' ? 'var(--success)' : avaluo.estado_aprobacion === 'rechazado' ? 'var(--error)' : 'var(--warning)'}; color: white;">${avaluo.estado_aprobacion.toUpperCase()}</span>` : ''}
+              <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada || 'Sin fecha'}
             </div>
             <div class="appraisal-actions">
-              ${userRole !== 'asesor' ? `<button class="btn-secondary btn-small" onclick="editAppraisal('${avaluo.id}')">
-                <i class="fas fa-edit"></i> Editar
-              </button>` : ''}
               <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
                 <i class="fas fa-eye"></i> Ver
               </button>
-              ${userRole === 'super_admin' ? `<button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="deleteAppraisal('${avaluo.id}')">
-                <i class="fas fa-trash"></i>
-              </button>` : ''}
             </div>
           </div>
           <div class="appraisal-details">
-            <div><strong>Asociado:</strong> ${avaluo.associate_name || avaluo.datos?.associateName || 'No especificado'}</div>
-            <div><strong>Dirección:</strong> ${avaluo.address || avaluo.datos?.address || 'No especificado'}</div>
-            <div><strong>Valor Total:</strong> ${avaluo.total_value || avaluo.datos?.totalValue || 'Q0.00'}</div>
-            <div><strong>Usuario:</strong> ${avaluo.usuario_nombre || avaluo.datos?.usuario_nombre || 'Anónimo'}</div>
-            ${userRole !== 'asesor' ? `<div><strong>Rol:</strong> ${avaluo.usuario_rol || 'asesor'}</div>` : ''}
-            ${userRole === 'super_admin' ? `<div><strong>Cooperativa:</strong> ${avaluo.cooperativa_id || 'No asignada'}</div>` : ''}
+            <div><strong>Asociado:</strong> ${avaluo.associate_name || 'No especificado'}</div>
+            <div><strong>Dirección:</strong> ${avaluo.address || 'No especificado'}</div>
+            <div><strong>Valor Total:</strong> ${avaluo.total_value || 'Q0.00'}</div>
+            <div><strong>Usuario:</strong> ${avaluo.usuario_nombre || 'Anónimo'}</div>
           </div>
         </div>
       `).join('');
@@ -1836,7 +1796,7 @@
     modal.classList.add('active');
     
   } catch (error) {
-    console.error('❌ Error cargando avalúos:', error);
+    console.error('Error cargando avalúos:', error);
     listContainer.innerHTML = `
       <div class="empty-state">
         <i class="fas fa-exclamation-triangle"></i>
