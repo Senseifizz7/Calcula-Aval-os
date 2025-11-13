@@ -219,24 +219,32 @@
     .auth-input{ width:100%; margin-bottom:8px; padding:10px; border:1px solid var(--border); border-radius:8px; }
     .auth-close{ position:absolute; top:18px; right:18px; background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer; }
     
-    @media (max-width:768px){
-      .app-container{ padding:0 var(--space-sm); }
-      .card{ padding: var(--space-md); margin: var(--space-md) 0; }
-      .form-grid,.characteristics-grid,.result-grid{ grid-template-columns:1fr; }
-      .form-steps{ flex-direction:column; gap: var(--space-md); }
-      .form-steps::before{ display:none; }
-      .step{ flex-direction:row; gap: var(--space-sm); }
-      .step-label{ text-align:left; }
-      #save-btn,#pdf-btn{ right:16px; bottom:80px; }
-      #pdf-btn{ bottom:140px; }
-    }
+   @media (max-width:768px){
+  .app-container{ padding:0 var(--space-sm); }
+  .card{ padding: var(--space-md); margin: var(--space-md) 0; }
+  .form-grid,.characteristics-grid,.result-grid{ grid-template-columns:1fr; }
+  .form-steps{ flex-direction:column; gap: var(--space-md); }
+  .form-steps::before{ display:none; }
+  .step{ flex-direction:row; gap: var(--space-sm); }
+  .step-label{ text-align:left; }
+  #save-btn,#pdf-btn{ right:16px; bottom:80px; }
+  #pdf-btn{ bottom:140px; }
+  
+  #admin-panel-btn {
+    top: 148px !important;
+    right: 16px !important;
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 1.1rem !important;
+  }
+}
 
-    #username-modal .modal-content {
-      max-width: 400px;
-    }
-    #username-modal .form-group {
-      margin-bottom: 0;
-    }
+#username-modal .modal-content {
+  max-width: 400px;
+}
+#username-modal .form-group {
+  margin-bottom: 0;
+}
 
     .appraisal-item {
       background: var(--bg-card);
