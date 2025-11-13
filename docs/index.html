@@ -5490,11 +5490,58 @@ async function editarCooperativa(coopId) {
 }
 
 async function eliminarCooperativa(coopId) {
-  if (confirm('¿Estás seguro de eliminar esta cooperativa?')) {
-    alert(`🔧 Eliminar cooperativa: ${coopId}`);
-  }
-}
+    if (!confirm('¿Estás seguro de eliminar esta cooperativa?\n\n⚠️ Esta acción no se puede deshacer.')) {
+        return;
+    }
 
+    try {
+        console.log('🗑️ Eliminando cooperativa:', coopId);
+
+       
+        const { data: usuarios, error: usuariosError } = await window.supabase
+            .from('usuarios')
+            .select('id, nombre')
+            .eq('cooperativa_id', coopId);
+
+        if (usuariosError) throw usuariosError;
+
+        if (usuarios && usuarios.length > 0) {
+            const usuariosLista = usuarios.map(u => u.nombre || u.id).join(', ');
+            alert(`❌ No se puede eliminar la cooperativa porque tiene usuarios asignados:\n\n${usuariosLista}\n\nReasigna los usuarios primero.`);
+            return;
+        }
+
+        
+        const { data: avaluos, error: avaluosError } = await window.supabase
+            .from('avaluos')
+            .select('id')
+            .eq('cooperativa_id', coopId);
+
+        if (avaluosError) throw avaluosError;
+
+        if (avaluos && avaluos.length > 0) {
+            alert(`❌ No se puede eliminar la cooperativa porque tiene ${avaluos.length} avalúos asociados.`);
+            return;
+        }
+
+        
+        const { error: deleteError } = await window.supabase
+            .from('cooperativas')
+            .delete()
+            .eq('id', coopId);
+
+        if (deleteError) throw deleteError;
+
+        alert('✅ Cooperativa eliminada exitosamente');
+        
+        
+        gestionarCooperativas();
+        
+    } catch (error) {
+        console.error('❌ Error eliminando cooperativa:', error);
+        alert('Error al eliminar cooperativa: ' + error.message);
+    }
+}
 async function crearCooperativa() {
   
   try {
