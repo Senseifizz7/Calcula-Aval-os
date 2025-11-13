@@ -1774,14 +1774,13 @@
     alert('Error al eliminar el avalúo: ' + error.message);
   }
 }
-
     
     async function showAllAppraisals() {
   const modal = document.getElementById('all-appraisals-modal');
   const listContainer = document.getElementById('all-appraisals-list');
   
   try {
-    // SIMPLIFICAR: Mostrar todos los avalúos sin filtros complejos
+    
     const { data: allAppraisals, error } = await window.supabase
       .from('avaluos')
       .select('*')
