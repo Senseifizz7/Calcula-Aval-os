@@ -5954,14 +5954,14 @@ async function invitarGerente(coopId, coopNombre) {
 
         console.log('🔄 Procesando gerente:', { email, nombre, coopId, coopNombre });
 
-        
+        // 1. VERIFICAR SI EL USUARIO YA EXISTE EN auth.users
         const { data: { users }, error: authError } = await window.supabase.auth.admin.listUsers();
         if (authError) throw authError;
 
         const usuarioExistente = users.find(user => user.email === email);
 
         if (usuarioExistente) {
-            
+            // 2A. USUARIO EXISTENTE - ASIGNAR COOPERATIVA Y ROL
             const { error: upsertError } = await window.supabase
                 .from('usuarios')
                 .upsert({
@@ -5969,7 +5969,7 @@ async function invitarGerente(coopId, coopNombre) {
                     email: email,
                     nombre: nombre,
                     rol: 'gerente',
-                    cooperativa_id: coopId,  
+                    cooperativa_id: coopId,
                     activo: true,
                     actualizado_en: new Date().toISOString()
                 }, {
@@ -5979,26 +5979,26 @@ async function invitarGerente(coopId, coopNombre) {
 
             if (upsertError) throw upsertError;
 
-            alert(`✅ ${nombre} asignado como gerente de:\n"${cooperativaNombre}"`);
+            alert(`✅ ${nombre} asignado como gerente de:\n"${coopNombre}"`);
 
         } else {
-            
+            // 2B. USUARIO NUEVO - INVITACIÓN CON COOPERATIVA
             const { data: inviteData, error: inviteError } = await window.supabase.auth.admin.inviteUserByEmail(email, {
                 data: {
                     rol: 'gerente',
                     cooperativa_id: coopId,
                     nombre: nombre,
-                    cooperativa_nombre: coopNombre  /
+                    cooperativa_nombre: coopNombre  // ← CORREGIDO
                 }
             });
 
             if (inviteError) {
-                
+                // Si falla la invitación, crear usuario directo
                 console.warn('Invitación falló, creando usuario directo:', inviteError);
                 
                 const { data: signUpData, error: signUpError } = await window.supabase.auth.admin.createUser({
                     email: email,
-                    password: 'tempPassword123', 
+                    password: 'tempPassword123',
                     email_confirm: true,
                     user_metadata: {
                         nombre: nombre,
@@ -6009,7 +6009,7 @@ async function invitarGerente(coopId, coopNombre) {
 
                 if (signUpError) throw signUpError;
 
-                
+                // Crear en tabla usuarios
                 const { error: userError } = await window.supabase
                     .from('usuarios')
                     .insert([{
@@ -6049,7 +6049,7 @@ async function invitarGerente(coopId, coopNombre) {
         console.error('❌ Error en invitación gerente:', error);
         alert('Error: ' + error.message);
     }
-}
+}  
 
 async function buscarUsuariosExistente() {
   const busqueda = document.getElementById('buscar-gerente').value.trim();
