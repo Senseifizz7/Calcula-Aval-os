@@ -6259,13 +6259,14 @@ setTimeout(() => {
     userRole: window.__session?.user?.user_metadata?.rol
   });
   
-  
-  if (typeof updateAdminButton === 'function') {
-    updateAdminButton();
-  } else {
-    console.error('❌ updateAdminButton no está definida');
-  }
+} 
+
+if (typeof updateAdminButton === 'function') {
+  updateAdminButton();
+} else {
+  console.error('❌ updateAdminButton no está definida');
+}
 }, 3000);
-  </script>
+</script>
 </body>
 </html>
