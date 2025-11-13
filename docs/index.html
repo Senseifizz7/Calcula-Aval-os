@@ -4964,7 +4964,7 @@ async function cargarUsuarios() {
     const userRole = user?.user_metadata?.rol;
     const userCooperativaId = user?.user_metadata?.cooperativa_id;
 
-    // CARGAR TODOS LOS USUARIOS (RLS simple lo permite)
+    
     const { data: usuarios, error } = await window.supabase
       .from('usuarios')
       .select('*')
@@ -4974,7 +4974,7 @@ async function cargarUsuarios() {
     
     console.log('✅ Usuarios cargados:', usuarios?.length);
     
-    // FILTRAR EN EL FRONTEND según el rol
+    
     let usuariosFiltrados = usuarios || [];
     
     if (userRole === 'gerente') {
@@ -4982,7 +4982,7 @@ async function cargarUsuarios() {
     } else if (userRole === 'asesor') {
       usuariosFiltrados = usuarios.filter(u => u.id === user.id);
     }
-    // SUPER_ADMIN ve todos
+    
     
     let usuariosHTML = '';
     
@@ -5853,12 +5853,12 @@ async function asignarGerente(coopId, coopNombre) {
   console.log(`🔄 Asignando gerente a cooperativa: ${coopNombre} (${coopId})`);
   
   try {
-    // Cerrar modales anteriores
+    
     if (document.getElementById('cooperativas-modal')) {
       closeModal('cooperativas-modal');
     }
 
-    // Crear o actualizar modal
+    
     let asignarModal = document.getElementById('asignar-gerente-modal');
     
     if (!asignarModal) {
@@ -5868,7 +5868,7 @@ async function asignarGerente(coopId, coopNombre) {
       document.body.appendChild(asignarModal);
     }
 
-    // CONTENIDO COMPLETO DEL MODAL (CON BOTÓN DE INVITAR NUEVO)
+    
     asignarModal.innerHTML = `
       <div class="modal-content" style="max-width: 500px; max-height: 80vh; overflow-y: auto;">
         <div class="modal-header">
@@ -5926,7 +5926,7 @@ async function asignarGerente(coopId, coopNombre) {
     
     asignarModal.classList.add('active');
     
-    // Limpiar campos
+    
     setTimeout(() => {
       document.getElementById('buscar-gerente').value = '';
       document.getElementById('email-nuevo-gerente').value = '';
@@ -5954,14 +5954,14 @@ async function invitarGerente(coopId, coopNombre) {
 
         console.log('🔄 Procesando gerente:', { email, nombre, coopId, coopNombre });
 
-        // 1. VERIFICAR SI EL USUARIO YA EXISTE EN auth.users
+        
         const { data: { users }, error: authError } = await window.supabase.auth.admin.listUsers();
         if (authError) throw authError;
 
         const usuarioExistente = users.find(user => user.email === email);
 
         if (usuarioExistente) {
-            // 2A. USUARIO EXISTENTE - ASIGNAR COOPERATIVA Y ROL
+            
             const { error: upsertError } = await window.supabase
                 .from('usuarios')
                 .upsert({
@@ -5982,18 +5982,18 @@ async function invitarGerente(coopId, coopNombre) {
             alert(`✅ ${nombre} asignado como gerente de:\n"${coopNombre}"`);
 
         } else {
-            // 2B. USUARIO NUEVO - INVITACIÓN CON COOPERATIVA
+            
             const { data: inviteData, error: inviteError } = await window.supabase.auth.admin.inviteUserByEmail(email, {
                 data: {
                     rol: 'gerente',
                     cooperativa_id: coopId,
                     nombre: nombre,
-                    cooperativa_nombre: coopNombre  // ← CORREGIDO
+                    cooperativa_nombre: coopNombre  
                 }
             });
 
             if (inviteError) {
-                // Si falla la invitación, crear usuario directo
+                
                 console.warn('Invitación falló, creando usuario directo:', inviteError);
                 
                 const { data: signUpData, error: signUpError } = await window.supabase.auth.admin.createUser({
@@ -6009,7 +6009,7 @@ async function invitarGerente(coopId, coopNombre) {
 
                 if (signUpError) throw signUpError;
 
-                // Crear en tabla usuarios
+                
                 const { error: userError } = await window.supabase
                     .from('usuarios')
                     .insert([{
