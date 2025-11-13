@@ -6138,12 +6138,11 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
 // function initAdminButton() {
   console.log('🚀 INICIANDO BOTÓN ADMIN...');
   
-  
   if (!window.supabase) {
     console.log('⏳ Esperando Supabase...');
     // setTimeout(initAdminButton, 500);
     return;
-  }
+}
   
   const user = window.__session?.user;
   if (!user) {
