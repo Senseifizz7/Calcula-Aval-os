@@ -5770,10 +5770,12 @@ async function gestionarCooperativas() {
               </button>
               <button class="btn-secondary btn-small btn-editar-coop" data-coop-id="${coop.id}">
                 <i class="fas fa-edit"></i> Editar
-              </button>
-              <button class="btn-small btn-eliminar-coop" data-coop-id="${coop.id}" style="background: var(--error); color: white; border: none;">
-                <i class="fas fa-trash"></i>
-              </button>
+              <button class="btn-small btn-eliminar-coop" 
+        onclick="eliminarCooperativa('${coop.id}')" 
+        data-coop-id="${coop.id}"
+        style="background: var(--error); color: white; border: none;">
+  <i class="fas fa-trash"></i> Eliminar
+</button>
             </div>
           </div>
           <div class="appraisal-details">
