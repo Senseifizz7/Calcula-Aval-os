@@ -1735,18 +1735,45 @@
         }
       },
 
-      deleteAppraisal: function(appraisalId) {
-        try {
-          const avaluos = this.getAllAppraisals();
-          const filtered = avaluos.filter(av => av.id !== appraisalId);
-          localStorage.setItem('sistema_avaluos', JSON.stringify(filtered));
-          return true;
-        } catch (e) {
-          console.error('Error al eliminar avalúo:', e);
-          return false;
-        }
-      }
-    };
+      async function deleteAppraisal(appraisalId) {
+  if (!confirm('¿Estás seguro de que quieres eliminar este avalúo? Esta acción no se puede deshacer.')) {
+    return;
+  }
+
+  try {
+    console.log('🗑️ Eliminando avalúo:', appraisalId);
+    
+    
+    const { error } = await window.supabase
+      .from('avaluos')
+      .delete()
+      .eq('id', appraisalId);
+
+    if (error) {
+      console.error('❌ Error eliminando de Supabase:', error);
+      throw error;
+    }
+
+    
+    const avaluos = window.avaluosStorage.getAllAppraisals();
+    const filtered = avaluos.filter(av => av.id !== appraisalId);
+    localStorage.setItem('sistema_avaluos', JSON.stringify(filtered));
+
+    alert('✅ Avalúo eliminado correctamente');
+    
+    
+    if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
+      await showAllAppraisals();
+    }
+    if (document.getElementById('my-appraisals-modal').classList.contains('active')) {
+      await showMyAppraisals();
+    }
+    
+  } catch (error) {
+    console.error('❌ Error completo eliminando:', error);
+    alert('Error al eliminar el avalúo: ' + error.message);
+  }
+}
 
     
     async function showAllAppraisals() {
