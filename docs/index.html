@@ -1735,52 +1735,26 @@
         }
       },
 
-      async function deleteAppraisal(appraisalId) {
-  if (!confirm('¿Estás seguro de que quieres eliminar este avalúo? Esta acción no se puede deshacer.')) {
-    return;
-  }
+      deleteAppraisal: function(appraisalId) {
+        try {
+          const avaluos = this.getAllAppraisals();
+          const filtered = avaluos.filter(av => av.id !== appraisalId);
+          localStorage.setItem('sistema_avaluos', JSON.stringify(filtered));
+          return true;
+        } catch (e) {
+          console.error('Error al eliminar avalúo:', e);
+          return false;
+        }
+      }
+    };
 
-  try {
-    console.log('🗑️ Eliminando avalúo:', appraisalId);
-    
-    
-    const { error } = await window.supabase
-      .from('avaluos')
-      .delete()
-      .eq('id', appraisalId);
-
-    if (error) {
-      console.error('❌ Error eliminando de Supabase:', error);
-      throw error;
-    }
-
-    
-    const avaluos = window.avaluosStorage.getAllAppraisals();
-    const filtered = avaluos.filter(av => av.id !== appraisalId);
-    localStorage.setItem('sistema_avaluos', JSON.stringify(filtered));
-
-    alert('✅ Avalúo eliminado correctamente');
-    
-    
-    if (document.getElementById('all-appraisals-modal').classList.contains('active')) {
-      await showAllAppraisals();
-    }
-    if (document.getElementById('my-appraisals-modal').classList.contains('active')) {
-      await showMyAppraisals();
-    }
-    
-  } catch (error) {
-    console.error('❌ Error completo eliminando:', error);
-    alert('Error al eliminar el avalúo: ' + error.message);
-  }
-}
     
     async function showAllAppraisals() {
   const modal = document.getElementById('all-appraisals-modal');
   const listContainer = document.getElementById('all-appraisals-list');
   
   try {
-    
+    // SIMPLIFICAR: Mostrar todos los avalúos sin filtros complejos
     const { data: allAppraisals, error } = await window.supabase
       .from('avaluos')
       .select('*')
@@ -2959,107 +2933,104 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     integrarValores();
   }
 }
-
     function __renderTipos(){
-  try {
-    const tipologias = __getTipos();
-    
-    // Agrupar por categoría y tipo
-    const grouped = tipologias.reduce((acc, tipologia) => {
-      if (!acc[tipologia.category]) {
-        acc[tipologia.category] = {};
-      }
-      if (!acc[tipologia.category][tipologia.type]) {
-        acc[tipologia.category][tipologia.type] = [];
-      }
-      acc[tipologia.category][tipologia.type].push(tipologia);
-      return acc;
-    }, {});
-
-    // Renderizar cada categoría
-    ['baja', 'media', 'alta'].forEach(categoria => {
-      const tabContent = document.getElementById(`tab-${categoria}`);
-      if (!tabContent) return;
-
-      let html = '';
-      const tipos = grouped[categoria.charAt(0).toUpperCase() + categoria.slice(1)];
+      const tipologias = __getTipos();
       
-      if (!tipos) {
-        html = '<div style="padding: 40px; text-align: center; color: var(--text-light);"><i class="fas fa-home" style="font-size: 3rem; margin-bottom: 16px;"></i><p>No hay tipologías disponibles para esta categoría</p></div>';
-      } else {
-        const tipoOrder = ['Baja', 'Media', 'Alta'];
-        tipoOrder.forEach(tipo => {
-          if (tipos[tipo]) {
-            const tipologia = tipos[tipo][0]; 
-            const rango = RANGOS_PRECIO[categoria.charAt(0).toUpperCase() + categoria.slice(1)]?.[tipo] || { min: 0, max: 0 };
-            const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
-            
-            html += `
-              <div class="typology-accordion">
-                <button class="typology-accordion-header" onclick="__updateBreadcrumbs('${categoria.charAt(0).toUpperCase() + categoria.slice(1)}', '${tipo}')">
-                  <span>Tipología ${tipo} - ${rangoTexto}</span>
-                  <i class="fas fa-chevron-down typology-accordion-icon"></i>
-                </button>
-                <div class="typology-accordion-content">
-                  <div style="padding: 20px; background: rgba(91, 123, 122, 0.03); border-bottom: 1px solid var(--border-light);">
-                    <div style="font-weight: 600; color: var(--primary); margin-bottom: 12px; font-size: 1.1rem;">
-                      Descripción General - Tipología ${tipo}
-                    </div>
-                    <div style="white-space: pre-line; font-size: 0.9rem; line-height: 1.5; color: var(--text);">
-                      ${tipologia.generalDescription}
-                    </div>
-                  </div>
-                  
-                  <div class="typology-variants">
-            `;
-            
-            tipologia.variants.forEach((variante, index) => {
+      
+      const grouped = tipologias.reduce((acc, tipologia) => {
+        if (!acc[tipologia.category]) {
+          acc[tipologia.category] = {};
+        }
+        if (!acc[tipologia.category][tipologia.type]) {
+          acc[tipologia.category][tipologia.type] = [];
+        }
+        acc[tipologia.category][tipologia.type].push(tipologia);
+        return acc;
+      }, {});
+
+      
+      ['baja', 'media', 'alta'].forEach(categoria => {
+        const tabContent = document.getElementById(`tab-${categoria}`);
+        if (!tabContent) return;
+
+        let html = '';
+        const tipos = grouped[categoria.charAt(0).toUpperCase() + categoria.slice(1)];
+        
+        if (!tipos) {
+          html = '<div style="padding: 40px; text-align: center; color: var(--text-light);"><i class="fas fa-home" style="font-size: 3rem; margin-bottom: 16px;"></i><p>No hay tipologías disponibles para esta categoría</p></div>';
+        } else {
+          
+          const tipoOrder = ['Baja', 'Media', 'Alta'];
+          tipoOrder.forEach(tipo => {
+            if (tipos[tipo]) {
+              const tipologia = tipos[tipo][0]; 
+              const rango = RANGOS_PRECIO[categoria.charAt(0).toUpperCase() + categoria.slice(1)]?.[tipo] || { min: 0, max: 0 };
+              const rangoTexto = `Q${rango.min.toLocaleString('es-GT')}–Q${rango.max.toLocaleString('es-GT')}/m²`;
+              
               html += `
-                <div class="typology-variant" data-id="${variante.id}">
-                  <div class="variant-images">
-                    <img class="variant-image" src="${variante.img}" alt="${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.img}', '${variante.title}')">
-                    ${variante.imgInterior ? `<img class="variant-image" src="${variante.imgInterior}" alt="Interior ${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.imgInterior}', 'Interior ${variante.title}')">` : ''}
+                <div class="typology-accordion">
+                  <button class="typology-accordion-header" onclick="__updateBreadcrumbs('${categoria.charAt(0).toUpperCase() + categoria.slice(1)}', '${tipo}')">
+                    <span>Tipología ${tipo} - ${rangoTexto}</span>
+                    <i class="fas fa-chevron-down typology-accordion-icon"></i>
+                  </button>
+                  <div class="typology-accordion-content">
+                    <!-- DESCRIPCIÓN GENERAL DE LA TIPOLOGÍA -->
+                    <div style="padding: 20px; background: rgba(91, 123, 122, 0.03); border-bottom: 1px solid var(--border-light);">
+                      <div style="font-weight: 600; color: var(--primary); margin-bottom: 12px; font-size: 1.1rem;">
+                        Descripción General - Tipología ${tipo}
+                      </div>
+                      <div style="white-space: pre-line; font-size: 0.9rem; line-height: 1.5; color: var(--text);">
+                        ${tipologia.generalDescription}
+                      </div>
+                    </div>
+                    
+                    <div class="typology-variants">
+              `;
+              
+              
+              tipologia.variants.forEach((variante, index) => {
+                html += `
+                  <div class="typology-variant" data-id="${variante.id}">
+                    <div class="variant-images">
+                      <img class="variant-image" src="${variante.img}" alt="${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.img}', '${variante.title}')">
+                      ${variante.imgInterior ? `<img class="variant-image" src="${variante.imgInterior}" alt="Interior ${variante.title}" onclick="event.stopPropagation(); openImageModal('${variante.imgInterior}', 'Interior ${variante.title}')">` : ''}
+                    </div>
+                    <div class="variant-content">
+                      <div class="variant-details">
+                        <div class="variant-title">${variante.title}</div>
+                        <div class="variant-price">Q${variante.pricePerM2.toLocaleString('es-GT')}/m²</div>
+                        
+                        <ul class="variant-features">
+                          ${variante.bullets.map(bullet => `<li><i class="fas fa-check"></i>${bullet}</li>`).join('')}
+                        </ul>
+                        
+                        <button class="select-button" onclick="event.stopPropagation(); __selectTipo('${variante.id}')">
+                          <i class="fas fa-hand-pointer"></i> Seleccionar esta variante
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div class="variant-content">
-                    <div class="variant-details">
-                      <div class="variant-title">${variante.title}</div>
-                      <div class="variant-price">Q${variante.pricePerM2.toLocaleString('es-GT')}/m²</div>
-                      
-                      <ul class="variant-features">
-                        ${variante.bullets.map(bullet => `<li><i class="fas fa-check"></i>${bullet}</li>`).join('')}
-                      </ul>
-                      
-                      <button class="select-button" onclick="event.stopPropagation(); __selectTipo('${variante.id}')">
-                        <i class="fas fa-hand-pointer"></i> Seleccionar esta variante
-                      </button>
+                `;
+              });
+              
+              html += `
                     </div>
                   </div>
                 </div>
               `;
-            });
-            
-            html += `
-                  </div>
-                </div>
-              </div>
-            `;
-          }
-        });
-      }
+            }
+          });
+        }
+        
+        tabContent.innerHTML = html;
+      });
+
       
-      tabContent.innerHTML = html;
-    });
-
-    initAccordions();
-    __updateBreadcrumbs('Baja', '');
-    
-  } catch (error) {
-    console.error('Error en __renderTipos:', error);
-  }
-}
-
-
-window.__renderTipos = __renderTipos;
+      initAccordions();
+      
+      
+      __updateBreadcrumbs('Baja', '');
+    }
 
     function initAccordions() {
       document.querySelectorAll('.typology-accordion-header').forEach(header => {
@@ -4487,70 +4458,51 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     };
 
     window.__signInWithEmail = async (email, password) => {
-  try {
-    console.log("🔐 Intentando login con:", email);
-    
-    if (!email || !password) {
-      alert("Por favor ingresa email y contraseña");
-      return;
-    }
+      try {
+        console.log("🔐 Intentando login con:", email);
+        
+        if (!email || !password) {
+          alert("Por favor ingresa email y contraseña");
+          return;
+        }
 
-    // MOSTRAR ESTADO DE CARGA
-    const loginBtn = document.querySelector('.btn-primary[onclick*="__signInWithEmail"]');
-    const originalText = loginBtn?.innerHTML;
-    if (loginBtn) {
-      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
-      loginBtn.disabled = true;
-    }
+        const { data, error } = await window.supabase.auth.signInWithPassword({ 
+          email: email.trim(), 
+          password: password.trim() 
+        });
 
-    const { data, error } = await window.supabase.auth.signInWithPassword({ 
-      email: email.trim(), 
-      password: password.trim() 
-    });
+        if (error) {
+          console.error("❌ Error en login:", error);
+          
+          if (error.message?.includes('Invalid login credentials')) {
+            alert("Email o contraseña incorrectos");
+          } else if (error.message?.includes('Email not confirmed')) {
+            alert("Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
+          } else if (error.message?.includes('Email rate limit exceeded')) {
+            alert("Demasiados intentos. Espera unos minutos.");
+          } else {
+            throw error;
+          }
+          return;
+        }
 
-    if (error) {
-      console.error("❌ Error en login:", error);
-      
-      if (loginBtn) {
-        loginBtn.innerHTML = originalText;
-        loginBtn.disabled = false;
+        
+        window.__session = data.session;
+        __updateAuthUI(true);
+        console.log("✅ Login exitoso:", data.user.email);
+        
+        
+        if (data.user && !data.user.user_metadata?.username) {
+          setTimeout(() => {
+            showUsernameModal(data.user.id);
+          }, 1000);
+        }
+
+      } catch (e) {
+        console.error("❌ Error completo en login:", e);
+        alert("Error al iniciar sesión: " + (e.message || e));
       }
-      
-      if (error.message?.includes('Invalid login credentials')) {
-        alert("❌ Email o contraseña incorrectos");
-      } else if (error.message?.includes('Email not confirmed')) {
-        alert("📧 Tu email no ha sido confirmado. Revisa tu correo y haz clic en el enlace de verificación.");
-      } else if (error.message?.includes('Email rate limit exceeded')) {
-        alert("⏰ Demasiados intentos. Espera unos minutos.");
-      } else {
-        alert("❌ Error al iniciar sesión: " + error.message);
-      }
-      return;
-    }
-
-    
-    console.log("✅ Login exitoso:", data.user.email);
-    
-    
-    document.getElementById('auth-overlay').style.display = 'none';
-    
-    
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
-    
-  } catch (e) {
-    console.error("❌ Error completo en login:", e);
-    alert("Error al iniciar sesión: " + (e.message || e));
-    
-    
-    const loginBtn = document.querySelector('.btn-primary[onclick*="__signInWithEmail"]');
-    if (loginBtn) {
-      loginBtn.innerHTML = '<i class="fas fa-right-to-bracket"></i> Iniciar sesión';
-      loginBtn.disabled = false;
-    }
-  }
-};
+    };
 
     window.__signInWithGoogle = async () => {
       try {
