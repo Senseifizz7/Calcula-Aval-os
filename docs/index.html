@@ -5482,13 +5482,68 @@ async function loadGerentePanel() {
 }
 
 async function verDetallesCooperativa(coopId) {
-  alert(`🔧 Ver detalles de cooperativa: ${coopId}`);
-}
+    try {
+        const { data: cooperativa, error } = await window.supabase
+            .from('cooperativas')
+            .select('*')
+            .eq('id', coopId)
+            .single();
 
+        if (error) throw error;
+
+        
+        alert(`📋 Detalles Cooperativa:\n\n🏢 Nombre: ${cooperativa.nombre}\n📞 Teléfono: ${cooperativa.telefono || 'No especificado'}\n📍 Dirección: ${cooperativa.direccion || 'No especificada'}\n✅ Estado: ${cooperativa.activo ? 'ACTIVA' : 'INACTIVA'}\n📅 Creada: ${new Date(cooperativa.creado_en).toLocaleDateString('es-GT')}`);
+
+    } catch (error) {
+        console.error('❌ Error cargando detalles:', error);
+        alert('Error al cargar detalles: ' + error.message);
+    }
+}
+    
 async function editarCooperativa(coopId) {
-  alert(`🔧 Editar cooperativa: ${coopId}`);
-}
+    try {
+        const { data: cooperativa, error } = await window.supabase
+            .from('cooperativas')
+            .select('*')
+            .eq('id', coopId)
+            .single();
 
+        if (error) throw error;
+
+        const nuevoNombre = prompt('Nuevo nombre de la cooperativa:', cooperativa.nombre);
+        if (nuevoNombre === null) return; // Usuario canceló
+
+        const nuevoTelefono = prompt('Nuevo teléfono:', cooperativa.telefono || '');
+        const nuevaDireccion = prompt('Nueva dirección:', cooperativa.direccion || '');
+        
+        const nuevoActivo = confirm(`¿La cooperativa debe estar activa?\n\n(OK = Activa, Cancelar = Inactiva)`);
+
+        if (!nuevoNombre.trim()) {
+            alert('❌ El nombre es obligatorio');
+            return;
+        }
+
+        const { error: updateError } = await window.supabase
+            .from('cooperativas')
+            .update({
+                nombre: nuevoNombre.trim(),
+                telefono: nuevoTelefono?.trim() || null,
+                direccion: nuevaDireccion?.trim() || null,
+                activo: nuevoActivo
+            })
+            .eq('id', coopId);
+
+        if (updateError) throw updateError;
+
+        alert('✅ Cooperativa actualizada exitosamente');
+        gestionarCooperativas(); 
+
+    } catch (error) {
+        console.error('❌ Error editando cooperativa:', error);
+        alert('Error al editar: ' + error.message);
+    }
+}
+    
 async function eliminarCooperativa(coopId) {
     if (!confirm('¿Estás seguro de eliminar esta cooperativa?\n\n⚠️ Esta acción no se puede deshacer.')) {
         return;
@@ -5759,24 +5814,24 @@ async function gestionarCooperativas() {
       `;
     } else {
       cooperativasHTML = cooperativas.map(coop => `
-        <div class="appraisal-item" style="cursor: pointer;" data-coop-id="${coop.id}">
-          <div class="appraisal-header">
-            <div class="appraisal-date">
-              <i class="fas fa-building"></i> ${coop.nombre}
-            </div>
-            <div class="appraisal-actions">
-              <button class="btn-primary btn-small btn-asignar-gerente" data-coop-id="${coop.id}" data-coop-nombre="${coop.nombre}">
-                <i class="fas fa-user-tie"></i> Asignar Gerente
-              </button>
-              <button class="btn-secondary btn-small btn-editar-coop" data-coop-id="${coop.id}">
-                <i class="fas fa-edit"></i> Editar
-              <button class="btn-small btn-eliminar-coop" 
-        onclick="eliminarCooperativa('${coop.id}')" 
-        data-coop-id="${coop.id}"
-        style="background: var(--error); color: white; border: none;">
-  <i class="fas fa-trash"></i> Eliminar
-</button>
-            </div>
+        <div class="appraisal-actions">
+  <button class="btn-secondary btn-small" onclick="verDetallesCooperativa('${coop.id}')">
+    <i class="fas fa-eye"></i> Ver
+  </button>
+  
+  <button class="btn-secondary btn-small" onclick="editarCooperativa('${coop.id}')">
+    <i class="fas fa-edit"></i> Editar
+  </button>
+  
+  <button class="btn-primary btn-small" onclick="asignarGerente('${coop.id}', '${coop.nombre}')">
+    <i class="fas fa-user-tie"></i> Gerente
+  </button>
+  
+  <button class="btn-small" onclick="eliminarCooperativa('${coop.id}')" 
+          style="background: var(--error); color: white; border: none;">
+    <i class="fas fa-trash"></i> Eliminar
+  </button>
+</div>
           </div>
           <div class="appraisal-details">
             <div><strong>Teléfono:</strong> ${coop.telefono || 'No especificado'}</div>
