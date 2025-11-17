@@ -4804,7 +4804,8 @@ function updateAdminButton() {
   
   let adminBtn = document.getElementById('admin-panel-btn');
   
-  if (userRole !== 'asesor') {
+  if (userRole === 'super_admin' || userRole === 'gerente') {
+}
     if (!adminBtn) {
       console.log('🔄 Creando nuevo botón admin...');
       adminBtn = document.createElement('button');
