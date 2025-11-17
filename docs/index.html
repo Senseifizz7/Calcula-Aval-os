@@ -5137,7 +5137,7 @@ async function asignarCooperativa(usuarioId) {
   try {
     
     const { data: cooperativas, error } = await window.supabase
-      .from('cooperativas')
+      .from('cooperativa')
       .select('*')
       .eq('activo', true);
     
