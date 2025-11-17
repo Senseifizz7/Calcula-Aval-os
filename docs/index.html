@@ -4962,7 +4962,7 @@ async function cargarUsuarios() {
             <div><strong>Email:</strong> ${usuario.email}</div>
             <div><strong>Rol:</strong> ${usuario.rol || 'No asignado'}</div>
             <div><strong>Cooperativa:</strong> ${usuario.cooperativa_id || 'No asignada'}</div>
-            <div><strong>Estado:</strong> <span style="color: ${usuario.activo ? 'var(--success)' : 'var(--error)'};">${usuario.activo ? 'ACTIVO' : 'INACTIVO'}</span></div>
+            <div><strong>Estado:</strong> <span style="color: var(--success);">ACTIVO</span></div>
           </div>
         </div>
       `).join('');
