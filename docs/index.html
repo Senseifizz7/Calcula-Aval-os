@@ -4678,18 +4678,19 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     window.__canUseApp = () => !!window.__session;
 
     document.addEventListener('DOMContentLoaded', () => {
-      const nextBtn = document.getElementById('next-step');
-      if(nextBtn){
-        nextBtn.addEventListener('click', (e) => {
-          if(!window.__canUseApp()){
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            document.getElementById('auth-overlay').style.display='flex';
-            alert("Inicia sesión para continuar.");
-          }
-        }, true);
+  const nextBtn = document.getElementById('next-step');
+  if(nextBtn){
+    nextBtn.addEventListener('click', (e) => {
+      if(!window.__canUseApp()){
+        e.preventDefault(); 
+        document.getElementById('auth-overlay').style.display='flex';
+        alert("Inicia sesión para continuar.");
+        return false;
       }
-    });
+      
+    }); 
+  }
+});
 
     const _origCalculate = window.calculateRealAppraisal;
     if(_origCalculate){
