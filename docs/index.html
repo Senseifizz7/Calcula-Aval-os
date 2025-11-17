@@ -5925,28 +5925,7 @@ window.invitarGerente = async function(coopId, coopNombre, emailPrellenado = '')
 }; 
 
     window.buscarUsuariosExistente = function(busqueda) {
-    console.log('🔍 Buscando usuarios existentes:', busqueda);
-    
-    
-    if (busqueda.length < 3) {
-        console.log('Búsqueda muy corta, esperando más caracteres...');
-        return;
-    }
-    
-    
-    console.log('Realizando búsqueda con:', busqueda);
-};
-  
-window.buscarUsuariosExistente = function(busqueda) {
-    console.log('Búsqueda de usuarios:', busqueda);
-    
-    alert('🔍 Función de búsqueda: ' + busqueda);
-    
-   
-    if (busqueda.length > 2) {
-        console.log('Buscando usuarios con:', busqueda);
-        
-    }
+    console.log('🔍 Buscando usuarios:', busqueda);
 };
 
 async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
