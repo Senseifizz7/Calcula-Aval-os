@@ -5739,6 +5739,10 @@ async function gestionarCooperativas() {
   <button class="btn-primary btn-small" onclick="asignarGerenteSimple('${coop.id}', '${coop.nombre}')">
     <i class="fas fa-user-tie"></i> Gerente
   </button>
+
+  <button class="btn-secondary btn-small" onclick="invitarGerente('${coop.id}', '${coop.nombre}')" style="margin-left: 5px;">
+    <i class="fas fa-envelope"></i> Invitar
+</button>
   
   <button class="btn-small" onclick="eliminarCooperativa('${coop.id}')" 
           style="background: var(--error); color: white; border: none;">
