@@ -5765,7 +5765,7 @@ async function gestionarCooperativas() {
     setTimeout(() => {
   console.log('🔧 Intentando configurar event listeners...');
 
-  // REEMPLAZAR la función asignarGerente actual con esta versión corregida:
+ 
 window.asignarGerente = async function(coopId, coopNombre) {
   try {
     console.log(`🔄 Asignando gerente a cooperativa: ${coopNombre}`);
@@ -5776,7 +5776,7 @@ window.asignarGerente = async function(coopId, coopNombre) {
       return;
     }
 
-    // VERIFICAR SI EL USUARIO EXISTE
+   
     console.log(`🔍 Buscando usuario: ${email}`);
     const { data: usuario, error: searchError } = await window.supabase
       .from('usuarios')
@@ -5790,7 +5790,7 @@ window.asignarGerente = async function(coopId, coopNombre) {
     }
 
     if (!usuario) {
-      // USUARIO NO EXISTE - OFRECER CREARLO
+     
       console.log('❌ Usuario no encontrado');
       const crearNuevo = confirm(`❌ Usuario no encontrado: ${email}\n\n¿Quieres crear un nuevo usuario gerente?`);
       
@@ -5800,7 +5800,7 @@ window.asignarGerente = async function(coopId, coopNombre) {
 
         console.log(`🔄 Creando nuevo gerente: ${nombre}`);
         
-        // CREAR NUEVO USUARIO COMO GERENTE
+       
         const { data: nuevoUsuario, error: createError } = await window.supabase
           .from('usuarios')
           .insert([{
@@ -5827,7 +5827,6 @@ window.asignarGerente = async function(coopId, coopNombre) {
       return;
     }
 
-    // USUARIO EXISTE - ACTUALIZAR A GERENTE
     console.log(`✅ Usuario encontrado: ${usuario.nombre}`, usuario);
     
     const confirmar = confirm(`¿Asignar a ${usuario.nombre} (${usuario.email}) como gerente de:\n"${coopNombre}"?`);
@@ -5866,7 +5865,6 @@ window.asignarGerente = async function(coopId, coopNombre) {
   }
 };
 
-// AGREGAR esta función nueva que falta:
 window.invitarGerente = async function(coopId, coopNombre, emailPrellenado = '') {
   try {
     console.log(`🔄 Invitando nuevo gerente para: ${coopNombre}`);
@@ -5882,7 +5880,7 @@ window.invitarGerente = async function(coopId, coopNombre, emailPrellenado = '')
 
     console.log(`🔄 Creando invitación para: ${nombre} (${email})`);
     
-    // VERIFICAR PRIMERO SI EL EMAIL YA EXISTE
+   
     const { data: usuarioExistente, error: checkError } = await window.supabase
       .from('usuarios')
       .select('id')
@@ -5924,7 +5922,20 @@ window.invitarGerente = async function(coopId, coopNombre, emailPrellenado = '')
     console.error('❌ Error en invitarGerente:', error);
     alert('❌ Error al invitar gerente: ' + error.message);
   }
-};      
+}; 
+
+      
+window.buscarUsuariosExistente = function(busqueda) {
+    console.log('Búsqueda de usuarios:', busqueda);
+    
+    alert('🔍 Función de búsqueda: ' + busqueda);
+    
+   
+    if (busqueda.length > 2) {
+        console.log('Buscando usuarios con:', busqueda);
+        
+    }
+};
 
 async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
   try {
