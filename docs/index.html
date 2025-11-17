@@ -6130,11 +6130,94 @@ setTimeout(() => {
   }
 }, 5000);
 
-window.asignarGerente = asignarGerente;
-window.invitarGerente = invitarGerente;
-window.procesarAsignacionGerente = procesarAsignacionGerente;
-window.cerrarYInvitar = cerrarYInvitar;
+window.asignarGerente = async function(coopId, coopNombre) {
+  try {
+    console.log(`🔄 Asignando gerente a: ${coopNombre}`);
+    
+    closeModal('cooperativas-modal');
+    
+    const email = prompt(`ASIGNAR GERENTE EXISTENTE\n\nCooperativa: ${coopNombre}\n\nIngresa el email del usuario existente:`);
+    if (!email) return;
 
+   
+    const { data: usuario, error: searchError } = await window.supabase
+      .from('usuarios')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (searchError && searchError.code !== 'PGRST116') throw searchError;
+
+    if (!usuario) {
+      if (confirm(`❌ Usuario no encontrado: ${email}\n\n¿Quieres INVITAR a este email como NUEVO gerente?`)) {
+        await window.invitarGerente(coopId, coopNombre, email);
+      }
+      return;
+    }
+
+    
+    const { error: updateError } = await window.supabase
+      .from('usuarios')
+      .update({
+        rol: 'gerente',
+        cooperativa_id: coopId,
+        actualizado_en: new Date().toISOString()
+      })
+      .eq('email', email);
+
+    if (updateError) throw updateError;
+
+    alert(`✅ GERENTE ASIGNADO:\n\n📧 ${email}\n👤 ${usuario.nombre || 'Usuario'}\n🏢 ${coopNombre}\n\nEl usuario ahora es gerente de esta cooperativa.`);
+
+  } catch (error) {
+    console.error('❌ Error asignando gerente:', error);
+    alert('Error asignando gerente: ' + error.message);
+  }
+};
+
+window.invitarGerente = async function(coopId, coopNombre, emailPrellenado = '') {
+  try {
+    const email = emailPrellenado || prompt('INVITAR NUEVO GERENTE\n\nIngresa el email del nuevo gerente:');
+    if (!email) return;
+
+    const nombre = prompt('Nombre completo del nuevo gerente:');
+    if (!nombre) return;
+
+    
+    const { data: usuarioExistente, error: checkError } = await window.supabase
+      .from('usuarios')
+      .select('id')
+      .eq('email', email)
+      .single();
+
+    if (usuarioExistente) {
+      alert('❌ Este email ya está registrado.\n\nUsa "Asignar Gerente" para usuarios existentes.');
+      return;
+    }
+
+  
+    const { data, error } = await window.supabase
+      .from('usuarios')
+      .insert([{
+        email: email,
+        nombre: nombre,
+        rol: 'gerente', 
+        cooperativa_id: coopId,
+        activo: true,
+        creado_por: window.__session?.user?.id,
+        actualizado_en: new Date().toISOString()
+      }])
+      .select();
+
+    if (error) throw error;
+
+    alert(`✅ NUEVO GERENTE CREADO:\n\n📧 ${email}\n👤 ${nombre}\n🏢 ${coopNombre}\n\nEl usuario puede iniciar sesión inmediatamente.`);
+
+  } catch (error) {
+    console.error('❌ Error invitando gerente:', error);
+    alert('Error creando gerente: ' + error.message);
+  }
+};  
   </script>
 </body>
 </html>
