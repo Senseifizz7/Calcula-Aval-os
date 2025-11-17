@@ -4868,7 +4868,6 @@ async function updateAdminButton() {
 
 async function showAdminPanel() {
   const user = window.__session?.user;
-  const userRole = user?.user_metadata?.rol || 'asesor';
   
   let adminModal = document.getElementById('admin-panel-modal');
   
