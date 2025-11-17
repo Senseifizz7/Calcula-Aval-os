@@ -5773,7 +5773,7 @@ async function gestionarCooperativas() {
   try {
     
     const { data: cooperativas, error } = await window.supabase
-      .from('cooperativas')
+      .from('cooperativa')
       .select('*')
       .order('nombre', { ascending: true });
     
