@@ -5437,8 +5437,14 @@ async function loadGerentePanel() {
           <div class="result-item"><div class="label">Total Avalúos</div><div class="value">${totalAvaluos}</div></div>
           <div class="result-item"><div class="label">Pendientes</div><div class="value">${avaluosPendientes}</div></div>
         </div>
-        <button class="btn-primary" onclick="showAllAppraisals()" style="width: 100%;">
-          <i class="fas fa-list"></i> Revisar Todos los Avalúos
+        
+        <!-- ✅ NUEVO BOTÓN DE APROBACIÓN -->
+        <button class="btn-primary" onclick="panelAprobacionGerente()" style="width: 100%; margin-bottom: 10px; background: var(--warning);">
+          <i class="fas fa-clipboard-check"></i> Revisar Avalúos Pendientes (${avaluosPendientes})
+        </button>
+        
+        <button class="btn-secondary" onclick="showAllAppraisals()" style="width: 100%;">
+          <i class="fas fa-list"></i> Ver Todos los Avalúos
         </button>
       </div>
     `;
