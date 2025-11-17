@@ -5390,122 +5390,99 @@ async function loadGerentePanel() {
   }
 }
 
-async function verDetallesCooperativa(coopId) {
-    try {
-        const { data: cooperativa, error } = await window.supabase
-            .from('cooperativas')
-            .select('*')
-            .eq('id', coopId)
-            .single();
+async function eliminarCooperativa(coopId) {
+    if (!confirm('¿ELIMINAR cooperativa? Esta acción no se puede deshacer.')) return;
+
+    try 
+        // Verificar si tiene usuarios
+        const { data: usuarios, error: usersError } = await window.supabase
+            .from('usuarios')
+            .select('id')
+            .eq('cooperativa_id', coopId);
+
+        if (usersError) throw usersError;
+        if (usuarios?.length > 0) {
+            alert('❌ No se puede eliminar: Tiene usuarios asignados');
+            return;
+        }
+
+        const { error } = await window.supabase
+            .from('cooperativa')
+            .delete()
+            .eq('id', coopId);
 
         if (error) throw error;
-
         
-        alert(`📋 Detalles Cooperativa:\n\n🏢 Nombre: ${cooperativa.nombre}\n📞 Teléfono: ${cooperativa.telefono || 'No especificado'}\n📍 Dirección: ${cooperativa.direccion || 'No especificada'}\n✅ Estado: ${cooperativa.activo ? 'ACTIVA' : 'INACTIVA'}\n📅 Creada: ${new Date(cooperativa.creado_en).toLocaleDateString('es-GT')}`);
-
+        alert('✅ Cooperativa eliminada');
+        gestionarCooperativas();
     } catch (error) {
-        console.error('❌ Error cargando detalles:', error);
-        alert('Error al cargar detalles: ' + error.message);
+        alert('Error eliminando: ' + error.message);
     }
 }
     
 async function editarCooperativa(coopId) {
     try {
         const { data: cooperativa, error } = await window.supabase
-            .from('cooperativas')
+            .from('cooperativa')
             .select('*')
             .eq('id', coopId)
             .single();
 
         if (error) throw error;
 
-        const nuevoNombre = prompt('Nuevo nombre de la cooperativa:', cooperativa.nombre);
-        if (nuevoNombre === null) return; // Usuario canceló
-
-        const nuevoTelefono = prompt('Nuevo teléfono:', cooperativa.telefono || '');
-        const nuevaDireccion = prompt('Nueva dirección:', cooperativa.direccion || '');
-        
-        const nuevoActivo = confirm(`¿La cooperativa debe estar activa?\n\n(OK = Activa, Cancelar = Inactiva)`);
-
-        if (!nuevoNombre.trim()) {
-            alert('❌ El nombre es obligatorio');
-            return;
-        }
+        const nuevoNombre = prompt('Nuevo nombre:', cooperativa.nombre);
+        if (!nuevoNombre?.trim()) return;
 
         const { error: updateError } = await window.supabase
-            .from('cooperativas')
+            .from('cooperativa')
             .update({
                 nombre: nuevoNombre.trim(),
-                telefono: nuevoTelefono?.trim() || null,
-                direccion: nuevaDireccion?.trim() || null,
-                activo: nuevoActivo
+                telefono: prompt('Nuevo teléfono:', cooperativa.telefono) || null,
+                direccion: prompt('Nueva dirección:', cooperativa.direccion) || null,
+                activo: confirm('¿Cooperativa activa?') ? true : false,
+                actualizado_en: new Date().toISOString()
             })
             .eq('id', coopId);
 
         if (updateError) throw updateError;
-
-        alert('✅ Cooperativa actualizada exitosamente');
-        gestionarCooperativas(); 
-
+        
+        alert('✅ Cooperativa actualizada');
+        gestionarCooperativas();
     } catch (error) {
-        console.error('❌ Error editando cooperativa:', error);
-        alert('Error al editar: ' + error.message);
+        alert('Error editando: ' + error.message);
     }
 }
     
 async function eliminarCooperativa(coopId) {
-    if (!confirm('¿Estás seguro de eliminar esta cooperativa?\n\n⚠️ Esta acción no se puede deshacer.')) {
-        return;
-    }
+    if (!confirm('¿ELIMINAR cooperativa? Esta acción no se puede deshacer.')) return;
 
     try {
-        console.log('🗑️ Eliminando cooperativa:', coopId);
-
-       
-        const { data: usuarios, error: usuariosError } = await window.supabase
-            .from('usuarios')
-            .select('id, nombre')
-            .eq('cooperativa_id', coopId);
-
-        if (usuariosError) throw usuariosError;
-
-        if (usuarios && usuarios.length > 0) {
-            const usuariosLista = usuarios.map(u => u.nombre || u.id).join(', ');
-            alert(`❌ No se puede eliminar la cooperativa porque tiene usuarios asignados:\n\n${usuariosLista}\n\nReasigna los usuarios primero.`);
-            return;
-        }
-
         
-        const { data: avaluos, error: avaluosError } = await window.supabase
-            .from('avaluos')
+        const { data: usuarios, error: usersError } = await window.supabase
+            .from('usuarios')
             .select('id')
             .eq('cooperativa_id', coopId);
 
-        if (avaluosError) throw avaluosError;
-
-        if (avaluos && avaluos.length > 0) {
-            alert(`❌ No se puede eliminar la cooperativa porque tiene ${avaluos.length} avalúos asociados.`);
+        if (usersError) throw usersError;
+        if (usuarios?.length > 0) {
+            alert('❌ No se puede eliminar: Tiene usuarios asignados');
             return;
         }
 
-        
-        const { error: deleteError } = await window.supabase
-            .from('cooperativas')
+        const { error } = await window.supabase
+            .from('cooperativa')
             .delete()
             .eq('id', coopId);
 
-        if (deleteError) throw deleteError;
-
-        alert('✅ Cooperativa eliminada exitosamente');
+        if (error) throw error;
         
-        
+        alert('✅ Cooperativa eliminada');
         gestionarCooperativas();
-        
     } catch (error) {
-        console.error('❌ Error eliminando cooperativa:', error);
-        alert('Error al eliminar cooperativa: ' + error.message);
+        alert('Error eliminando: ' + error.message);
     }
 }
+    
 async function crearCooperativa() {
   
   try {
