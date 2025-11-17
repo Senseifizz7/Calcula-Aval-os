@@ -4784,6 +4784,7 @@ function verificarFuncionesAdmin() {
   
 let adminSystemInitialized = false;
 
+// REEMPLAZAR la función updateAdminButton actual con esta versión corregida:
 async function updateAdminButton() {
   console.log('🔄 Actualizando botón admin...');
   
@@ -4799,30 +4800,37 @@ async function updateAdminButton() {
     return;
   }
   
-  
-  let userRole = 'asesor'; 
+ 
+  let userRole = 'asesor';
+  let userCooperativaId = null;
   
   try {
+   
     const { data: usuario, error } = await window.supabase
       .from('usuarios')
-      .select('rol')
+      .select('rol, cooperativa_id')
       .eq('id', user.id)
       .single();
     
     if (!error && usuario) {
       userRole = usuario.rol;
+      userCooperativaId = usuario.cooperativa_id;
+      console.log('✅ Rol desde tabla usuarios:', userRole);
     } else {
      
       userRole = user?.user_metadata?.rol || 'asesor';
+      userCooperativaId = user?.user_metadata?.cooperativa_id;
+      console.log('✅ Rol desde metadata:', userRole);
     }
   } catch (error) {
     console.error('Error obteniendo rol:', error);
     userRole = user?.user_metadata?.rol || 'asesor';
   }
   
-  console.log('✅ Rol detectado:', userRole);
+  console.log('✅ Rol final detectado:', userRole);
   
   let adminBtn = document.getElementById('admin-panel-btn');
+  
   
   if (userRole === 'super_admin' || userRole === 'gerente') {
     if (!adminBtn) {
@@ -4834,9 +4842,10 @@ async function updateAdminButton() {
       adminBtn.innerHTML = '<i class="fas fa-cog"></i>';
       adminBtn.onclick = showAdminPanel;
       
+      
       adminBtn.style.cssText = `
         position: fixed !important;
-        top: 235px !important;
+        top: 180px !important;
         right: 24px !important;
         width: 56px !important;
         height: 56px !important;
@@ -4854,14 +4863,15 @@ async function updateAdminButton() {
       `;
       
       floatingActions.appendChild(adminBtn);
-      console.log('✅ Botón de admin CREADO EXITOSAMENTE');
+      console.log('✅ Botón de admin CREADO EXITOSAMENTE para rol:', userRole);
     } else {
-      console.log('✅ Botón de admin ya existe');
+      adminBtn.style.display = 'flex';
+      console.log('✅ Botón de admin ya existe, mostrando');
     }
   } else {
     if (adminBtn) {
-      adminBtn.remove();
-      console.log('❌ Botón de admin removido (usuario es asesor)');
+      adminBtn.style.display = 'none';
+      console.log('❌ Botón de admin oculto (usuario es asesor)');
     }
   }
 }
