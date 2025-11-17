@@ -4278,6 +4278,8 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     
     document.addEventListener('DOMContentLoaded',function(){
       window.formWizard=new FormWizard();
+      document.getElementById('all-appraisals-btn').addEventListener('click', showAllAppraisals);
+  document.getElementById('my-appraisals-btn').addEventListener('click', showMyAppraisals);
       document.getElementById('save-btn').addEventListener('click',async function(){ 
         await saveCurrentAppraisal();
         
