@@ -5591,7 +5591,7 @@ try {
   console.log('🔄 Guardando nueva cooperativa:', { nombre, telefono, direccion, activo });
   
   const { data, error } = await window.supabase
-    .from('cooperativas')
+    .from('cooperativa')
     .insert([
       {
         nombre: nombre,
