@@ -5862,6 +5862,66 @@ window.asignarGerente = async function(coopId, coopNombre) {
   }
 };
 
+// AGREGAR esta función nueva que falta:
+window.invitarGerente = async function(coopId, coopNombre, emailPrellenado = '') {
+  try {
+    console.log(`🔄 Invitando nuevo gerente para: ${coopNombre}`);
+    
+    const email = emailPrellenado || prompt(`INVITAR NUEVO GERENTE:\n\nCooperativa: ${coopNombre}\n\nIngresa el email del nuevo gerente:`);
+    if (!email) {
+      console.log('❌ Usuario canceló la operación');
+      return;
+    }
+
+    const nombre = prompt('Nombre completo del nuevo gerente:');
+    if (!nombre) return;
+
+    console.log(`🔄 Creando invitación para: ${nombre} (${email})`);
+    
+    // VERIFICAR PRIMERO SI EL EMAIL YA EXISTE
+    const { data: usuarioExistente, error: checkError } = await window.supabase
+      .from('usuarios')
+      .select('id')
+      .eq('email', email)
+      .single();
+
+    if (usuarioExistente) {
+      alert('❌ Este email ya está registrado en el sistema. Usa la opción "Asignar Gerente" en lugar de "Invitar".');
+      return;
+    }
+
+    // CREAR NUEVO USUARIO GERENTE
+    const { data: nuevoUsuario, error: createError } = await window.supabase
+      .from('usuarios')
+      .insert([{
+        email: email,
+        nombre: nombre,
+        rol: 'gerente',
+        cooperativa_id: coopId,
+        activo: true,
+        creado_por: window.__session?.user?.id,
+        creado_en: new Date().toISOString()
+      }])
+      .select()
+      .single();
+
+    if (createError) {
+      console.error('❌ Error creando usuario:', createError);
+      throw createError;
+    }
+
+    console.log('✅ Nuevo gerente invitado:', nuevoUsuario);
+    alert(`✅ NUEVO GERENTE INVITADO:\n\nNombre: ${nombre}\nEmail: ${email}\nCooperativa: ${coopNombre}\n\nEl usuario recibirá instrucciones para activar su cuenta.`);
+
+    
+    closeModal('asignar-gerente-modal');
+    
+  } catch (error) {
+    console.error('❌ Error en invitarGerente:', error);
+    alert('❌ Error al invitar gerente: ' + error.message);
+  }
+};      
+
 async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
   try {
     console.log('✅ Usuario seleccionado:', { usuarioId, usuarioEmail, usuarioNombre });
@@ -6023,6 +6083,75 @@ setTimeout(() => {
   if (typeof updateAdminButton === 'function') {
     updateAdminButton();
   }
+}, 5000);
+
+let adminSystemInitialized = false;
+let initializationAttempts = 0;
+const MAX_ATTEMPTS = 10;
+
+function initializeAdminSystem() {
+    if (adminSystemInitialized) return;
+    
+    initializationAttempts++;
+    console.log(`🔄 Intento ${initializationAttempts} de inicialización...`);
+    
+    // VERIFICAR CONDICIONES NECESARIAS
+    const supabaseReady = window.supabase && window.supabase.auth;
+    const sessionReady = window.__session !== undefined; // Importante: undefined vs null
+    
+    console.log('✅ Condiciones:', {
+        supabaseReady: !!supabaseReady,
+        sessionReady: sessionReady,
+        session: window.__session,
+        user: window.__session?.user
+    });
+    
+    if (supabaseReady && sessionReady) {
+        console.log('🎉 Condiciones CUMPLIDAS, ejecutando updateAdminButton...');
+        adminSystemInitialized = true;
+        updateAdminButton();
+        
+        // CONFIGURAR LISTENER PARA CAMBIOS DE SESIÓN
+        window.supabase.auth.onAuthStateChange((event, session) => {
+            console.log('🔄 Cambio de estado auth:', event);
+            window.__session = session;
+            setTimeout(updateAdminButton, 500);
+        });
+        
+    } else if (initializationAttempts < MAX_ATTEMPTS) {
+        console.log('⏳ Condiciones no cumplidas, reintentando en 1s...');
+        setTimeout(initializeAdminSystem, 1000);
+    } else {
+        console.error('❌ No se pudo inicializar después de', MAX_ATTEMPTS, 'intentos');
+    }
+}
+
+// INICIAR EL SISTEMA CUANDO LA PÁGINA ESTÉ LISTA
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('📄 DOM cargado, iniciando sistema admin...');
+        setTimeout(initializeAdminSystem, 1000);
+    });
+} else {
+    console.log('⚡ DOM ya listo, iniciando sistema admin...');
+    setTimeout(initializeAdminSystem, 1000);
+}
+
+// TAMBIÉN EJECUTAR AL CARGAR COMPLETAMENTE LA PÁGINA
+window.addEventListener('load', function() {
+    console.log('🖼️ Página completamente cargada, verificando admin...');
+    setTimeout(initializeAdminSystem, 500);
+});
+
+// REINTENTO CADA 5 SEGUNDOS POR SI FALLA ALGO
+setInterval(() => {
+    const adminBtn = document.getElementById('admin-panel-btn');
+    const user = window.__session?.user;
+    
+    if (user && !adminBtn) {
+        console.log('🔍 Usuario logueado pero sin botón admin, reintentando...');
+        initializeAdminSystem();
+    }
 }, 5000);
   </script>
 </body>
