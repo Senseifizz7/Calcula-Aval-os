@@ -5761,92 +5761,81 @@ async function gestionarCooperativas() {
     setTimeout(() => {
   console.log('🔧 Intentando configurar event listeners...');
 
-      async function asignarGerente(coopId, coopNombre) {
+  // REEMPLAZAR la función asignarGerente actual con esta versión corregida:
+window.asignarGerente = async function(coopId, coopNombre) {
   try {
-    console.log(`🔄 Asignando gerente a: ${coopNombre}`);
+    console.log(`🔄 Asignando gerente a cooperativa: ${coopNombre}`);
     
-    // Cerrar modales abiertos
-    closeModal('cooperativas-modal');
-    
-    let asignarModal = document.getElementById('asignar-gerente-modal');
-    
-    if (!asignarModal) {
-      asignarModal = document.createElement('div');
-      asignarModal.className = 'catalog-modal';
-      asignarModal.id = 'asignar-gerente-modal';
-      document.body.appendChild(asignarModal);
+    const email = prompt(`ASIGNAR GERENTE:\n\nCooperativa: ${coopNombre}\n\nIngresa el email del usuario existente:`);
+    if (!email) {
+      console.log('❌ Usuario canceló la operación');
+      return;
     }
 
-    asignarModal.innerHTML = `
-      <div class="modal-content" style="max-width: 500px;">
-        <div class="modal-header">
-          <h3><i class="fas fa-user-tie"></i> Asignar Gerente</h3>
-          <button class="modal-close" onclick="closeModal('asignar-gerente-modal')">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 20px;">
-          <h4 style="color: var(--primary); margin-bottom: 15px;">Cooperativa: ${coopNombre}</h4>
-          
-          <div class="form-group">
-            <label class="required">Email del usuario existente</label>
-            <input type="email" id="email-gerente-existente" placeholder="usuario@existente.com" 
-                   style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius);">
-          </div>
-          
-          <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button class="btn-secondary" onclick="closeModal('asignar-gerente-modal')" style="flex: 1;">
-              <i class="fas fa-times"></i> Cancelar
-            </button>
-            <button class="btn-primary" onclick="procesarAsignacionGerente('${coopId}', '${coopNombre}')" style="flex: 1;">
-              <i class="fas fa-user-check"></i> Asignar Gerente
-            </button>
-          </div>
-          
-          <div style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 20px;">
-            <p style="text-align: center; color: var(--text-light);">
-              ¿El usuario no existe? 
-              <a href="#" onclick="cerrarYInvitar('${coopId}', '${coopNombre}')" style="color: var(--primary);">Invitar nuevo gerente</a>
-            </p>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    asignarModal.classList.add('active');
-    setTimeout(() => document.getElementById('email-gerente-existente').focus(), 100);
-    
-  } catch (error) {
-    console.error('❌ Error en asignarGerente:', error);
-    alert('Error: ' + error.message);
-  }
-}
-
-// FUNCIÓN AUXILIAR PARA ASIGNACIÓN
-async function procesarAsignacionGerente(coopId, coopNombre) {
-  const email = document.getElementById('email-gerente-existente').value.trim();
-  
-  if (!email) {
-    alert('❌ Ingresa un email válido');
-    return;
-  }
-
-  try {
-    // Verificar si usuario existe
+    // VERIFICAR SI EL USUARIO EXISTE
+    console.log(`🔍 Buscando usuario: ${email}`);
     const { data: usuario, error: searchError } = await window.supabase
       .from('usuarios')
       .select('*')
       .eq('email', email)
       .single();
 
-    if (searchError && searchError.code !== 'PGRST116') throw searchError;
+    if (searchError && searchError.code !== 'PGRST116') {
+      console.error('❌ Error buscando usuario:', searchError);
+      throw searchError;
+    }
 
     if (!usuario) {
-      if (confirm(`❌ Usuario no encontrado.\n\n¿Quieres crear un nuevo usuario gerente con el email: ${email}?`)) {
-        cerrarYInvitar(coopId, coopNombre, email);
+      // USUARIO NO EXISTE - OFRECER CREARLO
+      console.log('❌ Usuario no encontrado');
+      const crearNuevo = confirm(`❌ Usuario no encontrado: ${email}\n\n¿Quieres crear un nuevo usuario gerente?`);
+      
+      if (crearNuevo) {
+        const nombre = prompt('Nombre completo del nuevo gerente:');
+        if (!nombre) return;
+
+        console.log(`🔄 Creando nuevo gerente: ${nombre}`);
+        
+        // CREAR NUEVO USUARIO COMO GERENTE
+        const { data: nuevoUsuario, error: createError } = await window.supabase
+          .from('usuarios')
+          .insert([{
+            email: email,
+            nombre: nombre,
+            rol: 'gerente',
+            cooperativa_id: coopId,
+            activo: true,
+            creado_por: window.__session?.user?.id,
+            creado_en: new Date().toISOString()
+          }])
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('❌ Error creando usuario:', createError);
+          throw createError;
+        }
+
+        console.log('✅ Nuevo gerente creado:', nuevoUsuario);
+        alert(`✅ NUEVO GERENTE CREADO:\n\nNombre: ${nombre}\nEmail: ${email}\nCooperativa: ${coopNombre}`);
+        
       }
       return;
     }
 
-   
+    // USUARIO EXISTE - ACTUALIZAR A GERENTE
+    console.log(`✅ Usuario encontrado: ${usuario.nombre}`, usuario);
+    
+    const confirmar = confirm(`¿Asignar a ${usuario.nombre} (${usuario.email}) como gerente de:\n"${coopNombre}"?`);
+    
+    if (!confirmar) {
+      console.log('❌ Usuario canceló la asignación');
+      return;
+    }
+
+    console.log(`🔄 Actualizando usuario a gerente...`);
+    
+    
     const { error: updateError } = await window.supabase
       .from('usuarios')
       .update({
@@ -5854,26 +5843,24 @@ async function procesarAsignacionGerente(coopId, coopNombre) {
         cooperativa_id: coopId,
         actualizado_en: new Date().toISOString()
       })
-      .eq('email', email);
+      .eq('id', usuario.id);
 
-    if (updateError) throw updateError;
+    if (updateError) {
+      console.error('❌ Error actualizando usuario:', updateError);
+      throw updateError;
+    }
 
-    alert(`✅ ${usuario.nombre || email} asignado como gerente de:\n"${coopNombre}"`);
+    console.log('✅ Gerente asignado exitosamente');
+    alert(`✅ GERENTE ASIGNADO:\n\n${usuario.nombre}\n${usuario.email}\n\nAhora es gerente de: ${coopNombre}`);
+
+    
     closeModal('asignar-gerente-modal');
     
   } catch (error) {
-    alert('Error asignando gerente: ' + error.message);
+    console.error('❌ Error en asignarGerente:', error);
+    alert('❌ Error al asignar gerente: ' + error.message);
   }
-}
-
-
-function cerrarYInvitar(coopId, coopNombre, emailPrellenado = '') {
-  closeModal('asignar-gerente-modal');
-  setTimeout(() => invitarGerente(coopId, coopNombre, emailPrellenado), 300);
-}
-
-window.asignarGerente = asignarGerente;
-
+};
 
 async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombre) {
   try {
