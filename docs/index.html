@@ -4784,7 +4784,7 @@ function verificarFuncionesAdmin() {
   
 let adminSystemInitialized = false;
 
-function updateAdminButton() {
+async function updateAdminButton() {
   console.log('🔄 Actualizando botón admin...');
   
   const floatingActions = document.querySelector('.floating-actions');
@@ -4799,13 +4799,32 @@ function updateAdminButton() {
     return;
   }
   
-  const userRole = user?.user_metadata?.rol || 'asesor';
-  console.log('✅ Usuario detectado con rol:', userRole);
+  
+  let userRole = 'asesor'; 
+  
+  try {
+    const { data: usuario, error } = await window.supabase
+      .from('usuarios')
+      .select('rol')
+      .eq('id', user.id)
+      .single();
+    
+    if (!error && usuario) {
+      userRole = usuario.rol;
+    } else {
+     
+      userRole = user?.user_metadata?.rol || 'asesor';
+    }
+  } catch (error) {
+    console.error('Error obteniendo rol:', error);
+    userRole = user?.user_metadata?.rol || 'asesor';
+  }
+  
+  console.log('✅ Rol detectado:', userRole);
   
   let adminBtn = document.getElementById('admin-panel-btn');
   
   if (userRole === 'super_admin' || userRole === 'gerente') {
-}
     if (!adminBtn) {
       console.log('🔄 Creando nuevo botón admin...');
       adminBtn = document.createElement('button');
@@ -4814,7 +4833,6 @@ function updateAdminButton() {
       adminBtn.title = 'Panel de Administración';
       adminBtn.innerHTML = '<i class="fas fa-cog"></i>';
       adminBtn.onclick = showAdminPanel;
-      
       
       adminBtn.style.cssText = `
         position: fixed !important;
@@ -4847,7 +4865,6 @@ function updateAdminButton() {
     }
   }
 }
-
 
 async function showAdminPanel() {
   const user = window.__session?.user;
