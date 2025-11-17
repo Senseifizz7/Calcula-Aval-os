@@ -1687,6 +1687,65 @@
         }
       },
 
+      async function showAllAppraisals() {
+  const modal = document.getElementById('all-appraisals-modal');
+  const listContainer = document.getElementById('all-appraisals-list');
+  
+  try {
+    // SIMPLIFICAR: Mostrar todos los avalúos sin filtros complejos
+    const { data: allAppraisals, error } = await window.supabase
+      .from('avaluos')
+      .select('*')
+      .order('fecha_creacion', { ascending: false });
+
+    if (error) throw error;
+
+    if (!allAppraisals || allAppraisals.length === 0) {
+      listContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <h4>No hay avalúos registrados</h4>
+          <p>Los avalúos que se realicen aparecerán aquí</p>
+        </div>
+      `;
+    } else {
+      listContainer.innerHTML = allAppraisals.map(avaluo => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada || 'Sin fecha'}
+            </div>
+            <div class="appraisal-actions">
+              <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Asociado:</strong> ${avaluo.associate_name || 'No especificado'}</div>
+            <div><strong>Dirección:</strong> ${avaluo.address || 'No especificado'}</div>
+            <div><strong>Valor Total:</strong> ${avaluo.total_value || 'Q0.00'}</div>
+            <div><strong>Usuario:</strong> ${avaluo.usuario_nombre || 'Anónimo'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    modal.classList.add('active');
+    
+  } catch (error) {
+    console.error('Error cargando avalúos:', error);
+    listContainer.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar avalúos</h4>
+        <p>${error.message}</p>
+      </div>
+    `;
+    modal.classList.add('active');
+  }
+}
+
       saveAppraisal: function(avaluoData) {
         try {
           const avaluos = this.getAllAppraisals();
