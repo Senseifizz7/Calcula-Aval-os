@@ -1687,65 +1687,6 @@
         }
       },
 
-      async function showAllAppraisals() {
-  const modal = document.getElementById('all-appraisals-modal');
-  const listContainer = document.getElementById('all-appraisals-list');
-  
-  try {
-    // SIMPLIFICAR: Mostrar todos los avalúos sin filtros complejos
-    const { data: allAppraisals, error } = await window.supabase
-      .from('avaluos')
-      .select('*')
-      .order('fecha_creacion', { ascending: false });
-
-    if (error) throw error;
-
-    if (!allAppraisals || allAppraisals.length === 0) {
-      listContainer.innerHTML = `
-        <div class="empty-state">
-          <i class="fas fa-inbox"></i>
-          <h4>No hay avalúos registrados</h4>
-          <p>Los avalúos que se realicen aparecerán aquí</p>
-        </div>
-      `;
-    } else {
-      listContainer.innerHTML = allAppraisals.map(avaluo => `
-        <div class="appraisal-item">
-          <div class="appraisal-header">
-            <div class="appraisal-date">
-              <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada || 'Sin fecha'}
-            </div>
-            <div class="appraisal-actions">
-              <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
-                <i class="fas fa-eye"></i> Ver
-              </button>
-            </div>
-          </div>
-          <div class="appraisal-details">
-            <div><strong>Asociado:</strong> ${avaluo.associate_name || 'No especificado'}</div>
-            <div><strong>Dirección:</strong> ${avaluo.address || 'No especificado'}</div>
-            <div><strong>Valor Total:</strong> ${avaluo.total_value || 'Q0.00'}</div>
-            <div><strong>Usuario:</strong> ${avaluo.usuario_nombre || 'Anónimo'}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-    
-    modal.classList.add('active');
-    
-  } catch (error) {
-    console.error('Error cargando avalúos:', error);
-    listContainer.innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-exclamation-triangle"></i>
-        <h4>Error al cargar avalúos</h4>
-        <p>${error.message}</p>
-      </div>
-    `;
-    modal.classList.add('active');
-  }
-}
-
       saveAppraisal: function(avaluoData) {
         try {
           const avaluos = this.getAllAppraisals();
@@ -1808,7 +1749,168 @@
     };
 
     
+    async function showAllAppraisals() {
+  const modal = document.getElementById('all-appraisals-modal');
+  const listContainer = document.getElementById('all-appraisals-list');
+  
+  try {
+    // SIMPLIFICAR: Mostrar todos los avalúos sin filtros complejos
+    const { data: allAppraisals, error } = await window.supabase
+      .from('avaluos')
+      .select('*')
+      .order('fecha_creacion', { ascending: false });
+
+    if (error) throw error;
+
+    if (!allAppraisals || allAppraisals.length === 0) {
+      listContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-inbox"></i>
+          <h4>No hay avalúos registrados</h4>
+          <p>Los avalúos que se realicen aparecerán aquí</p>
+        </div>
+      `;
+    } else {
+      listContainer.innerHTML = allAppraisals.map(avaluo => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada || 'Sin fecha'}
+            </div>
+            <div class="appraisal-actions">
+              <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Asociado:</strong> ${avaluo.associate_name || 'No especificado'}</div>
+            <div><strong>Dirección:</strong> ${avaluo.address || 'No especificado'}</div>
+            <div><strong>Valor Total:</strong> ${avaluo.total_value || 'Q0.00'}</div>
+            <div><strong>Usuario:</strong> ${avaluo.usuario_nombre || 'Anónimo'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
     
+    modal.classList.add('active');
+    
+  } catch (error) {
+    console.error('Error cargando avalúos:', error);
+    listContainer.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar avalúos</h4>
+        <p>${error.message}</p>
+      </div>
+    `;
+    modal.classList.add('active');
+  }
+}
+
+    async function showMyAppraisals() {
+  if (!window.__session) {
+    alert('Debes iniciar sesión para ver tus avalúos');
+    document.getElementById('auth-overlay').style.display = 'flex';
+    return;
+  }
+  
+  const modal = document.getElementById('my-appraisals-modal');
+  const listContainer = document.getElementById('my-appraisals-list');
+  
+  // OBTENER DATOS DEL USUARIO ACTUAL
+  const user = window.__session.user;
+  const userRole = user?.user_metadata?.rol || 'asesor';
+  const userCooperativaId = user?.user_metadata?.cooperativa_id;
+  
+  console.log('👤 Mostrando mis avalúos para:', { userRole, userCooperativaId });
+
+  try {
+    let myAppraisals = [];
+    
+    if (userRole === 'asesor') {
+      // ASESOR: Ve solo SUS avalúos
+      const { data, error } = await window.supabase
+        .from('avaluos')
+        .select('*')
+        .eq('usuario_id', user.id)
+        .order('fecha_creacion', { ascending: false });
+      
+      if (error) throw error;
+      myAppraisals = data || [];
+      
+    } else {
+      // GERENTE/SUPER_ADMIN: En "Mis Avalúos" ven los que ELLOS crearon
+      const { data, error } = await window.supabase
+        .from('avaluos')
+        .select('*')
+        .eq('usuario_id', user.id)
+        .order('fecha_creacion', { ascending: false });
+      
+      if (error) throw error;
+      myAppraisals = data || [];
+    }
+
+    console.log(`📊 Mis avalúos encontrados: ${myAppraisals.length} para rol: ${userRole}`);
+
+    if (myAppraisals.length === 0) {
+      listContainer.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-file-contract"></i>
+          <h4>No tienes avalúos guardados</h4>
+          <p>Los avalúos que realices aparecerán aquí</p>
+        </div>
+      `;
+    } else {
+      listContainer.innerHTML = myAppraisals.map(avaluo => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada || new Date(avaluo.fecha_creacion).toLocaleDateString('es-GT')}
+              ${avaluo.estado_aprobacion ? `<span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${avaluo.estado_aprobacion === 'aprobado' ? 'var(--success)' : avaluo.estado_aprobacion === 'rechazado' ? 'var(--error)' : 'var(--warning)'}; color: white;">${avaluo.estado_aprobacion.toUpperCase()}</span>` : ''}
+            </div>
+            <div class="appraisal-actions">
+              <button class="btn-primary btn-small" onclick="editAppraisal('${avaluo.id}')">
+                <i class="fas fa-edit"></i> Editar
+              </button>
+              <button class="btn-secondary btn-small" onclick="viewAppraisal('${avaluo.id}')">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+              <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="deleteAppraisal('${avaluo.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Asociado:</strong> ${avaluo.associate_name || avaluo.datos?.associateName || 'No especificado'}</div>
+            <div><strong>Dirección:</strong> ${avaluo.address || avaluo.datos?.address || 'No especificado'}</div>
+            <div><strong>Valor Total:</strong> ${avaluo.total_value || avaluo.datos?.totalValue || 'Q0.00'}</div>
+            <div><strong>Estado:</strong> 
+              <span style="color: ${avaluo.estado_aprobacion === 'aprobado' ? 'var(--success)' : avaluo.estado_aprobacion === 'rechazado' ? 'var(--error)' : 'var(--warning)'}; font-weight: 600;">
+                ${avaluo.estado_aprobacion?.toUpperCase() || 'PENDIENTE'}
+              </span>
+            </div>
+            ${avaluo.estado_aprobacion === 'aprobado' && avaluo.aprobado_por ? `<div><strong>Aprobado por:</strong> ${avaluo.aprobado_por_nombre || 'Gerente'}</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    modal.classList.add('active');
+    
+  } catch (error) {
+    console.error('❌ Error cargando mis avalúos:', error);
+    listContainer.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar avalúos</h4>
+        <p>${error.message}</p>
+      </div>
+    `;
+    modal.classList.add('active');
+  }
+}
+
     function viewAppraisal(appraisalId) {
       const avaluos = window.avaluosStorage.getAllAppraisals();
       const avaluo = avaluos.find(av => av.id === appraisalId);
@@ -1915,13 +2017,9 @@
       total_construccion: appraisalData.totalConstruccion,
       total_terreno: appraisalData.totalTerreno,
       datos_completos: appraisalData,
-      estado_aprobacion: 'pendiente',  
-      aprobado_por: null,             
-      aprobado_por_nombre: null,        
-      comentarios_rechazo: null,      
-      fecha_aprobacion: null,          
-      cooperativa_id: null
-};
+      estado_aprobacion: 'aprobado',
+      cooperativa_id: null // Valor por defecto
+    };
 
     console.log('📤 Enviando a Supabase:', supabaseData);
 
@@ -1948,6 +2046,9 @@
     if (loadingOverlay) loadingOverlay.style.display = 'none';
   }
 }
+
+    document.getElementById('all-appraisals-btn').addEventListener('click', showAllAppraisals);
+    document.getElementById('my-appraisals-btn').addEventListener('click', showMyAppraisals);
 
     document.getElementById('all-appraisals-modal').addEventListener('click', function(e) {
       if (e.target === this) closeModal('all-appraisals-modal');
@@ -4200,8 +4301,6 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
     
     document.addEventListener('DOMContentLoaded',function(){
       window.formWizard=new FormWizard();
-      document.getElementById('all-appraisals-btn').addEventListener('click', showAllAppraisals);
-  document.getElementById('my-appraisals-btn').addEventListener('click', showMyAppraisals);
       document.getElementById('save-btn').addEventListener('click',async function(){ 
         await saveCurrentAppraisal();
         
@@ -5334,14 +5433,8 @@ async function loadGerentePanel() {
           <div class="result-item"><div class="label">Total Avalúos</div><div class="value">${totalAvaluos}</div></div>
           <div class="result-item"><div class="label">Pendientes</div><div class="value">${avaluosPendientes}</div></div>
         </div>
-        
-        <!-- ✅ NUEVO BOTÓN DE APROBACIÓN -->
-        <button class="btn-primary" onclick="panelAprobacionGerente()" style="width: 100%; margin-bottom: 10px; background: var(--warning);">
-          <i class="fas fa-clipboard-check"></i> Revisar Avalúos Pendientes (${avaluosPendientes})
-        </button>
-        
-        <button class="btn-secondary" onclick="showAllAppraisals()" style="width: 100%;">
-          <i class="fas fa-list"></i> Ver Todos los Avalúos
+        <button class="btn-primary" onclick="showAllAppraisals()" style="width: 100%;">
+          <i class="fas fa-list"></i> Revisar Todos los Avalúos
         </button>
       </div>
     `;
@@ -6139,207 +6232,6 @@ setTimeout(() => {
     updateAdminButton();
   }
 }, 5000);
-
-
-async function panelAprobacionGerente() {
-  const user = window.__session?.user;
-  const userCooperativaId = user?.user_metadata?.cooperativa_id;
-  
-  if (!userCooperativaId) {
-    alert('No tienes una cooperativa asignada');
-    return;
-  }
-
-  try {
-    const { data: avaluosPendientes, error } = await window.supabase
-      .from('avaluos')
-      .select('*')
-      .eq('cooperativa_id', userCooperativaId)
-      .eq('estado_aprobacion', 'pendiente')
-      .order('fecha_creacion', { ascending: false });
-
-    if (error) throw error;
-
-    // Crear modal
-    let aprobacionModal = document.getElementById('aprobacion-gerente-modal');
-    
-    if (!aprobacionModal) {
-      aprobacionModal = document.createElement('div');
-      aprobacionModal.className = 'catalog-modal';
-      aprobacionModal.id = 'aprobacion-gerente-modal';
-      document.body.appendChild(aprobacionModal);
-    }
-
-    let avaluosHTML = '';
-    
-    if (!avaluosPendientes || avaluosPendientes.length === 0) {
-      avaluosHTML = `
-        <div class="empty-state">
-          <i class="fas fa-clipboard-check"></i>
-          <h4>No hay avalúos pendientes</h4>
-          <p>Todos los avalúos de tu cooperativa han sido revisados</p>
-        </div>
-      `;
-    } else {
-      avaluosHTML = avaluosPendientes.map(avaluo => `
-        <div class="appraisal-item">
-          <div class="appraisal-header">
-            <div class="appraisal-date">
-              <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada || new Date(avaluo.fecha_creacion).toLocaleDateString('es-GT')}
-            </div>
-            <div class="appraisal-actions">
-              <button class="btn-primary btn-small" onclick="aprobarAvaluo('${avaluo.id}')">
-                <i class="fas fa-check"></i> Aprobar
-              </button>
-              <button class="btn-secondary btn-small" onclick="rechazarAvaluo('${avaluo.id}')">
-                <i class="fas fa-times"></i> Rechazar
-              </button>
-              <button class="btn-small" onclick="verDetallesAvaluo('${avaluo.id}')">
-                <i class="fas fa-eye"></i> Ver
-              </button>
-            </div>
-          </div>
-          <div class="appraisal-details">
-            <div><strong>Asociado:</strong> ${avaluo.associate_name || avaluo.datos?.associateName || 'No especificado'}</div>
-            <div><strong>Dirección:</strong> ${avaluo.address || avaluo.datos?.address || 'No especificado'}</div>
-            <div><strong>Valor Total:</strong> ${avaluo.total_value || avaluo.datos?.totalValue || 'Q0.00'}</div>
-            <div><strong>Usuario:</strong> ${avaluo.usuario_nombre || 'Anónimo'}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    aprobacionModal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3><i class="fas fa-clipboard-check"></i> Avalúos Pendientes de Aprobación</h3>
-          <button class="modal-close" onclick="closeModal('aprobacion-gerente-modal')">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 20px;">
-          <div style="margin-bottom: 16px; color: var(--text-light); font-size: 0.9rem;">
-            <i class="fas fa-info-circle"></i> Revisa y aprueba los avalúos de tu cooperativa
-          </div>
-          <div id="lista-avaluos-pendientes" style="max-height: 60vh; overflow-y: auto;">
-            ${avaluosHTML}
-          </div>
-        </div>
-      </div>
-    `;
-
-    aprobacionModal.classList.add('active');
-
-  } catch (error) {
-    console.error('Error cargando avalúos pendientes:', error);
-    alert('Error: ' + error.message);
-  }
-}
-
-
-async function verDetallesAvaluo(avaluoId) {
-  const avaluos = await window.supabase.from('avaluos').select('*').eq('id', avaluoId).single();
-  if (avaluos.data) {
-    alert(`Detalles del Avalúo:\n\nAsociado: ${avaluos.data.associate_name}\nDirección: ${avaluos.data.address}\nValor: ${avaluos.data.total_value}`);
-  }
-}
-
-    // ==================== FUNCIONES DE APROBACIÓN ====================
-
-async function aprobarAvaluo(avaluoId) {
-  const user = window.__session?.user;
-  
-  if (!confirm('¿Estás seguro de aprobar este avalúo?\n\nEsta acción no se puede deshacer.')) {
-    return;
-  }
-
-  try {
-    const { error } = await window.supabase
-      .from('avaluos')
-      .update({
-        estado_aprobacion: 'aprobado',
-        aprobado_por: user.id,
-        aprobado_por_nombre: user.user_metadata?.username || user.email,
-        fecha_aprobacion: new Date().toISOString(),
-        comentarios_rechazo: null
-      })
-      .eq('id', avaluoId);
-
-    if (error) throw error;
-
-    // Mostrar mensaje de éxito
-    const modal = document.getElementById('aprobacion-gerente-modal');
-    const successMsg = document.createElement('div');
-    successMsg.innerHTML = `
-      <div style="background: var(--success); color: white; padding: 10px; border-radius: var(--radius); margin-bottom: 15px; text-align: center;">
-        <i class="fas fa-check-circle"></i> Avalúo aprobado correctamente
-      </div>
-    `;
-    
-    setTimeout(() => {
-      panelAprobacionGerente();
-    }, 1500);
-
-  } catch (error) {
-    console.error('Error aprobando avalúo:', error);
-    alert('Error al aprobar: ' + error.message);
-  }
-}
-
-async function rechazarAvaluo(avaluoId) {
-  const comentarios = prompt('Motivo del rechazo (obligatorio):');
-  
-  if (!comentarios) {
-    alert('Debes ingresar un motivo para rechazar el avalúo');
-    return;
-  }
-
-  if (!confirm('¿Estás seguro de rechazar este avalúo?\n\nMotivo: ' + comentarios)) {
-    return;
-  }
-
-  const user = window.__session?.user;
-  
-  try {
-    const { error } = await window.supabase
-      .from('avaluos')
-      .update({
-        estado_aprobacion: 'rechazado',
-        aprobado_por: user.id,
-        aprobado_por_nombre: user.user_metadata?.username || user.email,
-        comentarios_rechazo: comentarios,
-        fecha_aprobacion: new Date().toISOString()
-      })
-      .eq('id', avaluoId);
-
-    if (error) throw error;
-
-    
-    const modal = document.getElementById('aprobacion-gerente-modal');
-    const successMsg = document.createElement('div');
-    successMsg.innerHTML = `
-      <div style="background: var(--warning); color: white; padding: 10px; border-radius: var(--radius); margin-bottom: 15px; text-align: center;">
-        <i class="fas fa-exclamation-triangle"></i> Avalúo rechazado
-      </div>
-    `;
-    modal.querySelector('.modal-body').insertBefore(successMsg, modal.querySelector('#lista-avaluos-pendientes'));
-    
-    
-    setTimeout(() => {
-      panelAprobacionGerente();
-    }, 1500);
-
-  } catch (error) {
-    console.error('Error rechazando avalúo:', error);
-    alert('Error al rechazar: ' + error.message);
-  }
-}
-
-
-function closeAprobacionModal() {
-  const modal = document.getElementById('aprobacion-gerente-modal');
-  if (modal) {
-    modal.classList.remove('active');
-  }
-}
   </script>
 </body>
 </html>
