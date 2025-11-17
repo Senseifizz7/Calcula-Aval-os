@@ -4675,8 +4675,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
     };
 
     window.__signOut = async () => { await window.supabase.auth.signOut(); };
-    window.__canUseApp = () => !!window.__session;
-
+    window.__canUseApp = function() {
+  if (!window.__session || !window.__session.user) {
+    return false;
+  }
+  
+  const user = window.__session.user;
+  return user.aud === 'authenticated';
+};
     document.addEventListener('DOMContentLoaded', () => {
   const nextBtn = document.getElementById('next-step');
   if(nextBtn){
