@@ -6237,7 +6237,6 @@ setTimeout(() => {
   }
 }, 5000);
 
-    // ==================== SISTEMA DE APROBACIÓN ====================
 
 async function panelAprobacionGerente() {
   const user = window.__session?.user;
@@ -6337,6 +6336,107 @@ async function verDetallesAvaluo(avaluoId) {
   const avaluos = await window.supabase.from('avaluos').select('*').eq('id', avaluoId).single();
   if (avaluos.data) {
     alert(`Detalles del Avalúo:\n\nAsociado: ${avaluos.data.associate_name}\nDirección: ${avaluos.data.address}\nValor: ${avaluos.data.total_value}`);
+  }
+}
+
+    // ==================== FUNCIONES DE APROBACIÓN ====================
+
+async function aprobarAvaluo(avaluoId) {
+  const user = window.__session?.user;
+  
+  if (!confirm('¿Estás seguro de aprobar este avalúo?\n\nEsta acción no se puede deshacer.')) {
+    return;
+  }
+
+  try {
+    const { error } = await window.supabase
+      .from('avaluos')
+      .update({
+        estado_aprobacion: 'aprobado',
+        aprobado_por: user.id,
+        aprobado_por_nombre: user.user_metadata?.username || user.email,
+        fecha_aprobacion: new Date().toISOString(),
+        comentarios_rechazo: null
+      })
+      .eq('id', avaluoId);
+
+    if (error) throw error;
+
+    // Mostrar mensaje de éxito
+    const modal = document.getElementById('aprobacion-gerente-modal');
+    const successMsg = document.createElement('div');
+    successMsg.innerHTML = `
+      <div style="background: var(--success); color: white; padding: 10px; border-radius: var(--radius); margin-bottom: 15px; text-align: center;">
+        <i class="fas fa-check-circle"></i> Avalúo aprobado correctamente
+      </div>
+    `;
+    modal.querySelector('.modal-body').insertBefore(successMsg, modal.querySelector('#lista-avaluos-pendientes'));
+    
+    ¿
+    setTimeout(() => {
+      panelAprobacionGerente();
+    }, 1500);
+
+  } catch (error) {
+    console.error('Error aprobando avalúo:', error);
+    alert('Error al aprobar: ' + error.message);
+  }
+}
+
+async function rechazarAvaluo(avaluoId) {
+  const comentarios = prompt('Motivo del rechazo (obligatorio):');
+  
+  if (!comentarios) {
+    alert('Debes ingresar un motivo para rechazar el avalúo');
+    return;
+  }
+
+  if (!confirm('¿Estás seguro de rechazar este avalúo?\n\nMotivo: ' + comentarios)) {
+    return;
+  }
+
+  const user = window.__session?.user;
+  
+  try {
+    const { error } = await window.supabase
+      .from('avaluos')
+      .update({
+        estado_aprobacion: 'rechazado',
+        aprobado_por: user.id,
+        aprobado_por_nombre: user.user_metadata?.username || user.email,
+        comentarios_rechazo: comentarios,
+        fecha_aprobacion: new Date().toISOString()
+      })
+      .eq('id', avaluoId);
+
+    if (error) throw error;
+
+    
+    const modal = document.getElementById('aprobacion-gerente-modal');
+    const successMsg = document.createElement('div');
+    successMsg.innerHTML = `
+      <div style="background: var(--warning); color: white; padding: 10px; border-radius: var(--radius); margin-bottom: 15px; text-align: center;">
+        <i class="fas fa-exclamation-triangle"></i> Avalúo rechazado
+      </div>
+    `;
+    modal.querySelector('.modal-body').insertBefore(successMsg, modal.querySelector('#lista-avaluos-pendientes'));
+    
+    
+    setTimeout(() => {
+      panelAprobacionGerente();
+    }, 1500);
+
+  } catch (error) {
+    console.error('Error rechazando avalúo:', error);
+    alert('Error al rechazar: ' + error.message);
+  }
+}
+
+n
+function closeAprobacionModal() {
+  const modal = document.getElementById('aprobacion-gerente-modal');
+  if (modal) {
+    modal.classList.remove('active');
   }
 }
   </script>
