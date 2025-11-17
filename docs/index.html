@@ -5768,82 +5768,31 @@ async function gestionarCooperativas() {
  
 window.asignarGerente = async function(coopId, coopNombre) {
   try {
-    console.log(`🔄 Asignando gerente a cooperativa: ${coopNombre}`);
+    console.log(`🔄 Asignando gerente a: ${coopNombre}`);
     
-    const email = prompt(`ASIGNAR GERENTE:\n\nCooperativa: ${coopNombre}\n\nIngresa el email del usuario existente:`);
-    if (!email) {
-      console.log('❌ Usuario canceló la operación');
-      return;
-    }
+    const email = prompt(`ASIGNAR GERENTE EXISTENTE:\n\nCooperativa: ${coopNombre}\n\nIngresa el email del usuario EXISTENTE:`);
+    if (!email) return;
 
-   
-    console.log(`🔍 Buscando usuario: ${email}`);
-    const { data: usuario, error: searchError } = await window.supabase
+    // BUSCAR USUARIO EXISTENTE
+    const { data: usuario, error: searchError } = await supabase
       .from('usuarios')
       .select('*')
       .eq('email', email)
       .single();
 
-    if (searchError && searchError.code !== 'PGRST116') {
-      console.error('❌ Error buscando usuario:', searchError);
-      throw searchError;
-    }
-
-    if (!usuario) {
-     
-      console.log('❌ Usuario no encontrado');
-      const crearNuevo = confirm(`❌ Usuario no encontrado: ${email}\n\n¿Quieres crear un nuevo usuario gerente?`);
-      
-      if (crearNuevo) {
-        const nombre = prompt('Nombre completo del nuevo gerente:');
-        if (!nombre) return;
-
-        console.log(`🔄 Creando nuevo gerente: ${nombre}`);
-        
-       
-        const { data: nuevoUsuario, error: createError } = await window.supabase
-          .from('usuarios')
-          .insert([{
-            email: email,
-            nombre: nombre,
-            rol: 'gerente',
-            cooperativa_id: coopId,
-            activo: true,
-            creado_por: window.__session?.user?.id,
-            creado_en: new Date().toISOString()
-          }])
-          .select()
-          .single();
-
-        if (createError) {
-          console.error('❌ Error creando usuario:', createError);
-          throw createError;
-        }
-
-        console.log('✅ Nuevo gerente creado:', nuevoUsuario);
-        alert(`✅ NUEVO GERENTE CREADO:\n\nNombre: ${nombre}\nEmail: ${email}\nCooperativa: ${coopNombre}`);
-        
-      }
+    if (searchError || !usuario) {
+      alert(`❌ Usuario no encontrado: ${email}\n\nEl usuario debe estar registrado primero.`);
       return;
     }
 
-    console.log(`✅ Usuario encontrado: ${usuario.nombre}`, usuario);
-    
-    const confirmar = confirm(`¿Asignar a ${usuario.nombre} (${usuario.email}) como gerente de:\n"${coopNombre}"?`);
-    
-    if (!confirmar) {
-      console.log('❌ Usuario canceló la asignación');
-      return;
-    }
+    console.log('✅ Usuario encontrado:', usuario);
 
-    console.log(`🔄 Actualizando usuario a gerente...`);
-    
-    
-    const { error: updateError } = await window.supabase
+    // ACTUALIZAR A GERENTE - ESTA ES LA PARTE CLAVE
+    const { error: updateError } = await supabase
       .from('usuarios')
       .update({
-        rol: 'gerente',
-        cooperativa_id: coopId,
+        rol: 'gerente',           // ⭐ ESTO ES LO MÁS IMPORTANTE
+        cooperativa_id: coopId,   // ⭐ Y ESTO
         actualizado_en: new Date().toISOString()
       })
       .eq('id', usuario.id);
@@ -5853,10 +5802,8 @@ window.asignarGerente = async function(coopId, coopNombre) {
       throw updateError;
     }
 
-    console.log('✅ Gerente asignado exitosamente');
-    alert(`✅ GERENTE ASIGNADO:\n\n${usuario.nombre}\n${usuario.email}\n\nAhora es gerente de: ${coopNombre}`);
+    alert(`✅ GERENTE ASIGNADO:\n\n${usuario.nombre}\n${usuario.email}\n\nAhora es gerente de: ${coopNombre}\n\n🔔 El usuario debe CERRAR SESIÓN y VOLVER A INICIAR para ver los cambios.`);
 
-    
     closeModal('asignar-gerente-modal');
     
   } catch (error) {
