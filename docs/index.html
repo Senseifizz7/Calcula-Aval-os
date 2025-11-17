@@ -2017,9 +2017,13 @@
       total_construccion: appraisalData.totalConstruccion,
       total_terreno: appraisalData.totalTerreno,
       datos_completos: appraisalData,
-      estado_aprobacion: 'aprobado',
-      cooperativa_id: null // Valor por defecto
-    };
+      estado_aprobacion: 'pendiente',  
+      aprobado_por: null,             
+      aprobado_por_nombre: null,        
+      comentarios_rechazo: null,      
+      fecha_aprobacion: null,          
+      cooperativa_id: null
+};
 
     console.log('📤 Enviando a Supabase:', supabaseData);
 
@@ -6232,6 +6236,109 @@ setTimeout(() => {
     updateAdminButton();
   }
 }, 5000);
+
+    // ==================== SISTEMA DE APROBACIÓN ====================
+
+async function panelAprobacionGerente() {
+  const user = window.__session?.user;
+  const userCooperativaId = user?.user_metadata?.cooperativa_id;
+  
+  if (!userCooperativaId) {
+    alert('No tienes una cooperativa asignada');
+    return;
+  }
+
+  try {
+    const { data: avaluosPendientes, error } = await window.supabase
+      .from('avaluos')
+      .select('*')
+      .eq('cooperativa_id', userCooperativaId)
+      .eq('estado_aprobacion', 'pendiente')
+      .order('fecha_creacion', { ascending: false });
+
+    if (error) throw error;
+
+    // Crear modal
+    let aprobacionModal = document.getElementById('aprobacion-gerente-modal');
+    
+    if (!aprobacionModal) {
+      aprobacionModal = document.createElement('div');
+      aprobacionModal.className = 'catalog-modal';
+      aprobacionModal.id = 'aprobacion-gerente-modal';
+      document.body.appendChild(aprobacionModal);
+    }
+
+    let avaluosHTML = '';
+    
+    if (!avaluosPendientes || avaluosPendientes.length === 0) {
+      avaluosHTML = `
+        <div class="empty-state">
+          <i class="fas fa-clipboard-check"></i>
+          <h4>No hay avalúos pendientes</h4>
+          <p>Todos los avalúos de tu cooperativa han sido revisados</p>
+        </div>
+      `;
+    } else {
+      avaluosHTML = avaluosPendientes.map(avaluo => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada || new Date(avaluo.fecha_creacion).toLocaleDateString('es-GT')}
+            </div>
+            <div class="appraisal-actions">
+              <button class="btn-primary btn-small" onclick="aprobarAvaluo('${avaluo.id}')">
+                <i class="fas fa-check"></i> Aprobar
+              </button>
+              <button class="btn-secondary btn-small" onclick="rechazarAvaluo('${avaluo.id}')">
+                <i class="fas fa-times"></i> Rechazar
+              </button>
+              <button class="btn-small" onclick="verDetallesAvaluo('${avaluo.id}')">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Asociado:</strong> ${avaluo.associate_name || avaluo.datos?.associateName || 'No especificado'}</div>
+            <div><strong>Dirección:</strong> ${avaluo.address || avaluo.datos?.address || 'No especificado'}</div>
+            <div><strong>Valor Total:</strong> ${avaluo.total_value || avaluo.datos?.totalValue || 'Q0.00'}</div>
+            <div><strong>Usuario:</strong> ${avaluo.usuario_nombre || 'Anónimo'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    aprobacionModal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3><i class="fas fa-clipboard-check"></i> Avalúos Pendientes de Aprobación</h3>
+          <button class="modal-close" onclick="closeModal('aprobacion-gerente-modal')">&times;</button>
+        </div>
+        <div class="modal-body" style="padding: 20px;">
+          <div style="margin-bottom: 16px; color: var(--text-light); font-size: 0.9rem;">
+            <i class="fas fa-info-circle"></i> Revisa y aprueba los avalúos de tu cooperativa
+          </div>
+          <div id="lista-avaluos-pendientes" style="max-height: 60vh; overflow-y: auto;">
+            ${avaluosHTML}
+          </div>
+        </div>
+      </div>
+    `;
+
+    aprobacionModal.classList.add('active');
+
+  } catch (error) {
+    console.error('Error cargando avalúos pendientes:', error);
+    alert('Error: ' + error.message);
+  }
+}
+
+
+async function verDetallesAvaluo(avaluoId) {
+  const avaluos = await window.supabase.from('avaluos').select('*').eq('id', avaluoId).single();
+  if (avaluos.data) {
+    alert(`Detalles del Avalúo:\n\nAsociado: ${avaluos.data.associate_name}\nDirección: ${avaluos.data.address}\nValor: ${avaluos.data.total_value}`);
+  }
+}
   </script>
 </body>
 </html>
