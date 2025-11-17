@@ -5726,7 +5726,7 @@ async function gestionarCooperativas() {
     <i class="fas fa-edit"></i> Editar
   </button>
   
-  <button class="btn-primary btn-small" onclick="asignarGerente('${coop.id}', '${coop.nombre}')">
+  <button class="btn-primary btn-small" onclick="asignarGerenteSimple('${coop.id}', '${coop.nombre}')">
     <i class="fas fa-user-tie"></i> Gerente
   </button>
   
@@ -6096,50 +6096,25 @@ window.asignarGerente = async function(coopId, coopNombre) {
   }
 };
 
-  window.asignarGerente = async function(coopId, coopNombre) {
-  try {
-    const email = prompt(`ASIGNAR GERENTE:\n\nCooperativa: ${coopNombre}\n\nIngresa el email del usuario:`);
-    if (!email) return;
-
-    const { data: usuario, error } = await window.supabase
-      .from('usuarios')
-      .select('*')
-      .eq('email', email)
-      .single();
-
-    if (error && error.code !== 'PGRST116') throw error;
-
-    if (usuario) {
-      
-      await window.supabase
-        .from('usuarios')
-        .update({
-          rol: 'gerente',
-          cooperativa_id: coopId,
-          actualizado_en: new Date().toISOString()
-        })
-        .eq('email', email);
-      alert(`✅ ${usuario.nombre || email} asignado como gerente de ${coopNombre}`);
-    } else {
-      
-      const nombre = prompt(`Crear NUEVO gerente:\n\nEmail: ${email}\n\nIngresa el nombre completo:`);
-      if (!nombre) return;
-      await window.supabase
-        .from('usuarios')
-        .insert([{
-          email: email,
-          nombre: nombre,
-          rol: 'gerente',
-          cooperativa_id: coopId,
-          activo: true,
-          creado_por: window.__session?.user?.id
-        }]);
-      alert(`✅ Nuevo gerente creado:\n\n${nombre}\n${email}\n\nPara: ${coopNombre}`);
-    }
-  } catch (error) {
-    alert('❌ Error: ' + error.message);
-  }
-};
+  function asignarGerenteSimple(coopId, coopNombre) {
+  const email = prompt(`ASIGNAR GERENTE:\n\nCooperativa: ${coopNombre}\n\nIngresa el email:`);
+  if (!email) return;
+  
+  const nombre = prompt(`Nombre completo para ${email}:`);
+  if (!nombre) return;
+  
+  window.supabase.from('usuarios').upsert({
+    email: email,
+    nombre: nombre, 
+    rol: 'gerente',
+    cooperativa_id: coopId,
+    activo: true,
+    actualizado_en: new Date().toISOString()
+  }, { onConflict: 'email' }).then(({ error }) => {
+    if (error) alert('Error: ' + error.message);
+    else alert(`✅ Gerente asignado:\n${nombre}\n${email}`);
+  });
+}
   </script>
 </body>
 </html>
