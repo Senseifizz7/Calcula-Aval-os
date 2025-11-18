@@ -5121,36 +5121,61 @@ async function eliminarUsuario(usuarioId) {
   }
 }
 
-
+// REEMPLAZAR su función invitarAsesor existente con ESTA:
 async function invitarAsesor() {
-  const email = prompt('Email del nuevo asesor:');
-  const nombre = prompt('Nombre del nuevo asesor:');
-  
-  if (!email || !nombre) {
-    alert('Email y nombre son requeridos');
-    return;
-  }
-  
   try {
-    const user = window.__session.user;
-    const cooperativaId = user?.user_metadata?.cooperativa_id;
-    
-    const { error } = await window.supabase
+    const user = window.__session?.user;
+    const userRole = user?.user_metadata?.rol;
+    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+
+    // Si es GERENTE, usar SU cooperativa_id
+    const cooperativaId = userRole === 'gerente' ? userCooperativaId : null;
+
+    if (userRole === 'gerente' && !cooperativaId) {
+      alert('❌ No tiene cooperativa asignada');
+      return;
+    }
+
+    const email = prompt('📧 Ingrese el email del nuevo asesor:');
+    if (!email) return;
+
+    const nombre = prompt('👤 Ingrese el nombre completo del asesor:');
+    if (!nombre) return;
+
+    console.log('🔄 Invitando asesor:', { email, nombre, cooperativaId, userRole });
+
+    const { data, error } = await window.supabase
       .from('usuarios')
       .insert([{
         email: email,
         nombre: nombre,
         rol: 'asesor',
-        cooperativa_id: cooperativaId,
-        activo: true
-      }]);
-    
-    if (error) throw error;
-    
-    alert(`✅ Asesor ${nombre} invitado. Se le enviará un email para configurar su cuenta.`);
-    
+        cooperativa_id: cooperativaId,  // Para gerente: su cooperativa, para super_admin: null
+        activo: true,
+        creado_por: user.id,
+        creado_en: new Date().toISOString()
+      }])
+      .select();
+
+    if (error) {
+      if (error.code === '23505') {
+        alert('❌ Este email ya está registrado en el sistema');
+      } else {
+        throw error;
+      }
+      return;
+    }
+
+    alert(`✅ Asesor invitado exitosamente:\n\nNombre: ${nombre}\nEmail: ${email}`);
+
+    // Recargar lista si está en modal de gerente
+    if (userRole === 'gerente' && document.getElementById('gestion-usuarios-gerente-modal')?.classList.contains('active')) {
+      await cargarUsuariosGerente(userCooperativaId);
+    }
+
   } catch (error) {
-    alert('Error invitando asesor: ' + error.message);
+    console.error('❌ Error invitando asesor:', error);
+    alert('Error al invitar asesor: ' + error.message);
   }
 }
 
