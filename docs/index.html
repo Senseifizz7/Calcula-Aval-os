@@ -3690,7 +3690,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
       document.getElementById('resultTotal').textContent=formatCurrency(terreno + totalConstruccion);
     }
 
-    async function generateReport(){
+  async function generateReport(){
   const loadingOverlay = document.getElementById('loadingOverlay'); 
   if (loadingOverlay) loadingOverlay.style.display = 'flex';
 
@@ -4030,7 +4030,7 @@ function actualizarValorBaseDesdeTipologia(selectElement) {
           
           doc.addImage(imgSrc, 'JPEG', xPos, y, imgWidth, imgHeight);
           
-          doc.setFontSize(7); // Texto más pequeño
+          doc.setFontSize(7); 
           doc.text(`Evidencia ${i + 1}`, xPos, y + imgHeight + 4);
           
           if ((i + 1) % 3 === 0) {
@@ -4784,7 +4784,7 @@ function verificarFuncionesAdmin() {
   
 let adminSystemInitialized = false;
 
-// REEMPLAZAR la función updateAdminButton actual con esta versión corregida:
+
 async function updateAdminButton() {
   console.log('🔄 Actualizando botón admin...');
   
@@ -5775,7 +5775,7 @@ window.asignarGerente = async function(coopId, coopNombre) {
     const email = prompt(`ASIGNAR GERENTE EXISTENTE:\n\nCooperativa: ${coopNombre}\n\nIngresa el email del usuario EXISTENTE:`);
     if (!email) return;
 
-    // BUSCAR USUARIO EXISTENTE
+    
     const { data: usuario, error: searchError } = await supabase
       .from('usuarios')
       .select('*')
@@ -5789,12 +5789,12 @@ window.asignarGerente = async function(coopId, coopNombre) {
 
     console.log('✅ Usuario encontrado:', usuario);
 
-    // ACTUALIZAR A GERENTE - ESTA ES LA PARTE CLAVE
+    
     const { error: updateError } = await supabase
       .from('usuarios')
       .update({
-        rol: 'gerente',           // ⭐ ESTO ES LO MÁS IMPORTANTE
-        cooperativa_id: coopId,   // ⭐ Y ESTO
+        rol: 'gerente',           
+        cooperativa_id: coopId,  
         actualizado_en: new Date().toISOString()
       })
       .eq('id', usuario.id);
@@ -6050,9 +6050,9 @@ function initializeAdminSystem() {
     initializationAttempts++;
     console.log(`🔄 Intento ${initializationAttempts} de inicialización...`);
     
-    // VERIFICAR CONDICIONES NECESARIAS
+    
     const supabaseReady = window.supabase && window.supabase.auth;
-    const sessionReady = window.__session !== undefined; // Importante: undefined vs null
+    const sessionReady = window.__session !== undefined;
     
     console.log('✅ Condiciones:', {
         supabaseReady: !!supabaseReady,
@@ -6066,7 +6066,7 @@ function initializeAdminSystem() {
         adminSystemInitialized = true;
         updateAdminButton();
         
-        // CONFIGURAR LISTENER PARA CAMBIOS DE SESIÓN
+       
         window.supabase.auth.onAuthStateChange((event, session) => {
             console.log('🔄 Cambio de estado auth:', event);
             window.__session = session;
@@ -6081,7 +6081,7 @@ function initializeAdminSystem() {
     }
 }
 
-// INICIAR EL SISTEMA CUANDO LA PÁGINA ESTÉ LISTA
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
         console.log('📄 DOM cargado, iniciando sistema admin...');
@@ -6092,13 +6092,13 @@ if (document.readyState === 'loading') {
     setTimeout(initializeAdminSystem, 1000);
 }
 
-// TAMBIÉN EJECUTAR AL CARGAR COMPLETAMENTE LA PÁGINA
+
 window.addEventListener('load', function() {
     console.log('🖼️ Página completamente cargada, verificando admin...');
     setTimeout(initializeAdminSystem, 500);
 });
 
-// REINTENTO CADA 5 SEGUNDOS POR SI FALLA ALGO
+
 setInterval(() => {
     const adminBtn = document.getElementById('admin-panel-btn');
     const user = window.__session?.user;
