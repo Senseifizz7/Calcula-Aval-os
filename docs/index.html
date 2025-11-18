@@ -953,7 +953,6 @@
       }
     }
 
-    /* === BREADCRUMBS - SOLO ESTO SE AGREGA === */
     .typology-breadcrumbs {
       padding: 16px 24px;
       background: rgba(91, 123, 122, 0.03);
@@ -1754,7 +1753,7 @@
   const listContainer = document.getElementById('all-appraisals-list');
   
   try {
-    // SIMPLIFICAR: Mostrar todos los avalúos sin filtros complejos
+    
     const { data: allAppraisals, error } = await window.supabase
       .from('avaluos')
       .select('*')
@@ -1818,7 +1817,7 @@
   const modal = document.getElementById('my-appraisals-modal');
   const listContainer = document.getElementById('my-appraisals-list');
   
-  // OBTENER DATOS DEL USUARIO ACTUAL
+  
   const user = window.__session.user;
   const userRole = user?.user_metadata?.rol || 'asesor';
   const userCooperativaId = user?.user_metadata?.cooperativa_id;
@@ -1829,7 +1828,7 @@
     let myAppraisals = [];
     
     if (userRole === 'asesor') {
-      // ASESOR: Ve solo SUS avalúos
+      
       const { data, error } = await window.supabase
         .from('avaluos')
         .select('*')
@@ -1840,7 +1839,7 @@
       myAppraisals = data || [];
       
     } else {
-      // GERENTE/SUPER_ADMIN: En "Mis Avalúos" ven los que ELLOS crearon
+      
       const { data, error } = await window.supabase
         .from('avaluos')
         .select('*')
@@ -1972,7 +1971,7 @@
     const userEmail = user?.email || 'usuario@ejemplo.com';
     const userName = user?.user_metadata?.username || userEmail?.split('@')[0] || 'Usuario';
 
-    // VALIDAR CAMPOS REQUERIDOS
+    
     const associateName = document.getElementById('associate-name').value;
     const address = document.getElementById('address').value;
     
@@ -1981,7 +1980,7 @@
       return false;
     }
 
-    // PREPARAR DATOS CON VALORES POR DEFECTO
+    
     const appraisalData = {
       associateName: associateName,
       address: address,
@@ -1997,7 +1996,7 @@
       totalTerreno: parseFloat(document.getElementById('totalTerreno').value) || 0
     };
 
-    // PREPARAR DATOS PARA SUPABASE
+    
     const supabaseData = {
       usuario_id: user.id,
       usuario_email: userEmail,
@@ -2018,12 +2017,11 @@
       total_terreno: appraisalData.totalTerreno,
       datos_completos: appraisalData,
       estado_aprobacion: 'aprobado',
-      cooperativa_id: null // Valor por defecto
+      cooperativa_id: null 
     };
 
     console.log('📤 Enviando a Supabase:', supabaseData);
 
-    // INSERTAR EN BASE DE DATOS
     const { data, error } = await window.supabase
       .from('avaluos')
       .insert([supabaseData])
