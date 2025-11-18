@@ -5442,12 +5442,12 @@ async function loadSuperAdminPanel() {
   }
 }
     
-// REEMPLAZAR la función loadGerentePanel
+
 async function loadGerentePanel() {
   const modal = document.getElementById('admin-panel-modal');
   if (!modal) return;
 
-  // CONTENIDO ESPECÍFICO para GERENTE (más limitado)
+  
   modal.querySelector('.modal-body').innerHTML = `
     <div style="padding: 0;">
       <div class="typology-tabs">
@@ -5496,10 +5496,10 @@ async function loadGerentePanel() {
     </div>
   `;
 
-  // Cargar info de la cooperativa del gerente
+  
   await cargarInfoCooperativaGerente();
   
-  // Reinicializar tabs
+  
   setTimeout(() => {
     const tabs = modal.querySelectorAll('.typology-tab');
     tabs.forEach(tab => {
@@ -5514,16 +5514,79 @@ async function loadGerentePanel() {
   }, 100);
 }
 
-// AGREGAR función específica para gerentes
-async function gestionarUsuariosGerente() {
-  console.log('👥 Gerente gestionando usuarios de su cooperativa...');
-  // Aquí filtraría solo usuarios de SU cooperativa_id
-  gestionarUsuarios();
+async function cargarUsuariosGerente(cooperativaId) {
+  try {
+    console.log('🔄 Cargando usuarios de cooperativa:', cooperativaId);
+    
+    const { data: usuarios, error } = await window.supabase
+      .from('usuarios')
+      .select('*')
+      .eq('cooperativa_id', cooperativaId)  
+      .order('nombre', { ascending: true });
+    
+    if (error) throw error;
+    
+    console.log('✅ Usuarios de cooperativa cargados:', usuarios?.length);
+    
+    let usuariosHTML = '';
+    
+    if (!usuarios || usuarios.length === 0) {
+      usuariosHTML = `
+        <div class="empty-state">
+          <i class="fas fa-users"></i>
+          <h4>No hay usuarios en tu cooperativa</h4>
+          <p>Invita asesores para que aparezcan aquí</p>
+          <button class="btn-primary" onclick="invitarAsesor()" style="margin-top: 10px;">
+            <i class="fas fa-user-plus"></i> Invitar Asesor
+          </button>
+        </div>
+      `;
+    } else {
+      usuariosHTML = usuarios.map(usuario => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-user"></i> ${usuario.nombre || usuario.email}
+              ${usuario.rol ? `<span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${usuario.rol === 'gerente' ? 'var(--primary)' : 'var(--secondary)'}; color: white;">${usuario.rol.toUpperCase()}</span>` : ''}
+            </div>
+            <div class="appraisal-actions">
+              <!-- Gerente NO puede cambiar roles ni asignar cooperativas -->
+              <button class="btn-secondary btn-small" onclick="verDetallesUsuario('${usuario.id}')">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+              ${usuario.rol !== 'gerente' ? `
+                <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="eliminarUsuarioGerente('${usuario.id}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Email:</strong> ${usuario.email}</div>
+            <div><strong>Rol:</strong> ${usuario.rol || 'No asignado'}</div>
+            <div><strong>Estado:</strong> <span style="color: ${usuario.activo ? 'var(--success)' : 'var(--error)'};">${usuario.activo ? 'ACTIVO' : 'INACTIVO'}</span></div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    document.getElementById('lista-usuarios-gerente').innerHTML = usuariosHTML;
+    
+  } catch (error) {
+    console.error('❌ Error cargando usuarios de cooperativa:', error);
+    document.getElementById('lista-usuarios-gerente').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar usuarios</h4>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
 }
-
+    
 async function showAvaluosMiCooperativa() {
   console.log('📊 Gerente viendo avalúos de su cooperativa...');
-  // Aquí filtraría solo avalúos de SU cooperativa_id  
+  
   showAllAppraisals();
 }
 
