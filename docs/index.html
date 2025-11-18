@@ -6297,9 +6297,9 @@ setInterval(() => {
     }
 }, 5000);
 
-
+// AGREGAR este script para manejar los tabs del panel admin
 document.addEventListener('DOMContentLoaded', function() {
-  
+  // Inicializar tabs del panel admin
   const adminModal = document.getElementById('admin-panel-modal');
   
   if (adminModal) {
@@ -6310,18 +6310,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const tabName = this.getAttribute('data-tab');
         console.log('🔍 Click en tab:', tabName);
         
-       
+        // Remover active de todos los tabs
         adminTabs.forEach(t => t.classList.remove('active'));
         
-        
+        // Remover active de todos los contenidos
         adminModal.querySelectorAll('.typology-tab-content').forEach(content => {
           content.classList.remove('active');
         });
         
-       
+        // Activar tab clickeado
         this.classList.add('active');
         
-       
+        // Activar contenido correspondiente
         const targetContent = adminModal.querySelector(`#tab-${tabName}`);
         if (targetContent) {
           targetContent.classList.add('active');
