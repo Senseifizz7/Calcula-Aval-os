@@ -4798,24 +4798,27 @@ async function updateAdminButton() {
     return;
   }
   
- 
   let userRole = 'asesor';
   let userCooperativaId = null;
   
   try {
-   
+    
     const { data: usuario, error } = await window.supabase
       .from('usuarios')
-      .select('rol, cooperativa_id')
+      .select('rol, cooperativa_id, activo')
       .eq('id', user.id)
       .single();
     
-    if (!error && usuario) {
+    if (error) {
+      console.warn('⚠️ Error consultando usuarios, usando metadata:', error);
+     
+      userRole = user?.user_metadata?.rol || 'asesor';
+      userCooperativaId = user?.user_metadata?.cooperativa_id;
+    } else if (usuario) {
       userRole = usuario.rol;
       userCooperativaId = usuario.cooperativa_id;
       console.log('✅ Rol desde tabla usuarios:', userRole);
     } else {
-     
       userRole = user?.user_metadata?.rol || 'asesor';
       userCooperativaId = user?.user_metadata?.cooperativa_id;
       console.log('✅ Rol desde metadata:', userRole);
@@ -4825,10 +4828,10 @@ async function updateAdminButton() {
     userRole = user?.user_metadata?.rol || 'asesor';
   }
   
+ 
   console.log('✅ Rol final detectado:', userRole);
   
   let adminBtn = document.getElementById('admin-panel-btn');
-  
   
   if (userRole === 'super_admin' || userRole === 'gerente') {
     if (!adminBtn) {
@@ -4839,7 +4842,6 @@ async function updateAdminButton() {
       adminBtn.title = 'Panel de Administración';
       adminBtn.innerHTML = '<i class="fas fa-cog"></i>';
       adminBtn.onclick = showAdminPanel;
-      
       
       adminBtn.style.cssText = `
         position: fixed !important;
@@ -4932,28 +4934,24 @@ async function cargarUsuarios() {
     const userCooperativaId = user?.user_metadata?.cooperativa_id;
 
     
-    const { data: usuarios, error } = await window.supabase
-      .from('usuarios')
-      .select('*')
-      .order('nombre', { ascending: true });
+    let query = window.supabase.from('usuarios').select('*');
     
-    if (error) throw error;
+    if (userRole === 'gerente') {
+      query = query.eq('cooperativa_id', userCooperativaId);
+    }
+    
+    const { data: usuarios, error } = await query.order('nombre', { ascending: true });
+    
+    if (error) {
+      console.error('❌ Error cargando usuarios:', error);
+      throw new Error(`Error de base de datos: ${error.message}`);
+    }
     
     console.log('✅ Usuarios cargados:', usuarios?.length);
     
-    
-    let usuariosFiltrados = usuarios || [];
-    
-    if (userRole === 'gerente') {
-      usuariosFiltrados = usuarios.filter(u => u.cooperativa_id === userCooperativaId);
-    } else if (userRole === 'asesor') {
-      usuariosFiltrados = usuarios.filter(u => u.id === user.id);
-    }
-    
-    
     let usuariosHTML = '';
     
-    if (usuariosFiltrados.length === 0) {
+    if (!usuarios || usuarios.length === 0) {
       usuariosHTML = `
         <div class="empty-state">
           <i class="fas fa-users"></i>
@@ -4962,7 +4960,7 @@ async function cargarUsuarios() {
         </div>
       `;
     } else {
-      usuariosHTML = usuariosFiltrados.map(usuario => `
+      usuariosHTML = usuarios.map(usuario => `
         <div class="appraisal-item">
           <div class="appraisal-header">
             <div class="appraisal-date">
@@ -4987,7 +4985,8 @@ async function cargarUsuarios() {
             <div><strong>Email:</strong> ${usuario.email}</div>
             <div><strong>Rol:</strong> ${usuario.rol || 'No asignado'}</div>
             <div><strong>Cooperativa:</strong> ${usuario.cooperativa_id || 'No asignada'}</div>
-            <div><strong>Estado:</strong> <span style="color: var(--success);">ACTIVO</span></div>
+            <div><strong>Estado:</strong> <span style="color: ${usuario.activo ? 'var(--success)' : 'var(--error)'};">${usuario.activo ? 'ACTIVO' : 'INACTIVO'}</span></div>
+            <div><strong>Creado:</strong> ${new Date(usuario.created_at).toLocaleDateString('es-GT')}</div>
           </div>
         </div>
       `).join('');
@@ -5002,8 +5001,8 @@ async function cargarUsuarios() {
         <i class="fas fa-exclamation-triangle"></i>
         <h4>Error al cargar usuarios</h4>
         <p>${error.message}</p>
-        <button class="btn-primary" onclick="desactivarRLS()" style="margin-top: 10px;">
-          <i class="fas fa-cog"></i> Solucionar Automáticamente
+        <button class="btn-secondary" onclick="cargarUsuarios()" style="margin-top: 10px;">
+          <i class="fas fa-refresh"></i> Reintentar
         </button>
       </div>
     `;
