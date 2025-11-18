@@ -5605,6 +5605,126 @@ async function cargarUsuariosGerente(cooperativaId) {
     }
   }
 } 
+
+    // AGREGAR esta función COMPLETA
+async function gestionarUsuariosGerente() {
+  console.log('👥 Gerente gestionando usuarios de su cooperativa...');
+  
+  try {
+    const user = window.__session?.user;
+    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+    
+    if (!userCooperativaId) {
+      alert('❌ No tiene cooperativa asignada');
+      return;
+    }
+
+    // Cerrar panel admin primero
+    closeModal('admin-panel-modal');
+    
+    // Crear modal específico para gerente
+    let usuariosModal = document.getElementById('gestion-usuarios-gerente-modal');
+    
+    if (!usuariosModal) {
+      usuariosModal = document.createElement('div');
+      usuariosModal.className = 'catalog-modal';
+      usuariosModal.id = 'gestion-usuarios-gerente-modal';
+      usuariosModal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3><i class="fas fa-users"></i> Usuarios de Mi Cooperativa</h3>
+            <button class="modal-close" onclick="closeModal('gestion-usuarios-gerente-modal')">&times;</button>
+          </div>
+          <div class="modal-body" style="padding: 20px;">
+            <div id="lista-usuarios-gerente">
+              <div class="loading-spinner"></div>
+              <p>Cargando usuarios de mi cooperativa...</p>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(usuariosModal);
+    }
+    
+    // Cargar SOLO usuarios de SU cooperativa
+    await cargarUsuariosGerente(userCooperativaId);
+    usuariosModal.classList.add('active');
+    
+  } catch (error) {
+    console.error('❌ Error gerente gestionando usuarios:', error);
+    alert('Error: ' + error.message);
+  }
+}
+
+// Y asegurarse que también tenga cargarUsuariosGerente
+async function cargarUsuariosGerente(cooperativaId) {
+  try {
+    console.log('🔄 Cargando usuarios de cooperativa:', cooperativaId);
+    
+    const { data: usuarios, error } = await window.supabase
+      .from('usuarios')
+      .select('*')
+      .eq('cooperativa_id', cooperativaId)
+      .order('nombre', { ascending: true });
+    
+    if (error) throw error;
+    
+    console.log('✅ Usuarios de cooperativa cargados:', usuarios?.length);
+    
+    let usuariosHTML = '';
+    
+    if (!usuarios || usuarios.length === 0) {
+      usuariosHTML = `
+        <div class="empty-state">
+          <i class="fas fa-users"></i>
+          <h4>No hay usuarios en tu cooperativa</h4>
+          <p>Invita asesores para que aparezcan aquí</p>
+          <button class="btn-primary" onclick="invitarAsesor()" style="margin-top: 10px;">
+            <i class="fas fa-user-plus"></i> Invitar Asesor
+          </button>
+        </div>
+      `;
+    } else {
+      usuariosHTML = usuarios.map(usuario => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-user"></i> ${usuario.nombre || usuario.email}
+              ${usuario.rol ? `<span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${usuario.rol === 'gerente' ? 'var(--primary)' : 'var(--secondary)'}; color: white;">${usuario.rol.toUpperCase()}</span>` : ''}
+            </div>
+            <div class="appraisal-actions">
+              <button class="btn-secondary btn-small" onclick="verDetallesUsuario('${usuario.id}')">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+              ${usuario.rol !== 'gerente' ? `
+                <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="eliminarUsuarioGerente('${usuario.id}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Email:</strong> ${usuario.email}</div>
+            <div><strong>Rol:</strong> ${usuario.rol || 'No asignado'}</div>
+            <div><strong>Estado:</strong> <span style="color: ${usuario.activo ? 'var(--success)' : 'var(--error)'};">${usuario.activo ? 'ACTIVO' : 'INACTIVO'}</span></div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    document.getElementById('lista-usuarios-gerente').innerHTML = usuariosHTML;
+    
+  } catch (error) {
+    console.error('❌ Error cargando usuarios de cooperativa:', error);
+    document.getElementById('lista-usuarios-gerente').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar usuarios</h4>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
+}
     
 async function showAvaluosMiCooperativa() {
   console.log('📊 Gerente viendo avalúos de su cooperativa...');
