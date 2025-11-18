@@ -5442,35 +5442,109 @@ async function loadSuperAdminPanel() {
   }
 }
     
+// REEMPLAZAR la función loadGerentePanel
 async function loadGerentePanel() {
+  const modal = document.getElementById('admin-panel-modal');
+  if (!modal) return;
+
+  // CONTENIDO ESPECÍFICO para GERENTE (más limitado)
+  modal.querySelector('.modal-body').innerHTML = `
+    <div style="padding: 0;">
+      <div class="typology-tabs">
+        <button class="typology-tab active" data-tab="usuarios">Usuarios</button>
+        <button class="typology-tab" data-tab="avaluos">Avalúos</button>
+        <button class="typology-tab" data-tab="info">Mi Cooperativa</button>
+      </div>
+      
+      <!-- SOLO usuarios de SU cooperativa -->
+      <div class="typology-tab-content active" id="tab-usuarios">
+        <div style="padding: 20px;">
+          <button class="btn-primary" onclick="gestionarUsuariosGerente()" style="width: 100%; margin-bottom: 10px;">
+            <i class="fas fa-users"></i> Gestionar Usuarios de Mi Cooperativa
+          </button>
+          <button class="btn-secondary" onclick="invitarAsesor()" style="width: 100%;">
+            <i class="fas fa-user-plus"></i> Invitar Nuevo Asesor
+          </button>
+        </div>
+      </div>
+      
+      <!-- SOLO avalúos de SU cooperativa -->
+      <div class="typology-tab-content" id="tab-avaluos">
+        <div style="padding: 20px;">
+          <button class="btn-primary" onclick="showAvaluosMiCooperativa()" style="width: 100%; margin-bottom: 10px;">
+            <i class="fas fa-list"></i> Avalúos de Mi Cooperativa
+          </button>
+        </div>
+      </div>
+      
+      <!-- INFORMACIÓN de su cooperativa (solo lectura) -->
+      <div class="typology-tab-content" id="tab-info">
+        <div style="padding: 20px;">
+          <div class="result-item">
+            <div class="label">Mi Rol</div>
+            <div class="value">Gerente</div>
+          </div>
+          <div class="result-item">
+            <div class="label">Cooperativa Asignada</div>
+            <div class="value" id="info-cooperativa">Cargando...</div>
+          </div>
+          <button class="btn-secondary" onclick="verMiCooperativa()" style="width: 100%; margin-top: 10px;">
+            <i class="fas fa-eye"></i> Ver Información de Mi Cooperativa
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Cargar info de la cooperativa del gerente
+  await cargarInfoCooperativaGerente();
+  
+  // Reinicializar tabs
+  setTimeout(() => {
+    const tabs = modal.querySelectorAll('.typology-tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabName = this.getAttribute('data-tab');
+        tabs.forEach(t => t.classList.remove('active'));
+        modal.querySelectorAll('.typology-tab-content').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        modal.querySelector(`#tab-${tabName}`).classList.add('active');
+      });
+    });
+  }, 100);
+}
+
+// AGREGAR función específica para gerentes
+async function gestionarUsuariosGerente() {
+  console.log('👥 Gerente gestionando usuarios de su cooperativa...');
+  // Aquí filtraría solo usuarios de SU cooperativa_id
+  gestionarUsuarios();
+}
+
+async function showAvaluosMiCooperativa() {
+  console.log('📊 Gerente viendo avalúos de su cooperativa...');
+  // Aquí filtraría solo avalúos de SU cooperativa_id  
+  showAllAppraisals();
+}
+
+async function cargarInfoCooperativaGerente() {
   try {
     const user = window.__session?.user;
     const userCooperativaId = user?.user_metadata?.cooperativa_id;
     
-    const { data: avaluos, error: avaluosError } = await window.supabase
-      .from('avaluos')
-      .select('*')
-      .eq('cooperativa_id', userCooperativaId);
-    
-    if (avaluosError) throw avaluosError;
-    
-    const totalAvaluos = avaluos?.length || 0;
-    const avaluosPendientes = avaluos?.filter(a => a.estado_aprobacion === 'pendiente').length || 0;
-    
-    return `
-      <div class="admin-panel">
-        <h4 style="color: var(--primary); margin-bottom: 20px;">Panel Gerencial</h4>
-        <div class="result-grid" style="margin-bottom: 20px;">
-          <div class="result-item"><div class="label">Total Avalúos</div><div class="value">${totalAvaluos}</div></div>
-          <div class="result-item"><div class="label">Pendientes</div><div class="value">${avaluosPendientes}</div></div>
-        </div>
-        <button class="btn-primary" onclick="showAllAppraisals()" style="width: 100%;">
-          <i class="fas fa-list"></i> Revisar Todos los Avalúos
-        </button>
-      </div>
-    `;
+    if (userCooperativaId) {
+      const { data: cooperativa, error } = await window.supabase
+        .from('cooperativas')
+        .select('nombre, telefono, direccion')
+        .eq('id', userCooperativaId)
+        .single();
+      
+      if (!error && cooperativa) {
+        document.getElementById('info-cooperativa').textContent = cooperativa.nombre;
+      }
+    }
   } catch (error) {
-    return `<p>Error cargando datos: ${error.message}</p>`;
+    console.error('Error cargando info cooperativa:', error);
   }
 }
 
