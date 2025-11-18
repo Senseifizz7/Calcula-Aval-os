@@ -5420,8 +5420,8 @@ async function loadGerentePanel() {
 async function eliminarCooperativa(coopId) {
     if (!confirm('¿ELIMINAR cooperativa? Esta acción no se puede deshacer.')) return;
 
-    try 
-        // Verificar si tiene usuarios
+    try {
+       
         const { data: usuarios, error: usersError } = await window.supabase
             .from('usuarios')
             .select('id')
