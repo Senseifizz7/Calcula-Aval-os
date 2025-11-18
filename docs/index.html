@@ -5380,16 +5380,11 @@ async function loadSuperAdminPanel() {
   }
 }
     
-
 async function loadGerentePanel() {
-  if (!window.supabase) {
-    return '<p>Error: Supabase no disponible</p>';
-  }
-  
-  const user = window.__session?.user;
-  const userCooperativaId = user?.user_metadata?.cooperativa_id;
-  
   try {
+    const user = window.__session?.user;
+    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+    
     const { data: avaluos, error: avaluosError } = await window.supabase
       .from('avaluos')
       .select('*')
@@ -5407,8 +5402,6 @@ async function loadGerentePanel() {
           <div class="result-item"><div class="label">Total Avalúos</div><div class="value">${totalAvaluos}</div></div>
           <div class="result-item"><div class="label">Pendientes</div><div class="value">${avaluosPendientes}</div></div>
         </div>
-       eturn `
-      <div class="admin-panel">
         <button class="btn-primary" onclick="showAllAppraisals()" style="width: 100%;">
           <i class="fas fa-list"></i> Revisar Todos los Avalúos
         </button>
