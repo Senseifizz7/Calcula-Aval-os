@@ -5946,128 +5946,50 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
   }
 }   
 
+ function initializeAdminSystem() {
+  if (adminSystemInitialized) return;
   
-function initAdminButton() {
-  console.log('🚀 INICIANDO BOTÓN ADMIN...');
+  initializationAttempts++;
+  console.log(`🔄 Intento ${initializationAttempts} de inicialización...`);
   
-  if (!window.supabase) {
-    console.log('⏳ Esperando Supabase...');
-  setTimeout(initAdminButton, 500);
-    return;
-}
+  const supabaseReady = window.supabase && window.supabase.auth;
+  const sessionReady = window.__session !== undefined;
   
-  const user = window.__session?.user;
-  if (!user) {
-    console.log('⏳ Esperando usuario...');
-    setTimeout(initAdminButton, 500);
-    return;
-  }
-  
-  console.log('✅ Condiciones listas, ejecutando updateAdminButton...');
-  updateAdminButton();
-}
-
-
-console.log('🔧 Iniciando sistema de botón admin...');
-
-
-initAdminButton();
-
-
-document.addEventListener('DOMContentLoaded', function() {
-  console.log('📄 DOM cargado, ejecutando admin button...');
-  initAdminButton();
-});
-
-
-setInterval(() => {
-  const adminBtn = document.getElementById('admin-panel-btn');
-  if (!adminBtn && window.__session?.user) {
-    console.log('🔄 Reintentando crear botón admin...');
-    updateAdminButton();
-  }
-}, 2000);
-
-
-window.addEventListener('load', function() {
-  console.log('🖼️ Página completamente cargada, ejecutando admin button...');
-  setTimeout(initAdminButton, 1000);
-});
-
-   
-document.addEventListener('DOMContentLoaded', function() {
-  const btn = document.getElementById('btn-gestion-usuarios');
-  if (btn) {
-    btn.addEventListener('click', gestionarUsuarios);
-    console.log('✅ Botón gestión usuarios configurado');
-  }
-});
-
-    
-setTimeout(() => {
-  console.log('🔧 Forzando inicialización del botón admin...');
-  console.log('📊 Estado actual:', {
-    supabase: !!window.supabase,
-    session: !!window.__session,
-    user: window.__session?.user,
-    userRole: window.__session?.user?.user_metadata?.rol
+  console.log('✅ Condiciones:', {
+    supabaseReady: !!supabaseReady,
+    sessionReady: sessionReady,
+    session: window.__session,
+    user: window.__session?.user
   });
   
-  
-  if (typeof updateAdminButton === 'function') {
-    updateAdminButton();
-  } else {
-    console.error('❌ updateAdminButton no está definida');
-  }
-}, 3000);
-
-
-setTimeout(() => {
-  console.log('🔄 Verificación final del botón admin...');
-  if (typeof updateAdminButton === 'function') {
-    updateAdminButton();
-  }
-}, 5000);
-
-let initializationAttempts = 0;
-const MAX_ATTEMPTS = 10;
-
-function initializeAdminSystem() {
-    if (adminSystemInitialized) return;
-    
-    initializationAttempts++;
-    console.log(`🔄 Intento ${initializationAttempts} de inicialización...`);
+  if (supabaseReady && sessionReady) {
+    console.log('🎉 Condiciones CUMPLIDAS, ejecutando updateAdminButton...');
+    adminSystemInitialized = true;
     
     
-    const supabaseReady = window.supabase && window.supabase.auth;
-    const sessionReady = window.__session !== undefined;
+    setTimeout(() => {
+      updateAdminButton().catch(error => {
+        console.warn('⚠️ Error en updateAdminButton:', error);
+      });
+    }, 1000);
     
-    console.log('✅ Condiciones:', {
-        supabaseReady: !!supabaseReady,
-        sessionReady: sessionReady,
-        session: window.__session,
-        user: window.__session?.user
+    window.supabase.auth.onAuthStateChange((event, session) => {
+      console.log('🔄 Cambio de estado auth:', event);
+      window.__session = session;
+      setTimeout(() => {
+        updateAdminButton().catch(error => {
+          console.warn('⚠️ Error en updateAdminButton después de auth change:', error);
+        });
+      }, 500);
     });
     
-    if (supabaseReady && sessionReady) {
-        console.log('🎉 Condiciones CUMPLIDAS, ejecutando updateAdminButton...');
-        adminSystemInitialized = true;
-        updateAdminButton();
-        
-       
-        window.supabase.auth.onAuthStateChange((event, session) => {
-            console.log('🔄 Cambio de estado auth:', event);
-            window.__session = session;
-            setTimeout(updateAdminButton, 500);
-        });
-        
-    } else if (initializationAttempts < MAX_ATTEMPTS) {
-        console.log('⏳ Condiciones no cumplidas, reintentando en 1s...');
-        setTimeout(initializeAdminSystem, 1000);
-    } else {
-        console.error('❌ No se pudo inicializar después de', MAX_ATTEMPTS, 'intentos');
-    }
-}
+  } else if (initializationAttempts < MAX_ATTEMPTS) {
+    console.log('⏳ Condiciones no cumplidas, reintentando en 1s...');
+    setTimeout(initializeAdminSystem, 1000);
+  } else {
+    console.warn('⚠️ No se pudo inicializar después de', MAX_ATTEMPTS, 'intentos');
+  }
+} 
 
 
 if (document.readyState === 'loading') {
