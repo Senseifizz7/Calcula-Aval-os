@@ -5583,6 +5583,27 @@ async function cargarUsuariosGerente(cooperativaId) {
     `;
   }
 }
+
+    async function eliminarUsuarioGerente(usuarioId) {
+  if (confirm('¿Eliminar este usuario de tu cooperativa?')) {
+    try {
+      const { error } = await window.supabase
+        .from('usuarios')
+        .update({ cooperativa_id: null, rol: 'asesor' })
+        .eq('id', usuarioId);
+      
+      if (error) throw error;
+      
+      alert('✅ Usuario removido de tu cooperativa');
+      // Recargar la lista
+      const user = window.__session?.user;
+      const userCooperativaId = user?.user_metadata?.cooperativa_id;
+      if (userCooperativaId) cargarUsuariosGerente(userCooperativaId);
+      
+    } catch (error) {
+      alert('Error eliminando usuario: ' + error.message);
+    }
+  }
     
 async function showAvaluosMiCooperativa() {
   console.log('📊 Gerente viendo avalúos de su cooperativa...');
