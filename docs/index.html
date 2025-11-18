@@ -5423,7 +5423,6 @@ async function eliminarCooperativa(coopId) {
     if (!confirm('¿ELIMINAR cooperativa? Esta acción no se puede deshacer.')) return;
 
     try {
-       
         const { data: usuarios, error: usersError } = await window.supabase
             .from('usuarios')
             .select('id')
