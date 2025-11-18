@@ -1591,6 +1591,57 @@
     </div>
   </div>
 
+  <div class="catalog-modal" id="admin-panel-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-cog"></i> Panel de Administración</h3>
+      <button class="modal-close" onclick="closeModal('admin-panel-modal')">&times;</button>
+    </div>
+    
+    <div class="modal-body" style="padding: 0;">
+      <div class="typology-tabs">
+        <button class="typology-tab active" data-tab="usuarios">Usuarios</button>
+        <button class="typology-tab" data-tab="cooperativas">Cooperativas</button>
+        <button class="typology-tab" data-tab="avaluos">Avalúos</button>
+      </div>
+      
+      <div class="typology-tab-content active" id="tab-usuarios">
+        <div style="padding: 20px;">
+          <button class="btn-primary" onclick="gestionarUsuarios()" style="width: 100%; margin-bottom: 10px;">
+            <i class="fas fa-users"></i> Gestionar Usuarios
+          </button>
+          <button class="btn-secondary" onclick="invitarAsesor()" style="width: 100%;">
+            <i class="fas fa-user-plus"></i> Invitar Nuevo Asesor
+          </button>
+        </div>
+      </div>
+      
+      <div class="typology-tab-content" id="tab-cooperativas">
+        <div style="padding: 20px;">
+          <button class="btn-primary" onclick="gestionarCooperativas()" style="width: 100%; margin-bottom: 10px;">
+            <i class="fas fa-building"></i> Gestionar Cooperativas
+          </button>
+          <button class="btn-secondary" onclick="crearCooperativa()" style="width: 100%;">
+            <i class="fas fa-plus-circle"></i> Crear Nueva Cooperativa
+          </button>
+        </div>
+      </div>
+      
+      <div class="typology-tab-content" id="tab-avaluos">
+        <div style="padding: 20px;">
+          <button class="btn-primary" onclick="showAllAppraisals()" style="width: 100%; margin-bottom: 10px;">
+            <i class="fas fa-list"></i> Ver Todos los Avalúos
+          </button>
+          <button class="btn-secondary" onclick="showMyAppraisals()" style="width: 100%;">
+            <i class="fas fa-user"></i> Mis Avalúos
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-spinner"></div>
     <div style="color: var(--primary); font-weight: 500;">Generando PDF...</div>
@@ -4782,7 +4833,7 @@ function verificarFuncionesAdmin() {
   
 let adminSystemInitialized = false;
 
-
+// REEMPLAZAR la función updateAdminButton con esta versión mejorada
 async function updateAdminButton() {
   console.log('🔄 Actualizando botón admin...');
   
@@ -4802,37 +4853,44 @@ async function updateAdminButton() {
   let userCooperativaId = null;
   
   try {
+    console.log('🔍 Consultando usuario en tabla...');
     
+    // CORRECCIÓN: Consulta más simple con mejor manejo de errores
     const { data: usuario, error } = await window.supabase
       .from('usuarios')
-      .select('rol, cooperativa_id, activo')
+      .select('rol, cooperativa_id')
       .eq('id', user.id)
-      .single();
+      .maybeSingle(); // Usar maybeSingle en lugar de single
     
     if (error) {
-      console.warn('⚠️ Error consultando usuarios, usando metadata:', error);
-     
+      console.warn('⚠️ Error 406 en consulta de usuario:', error);
+      console.log('🔄 Usando fallback a metadata...');
+      
+      // Fallback robusto a metadata
       userRole = user?.user_metadata?.rol || 'asesor';
       userCooperativaId = user?.user_metadata?.cooperativa_id;
+      
+      console.log('✅ Rol desde fallback:', userRole);
     } else if (usuario) {
-      userRole = usuario.rol;
+      userRole = usuario.rol || 'asesor';
       userCooperativaId = usuario.cooperativa_id;
       console.log('✅ Rol desde tabla usuarios:', userRole);
     } else {
+      // Usuario no encontrado en tabla
       userRole = user?.user_metadata?.rol || 'asesor';
       userCooperativaId = user?.user_metadata?.cooperativa_id;
-      console.log('✅ Rol desde metadata:', userRole);
+      console.log('✅ Usuario no en tabla, usando metadata:', userRole);
     }
   } catch (error) {
-    console.error('Error obteniendo rol:', error);
-    userRole = user?.user_metadata?.rol || 'asesor';
+    console.error('❌ Error crítico obteniendo rol:', error);
+    userRole = 'asesor'; // Default seguro
   }
   
- 
   console.log('✅ Rol final detectado:', userRole);
   
   let adminBtn = document.getElementById('admin-panel-btn');
   
+  // Mostrar botón solo para super_admin y gerente
   if (userRole === 'super_admin' || userRole === 'gerente') {
     if (!adminBtn) {
       console.log('🔄 Creando nuevo botón admin...');
@@ -4845,7 +4903,7 @@ async function updateAdminButton() {
       
       adminBtn.style.cssText = `
         position: fixed !important;
-        top: 180px !important;
+        top: 234px !important;
         right: 24px !important;
         width: 56px !important;
         height: 56px !important;
@@ -4863,66 +4921,73 @@ async function updateAdminButton() {
       `;
       
       floatingActions.appendChild(adminBtn);
-      console.log('✅ Botón de admin CREADO EXITOSAMENTE para rol:', userRole);
+      console.log('✅ Botón de admin CREADO para rol:', userRole);
     } else {
       adminBtn.style.display = 'flex';
-      console.log('✅ Botón de admin ya existe, mostrando');
+      console.log('✅ Botón de admin mostrado');
     }
   } else {
     if (adminBtn) {
       adminBtn.style.display = 'none';
-      console.log('❌ Botón de admin oculto (usuario es asesor)');
+      console.log('❌ Botón de admin oculto (rol:', userRole, ')');
     }
   }
 }
 
+// REEMPLAZAR solo la función showAdminPanel con esta versión que usa SU panel existente
 async function showAdminPanel() {
-  const user = window.__session?.user;
-  
-  let adminModal = document.getElementById('admin-panel-modal');
-  
-  if (!adminModal) {
-    adminModal = document.createElement('div');
-    adminModal.className = 'catalog-modal';
-    adminModal.id = 'admin-panel-modal';
-    adminModal.innerHTML = `
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3><i class="fas fa-cog"></i> Panel de Administración</h3>
-          <button class="modal-close" onclick="closeModal('admin-panel-modal')">&times;</button>
-        </div>
-        <div class="modal-body" style="padding: 20px;">
-          <div id="admin-panel-content">
-            <div class="loading-spinner"></div>
-            <p>Cargando panel de administración...</p>
-          </div>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(adminModal);
-  }
+  console.log('🔧 Abriendo panel de administración existente...');
   
   try {
-    let adminContent = '';
-    
-    if (userRole === 'super_admin') {
-      adminContent = await loadSuperAdminPanel();
-    } else if (userRole === 'gerente') {
-      adminContent = await loadGerentePanel();
+    const user = window.__session?.user;
+    if (!user) {
+      alert('❌ No hay usuario logueado');
+      return;
     }
+
+    // Obtener el rol del usuario
+    let userRole = 'asesor';
     
-    document.getElementById('admin-panel-content').innerHTML = adminContent;
-    adminModal.classList.add('active');
+    try {
+      const { data: usuario, error } = await window.supabase
+        .from('usuarios')
+        .select('rol, cooperativa_id')
+        .eq('id', user.id)
+        .maybeSingle();
+      
+      if (!error && usuario) {
+        userRole = usuario.rol || 'asesor';
+      } else {
+        userRole = user?.user_metadata?.rol || 'asesor';
+      }
+    } catch (error) {
+      userRole = user?.user_metadata?.rol || 'asesor';
+    }
+
+    console.log('🎯 Abriendo panel para rol:', userRole);
+
+    // USAR SU PANEL EXISTENTE en lugar de crear uno nuevo
+    const adminModal = document.getElementById('admin-panel-modal');
     
+    if (adminModal) {
+      // Cargar contenido según el rol
+      if (userRole === 'super_admin') {
+        await loadSuperAdminPanel(); // SU función existente
+      } else if (userRole === 'gerente') {
+        await loadGerentePanel(); // SU función existente  
+      } else {
+        alert('❌ No tiene permisos de administración. Rol: ' + userRole);
+        return;
+      }
+      
+      adminModal.classList.add('active');
+    } else {
+      alert('❌ Panel de administración no encontrado en el sistema');
+    }
+
   } catch (error) {
-    console.error('❌ Error cargando panel admin:', error);
-    document.getElementById('admin-panel-content').innerHTML = `
-      <div class="empty-state">
-        <i class="fas fa-exclamation-triangle"></i>
-        <h4>Error al cargar panel</h4>
-        <p>${error.message}</p>
-      </div>
-    `;
+    console.error('❌ Error en showAdminPanel:', error);
+    alert('Error al abrir panel: ' + error.message);
   }
 }
 
@@ -5093,7 +5158,7 @@ async function asignarCooperativa(usuarioId) {
   try {
     
     const { data: cooperativas, error } = await window.supabase
-      .from('cooperativa')
+      .from('cooperativas')
       .select('*')
       .eq('activo', true);
     
@@ -5409,39 +5474,11 @@ async function loadGerentePanel() {
   }
 }
 
-async function eliminarCooperativa(coopId) {
-    if (!confirm('¿ELIMINAR cooperativa? Esta acción no se puede deshacer.')) return;
-
-    try {
-        const { data: usuarios, error: usersError } = await window.supabase
-            .from('usuarios')
-            .select('id')
-            .eq('cooperativa_id', coopId);
-
-        if (usersError) throw usersError;
-        if (usuarios?.length > 0) {
-            alert('❌ No se puede eliminar: Tiene usuarios asignados');
-            return;
-        }
-
-        const { error } = await window.supabase
-            .from('cooperativa')
-            .delete()
-            .eq('id', coopId);
-
-        if (error) throw error;
-        
-        alert('✅ Cooperativa eliminada');
-        gestionarCooperativas();
-    } catch (error) {
-        alert('Error eliminando: ' + error.message);
-    }
-}
     
 async function editarCooperativa(coopId) {
     try {
         const { data: cooperativa, error } = await window.supabase
-            .from('cooperativa')
+            .from('cooperativas')
             .select('*')
             .eq('id', coopId)
             .single();
@@ -5452,7 +5489,7 @@ async function editarCooperativa(coopId) {
         if (!nuevoNombre?.trim()) return;
 
         const { error: updateError } = await window.supabase
-            .from('cooperativa')
+            .from('cooperativas')
             .update({
                 nombre: nuevoNombre.trim(),
                 telefono: prompt('Nuevo teléfono:', cooperativa.telefono) || null,
@@ -5479,7 +5516,7 @@ async function eliminarCooperativa(coopId) {
         const { data: usuarios, error: usersError } = await window.supabase
             .from('usuarios')
             .select('id')
-            .eq('cooperativa_id', coopId);
+            .eq('cooperativas_id', coopId);
 
         if (usersError) throw usersError;
         if (usuarios?.length > 0) {
@@ -5488,7 +5525,7 @@ async function eliminarCooperativa(coopId) {
         }
 
         const { error } = await window.supabase
-            .from('cooperativa')
+            .from('cooperativas')
             .delete()
             .eq('id', coopId);
 
@@ -5586,7 +5623,7 @@ try {
   console.log('🔄 Guardando nueva cooperativa:', { nombre, telefono, direccion, activo });
   
   const { data, error } = await window.supabase
-    .from('cooperativa')
+    .from('cooperativas')
     .insert([
       {
         nombre: nombre,
@@ -5660,6 +5697,85 @@ if (document.readyState === 'loading') {
 }
 }
 
+async function cargarCooperativas() {
+  try {
+    console.log('🔄 Cargando cooperativas...');
+    
+    // CAMBIAR 'cooperativa' por 'cooperativas'
+    const { data: cooperativas, error } = await window.supabase
+      .from('cooperativas')  // ← AQUÍ CAMBIAR
+      .select('id, nombre, telefono, direccion, creado_en, activo, actualizado_en')
+      .eq('activo', true)
+      .order('nombre', { ascending: true });
+    
+    if (error) {
+      console.error('❌ Error:', error);
+      throw new Error(`Error cargando cooperativas: ${error.message}`);
+    }
+    
+    console.log('✅ Cooperativas cargadas:', cooperativas?.length);
+    
+    // ... el resto del código igual
+    let cooperativasHTML = '';
+    
+    if (!cooperativas || cooperativas.length === 0) {
+      cooperativasHTML = `
+        <div class="empty-state">
+          <i class="fas fa-building"></i>
+          <h4>No hay cooperativas registradas</h4>
+          <p>Crea la primera cooperativa para empezar</p>
+          <button class="btn-primary" onclick="crearCooperativa()" style="margin-top: 10px;">
+            <i class="fas fa-plus"></i> Crear Primera Cooperativa
+          </button>
+        </div>
+      `;
+    } else {
+      cooperativasHTML = cooperativas.map(coop => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-building"></i> ${coop.nombre}
+              <span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${coop.activo ? 'var(--success)' : 'var(--error)'}; color: white;">
+                ${coop.activo ? 'ACTIVA' : 'INACTIVA'}
+              </span>
+            </div>
+            <div class="appraisal-actions">
+              <button class="btn-secondary btn-small" onclick="editarCooperativa('${coop.id}')">
+                <i class="fas fa-edit"></i> Editar
+              </button>
+              <button class="btn-primary btn-small" onclick="asignarGerente('${coop.id}', '${coop.nombre}')">
+                <i class="fas fa-user-tie"></i> Gerente
+              </button>
+              <button class="btn-small" style="background: var(--error); color: white; border: none;" onclick="eliminarCooperativa('${coop.id}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Teléfono:</strong> ${coop.telefono || 'No especificado'}</div>
+            <div><strong>Dirección:</strong> ${coop.direccion || 'No especificada'}</div>
+            <div><strong>Creada:</strong> ${new Date(coop.creado_en).toLocaleDateString('es-GT')}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    document.getElementById('cooperativas-list').innerHTML = cooperativasHTML;
+    
+  } catch (error) {
+    console.error('❌ Error cargando cooperativas:', error);
+    document.getElementById('cooperativas-list').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar cooperativas</h4>
+        <p>${error.message}</p>
+        <button class="btn-secondary" onclick="cargarCooperativas()" style="margin-top: 10px;">
+          <i class="fas fa-refresh"></i> Reintentar
+        </button>
+      </div>
+    `;
+  }
+}
 
 async function gestionarCooperativas() {
   console.log('🔄 Cargando gestión de cooperativas...');
@@ -5700,7 +5816,7 @@ async function gestionarCooperativas() {
   try {
     
     const { data: cooperativas, error } = await window.supabase
-      .from('cooperativa')
+      .from('cooperativas')
       .select('*')
       .order('nombre', { ascending: true });
     
@@ -5946,7 +6062,6 @@ async function seleccionarUsuarioExistente(usuarioId, usuarioEmail, usuarioNombr
   }
 }  
 
-let adminSystemInitialized = false;
 let initializationAttempts = 0;
 const MAX_ATTEMPTS = 10;
 
@@ -6022,6 +6137,73 @@ setInterval(() => {
         initializeAdminSystem();
     }
 }, 5000);
+
+// AGREGAR este script para manejar los tabs del panel admin
+document.addEventListener('DOMContentLoaded', function() {
+  // Inicializar tabs del panel admin
+  const adminModal = document.getElementById('admin-panel-modal');
+  
+  if (adminModal) {
+    const adminTabs = adminModal.querySelectorAll('.typology-tab');
+    
+    adminTabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabName = this.getAttribute('data-tab');
+        console.log('🔍 Click en tab:', tabName);
+        
+        // Remover active de todos los tabs
+        adminTabs.forEach(t => t.classList.remove('active'));
+        
+        // Remover active de todos los contenidos
+        adminModal.querySelectorAll('.typology-tab-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        
+        // Activar tab clickeado
+        this.classList.add('active');
+        
+        // Activar contenido correspondiente
+        const targetContent = adminModal.querySelector(`#tab-${tabName}`);
+        if (targetContent) {
+          targetContent.classList.add('active');
+          console.log('✅ Tab activado:', tabName);
+        } else {
+          console.error('❌ Contenido no encontrado:', `tab-${tabName}`);
+        }
+      });
+    });
+    
+    console.log('✅ Tabs del panel admin inicializados');
+  } else {
+    console.log('⏳ Panel admin no encontrado, reintentando...');
+    setTimeout(arguments.callee, 500);
+  }
+});
+
+// Y AGREGAR también este fallback por si el DOM no está listo
+setTimeout(function() {
+  const adminTabs = document.querySelectorAll('#admin-panel-modal .typology-tab');
+  if (adminTabs.length > 0) {
+    console.log('🔄 Inicializando tabs con timeout...');
+    adminTabs.forEach(tab => {
+      if (!tab.hasAttribute('data-listener-added')) {
+        tab.setAttribute('data-listener-added', 'true');
+        tab.addEventListener('click', function() {
+          const tabName = this.getAttribute('data-tab');
+          console.log('🔍 Click en tab (fallback):', tabName);
+          
+          // Mismo código de arriba para cambiar tabs
+          document.querySelectorAll('#admin-panel-modal .typology-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('#admin-panel-modal .typology-tab-content').forEach(c => c.classList.remove('active'));
+          
+          this.classList.add('active');
+          const target = document.getElementById(`tab-${tabName}`);
+          if (target) target.classList.add('active');
+        });
+      }
+    });
+  }
+}, 1000);
   </script>
 </body>
 </html>
