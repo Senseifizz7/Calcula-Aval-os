@@ -5121,7 +5121,7 @@ async function eliminarUsuario(usuarioId) {
   }
 }
 
-// REEMPLAZAR su función invitarAsesor existente con ESTA:
+
 async function invitarAsesor() {
   try {
     const user = window.__session?.user;
@@ -5176,6 +5176,51 @@ async function invitarAsesor() {
   } catch (error) {
     console.error('❌ Error invitando asesor:', error);
     alert('Error al invitar asesor: ' + error.message);
+  }
+}
+
+    
+async function asignarGerenteSimple(coopId, coopNombre) {
+  try {
+    console.log(`🔄 Asignando gerente a: ${coopNombre}`);
+    
+    const email = prompt(`ASIGNAR GERENTE EXISTENTE:\n\nCooperativa: ${coopNombre}\n\nIngresa el email del usuario EXISTENTE:`);
+    if (!email) return;
+
+    
+    const { data: usuario, error: searchError } = await window.supabase
+      .from('usuarios')
+      .select('*')
+      .eq('email', email)
+      .single();
+
+    if (searchError || !usuario) {
+      alert(`❌ Usuario no encontrado: ${email}\n\nEl usuario debe estar registrado primero.`);
+      return;
+    }
+
+    console.log('✅ Usuario encontrado:', usuario);
+
+    
+    const { error: updateError } = await window.supabase
+      .from('usuarios')
+      .update({
+        rol: 'gerente',
+        cooperativa_id: coopId,
+        actualizado_en: new Date().toISOString()
+      })
+      .eq('id', usuario.id);
+
+    if (updateError) {
+      console.error('❌ Error actualizando usuario:', updateError);
+      throw updateError;
+    }
+
+    alert(`✅ GERENTE ASIGNADO:\n\n${usuario.nombre}\n${usuario.email}\n\nAhora es gerente de: ${coopNombre}\n\n🔔 El usuario debe CERRAR SESIÓN y VOLVER A INICIAR para ver los cambios.`);
+
+  } catch (error) {
+    console.error('❌ Error en asignarGerenteSimple:', error);
+    alert('❌ Error al asignar gerente: ' + error.message);
   }
 }
 
