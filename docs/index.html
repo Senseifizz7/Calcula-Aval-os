@@ -5883,17 +5883,103 @@ async function cargarUsuariosGerente(cooperativaId) {
   }
 }
 
+
 async function showAvaluosMiCooperativa() {
-  console.log('📊 Gerente viendo avalúos de su cooperativa...');
+  console.log('🎯 EJECUTANDO: showAvaluosMiCooperativa');
   
   try {
     const user = window.__session?.user;
-    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+    console.log('🔍 Usuario ID:', user?.id);
     
-    if (!userCooperativaId) {
-      alert('❌ No tiene cooperativa asignada');
+    if (!user) {
+      alert('❌ No hay usuario logueado');
       return;
     }
+
+    
+    console.log('🔍 Consultando tabla usuarios...');
+    const { data: usuario, error: userError } = await window.supabase
+      .from('usuarios')
+      .select('id, nombre, cooperativa_id')
+      .eq('id', user.id)
+      .single();
+
+    console.log('📊 Resultado usuario:', usuario);
+    console.log('❌ Error usuario:', userError);
+
+    if (userError) {
+      alert('Error BD: ' + userError.message);
+      return;
+    }
+
+    if (!usuario) {
+      alert('❌ Usuario no existe en BD');
+      return;
+    }
+
+    const userCooperativaId = usuario.cooperativa_id;
+    console.log('🏢 Cooperativa ID:', userCooperativaId);
+
+    if (!userCooperativaId) {
+      alert(`❌ NO TIENE COOPERATIVA ASIGNADA\n\nUsuario: ${usuario.nombre}\nID: ${usuario.id}\n\nContacte al administrador.`);
+      return;
+    }
+
+   
+    console.log('🔍 Verificando cooperativa...');
+    const { data: cooperativa, error: coopError } = await window.supabase
+      .from('cooperativas')
+      .select('nombre')
+      .eq('id', userCooperativaId)
+      .single();
+
+    console.log('📊 Resultado cooperativa:', cooperativa);
+    console.log('❌ Error cooperativa:', coopError);
+
+    if (coopError || !cooperativa) {
+      alert('❌ Cooperativa no existe: ' + userCooperativaId);
+      return;
+    }
+
+    
+    console.log('✅ TODO CORRECTO - Cargando avalúos...');
+    
+    
+    closeModal('admin-panel-modal');
+    
+    
+    let avaluosModal = document.getElementById('avaluos-cooperativa-modal');
+    
+    if (!avaluosModal) {
+      avaluosModal = document.createElement('div');
+      avaluosModal.className = 'catalog-modal';
+      avaluosModal.id = 'avaluos-cooperativa-modal';
+      avaluosModal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3><i class="fas fa-list"></i> Avalúos de: ${cooperativa.nombre}</h3>
+            <button class="modal-close" onclick="closeModal('avaluos-cooperativa-modal')">&times;</button>
+          </div>
+          <div class="modal-body" style="padding: 20px;">
+            <div id="lista-avaluos-cooperativa">
+              <div class="loading-spinner"></div>
+              <p>Cargando avalúos de ${cooperativa.nombre}...</p>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(avaluosModal);
+    }
+    
+    
+    await cargarAvaluosCooperativa(userCooperativaId);
+    avaluosModal.classList.add('active');
+
+  } catch (error) {
+    console.error('💥 ERROR CRÍTICO:', error);
+    alert('Error crítico: ' + error.message);
+  }
+}
 
     
     closeModal('admin-panel-modal');
