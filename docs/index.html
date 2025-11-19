@@ -5937,12 +5937,136 @@ async function cargarUsuariosGerente(cooperativaId) {
     `;
   }
 }
-    
+
 async function showAvaluosMiCooperativa() {
   console.log('📊 Gerente viendo avalúos de su cooperativa...');
   
-  showAllAppraisals();
+  try {
+    const user = window.__session?.user;
+    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+    
+    if (!userCooperativaId) {
+      alert('❌ No tiene cooperativa asignada');
+      return;
+    }
+
+    
+    closeModal('admin-panel-modal');
+    
+    
+    let avaluosModal = document.getElementById('avaluos-cooperativa-modal');
+    
+    if (!avaluosModal) {
+      avaluosModal = document.createElement('div');
+      avaluosModal.className = 'catalog-modal';
+      avaluosModal.id = 'avaluos-cooperativa-modal';
+      avaluosModal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3><i class="fas fa-list"></i> Avalúos de Mi Cooperativa</h3>
+            <button class="modal-close" onclick="closeModal('avaluos-cooperativa-modal')">&times;</button>
+          </div>
+          <div class="modal-body" style="padding: 20px;">
+            <div id="lista-avaluos-cooperativa">
+              <div class="loading-spinner"></div>
+              <p>Cargando avalúos de mi cooperativa...</p>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(avaluosModal);
+    }
+    
+   
+    await cargarAvaluosCooperativa(userCooperativaId);
+    avaluosModal.classList.add('active');
+    
+  } catch (error) {
+    console.error('❌ Error cargando avalúos de cooperativa:', error);
+    alert('Error: ' + error.message);
+  }
 }
+
+
+async function cargarAvaluosCooperativa(cooperativaId) {
+  try {
+    console.log('🔄 Cargando avalúos de cooperativa:', cooperativaId);
+    
+   
+    const { data: avaluos, error } = await window.supabase
+      .from('avaluos')
+      .select(`
+        *,
+        usuarios:usuario_id(nombre, email, cooperativa_id)
+      `)
+      .eq('usuarios.cooperativa_id', cooperativaId)
+      .order('fecha_creacion', { ascending: false });
+    
+    if (error) throw error;
+    
+    console.log('✅ Avalúos de cooperativa cargados:', avaluos?.length);
+    
+    let avaluosHTML = '';
+    
+    if (!avaluos || avaluos.length === 0) {
+      avaluosHTML = `
+        <div class="empty-state">
+          <i class="fas fa-file-contract"></i>
+          <h4>No hay avalúos en tu cooperativa</h4>
+          <p>Los avalúos de tus asesores aparecerán aquí</p>
+        </div>
+      `;
+    } else {
+      avaluosHTML = avaluos.map(avaluo => `
+        <div class="appraisal-item">
+          <div class="appraisal-header">
+            <div class="appraisal-date">
+              <i class="fas fa-calendar"></i> ${avaluo.fecha_formateada || new Date(avaluo.fecha_creacion).toLocaleDateString('es-GT')}
+              ${avaluo.estado_aprobacion ? `<span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${avaluo.estado_aprobacion === 'aprobado' ? 'var(--success)' : avaluo.estado_aprobacion === 'rechazado' ? 'var(--error)' : 'var(--warning)'}; color: white;">${avaluo.estado_aprobacion.toUpperCase()}</span>` : ''}
+            </div>
+            <div class="appraisal-actions">
+              <button class="btn-secondary btn-small" onclick="verAvaluo('${avaluo.id}')">
+                <i class="fas fa-eye"></i> Ver
+              </button>
+              <button class="btn-primary btn-small" onclick="aprobarAvaluo('${avaluo.id}')">
+                <i class="fas fa-check"></i> Aprobar
+              </button>
+            </div>
+          </div>
+          <div class="appraisal-details">
+            <div><strong>Asociado:</strong> ${avaluo.associate_name || 'No especificado'}</div>
+            <div><strong>Dirección:</strong> ${avaluo.address || 'No especificado'}</div>
+            <div><strong>Valor Total:</strong> ${avaluo.total_value || 'Q0.00'}</div>
+            <div><strong>Asesor:</strong> ${avaluo.usuarios?.nombre || avaluo.usuario_nombre || 'Anónimo'}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    document.getElementById('lista-avaluos-cooperativa').innerHTML = avaluosHTML;
+    
+  } catch (error) {
+    console.error('❌ Error cargando avalúos de cooperativa:', error);
+    document.getElementById('lista-avaluos-cooperativa').innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h4>Error al cargar avalúos</h4>
+        <p>${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+
+async function verAvaluo(avaluoId) {
+  alert(`🔍 Ver avalúo: ${avaluoId}`);
+}
+
+async function aprobarAvaluo(avaluoId) {
+  if (confirm('¿Aprobar este avalúo?')) {
+    alert(`✅ Avalúo aprobado: ${avaluoId}`);
+  }
+}    
 
 async function cargarInfoCooperativaGerente() {
   try {
