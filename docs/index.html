@@ -5974,7 +5974,7 @@ async function eliminarCooperativa(coopId) {
         const { data: usuarios, error: usersError } = await window.supabase
             .from('usuarios')
             .select('id')
-            .eq('cooperativas_id', coopId);
+            .eq('cooperativa_id', coopId);
 
         if (usersError) throw usersError;
         if (usuarios?.length > 0) {
