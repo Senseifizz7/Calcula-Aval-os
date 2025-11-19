@@ -5256,6 +5256,63 @@ async function asignarGerenteSimple(coopId, coopNombre) {
   }
 }
 
+   
+async function verMiCooperativa() {
+  try {
+    const user = window.__session?.user;
+    
+    
+    let userCooperativaId = null;
+    const { data: usuario, error } = await window.supabase
+      .from('usuarios')
+      .select('cooperativa_id')
+      .eq('id', user.id)
+      .single();
+    
+    if (!error && usuario) {
+      userCooperativaId = usuario.cooperativa_id;
+    } else {
+      userCooperativaId = user?.user_metadata?.cooperativa_id;
+    }
+    
+    if (!userCooperativaId) {
+      alert('❌ No tiene cooperativa asignada');
+      return;
+    }
+
+    
+    const { data: cooperativa, error: coopError } = await window.supabase
+      .from('cooperativas')
+      .select('*')
+      .eq('id', userCooperativaId)
+      .single();
+    
+    if (coopError) throw coopError;
+    
+    if (!cooperativa) {
+      alert('❌ Cooperativa no encontrada');
+      return;
+    }
+
+    
+    const info = `
+🏢 INFORMACIÓN DE MI COOPERATIVA:
+
+📋 Nombre: ${cooperativa.nombre}
+📞 Teléfono: ${cooperativa.telefono || 'No especificado'}
+📍 Dirección: ${cooperativa.direccion || 'No especificada'}
+📅 Creada: ${new Date(cooperativa.creado_en).toLocaleDateString('es-GT')}
+✅ Estado: ${cooperativa.activo ? 'ACTIVA' : 'INACTIVA'}
+    `;
+    
+    alert(info);
+    
+  } catch (error) {
+    console.error('❌ Error viendo cooperativa:', error);
+    alert('Error al cargar información de la cooperativa: ' + error.message);
+  }
+}
+
 async function asignarCooperativa(usuarioId) {
   try {
     
