@@ -5708,23 +5708,40 @@ async function cargarUsuariosGerente(cooperativaId) {
   }
 } 
 
-    // AGREGAR esta función COMPLETA
 async function gestionarUsuariosGerente() {
   console.log('👥 Gerente gestionando usuarios de su cooperativa...');
   
   try {
     const user = window.__session?.user;
-    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+    
+    
+    let userCooperativaId = null;
+    
+   
+    const { data: usuario, error } = await window.supabase
+      .from('usuarios')
+      .select('cooperativa_id')
+      .eq('id', user.id)
+      .single();
+    
+    if (!error && usuario) {
+      userCooperativaId = usuario.cooperativa_id;
+      console.log('✅ Cooperativa desde tabla:', userCooperativaId);
+    } else {
+      // 2. Fallback a metadata
+      userCooperativaId = user?.user_metadata?.cooperativa_id;
+      console.log('✅ Cooperativa desde metadata:', userCooperativaId);
+    }
     
     if (!userCooperativaId) {
-      alert('❌ No tiene cooperativa asignada');
+      alert('❌ No tiene cooperativa asignada\n\nContacte al administrador para que le asigne una cooperativa.');
       return;
     }
 
-    // Cerrar panel admin primero
+   
     closeModal('admin-panel-modal');
     
-    // Crear modal específico para gerente
+    
     let usuariosModal = document.getElementById('gestion-usuarios-gerente-modal');
     
     if (!usuariosModal) {
@@ -5738,6 +5755,9 @@ async function gestionarUsuariosGerente() {
             <button class="modal-close" onclick="closeModal('gestion-usuarios-gerente-modal')">&times;</button>
           </div>
           <div class="modal-body" style="padding: 20px;">
+            <div style="margin-bottom: 15px; padding: 10px; background: var(--bg-hover); border-radius: var(--radius);">
+              <strong>Cooperativa:</strong> <span id="cooperativa-actual">Cargando...</span>
+            </div>
             <div id="lista-usuarios-gerente">
               <div class="loading-spinner"></div>
               <p>Cargando usuarios de mi cooperativa...</p>
@@ -5748,7 +5768,7 @@ async function gestionarUsuariosGerente() {
       document.body.appendChild(usuariosModal);
     }
     
-    // Cargar SOLO usuarios de SU cooperativa
+   
     await cargarUsuariosGerente(userCooperativaId);
     usuariosModal.classList.add('active');
     
