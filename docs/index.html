@@ -6034,27 +6034,61 @@ async function aprobarAvaluo(avaluoId) {
   }
 }    
 
+
 async function cargarInfoCooperativaGerente() {
   try {
     const user = window.__session?.user;
-    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+    console.log('🔍 Cargando info cooperativa para usuario:', user?.id);
     
-    if (userCooperativaId) {
-      const { data: cooperativa, error } = await window.supabase
-        .from('cooperativas')
-        .select('nombre, telefono, direccion')
-        .eq('id', userCooperativaId)
-        .single();
-      
-      if (!error && cooperativa) {
-        document.getElementById('info-cooperativa').textContent = cooperativa.nombre;
-      }
+    if (!user) {
+      document.getElementById('info-cooperativa').textContent = 'Usuario no logueado';
+      return;
     }
+
+   
+    const { data: usuario, error } = await window.supabase
+      .from('usuarios')
+      .select('cooperativa_id')
+      .eq('id', user.id)
+      .single();
+    
+    console.log('🔍 Resultado consulta usuario:', { usuario, error });
+
+    if (error) {
+      console.error('❌ Error obteniendo usuario:', error);
+      document.getElementById('info-cooperativa').textContent = 'Error cargando datos';
+      return;
+    }
+
+    if (!usuario || !usuario.cooperativa_id) {
+      document.getElementById('info-cooperativa').textContent = 'No asignada';
+      return;
+    }
+
+    console.log('🔍 cooperativa_id encontrado:', usuario.cooperativa_id);
+
+    
+    const { data: cooperativa, error: coopError } = await window.supabase
+      .from('cooperativas')
+      .select('nombre')
+      .eq('id', usuario.cooperativa_id)
+      .single();
+    
+    console.log('🔍 Resultado cooperativa:', { cooperativa, error: coopError });
+
+    if (coopError || !cooperativa) {
+      document.getElementById('info-cooperativa').textContent = 'Cooperativa no encontrada';
+      return;
+    }
+
+    console.log('✅ Cooperativa cargada:', cooperativa.nombre);
+    document.getElementById('info-cooperativa').textContent = cooperativa.nombre;
+    
   } catch (error) {
-    console.error('Error cargando info cooperativa:', error);
+    console.error('❌ Error cargando info cooperativa:', error);
+    document.getElementById('info-cooperativa').textContent = 'Error al cargar';
   }
 }
-
     
 async function editarCooperativa(coopId) {
     try {
