@@ -5102,54 +5102,87 @@ async function cambiarRolUsuario(usuarioId, rolActual) {
 }
 
 async function eliminarUsuario(usuarioId) {
-  if (!confirm('¿Está seguro de eliminar este usuario PERMANENTEMENTE?\n\nEsta acción no se puede deshacer.')) {
+  if (!confirm('¿Está seguro de eliminar este usuario PERMANENTEMENTE?\n\n⚠️ Esta acción no se puede deshacer.')) {
     return;
   }
 
   try {
     console.log('🗑️ Eliminando usuario:', usuarioId);
 
+   
+    const currentUser = window.__session?.user;
+    if (currentUser && currentUser.id === usuarioId) {
+      alert('❌ No puede eliminarse a sí mismo');
+      return;
+    }
+
     
     const { data: avaluos, error: avaluosError } = await window.supabase
       .from('avaluos')
-      .select('id')
+      .select('id, associate_name')
       .eq('usuario_id', usuarioId)
-      .limit(1);
+      .limit(5);
 
     if (avaluosError) {
       console.error('Error verificando avalúos:', avaluosError);
     }
 
     if (avaluos && avaluos.length > 0) {
-      alert('❌ No se puede eliminar: Este usuario tiene avalúos registrados.\n\nPrimero elimine o transfiera sus avalúos.');
+      const avaluosList = avaluos.map(a => `• ${a.associate_name || 'Avalúo ' + a.id}`).join('\n');
+      alert(`❌ No se puede eliminar: Este usuario tiene ${avaluos.length} avalúo(s) registrado(s):\n\n${avaluosList}\n\nPrimero elimine o transfiera sus avalúos.`);
       return;
     }
 
-   
+    
+    console.log('🔍 Ejecutando DELETE...');
     const { error: deleteError } = await window.supabase
       .from('usuarios')
       .delete()
       .eq('id', usuarioId);
 
     if (deleteError) {
-      console.error('❌ Error eliminando usuario:', deleteError);
-      
-      if (deleteError.code === '23503') {
-        alert('❌ No se puede eliminar: El usuario tiene datos relacionados.\n\nElimine primero sus avalúos u otros registros asociados.');
-      } else {
-        throw deleteError;
-      }
+      console.error('❌ Error DELETE:', deleteError);
+      alert(`❌ Error al eliminar: ${deleteError.message}\n\nCódigo: ${deleteError.code}`);
       return;
     }
 
-    console.log('✅ Usuario eliminado exitosamente');
+    console.log('✅ Usuario eliminado en base de datos');
+    
+    
     alert('✅ Usuario eliminado exitosamente');
     
+   
+    const user = window.__session?.user;
+    const userRole = user?.user_metadata?.rol;
+    const userCooperativaId = user?.user_metadata?.cooperativa_id;
+
     
-    await cargarUsuarios();
+    const userElement = document.querySelector(`[onclick*="${usuarioId}"]`)?.closest('.appraisal-item');
+    if (userElement) {
+      userElement.remove();
+      console.log('✅ Elemento removido del DOM');
+    }
+
+    
+    if (document.getElementById('gestion-usuarios-gerente-modal')?.classList.contains('active')) {
+      console.log('🔄 Recargando lista de gerente...');
+      if (userCooperativaId) await cargarUsuariosGerente(userCooperativaId);
+    } else if (document.getElementById('lista-usuarios')) {
+      console.log('🔄 Recargando lista general...');
+      await cargarUsuarios();
+    } else {
+      console.log('🔄 Recargando página...');
+      setTimeout(() => {
+        if (userRole === 'gerente') {
+          gestionarUsuariosGerente();
+        } else {
+          gestionarUsuarios();
+        }
+      }, 500);
+    }
 
   } catch (error) {
-    console.error('❌ Error completo eliminando usuario:', error);
+    console.error('❌ Error crítico:', error);
     alert('Error eliminando usuario: ' + error.message);
   }
 }
@@ -5160,7 +5193,7 @@ async function invitarAsesor() {
     const userRole = user?.user_metadata?.rol;
     const userCooperativaId = user?.user_metadata?.cooperativa_id;
 
-    // Si es GERENTE, usar SU cooperativa_id
+   
     const cooperativaId = userRole === 'gerente' ? userCooperativaId : null;
 
     if (userRole === 'gerente' && !cooperativaId) {
@@ -5182,7 +5215,7 @@ async function invitarAsesor() {
         email: email,
         nombre: nombre,
         rol: 'asesor',
-        cooperativa_id: cooperativaId,  // Para gerente: su cooperativa, para super_admin: null
+        cooperativa_id: cooperativaId, 
         activo: true,
         creado_por: user.id,
         creado_en: new Date().toISOString()
@@ -5200,7 +5233,7 @@ async function invitarAsesor() {
 
     alert(`✅ Asesor invitado exitosamente:\n\nNombre: ${nombre}\nEmail: ${email}`);
 
-    // Recargar lista si está en modal de gerente
+    
     if (userRole === 'gerente' && document.getElementById('gestion-usuarios-gerente-modal')?.classList.contains('active')) {
       await cargarUsuariosGerente(userCooperativaId);
     }
