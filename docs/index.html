@@ -5102,88 +5102,30 @@ async function cambiarRolUsuario(usuarioId, rolActual) {
 }
 
 async function eliminarUsuario(usuarioId) {
-  if (!confirm('¿Está seguro de eliminar este usuario PERMANENTEMENTE?\n\n⚠️ Esta acción no se puede deshacer.')) {
+  if (!confirm('¿ELIMINAR USUARIO DEFINITIVAMENTE?\n\n🚨 ESTA ACCIÓN NO SE PUEDE DESHACER')) {
     return;
   }
 
   try {
-    console.log('🗑️ Eliminando usuario:', usuarioId);
-
-   
-    const currentUser = window.__session?.user;
-    if (currentUser && currentUser.id === usuarioId) {
-      alert('❌ No puede eliminarse a sí mismo');
-      return;
-    }
-
     
-    const { data: avaluos, error: avaluosError } = await window.supabase
-      .from('avaluos')
-      .select('id, associate_name')
-      .eq('usuario_id', usuarioId)
-      .limit(5);
-
-    if (avaluosError) {
-      console.error('Error verificando avalúos:', avaluosError);
-    }
-
-    if (avaluos && avaluos.length > 0) {
-      const avaluosList = avaluos.map(a => `• ${a.associate_name || 'Avalúo ' + a.id}`).join('\n');
-      alert(`❌ No se puede eliminar: Este usuario tiene ${avaluos.length} avalúo(s) registrado(s):\n\n${avaluosList}\n\nPrimero elimine o transfiera sus avalúos.`);
-      return;
-    }
-
-    
-    console.log('🔍 Ejecutando DELETE...');
-    const { error: deleteError } = await window.supabase
+    const { error } = await window.supabase
       .from('usuarios')
-      .delete()
+      .update({ activo: false })
       .eq('id', usuarioId);
 
-    if (deleteError) {
-      console.error('❌ Error DELETE:', deleteError);
-      alert(`❌ Error al eliminar: ${deleteError.message}\n\nCódigo: ${deleteError.code}`);
-      return;
-    }
+    if (error) throw error;
 
-    console.log('✅ Usuario eliminado en base de datos');
+    alert('✅ Usuario DESACTIVADO exitosamente\n\nEl usuario ya no podrá acceder al sistema.');
     
     
-    alert('✅ Usuario eliminado exitosamente');
-    
-   
-    const user = window.__session?.user;
-    const userRole = user?.user_metadata?.rol;
-    const userCooperativaId = user?.user_metadata?.cooperativa_id;
-
-    
-    const userElement = document.querySelector(`[onclick*="${usuarioId}"]`)?.closest('.appraisal-item');
-    if (userElement) {
-      userElement.remove();
-      console.log('✅ Elemento removido del DOM');
-    }
-
-    
-    if (document.getElementById('gestion-usuarios-gerente-modal')?.classList.contains('active')) {
-      console.log('🔄 Recargando lista de gerente...');
-      if (userCooperativaId) await cargarUsuariosGerente(userCooperativaId);
-    } else if (document.getElementById('lista-usuarios')) {
-      console.log('🔄 Recargando lista general...');
-      await cargarUsuarios();
-    } else {
-      console.log('🔄 Recargando página...');
-      setTimeout(() => {
-        if (userRole === 'gerente') {
-          gestionarUsuariosGerente();
-        } else {
-          gestionarUsuarios();
-        }
-      }, 500);
-    }
+    setTimeout(() => {
+      if (typeof cargarUsuarios === 'function') cargarUsuarios();
+      else if (typeof gestionarUsuarios === 'function') gestionarUsuarios();
+      else location.reload();
+    }, 500);
 
   } catch (error) {
-    console.error('❌ Error crítico:', error);
-    alert('Error eliminando usuario: ' + error.message);
+    alert('❌ Error: ' + error.message);
   }
 }
 
