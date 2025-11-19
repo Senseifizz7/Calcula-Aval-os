@@ -5987,19 +5987,38 @@ async function showAvaluosMiCooperativa() {
   }
 }
 
-
 async function cargarAvaluosCooperativa(cooperativaId) {
   try {
     console.log('🔄 Cargando avalúos de cooperativa:', cooperativaId);
     
-   
+    // PRIMERO obtener los usuarios de esta cooperativa
+    const { data: usuarios, error: usuariosError } = await window.supabase
+      .from('usuarios')
+      .select('id')
+      .eq('cooperativa_id', cooperativaId);
+    
+    if (usuariosError) throw usuariosError;
+    
+    if (!usuarios || usuarios.length === 0) {
+      document.getElementById('lista-avaluos-cooperativa').innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-users"></i>
+          <h4>No hay asesores en tu cooperativa</h4>
+          <p>Invita asesores para que aparezcan sus avalúos aquí</p>
+        </div>
+      `;
+      return;
+    }
+    
+    // Obtener los IDs de los usuarios
+    const usuarioIds = usuarios.map(u => u.id);
+    console.log('👥 Usuarios de cooperativa:', usuarioIds);
+    
+    // LUEGO obtener avalúos de ESOS usuarios
     const { data: avaluos, error } = await window.supabase
       .from('avaluos')
-      .select(`
-        *,
-        usuarios:usuario_id(nombre, email, cooperativa_id)
-      `)
-      .eq('usuarios.cooperativa_id', cooperativaId)
+      .select('*')
+      .in('usuario_id', usuarioIds)  // ← FILTRAR por usuarios de la cooperativa
       .order('fecha_creacion', { ascending: false });
     
     if (error) throw error;
@@ -6013,7 +6032,7 @@ async function cargarAvaluosCooperativa(cooperativaId) {
         <div class="empty-state">
           <i class="fas fa-file-contract"></i>
           <h4>No hay avalúos en tu cooperativa</h4>
-          <p>Los avalúos de tus asesores aparecerán aquí</p>
+          <p>Los asesores aún no han creado avalúos</p>
         </div>
       `;
     } else {
@@ -6028,16 +6047,22 @@ async function cargarAvaluosCooperativa(cooperativaId) {
               <button class="btn-secondary btn-small" onclick="verAvaluo('${avaluo.id}')">
                 <i class="fas fa-eye"></i> Ver
               </button>
-              <button class="btn-primary btn-small" onclick="aprobarAvaluo('${avaluo.id}')">
-                <i class="fas fa-check"></i> Aprobar
-              </button>
+              ${avaluo.estado_aprobacion !== 'aprobado' ? `
+                <button class="btn-primary btn-small" onclick="aprobarAvaluo('${avaluo.id}')">
+                  <i class="fas fa-check"></i> Aprobar
+                </button>
+              ` : ''}
             </div>
           </div>
           <div class="appraisal-details">
             <div><strong>Asociado:</strong> ${avaluo.associate_name || 'No especificado'}</div>
             <div><strong>Dirección:</strong> ${avaluo.address || 'No especificado'}</div>
             <div><strong>Valor Total:</strong> ${avaluo.total_value || 'Q0.00'}</div>
-            <div><strong>Asesor:</strong> ${avaluo.usuarios?.nombre || avaluo.usuario_nombre || 'Anónimo'}</div>
+            <div><strong>Estado:</strong> 
+              <span style="color: ${avaluo.estado_aprobacion === 'aprobado' ? 'var(--success)' : avaluo.estado_aprobacion === 'rechazado' ? 'var(--error)' : 'var(--warning)'}; font-weight: 600;">
+                ${avaluo.estado_aprobacion?.toUpperCase() || 'PENDIENTE'}
+              </span>
+            </div>
           </div>
         </div>
       `).join('');
@@ -6056,7 +6081,6 @@ async function cargarAvaluosCooperativa(cooperativaId) {
     `;
   }
 }
-
 
 async function verAvaluo(avaluoId) {
   alert(`🔍 Ver avalúo: ${avaluoId}`);
