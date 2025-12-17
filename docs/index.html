@@ -2106,24 +2106,23 @@
       if (e.target === this) closeModal('my-appraisals-modal');
     });
 
-    
-    const RANGOS_PRECIO = {
-        'Baja': {
-            'Baja': { min: 250, max: 500 },
-            'Media': { min: 650, max: 850 },
-            'Alta': { min: 850, max: 1000 }
-        },
-        'Media': {
-            'Baja': { min: 800, max: 1100 },
-            'Media': { min: 900, max: 1300 },
-            'Alta': { min: 1300, max: 1800 }
-        },
-        'Alta': {
-            'Baja': { min: 1400, max: 1800 },
-            'Media': { min: 1800, max: 2200 },
-            'Alta': { min: 2300, max: 2900 }
-        }
-    };
+const RANGOS_PRECIO = {
+    'Baja': {
+        'Baja': { min: 300, max: 600 },
+        'Media': { min: 700, max: 1000 },
+        'Alta': { min: 1000, max: 1300 }
+    },
+    'Media': {
+        'Baja': { min: 1300, max: 1500 },
+        'Media': { min: 1500, max: 1800 },
+        'Alta': { min: 1800, max: 2000 }
+    },
+    'Alta': {
+        'Baja': { min: 2000, max: 2300 },
+        'Media': { min: 2300, max: 2900 },
+        'Alta': { min: 2900, max: 3800 }
+    }
+};
 
     
     const __FALLBACK_TIPOLOGIAS = [
@@ -2197,7 +2196,7 @@ Como acceso a este tipo de construcción encontramos:
             title: "Tipología Baja - Variante 2",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20baja%202.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20baja%202.png?raw=true",
-            pricePerM2: 500,
+            pricePerM2: 600,
             bullets: [
               "Estructura: sistema de adobe, columnas de madera",
               "Paredes: adobe, madera sin tratar, cartón",
@@ -2270,7 +2269,7 @@ Como acceso encontramos:
             title: "Tipología Media - Variante 1",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20media.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20media.png?raw=true",
-            pricePerM2: 750,
+            pricePerM2: 900,
             bullets: [
               "Estructura: sistema de adobe, block con pines fundidos",
               "Paredes: adobe con repello",
@@ -2289,7 +2288,7 @@ Como acceso encontramos:
             title: "Tipología Media - Variante 2",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20media%202.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20media%202.png?raw=true",
-            pricePerM2: 850,
+            pricePerM2: 1000,
             bullets: [
               "Estructura: mampostería con columnas",
               "Paredes: block de cantera",
@@ -2369,7 +2368,7 @@ Como acceso encontramos:
             title: "Tipología Alta - Variante 1",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20alta.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta.png?raw=true",
-            pricePerM2: 950,
+            pricePerM2: 1000,
             bullets: [
               "Estructura: mampostería con pines fundidos a 0.60 metros",
               "Paredes: block de cantera con pintura",
@@ -2388,7 +2387,7 @@ Como acceso encontramos:
             title: "Tipología Alta - Variante 2",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/tipolog%C3%ADa%20alta%202.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20baja/interior%20tipolog%C3%ADa%20alta%202.png?raw=true",
-            pricePerM2: 1000,
+            pricePerM2: 1300,
             bullets: [
               "Estructura: sistema de adobe, mampostería reforzada",
               "Paredes: adobe con repello y cernido, block normado",
@@ -2458,7 +2457,7 @@ Como acceso encontramos:
             title: "Tipología Baja - Variante 1",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20baja.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20baja.png?raw=true",
-            pricePerM2: 1100,
+            pricePerM2: 1300,
             bullets: [
               "Estructura: mampostería con block con pines fundidos",
               "Paredes: block con repello y cernido",
@@ -2477,7 +2476,7 @@ Como acceso encontramos:
             title: "Tipología Baja - Variante 2",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20baja%202.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20baja%202.png?raw=true",
-            pricePerM2: 1100,
+            pricePerM2: 1300,
             bullets: [
               "Estructura: mampostería con columnas para un nivel",
               "Paredes: block sisado visto, partes con repello y pintura",
@@ -2547,7 +2546,7 @@ Como acceso encontramos:
             title: "Tipología Media - Variante 1",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20media.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20media.png?raw=true",
-            pricePerM2: 1200,
+            pricePerM2: 1400,
             bullets: [
               "Estructura: mampostería reforzada para un nivel",
               "Paredes: block con repello y cernido",
@@ -2566,7 +2565,7 @@ Como acceso encontramos:
             title: "Tipología Media - Variante 2",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20media%202.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20media%202.png?raw=true",
-            pricePerM2: 1300,
+            pricePerM2: 1600,
             bullets: [
               "Estructura: mampostería reforzada para un nivel",
               "Paredes: block normado con repello y cernido, pintura",
@@ -2658,7 +2657,7 @@ Como acceso encontramos:
             title: "Tipología Alta - Variante 2",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/tipolog%C3%ADa%20alta%202.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20media/interior%20tipolog%C3%ADa%20alta%202.png?raw=true",
-            pricePerM2: 1800,
+            pricePerM2: 1900,
             bullets: [
               "Estructura: mampostería reforzada con pines para un nivel",
               "Paredes: block normado con repello, alisado, pintura",
@@ -2728,7 +2727,7 @@ Como acceso encontramos:
             title: "Tipología Baja - Variante 1",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipolog%C3%ADa%20baja.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipolog%C3%ADa%20baja.png?raw=true",
-            pricePerM2: 1700,
+            pricePerM2: 2000,
             bullets: [
               "Estructura: columnas y paredes de carga",
               "Paredes: repello, alisado, pintura",
@@ -2747,7 +2746,7 @@ Como acceso encontramos:
             title: "Tipología Baja - Variante 2",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipologia%20baja%202.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20baja%202.png?raw=true",
-            pricePerM2: 1800,
+            pricePerM2: 2300,
             bullets: [
               "Estructura: columnas y paredes de carga",
               "Paredes: repello, alisado, pintura",
@@ -2815,7 +2814,7 @@ Como acceso encontramos:
             title: "Tipología Media - Variante 1",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipolog%C3%ADa%20media.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20media.png?raw=true",
-            pricePerM2: 2100,
+            pricePerM2: 2400,
             bullets: [
               "Estructura: mampostería reforzada con columnas para dos niveles",
               "Paredes: block normado con repello, alisado, pintura",
@@ -2834,7 +2833,7 @@ Como acceso encontramos:
             title: "Tipología Media - Variante 2",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipologia%20media%202.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20media%202.png?raw=true",
-            pricePerM2: 2200,
+            pricePerM2: 2900,
             bullets: [
               "Estructura: mampostería reforzada con columnas para dos niveles",
               "Paredes: block normado con repello, alisado, pintura",
@@ -2903,7 +2902,7 @@ Como acceso encontramos:
             title: "Tipología Alta - Variante 1",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipolog%C3%ADa%20alta.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20alta.png?raw=true",
-            pricePerM2: 2800,
+            pricePerM2: 3000,
             bullets: [
               "Estructura: mampostería reforzada con columnas para dos niveles",
               "Paredes: block normado con repello, alisado, pintura",
@@ -2922,7 +2921,7 @@ Como acceso encontramos:
             title: "Tipología Alta - Variante 2",
             img: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/tipologia%20alta%202.png?raw=true",
             imgInterior: "https://github.com/Senseifizz7/Calcula-Aval-os/blob/main/categoria%20alta/interior%20tipologia%20alta%202.png?raw=true",
-            pricePerM2: 2900,
+            pricePerM2: 3800,
             bullets: [
               "Estructura: mampostería reforzada con columnas para dos niveles",
               "Paredes: block normado con repello, alisado, pintura",
