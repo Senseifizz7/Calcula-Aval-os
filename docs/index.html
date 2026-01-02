@@ -5809,7 +5809,7 @@ async function gestionarUsuariosGerente() {
   }
 }
 
-// Y asegurarse que también tenga cargarUsuariosGerente
+
 async function cargarUsuariosGerente(cooperativaId) {
   try {
     console.log('🔄 Cargando usuarios de cooperativa:', cooperativaId);
@@ -5932,7 +5932,7 @@ async function cargarAvaluosCooperativa(cooperativaId) {
   try {
     console.log('🔄 Cargando avalúos de cooperativa:', cooperativaId);
     
-    // PRIMERO obtener los usuarios de esta cooperativa
+    
     const { data: usuarios, error: usuariosError } = await window.supabase
       .from('usuarios')
       .select('id')
@@ -5951,15 +5951,15 @@ async function cargarAvaluosCooperativa(cooperativaId) {
       return;
     }
     
-    // Obtener los IDs de los usuarios
+    
     const usuarioIds = usuarios.map(u => u.id);
     console.log('👥 Usuarios de cooperativa:', usuarioIds);
     
-    // LUEGO obtener avalúos de ESOS usuarios
+    
     const { data: avaluos, error } = await window.supabase
       .from('avaluos')
       .select('*')
-      .in('usuario_id', usuarioIds)  // ← FILTRAR por usuarios de la cooperativa
+      .in('usuario_id', usuarioIds)  
       .order('fecha_creacion', { ascending: false });
     
     if (error) throw error;
@@ -5976,7 +5976,7 @@ async function cargarAvaluosCooperativa(cooperativaId) {
           <p>Los asesores aún no han creado avalúos</p>
         </div>
       `;
-    } else {
+       } else {
       avaluosHTML = avaluos.map(avaluo => `
         <div class="appraisal-item">
           <div class="appraisal-header">
@@ -5985,9 +5985,15 @@ async function cargarAvaluosCooperativa(cooperativaId) {
               ${avaluo.estado_aprobacion ? `<span style="margin-left: 10px; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; background: ${avaluo.estado_aprobacion === 'aprobado' ? 'var(--success)' : avaluo.estado_aprobacion === 'rechazado' ? 'var(--error)' : 'var(--warning)'}; color: white;">${avaluo.estado_aprobacion.toUpperCase()}</span>` : ''}
             </div>
             <div class="appraisal-actions">
+              <!-- BOTÓN EDITAR - SIEMPRE VISIBLE -->
+              <button class="btn-primary btn-small" onclick="editarAvaluo('${avaluo.id}')" style="margin-right: 5px;">
+                <i class="fas fa-edit"></i> Editar
+              </button>
+              
               <button class="btn-secondary btn-small" onclick="verAvaluo('${avaluo.id}')">
                 <i class="fas fa-eye"></i> Ver
               </button>
+              
               ${avaluo.estado_aprobacion !== 'aprobado' ? `
                 <button class="btn-primary btn-small" onclick="aprobarAvaluo('${avaluo.id}')">
                   <i class="fas fa-check"></i> Aprobar
@@ -6031,7 +6037,7 @@ async function aprobarAvaluo(avaluoId) {
   if (confirm('¿Aprobar este avalúo?')) {
     alert(`✅ Avalúo aprobado: ${avaluoId}`);
   }
-}    
+}  
 
 async function cargarInfoCooperativaGerente() {
   try {
@@ -6784,6 +6790,428 @@ setTimeout(function() {
     });
   }
 }, 1000);
+
+// ============================================
+// FUNCIÓN editarAvaluo() - VERSIÓN COMPLETA
+// ============================================
+async function editarAvaluo(avaluoId) {
+    console.log('🔧 Editando avalúo completo:', avaluoId);
+    
+    try {
+        // 1. Obtener TODOS los datos del avalúo
+        const { data: avaluo, error } = await window.supabase
+            .from('avaluos')
+            .select('*')
+            .eq('id', avaluoId)
+            .single();
+        
+        if (error) throw error;
+        if (!avaluo) {
+            alert('Avalúo no encontrado');
+            return;
+        }
+        
+        // 2. Crear función para escapar valores HTML
+        const escapar = (valor) => {
+            if (valor === null || valor === undefined) return '';
+            return String(valor).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        };
+        
+        // 3. Crear modal COMPLETO con todos los campos
+        const modalId = 'modal-editar-completo-' + Date.now();
+        const modalHTML = `
+        <div id="${modalId}" style="position:fixed; top:0; left:0; width:100%; height:100%; 
+              background:rgba(0,0,0,0.8); z-index:10000; display:flex; align-items:center; 
+              justify-content:center; padding:20px; font-family:system-ui, sans-serif;">
+            
+            <div style="background:white; border-radius:12px; width:95%; max-width:1000px; 
+                  max-height:90vh; overflow-y:auto; box-shadow:0 15px 50px rgba(0,0,0,0.4);">
+                
+                <!-- HEADER -->
+                <div style="padding:20px 25px; background:linear-gradient(135deg, #007bff, #0056b3); 
+                      color:white; border-radius:12px 12px 0 0; display:flex; justify-content:space-between; 
+                      align-items:center;">
+                    <div>
+                        <h2 style="margin:0; font-size:1.5rem;">
+                            <span style="background:white; color:#007bff; width:36px; height:36px; 
+                                  border-radius:50%; display:inline-flex; align-items:center; 
+                                  justify-content:center; margin-right:10px;">
+                                ✏️
+                            </span>
+                            EDITAR AVALÚO COMPLETO
+                        </h2>
+                        <p style="margin:5px 0 0 0; opacity:0.9; font-size:0.9rem;">
+                            ID: ${avaluoId} | Creado: ${avaluo.fecha_formateada || 'N/A'}
+                        </p>
+                    </div>
+                    <button onclick="document.getElementById('${modalId}').remove()" 
+                            style="background:rgba(255,255,255,0.2); border:none; color:white; 
+                                   width:40px; height:40px; border-radius:50%; font-size:24px; 
+                                   cursor:pointer;">
+                        ×
+                    </button>
+                </div>
+                
+                <!-- CONTENIDO CON PESTAÑAS -->
+                <div style="padding:25px;">
+                    <!-- PESTAÑAS -->
+                    <div style="display:flex; gap:5px; margin-bottom:25px; border-bottom:2px solid #e9ecef;">
+                        <button onclick="mostrarSeccion('datos', '${modalId}')" 
+                                style="padding:12px 25px; background:#007bff; color:white; border:none; 
+                                       border-radius:8px 8px 0 0; cursor:pointer; font-weight:600;">
+                            📋 Datos Principales
+                        </button>
+                        <button onclick="mostrarSeccion('medidas', '${modalId}')" 
+                                style="padding:12px 25px; background:#6c757d; color:white; border:none; 
+                                       border-radius:8px 8px 0 0; cursor:pointer; font-weight:600;">
+                            📏 Medidas
+                        </button>
+                        <button onclick="mostrarSeccion('caracteristicas', '${modalId}')" 
+                                style="padding:12px 25px; background:#17a2b8; color:white; border:none; 
+                                       border-radius:8px 8px 0 0; cursor:pointer; font-weight:600;">
+                            🏠 Características
+                        </button>
+                    </div>
+                    
+                    <!-- SECCIÓN 1: DATOS PRINCIPALES -->
+                    <div id="seccion-datos-${modalId}" style="display:block;">
+                        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;">
+                            <!-- COLUMNA IZQUIERDA -->
+                            <div>
+                                <div style="margin-bottom:15px;">
+                                    <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                        Nombre del Asociado *
+                                    </label>
+                                    <input type="text" id="edit-associate_name-${modalId}" 
+                                           value="${escapar(avaluo.associate_name)}"
+                                           style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                                  border-radius:6px; font-size:0.95rem;">
+                                </div>
+                                
+                                <div style="margin-bottom:15px;">
+                                    <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                        Nombre del Propietario
+                                    </label>
+                                    <input type="text" id="edit-owner_name-${modalId}" 
+                                           value="${escapar(avaluo.owner_name)}"
+                                           style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                                  border-radius:6px; font-size:0.95rem;">
+                                </div>
+                                
+                                <div style="margin-bottom:15px;">
+                                    <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                        Dirección Completa
+                                    </label>
+                                    <textarea id="edit-address-${modalId}" rows="3"
+                                           style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                                  border-radius:6px; font-size:0.95rem; resize:vertical;">
+${escapar(avaluo.address)}</textarea>
+                                </div>
+                                
+                                <div style="margin-bottom:15px;">
+                                    <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                        Departamento
+                                    </label>
+                                    <input type="text" id="edit-department-${modalId}" 
+                                           value="${escapar(avaluo.department)}"
+                                           style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                                  border-radius:6px; font-size:0.95rem;">
+                                </div>
+                            </div>
+                            
+                            <!-- COLUMNA DERECHA -->
+                            <div>
+                                <div style="margin-bottom:15px;">
+                                    <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                        Tipología
+                                    </label>
+                                    <input type="text" id="edit-typology-${modalId}" 
+                                           value="${escapar(avaluo.typology)}"
+                                           style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                                  border-radius:6px; font-size:0.95rem;">
+                                </div>
+                                
+                                <div style="margin-bottom:15px;">
+                                    <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                        Valor Total (Q) *
+                                    </label>
+                                    <input type="number" id="edit-total_value-${modalId}" 
+                                           value="${avaluo.total_value || 0}" step="0.01" min="0"
+                                           style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                                  border-radius:6px; font-size:0.95rem;">
+                                </div>
+                                
+                                <div style="margin-bottom:15px;">
+                                    <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                        Estado de Aprobación
+                                    </label>
+                                    <select id="edit-estado_aprobacion-${modalId}" 
+                                            style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                                   border-radius:6px; font-size:0.95rem;">
+                                        <option value="pendiente" ${avaluo.estado_aprobacion === 'pendiente' ? 'selected' : ''}>Pendiente</option>
+                                        <option value="aprobado" ${avaluo.estado_aprobacion === 'aprobado' ? 'selected' : ''}>Aprobado</option>
+                                        <option value="rechazado" ${avaluo.estado_aprobacion === 'rechazado' ? 'selected' : ''}>Rechazado</option>
+                                    </select>
+                                </div>
+                                
+                                <div style="margin-bottom:15px;">
+                                    <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                        Datos Completos
+                                    </label>
+                                    <select id="edit-datos_completos-${modalId}" 
+                                            style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                                   border-radius:6px; font-size:0.95rem;">
+                                        <option value="true" ${avaluo.datos_completos === true ? 'selected' : ''}>Sí</option>
+                                        <option value="false" ${avaluo.datos_completos === false ? 'selected' : ''}>No</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- SECCIÓN 2: MEDIDAS (oculta inicialmente) -->
+                    <div id="seccion-medidas-${modalId}" style="display:none;">
+                        <h3 style="color:#6c757d; margin-top:0;">Medidas y Dimensiones</h3>
+                        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;">
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                    Área de Construcción (m²)
+                                </label>
+                                <input type="number" id="edit-construction_area-${modalId}" 
+                                       value="${avaluo.construction_area || 0}" step="0.01" min="0"
+                                       style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                              border-radius:6px; font-size:0.95rem;">
+                            </div>
+                            
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                    Área de Terreno (m²)
+                                </label>
+                                <input type="number" id="edit-land_area-${modalId}" 
+                                       value="${avaluo.land_area || 0}" step="0.01" min="0"
+                                       style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                              border-radius:6px; font-size:0.95rem;">
+                            </div>
+                            
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                    Año de Construcción
+                                </label>
+                                <input type="number" id="edit-anio_construccion-${modalId}" 
+                                       value="${avaluo.anio_construccion || ''}" min="1900" max="2025"
+                                       style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                              border-radius:6px; font-size:0.95rem;">
+                            </div>
+                            
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                    Total Construcción
+                                </label>
+                                <input type="number" id="edit-total_construccion-${modalId}" 
+                                       value="${avaluo.total_construccion || 0}" step="0.01" min="0"
+                                       style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                              border-radius:6px; font-size:0.95rem;">
+                            </div>
+                            
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                    Total Terreno
+                                </label>
+                                <input type="number" id="edit-total_terreno-${modalId}" 
+                                       value="${avaluo.total_terreno || 0}" step="0.01" min="0"
+                                       style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                              border-radius:6px; font-size:0.95rem;">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- SECCIÓN 3: CARACTERÍSTICAS (oculta inicialmente) -->
+                    <div id="seccion-caracteristicas-${modalId}" style="display:none;">
+                        <h3 style="color:#17a2b8; margin-top:0;">Características del Inmueble</h3>
+                        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:20px;">
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                    Estado del Inmueble
+                                </label>
+                                <input type="text" id="edit-estado_inmueble-${modalId}" 
+                                       value="${escapar(avaluo.estado_inmueble)}"
+                                       style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                              border-radius:6px; font-size:0.95rem;">
+                            </div>
+                            
+                            <div style="margin-bottom:15px;">
+                                <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                    Aprobado por (Nombre)
+                                </label>
+                                <input type="text" id="edit-aprobado_por_nombre-${modalId}" 
+                                       value="${escapar(avaluo.aprobado_por_nombre)}"
+                                       style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                              border-radius:6px; font-size:0.95rem;">
+                            </div>
+                            
+                            <div style="grid-column:span 2;">
+                                <label style="display:block; margin-bottom:6px; font-weight:600; color:#495057;">
+                                    Descripción / Observaciones
+                                </label>
+                                <textarea id="edit-descripcion-${modalId}" rows="4"
+                                       style="width:100%; padding:10px; border:2px solid #dee2e6; 
+                                              border-radius:6px; font-size:0.95rem; resize:vertical;"
+                                       placeholder="Observaciones adicionales...">${escapar(avaluo.descripcion)}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- BOTONES FINALES -->
+                    <div style="display:flex; gap:15px; margin-top:30px; padding-top:20px; border-top:2px solid #e9ecef;">
+                        <button onclick="document.getElementById('${modalId}').remove()"
+                                style="flex:1; padding:14px; background:#6c757d; color:white; 
+                                       border:none; border-radius:8px; cursor:pointer; font-size:1rem;
+                                       font-weight:600;">
+                            Cancelar
+                        </button>
+                        <button onclick="guardarAvaluoCompleto('${avaluoId}', '${modalId}')"
+                                style="flex:1; padding:14px; background:#007bff; color:white; 
+                                       border:none; border-radius:8px; cursor:pointer; font-size:1rem;
+                                       font-weight:600;">
+                            💾 Guardar Todo el Avalúo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        
+        // 4. Insertar modal
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // 5. Agregar función para cambiar secciones
+        window.mostrarSeccion = function(seccion, modalId) {
+            // Ocultar todas
+            ['datos', 'medidas', 'caracteristicas'].forEach(sec => {
+                const elem = document.getElementById(`seccion-${sec}-${modalId}`);
+                if (elem) elem.style.display = 'none';
+            });
+            
+            // Mostrar seleccionada
+            const elemSeleccionado = document.getElementById(`seccion-${seccion}-${modalId}`);
+            if (elemSeleccionado) elemSeleccionado.style.display = 'block';
+            
+            // Cambiar colores de botones
+            const botones = document.querySelectorAll(`#${modalId} button[onclick^="mostrarSeccion"]`);
+            botones.forEach(btn => {
+                btn.style.background = '#6c757d'; // Gris por defecto
+            });
+            
+            // Resaltar botón activo
+            const botonActivo = document.querySelector(`#${modalId} button[onclick="mostrarSeccion('${seccion}', '${modalId}')"]`);
+            if (botonActivo) {
+                const colores = { datos: '#007bff', medidas: '#6c757d', caracteristicas: '#17a2b8' };
+                botonActivo.style.background = colores[seccion] || '#007bff';
+            }
+        };
+        
+        console.log('✅ Modal completo creado');
+        
+    } catch(error) {
+        console.error('❌ Error en editarAvaluo:', error);
+        alert('Error: ' + error.message);
+    }
+}
+
+// ============================================
+// FUNCIÓN PARA GUARDAR TODOS LOS CAMPOS
+// ============================================
+async function guardarAvaluoCompleto(avaluoId, modalId) {
+    try {
+        console.log('💾 Guardando avalúo completo:', avaluoId);
+        
+        // Recolectar TODOS los campos
+        const datos = {
+            // Datos principales
+            associate_name: document.getElementById(`edit-associate_name-${modalId}`)?.value.trim() || '',
+            owner_name: document.getElementById(`edit-owner_name-${modalId}`)?.value.trim() || '',
+            address: document.getElementById(`edit-address-${modalId}`)?.value.trim() || '',
+            department: document.getElementById(`edit-department-${modalId}`)?.value.trim() || '',
+            typology: document.getElementById(`edit-typology-${modalId}`)?.value.trim() || '',
+            total_value: parseFloat(document.getElementById(`edit-total_value-${modalId}`)?.value) || 0,
+            
+            // Medidas
+            construction_area: parseFloat(document.getElementById(`edit-construction_area-${modalId}`)?.value) || 0,
+            land_area: parseFloat(document.getElementById(`edit-land_area-${modalId}`)?.value) || 0,
+            anio_construccion: document.getElementById(`edit-anio_construccion-${modalId}`)?.value || null,
+            total_construccion: parseFloat(document.getElementById(`edit-total_construccion-${modalId}`)?.value) || 0,
+            total_terreno: parseFloat(document.getElementById(`edit-total_terreno-${modalId}`)?.value) || 0,
+            
+            // Características
+            estado_inmueble: document.getElementById(`edit-estado_inmueble-${modalId}`)?.value.trim() || '',
+            datos_completos: document.getElementById(`edit-datos_completos-${modalId}`)?.value === 'true',
+            
+            // Estado
+            estado_aprobacion: document.getElementById(`edit-estado_aprobacion-${modalId}`)?.value || 'pendiente',
+            aprobado_por_nombre: document.getElementById(`edit-aprobado_por_nombre-${modalId}`)?.value.trim() || '',
+            descripcion: document.getElementById(`edit-descripcion-${modalId}`)?.value.trim() || '',
+            
+            // Fecha de actualización
+            fecha_actualizacion: new Date().toISOString()
+        };
+        
+        // Validación básica
+        if (!datos.associate_name) {
+            alert('❌ El nombre del asociado es obligatorio');
+            document.getElementById(`edit-associate_name-${modalId}`)?.focus();
+            return;
+        }
+        
+        if (datos.total_value < 0) {
+            alert('❌ El valor total no puede ser negativo');
+            document.getElementById(`edit-total_value-${modalId}`)?.focus();
+            return;
+        }
+        
+        // Mostrar loading
+        const btnGuardar = document.querySelector(`button[onclick="guardarAvaluoCompleto('${avaluoId}', '${modalId}')"]`);
+        if (btnGuardar) {
+            btnGuardar.innerHTML = 'Guardando...';
+            btnGuardar.disabled = true;
+        }
+        
+        // Guardar en Supabase
+        const { error } = await window.supabase
+            .from('avaluos')
+            .update(datos)
+            .eq('id', avaluoId);
+        
+        if (error) throw error;
+        
+        // Éxito
+        document.getElementById(modalId)?.remove();
+        alert('✅ ¡Avalúo actualizado completamente!');
+        
+        // Recargar vista
+        setTimeout(() => {
+            if (typeof cargarAvaluosCooperativa === 'function' && window.__session?.user) {
+                const coopId = window.__session.user.user_metadata?.cooperativa_id;
+                if (coopId) cargarAvaluosCooperativa(coopId);
+            }
+        }, 800);
+        
+    } catch(error) {
+        console.error('❌ Error guardando:', error);
+        alert('Error al guardar: ' + error.message);
+        
+        // Restaurar botón
+        const btnGuardar = document.querySelector(`button[onclick="guardarAvaluoCompleto('${avaluoId}', '${modalId}')"]`);
+        if (btnGuardar) {
+            btnGuardar.innerHTML = '💾 Guardar Todo el Avalúo';
+            btnGuardar.disabled = false;
+        }
+    }
+}
+
+window.editAppraisal = editarAvaluo;
+window.guardarAvaluoEditado = guardarAvaluoCompleto;
+
+console.log('✅ Sistema completo de edición instalado');
 </script>
 </body>
 </html>
