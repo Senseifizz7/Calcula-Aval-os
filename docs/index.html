@@ -265,34 +265,32 @@
   </div>
 </div>
 
-<!-- Supabase SDK -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// === SOLUCIÓN DEFINITIVA: Código completamente reestructurado ===
 
-// 1. DECLARAR todas las funciones PRIMERO (para que estén disponibles globalmente)
 function showTab(tabId) {
     console.log('showTab llamado con:', tabId);
     
-    // Remover activo de todas las pestañas
+   
     document.querySelectorAll('.tab').forEach(t => {
         t.classList.remove('active');
     });
     
-    // Remover activo de todos los contenidos
+    
     document.querySelectorAll('.tab-content').forEach(c => {
         c.classList.remove('active');
     });
     
-    // Activar la pestaña correspondiente
+    
     if (tabId === 'patient') {
         document.querySelector('.tabs .tab:nth-child(1)').classList.add('active');
         document.getElementById('patient').classList.add('active');
     } else if (tabId === 'staff') {
         document.querySelector('.tabs .tab:nth-child(2)').classList.add('active');
         document.getElementById('staff').classList.add('active');
-        // Cargar pacientes cuando se muestra la pestaña de staff
+        
         if (typeof loadWaitingPatients === 'function') {
             loadWaitingPatients();
         }
@@ -407,17 +405,17 @@ function pagarCita() {
     alert("Pago simulado. En producción, conectarías a Mercado Pago o Stripe.");
 }
 
-// 2. Configuración de Supabase (solo una vez)
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM cargado, inicializando...');
     
-    // Verificar si Supabase ya está cargado
+    
     if (typeof supabase === 'undefined') {
         console.error('Supabase SDK no se cargó correctamente');
         return;
     }
     
-    // Configurar Supabase SOLO UNA VEZ
+   
     if (!window.supabaseClient) {
         const supabaseUrl = 'https://liwsphcpyckmbcblwysj.supabase.co';
         const supabaseAnonKey = 'sb_publishable_chqMIPoi4u7wqjbYSB2hNg_Ys6W0pIY';
@@ -426,7 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Cliente Supabase inicializado');
     }
     
-    // Configurar el formulario
+    
     const form = document.getElementById('joinQueueForm');
     if (form) {
         form.addEventListener('submit', async function(e) {
@@ -438,20 +436,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Obtener valores
+           
             const nombre = document.getElementById('nombre').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
             const especialidad = document.getElementById('especialidad').value;
             const motivo = document.getElementById('motivo').value.trim();
             
-            // Validación
+           
             if (!nombre || !telefono || !especialidad || !motivo) {
                 alert('Por favor completa todos los campos.');
                 return;
             }
             
             try {
-                // Insertar en Supabase
+                
                 const { data, error } = await window.supabaseClient
                     .from('turnos')
                     .insert([{
