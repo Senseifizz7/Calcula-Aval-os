@@ -1,4 +1,4 @@
-x<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -269,12 +269,16 @@ x<!DOCTYPE html>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // 🔑 CONFIGURA TUS CREDENCIALES DE SUPABASE AQUÍ (YA CORREGIDAS)
+  // 🔑 CONFIGURA TUS CREDENCIALES DE SUPABASE AQUÍ
   const supabaseUrl = 'https://liwsphcpyckmbcblwysj.supabase.co';
   const supabaseAnonKey = 'sb_publishable_chqMIPoi4u7wqjbYSB2hNg_Ys6W0pIY';
-  const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+  
+  // Declarar variable global para Supabase client
+  let supabase;
 
-  // === FUNCIONES ===
+  // === DECLARACIÓN DE FUNCIONES (PRIMERO) ===
+  
+  // Función para mostrar pestañas
   function showTab(tabId) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -288,49 +292,13 @@ x<!DOCTYPE html>
     document.getElementById(tabId).classList.add('active');
   }
 
-  document.getElementById('joinQueueForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const { data, error } = await supabase
-      .from('turnos')
-      .insert([
-        {
-          nombre: document.getElementById('nombre').value.trim(),
-          telefono: document.getElementById('telefono').value.trim(),
-          especialidad: document.getElementById('especialidad').value,
-          motivo: document.getElementById('motivo').value.trim()
-        }
-      ])
-      .select('id, created_at');
-
-    if (error) {
-      alert('Error: ' + error.message);
+  // Función para cargar pacientes en espera
+  async function loadWaitingPatients() {
+    if (!supabase) {
+      console.error('Supabase client no inicializado');
       return;
     }
-
-    const turno = data[0];
-    const turnoId = 'TURNO-' + turno.id.substring(0, 6).toUpperCase();
-
-    const { count } = await supabase
-      .from('turnos')
-      .select('*', { count: 'exact', head: true })
-      .eq('estado', 'esperando')
-      .lt('created_at', turno.created_at);
-
-    const posicion = (count || 0) + 1;
-    const minutos = posicion * 10;
-    const tiempoTexto = minutos < 60 
-      ? `${minutos} minutos` 
-      : `${Math.floor(minutos / 60)} hora${Math.floor(minutos / 60) > 1 ? 's' : ''}`;
-
-    document.getElementById('turnoId').textContent = turnoId;
-    document.getElementById('confEspecialidad').textContent = document.getElementById('especialidad').value;
-    document.getElementById('tiempoEstimado').textContent = tiempoTexto;
-    document.getElementById('confirmation').style.display = 'block';
-    document.getElementById('joinQueueForm').reset();
-  });
-
-  async function loadWaitingPatients() {
+    
     const { data, error } = await supabase
       .from('turnos')
       .select('*')
@@ -377,25 +345,143 @@ x<!DOCTYPE html>
     });
   }
 
+  // Función para marcar como llamado
   async function marcarLlamado(id) {
+    if (!supabase) {
+      alert('Error: Cliente Supabase no inicializado');
+      return;
+    }
+    
     const { error } = await supabase
       .from('turnos')
       .update({ estado: 'llamado' })
       .eq('id', id);
-    if (!error) loadWaitingPatients();
+      
+    if (error) {
+      alert('Error al marcar como llamado: ' + error.message);
+    } else {
+      loadWaitingPatients();
+    }
   }
 
+  // Función para marcar como atendido
   async function marcarAtendido(id) {
+    if (!supabase) {
+      alert('Error: Cliente Supabase no inicializado');
+      return;
+    }
+    
     const { error } = await supabase
       .from('turnos')
       .update({ estado: 'atendido' })
       .eq('id', id);
-    if (!error) loadWaitingPatients();
+      
+    if (error) {
+      alert('Error al marcar como atendido: ' + error.message);
+    } else {
+      loadWaitingPatients();
+    }
   }
 
+  // Función para simular pago
   function pagarCita() {
     alert("Pago simulado. En producción, conectarías a Mercado Pago o Stripe.");
   }
+
+  // === INICIALIZACIÓN (DESPUÉS DE LAS FUNCIONES) ===
+  
+  // Inicializar Supabase client solo una vez
+  function initSupabase() {
+    if (!window.supabaseClient) {
+      const { createClient } = supabaseModule;
+      window.supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+    }
+    supabase = window.supabaseClient;
+    console.log('Supabase client inicializado');
+  }
+
+  // Esperar a que el DOM esté cargado
+  document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar Supabase
+    initSupabase();
+    
+    // Configurar el evento del formulario
+    const form = document.getElementById('joinQueueForm');
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!supabase) {
+          alert('Error: Sistema no inicializado. Recarga la página.');
+          return;
+        }
+        
+        // Validación básica
+        const nombre = document.getElementById('nombre').value.trim();
+        const telefono = document.getElementById('telefono').value.trim();
+        const especialidad = document.getElementById('especialidad').value;
+        const motivo = document.getElementById('motivo').value.trim();
+        
+        if (!nombre || !telefono || !especialidad || !motivo) {
+          alert('Por favor completa todos los campos requeridos.');
+          return;
+        }
+        
+        try {
+          const { data, error } = await supabase
+            .from('turnos')
+            .insert([
+              {
+                nombre: nombre,
+                telefono: telefono,
+                especialidad: especialidad,
+                motivo: motivo,
+                estado: 'esperando'
+              }
+            ])
+            .select('id, created_at');
+
+          if (error) {
+            alert('Error al unirse a la fila: ' + error.message);
+            return;
+          }
+
+          const turno = data[0];
+          const turnoId = 'TURNO-' + turno.id.substring(0, 6).toUpperCase();
+
+          // Calcular posición en la fila
+          const { count } = await supabase
+            .from('turnos')
+            .select('*', { count: 'exact', head: true })
+            .eq('estado', 'esperando')
+            .lt('created_at', turno.created_at);
+
+          const posicion = (count || 0) + 1;
+          const minutos = posicion * 10;
+          const tiempoTexto = minutos < 60 
+            ? `${minutos} minutos` 
+            : `${Math.floor(minutos / 60)} hora${Math.floor(minutos / 60) > 1 ? 's' : ''}`;
+
+          // Mostrar confirmación
+          document.getElementById('turnoId').textContent = turnoId;
+          document.getElementById('confEspecialidad').textContent = especialidad;
+          document.getElementById('tiempoEstimado').textContent = tiempoTexto;
+          document.getElementById('confirmation').style.display = 'block';
+          document.getElementById('joinQueueForm').reset();
+          
+          // Desplazar la vista hacia la confirmación
+          document.getElementById('confirmation').scrollIntoView({ behavior: 'smooth' });
+          
+        } catch (err) {
+          console.error('Error:', err);
+          alert('Ocurrió un error inesperado. Por favor intenta nuevamente.');
+        }
+      });
+    }
+    
+    // Verificar que las pestañas estén funcionando
+    console.log('Sistema de fila virtual cargado correctamente');
+  });
 </script>
 
 </body>
