@@ -269,219 +269,252 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // 🔑 CONFIGURA TUS CREDENCIALES DE SUPABASE AQUÍ
-  const supabaseUrl = 'https://liwsphcpyckmbcblwysj.supabase.co';
-  const supabaseAnonKey = 'sb_publishable_chqMIPoi4u7wqjbYSB2hNg_Ys6W0pIY';
-  
-  // Declarar variable global para Supabase client
-  let supabase;
+// === SOLUCIÓN DEFINITIVA: Código completamente reestructurado ===
 
-  // === DECLARACIÓN DE FUNCIONES (PRIMERO) ===
-  
-  // Función para mostrar pestañas
-  function showTab(tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+// 1. DECLARAR todas las funciones PRIMERO (para que estén disponibles globalmente)
+function showTab(tabId) {
+    console.log('showTab llamado con:', tabId);
     
-    if (tabId === 'patient') {
-      document.querySelector('.tabs .tab:nth-child(1)').classList.add('active');
-    } else {
-      document.querySelector('.tabs .tab:nth-child(2)').classList.add('active');
-      loadWaitingPatients();
-    }
-    document.getElementById(tabId).classList.add('active');
-  }
-
-  // Función para cargar pacientes en espera
-  async function loadWaitingPatients() {
-    if (!supabase) {
-      console.error('Supabase client no inicializado');
-      return;
-    }
-    
-    const { data, error } = await supabase
-      .from('turnos')
-      .select('*')
-      .eq('estado', 'esperando')
-      .order('created_at', { ascending: true });
-
-    const list = document.getElementById('patientList');
-    if (error) {
-      list.innerHTML = `<p style="color:var(--danger);">Error: ${error.message}</p>`;
-      return;
-    }
-
-    if (data.length === 0) {
-      list.innerHTML = '<p style="text-align:center;color:var(--gray);">No hay pacientes en espera.</p>';
-      return;
-    }
-
-    list.innerHTML = '';
-    data.forEach((t, i) => {
-      const now = new Date();
-      const waitMs = now - new Date(t.created_at);
-      const waitMin = Math.floor(waitMs / 60000);
-      
-      const div = document.createElement('div');
-      div.className = 'patient-item';
-      div.innerHTML = `
-        <div class="patient-info">
-          <h4>${i + 1}. ${t.nombre}</h4>
-          <p><i class="fas fa-phone"></i> ${t.telefono}</p>
-          <p><i class="fas fa-user-md"></i> ${t.especialidad}</p>
-          <p><i class="fas fa-comment"></i> ${t.motivo.substring(0, 60)}${t.motivo.length > 60 ? '...' : ''}</p>
-          <p><i class="fas fa-clock"></i> Esperando: ${waitMin} min</p>
-        </div>
-        <div class="patient-actions">
-          <button class="btn-call" onclick="marcarLlamado('${t.id}')">
-            <i class="fas fa-phone"></i> Llamar
-          </button>
-          <button class="btn-done" onclick="marcarAtendido('${t.id}')">
-            <i class="fas fa-check"></i> Atendido
-          </button>
-        </div>
-      `;
-      list.appendChild(div);
+    // Remover activo de todas las pestañas
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.remove('active');
     });
-  }
-
-  // Función para marcar como llamado
-  async function marcarLlamado(id) {
-    if (!supabase) {
-      alert('Error: Cliente Supabase no inicializado');
-      return;
-    }
     
-    const { error } = await supabase
-      .from('turnos')
-      .update({ estado: 'llamado' })
-      .eq('id', id);
-      
-    if (error) {
-      alert('Error al marcar como llamado: ' + error.message);
-    } else {
-      loadWaitingPatients();
-    }
-  }
-
-  // Función para marcar como atendido
-  async function marcarAtendido(id) {
-    if (!supabase) {
-      alert('Error: Cliente Supabase no inicializado');
-      return;
-    }
+    // Remover activo de todos los contenidos
+    document.querySelectorAll('.tab-content').forEach(c => {
+        c.classList.remove('active');
+    });
     
-    const { error } = await supabase
-      .from('turnos')
-      .update({ estado: 'atendido' })
-      .eq('id', id);
-      
-    if (error) {
-      alert('Error al marcar como atendido: ' + error.message);
-    } else {
-      loadWaitingPatients();
+    // Activar la pestaña correspondiente
+    if (tabId === 'patient') {
+        document.querySelector('.tabs .tab:nth-child(1)').classList.add('active');
+        document.getElementById('patient').classList.add('active');
+    } else if (tabId === 'staff') {
+        document.querySelector('.tabs .tab:nth-child(2)').classList.add('active');
+        document.getElementById('staff').classList.add('active');
+        // Cargar pacientes cuando se muestra la pestaña de staff
+        if (typeof loadWaitingPatients === 'function') {
+            loadWaitingPatients();
+        }
     }
-  }
+}
 
-  // Función para simular pago
-  function pagarCita() {
-    alert("Pago simulado. En producción, conectarías a Mercado Pago o Stripe.");
-  }
-
-  // === INICIALIZACIÓN (DESPUÉS DE LAS FUNCIONES) ===
-  
-  // Inicializar Supabase client solo una vez
-  function initSupabase() {
+async function loadWaitingPatients() {
+    console.log('Cargando pacientes en espera...');
+    
     if (!window.supabaseClient) {
-      const { createClient } = supabaseModule;
-      window.supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
+        console.error('Supabase no está inicializado');
+        document.getElementById('patientList').innerHTML = 
+            '<p style="color:var(--danger);">Error: Sistema no inicializado. Recarga la página.</p>';
+        return;
     }
-    supabase = window.supabaseClient;
-    console.log('Supabase client inicializado');
-  }
-
-  // Esperar a que el DOM esté cargado
-  document.addEventListener('DOMContentLoaded', function() {
-    // Inicializar Supabase
-    initSupabase();
     
-    // Configurar el evento del formulario
+    const list = document.getElementById('patientList');
+    list.innerHTML = '<div class="loading">Cargando turnos...</div>';
+    
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('turnos')
+            .select('*')
+            .eq('estado', 'esperando')
+            .order('created_at', { ascending: true });
+
+        if (error) {
+            throw new Error(error.message);
+        }
+
+        if (!data || data.length === 0) {
+            list.innerHTML = '<p style="text-align:center;color:var(--gray);">No hay pacientes en espera.</p>';
+            return;
+        }
+
+        list.innerHTML = '';
+        data.forEach((t, i) => {
+            const now = new Date();
+            const waitMs = now - new Date(t.created_at);
+            const waitMin = Math.floor(waitMs / 60000);
+            
+            const div = document.createElement('div');
+            div.className = 'patient-item';
+            div.innerHTML = `
+                <div class="patient-info">
+                    <h4>${i + 1}. ${t.nombre}</h4>
+                    <p><i class="fas fa-phone"></i> ${t.telefono}</p>
+                    <p><i class="fas fa-user-md"></i> ${t.especialidad}</p>
+                    <p><i class="fas fa-comment"></i> ${t.motivo.substring(0, 60)}${t.motivo.length > 60 ? '...' : ''}</p>
+                    <p><i class="fas fa-clock"></i> Esperando: ${waitMin} min</p>
+                </div>
+                <div class="patient-actions">
+                    <button class="btn-call" onclick="marcarLlamado('${t.id}')">
+                        <i class="fas fa-phone"></i> Llamar
+                    </button>
+                    <button class="btn-done" onclick="marcarAtendido('${t.id}')">
+                        <i class="fas fa-check"></i> Atendido
+                    </button>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+    } catch (error) {
+        console.error('Error cargando pacientes:', error);
+        list.innerHTML = `<p style="color:var(--danger);">Error: ${error.message}</p>`;
+    }
+}
+
+async function marcarLlamado(id) {
+    if (!window.supabaseClient) {
+        alert('Error: Sistema no inicializado');
+        return;
+    }
+    
+    try {
+        const { error } = await window.supabaseClient
+            .from('turnos')
+            .update({ estado: 'llamado' })
+            .eq('id', id);
+            
+        if (error) throw new Error(error.message);
+        
+        alert('Paciente marcado como llamado');
+        loadWaitingPatients();
+    } catch (error) {
+        alert('Error al marcar como llamado: ' + error.message);
+    }
+}
+
+async function marcarAtendido(id) {
+    if (!window.supabaseClient) {
+        alert('Error: Sistema no inicializado');
+        return;
+    }
+    
+    try {
+        const { error } = await window.supabaseClient
+            .from('turnos')
+            .update({ estado: 'atendido' })
+            .eq('id', id);
+            
+        if (error) throw new Error(error.message);
+        
+        alert('Paciente marcado como atendido');
+        loadWaitingPatients();
+    } catch (error) {
+        alert('Error al marcar como atendido: ' + error.message);
+    }
+}
+
+function pagarCita() {
+    alert("Pago simulado. En producción, conectarías a Mercado Pago o Stripe.");
+}
+
+// 2. Configuración de Supabase (solo una vez)
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM cargado, inicializando...');
+    
+    // Verificar si Supabase ya está cargado
+    if (typeof supabase === 'undefined') {
+        console.error('Supabase SDK no se cargó correctamente');
+        return;
+    }
+    
+    // Configurar Supabase SOLO UNA VEZ
+    if (!window.supabaseClient) {
+        const supabaseUrl = 'https://liwsphcpyckmbcblwysj.supabase.co';
+        const supabaseAnonKey = 'sb_publishable_chqMIPoi4u7wqjbYSB2hNg_Ys6W0pIY';
+        
+        window.supabaseClient = supabase.createClient(supabaseUrl, supabaseAnonKey);
+        console.log('Cliente Supabase inicializado');
+    }
+    
+    // Configurar el formulario
     const form = document.getElementById('joinQueueForm');
     if (form) {
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        if (!supabase) {
-          alert('Error: Sistema no inicializado. Recarga la página.');
-          return;
-        }
-        
-        // Validación básica
-        const nombre = document.getElementById('nombre').value.trim();
-        const telefono = document.getElementById('telefono').value.trim();
-        const especialidad = document.getElementById('especialidad').value;
-        const motivo = document.getElementById('motivo').value.trim();
-        
-        if (!nombre || !telefono || !especialidad || !motivo) {
-          alert('Por favor completa todos los campos requeridos.');
-          return;
-        }
-        
-        try {
-          const { data, error } = await supabase
-            .from('turnos')
-            .insert([
-              {
-                nombre: nombre,
-                telefono: telefono,
-                especialidad: especialidad,
-                motivo: motivo,
-                estado: 'esperando'
-              }
-            ])
-            .select('id, created_at');
-
-          if (error) {
-            alert('Error al unirse a la fila: ' + error.message);
-            return;
-          }
-
-          const turno = data[0];
-          const turnoId = 'TURNO-' + turno.id.substring(0, 6).toUpperCase();
-
-          // Calcular posición en la fila
-          const { count } = await supabase
-            .from('turnos')
-            .select('*', { count: 'exact', head: true })
-            .eq('estado', 'esperando')
-            .lt('created_at', turno.created_at);
-
-          const posicion = (count || 0) + 1;
-          const minutos = posicion * 10;
-          const tiempoTexto = minutos < 60 
-            ? `${minutos} minutos` 
-            : `${Math.floor(minutos / 60)} hora${Math.floor(minutos / 60) > 1 ? 's' : ''}`;
-
-          // Mostrar confirmación
-          document.getElementById('turnoId').textContent = turnoId;
-          document.getElementById('confEspecialidad').textContent = especialidad;
-          document.getElementById('tiempoEstimado').textContent = tiempoTexto;
-          document.getElementById('confirmation').style.display = 'block';
-          document.getElementById('joinQueueForm').reset();
-          
-          // Desplazar la vista hacia la confirmación
-          document.getElementById('confirmation').scrollIntoView({ behavior: 'smooth' });
-          
-        } catch (err) {
-          console.error('Error:', err);
-          alert('Ocurrió un error inesperado. Por favor intenta nuevamente.');
-        }
-      });
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Formulario enviado');
+            
+            if (!window.supabaseClient) {
+                alert('Error: Sistema no inicializado. Por favor recarga la página.');
+                return;
+            }
+            
+            // Obtener valores
+            const nombre = document.getElementById('nombre').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const especialidad = document.getElementById('especialidad').value;
+            const motivo = document.getElementById('motivo').value.trim();
+            
+            // Validación
+            if (!nombre || !telefono || !especialidad || !motivo) {
+                alert('Por favor completa todos los campos.');
+                return;
+            }
+            
+            try {
+                // Insertar en Supabase
+                const { data, error } = await window.supabaseClient
+                    .from('turnos')
+                    .insert([{
+                        nombre: nombre,
+                        telefono: telefono,
+                        especialidad: especialidad,
+                        motivo: motivo,
+                        estado: 'esperando'
+                    }])
+                    .select('id, created_at');
+                
+                if (error) throw new Error(error.message);
+                
+                const turno = data[0];
+                const turnoId = 'TURNO-' + turno.id.substring(0, 6).toUpperCase();
+                
+               
+                const { count } = await window.supabaseClient
+                    .from('turnos')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('estado', 'esperando')
+                    .lt('created_at', turno.created_at);
+                
+                const posicion = (count || 0) + 1;
+                const minutos = posicion * 10;
+                let tiempoTexto;
+                
+                if (minutos < 60) {
+                    tiempoTexto = `${minutos} minutos`;
+                } else {
+                    const horas = Math.floor(minutos / 60);
+                    const minutosRestantes = minutos % 60;
+                    tiempoTexto = `${horas} hora${horas > 1 ? 's' : ''}`;
+                    if (minutosRestantes > 0) {
+                        tiempoTexto += ` y ${minutosRestantes} minutos`;
+                    }
+                }
+                
+              
+                document.getElementById('turnoId').textContent = turnoId;
+                document.getElementById('confEspecialidad').textContent = especialidad;
+                document.getElementById('tiempoEstimado').textContent = tiempoTexto;
+                document.getElementById('confirmation').style.display = 'block';
+                form.reset();
+                
+                
+                document.getElementById('confirmation').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al procesar tu solicitud: ' + error.message);
+            }
+        });
     }
     
-    // Verificar que las pestañas estén funcionando
-    console.log('Sistema de fila virtual cargado correctamente');
-  });
+    
+    console.log('Sistema inicializado correctamente');
+    console.log('showTab disponible:', typeof showTab);
+    console.log('supabaseClient disponible:', typeof window.supabaseClient);
+});
 </script>
 
 </body>
