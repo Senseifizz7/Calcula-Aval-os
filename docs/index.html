@@ -91,10 +91,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Formulario */
-    .form-group {
-      margin-bottom: 20px;
-    }
+    .form-group { margin-bottom: 20px; }
     label {
       display: block;
       margin-bottom: 8px;
@@ -114,10 +111,7 @@
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
     }
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
+    textarea { min-height: 90px; resize: vertical; }
     button {
       padding: 14px;
       font-size: 1.05rem;
@@ -142,20 +136,15 @@
       padding: 8px 16px;
       font-size: 0.95rem;
     }
-    .btn-call:hover {
-      background: #d97706;
-    }
+    .btn-call:hover { background: #d97706; }
     .btn-done {
       background: var(--success);
       color: white;
       padding: 8px 16px;
       font-size: 0.95rem;
     }
-    .btn-done:hover {
-      background: #059669;
-    }
+    .btn-done:hover { background: #059669; }
 
-    /* Confirmación */
     .confirmation-card {
       background: #f0fdfa;
       border: 1px solid #a7f3d0;
@@ -180,10 +169,7 @@
       color: var(--primary);
     }
 
-    /* Lista de pacientes */
-    .patient-list {
-      margin-top: 20px;
-    }
+    .patient-list { margin-top: 20px; }
     .patient-item {
       display: flex;
       justify-content: space-between;
@@ -196,50 +182,14 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.04);
       transition: transform 0.2s;
     }
-    .patient-item:hover {
-      transform: translateX(4px);
-    }
-    .patient-info {
-      flex: 1;
-      margin-right: 15px;
-    }
-    .patient-info h4 {
-      font-size: 1.15rem;
-      color: var(--text);
-      margin-bottom: 6px;
-    }
-    .patient-info p {
-      color: var(--gray);
-      font-size: 0.95rem;
-      margin: 4px 0;
-    }
-    .patient-actions {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 140px;
-    }
+    .patient-item:hover { transform: translateX(4px); }
+    .patient-info { flex: 1; margin-right: 15px; }
+    .patient-info h4 { font-size: 1.15rem; color: var(--text); margin-bottom: 6px; }
+    .patient-info p { color: var(--gray); font-size: 0.95rem; margin: 4px 0; }
+    .patient-actions { display: flex; flex-direction: column; gap: 8px; min-width: 140px; }
 
-    /* Estado */
-    .status-badge {
-      display: inline-block;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
-    .status-esperando { background: #dbeafe; color: #1d4ed8; }
-    .status-llamado { background: #fef3c7; color: #d97706; }
-    .status-atendido { background: #dcfce7; color: #16a34a; }
+    .loading { text-align: center; color: var(--gray); padding: 24px; }
 
-    /* Loading */
-    .loading {
-      text-align: center;
-      color: var(--gray);
-      padding: 24px;
-    }
-
-    /* Responsive */
     @media (max-width: 600px) {
       .container { border-radius: 0; }
       header { padding: 18px; }
@@ -261,7 +211,6 @@
     <button class="tab" onclick="showTab('staff')"><i class="fas fa-user-md"></i> Personal</button>
   </div>
 
-  <!-- Paciente -->
   <div id="patient" class="tab-content active">
     <form id="joinQueueForm">
       <div class="form-group">
@@ -307,7 +256,6 @@
     </div>
   </div>
 
-  <!-- Personal -->
   <div id="staff" class="tab-content">
     <h2><i class="fas fa-tasks"></i> Panel del Personal</h2>
     <p style="margin: 12px 0; color: var(--gray);">Pacientes en espera:</p>
@@ -317,16 +265,16 @@
   </div>
 </div>
 
-<!-- Supabase SDK -->
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-  // 🔑 CONFIGURA TUS CREDENCIALES DE SUPABASE AQUÍ
+  
   const supabaseUrl = 'https://liwsphcpyckmbcblwysj.supabase.co';
   const supabaseAnonKey = 'sb_publishable_chqMIPoi4u7wqjbYSB2hNg_Ys6W0pIY';
   const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-  // Mostrar pestañas
+  // === FUNCIONES ===
   function showTab(tabId) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -340,7 +288,6 @@
     document.getElementById(tabId).classList.add('active');
   }
 
-  // Unirse a la fila
   document.getElementById('joinQueueForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
@@ -357,14 +304,13 @@
       .select('id, created_at');
 
     if (error) {
-      alert('Error al unirse a la fila: ' + error.message);
+      alert('Error: ' + error.message);
       return;
     }
 
     const turno = data[0];
     const turnoId = 'TURNO-' + turno.id.substring(0, 6).toUpperCase();
 
-    // Calcular tiempo estimado (10 min por turno anterior)
     const { count } = await supabase
       .from('turnos')
       .select('*', { count: 'exact', head: true })
@@ -377,7 +323,6 @@
       ? `${minutos} minutos` 
       : `${Math.floor(minutos / 60)} hora${Math.floor(minutos / 60) > 1 ? 's' : ''}`;
 
-    // Mostrar confirmación
     document.getElementById('turnoId').textContent = turnoId;
     document.getElementById('confEspecialidad').textContent = document.getElementById('especialidad').value;
     document.getElementById('tiempoEstimado').textContent = tiempoTexto;
@@ -385,7 +330,6 @@
     document.getElementById('joinQueueForm').reset();
   });
 
-  // Cargar pacientes en espera
   async function loadWaitingPatients() {
     const { data, error } = await supabase
       .from('turnos')
@@ -395,7 +339,7 @@
 
     const list = document.getElementById('patientList');
     if (error) {
-      list.innerHTML = `<p style="color:var(--danger);">Error al cargar: ${error.message}</p>`;
+      list.innerHTML = `<p style="color:var(--danger);">Error: ${error.message}</p>`;
       return;
     }
 
@@ -406,12 +350,12 @@
 
     list.innerHTML = '';
     data.forEach((t, i) => {
-      const div = document.createElement('div');
-      div.className = 'patient-item';
       const now = new Date();
       const waitMs = now - new Date(t.created_at);
       const waitMin = Math.floor(waitMs / 60000);
       
+      const div = document.createElement('div');
+      div.className = 'patient-item';
       div.innerHTML = `
         <div class="patient-info">
           <h4>${i + 1}. ${t.nombre}</h4>
@@ -433,7 +377,6 @@
     });
   }
 
-  
   async function marcarLlamado(id) {
     const { error } = await supabase
       .from('turnos')
@@ -451,7 +394,7 @@
   }
 
   function pagarCita() {
-    alert("Redirigiendo al sistema de pagos...\n(En producción: conectar con Mercado Pago, Stripe, etc.)");
+    alert("Pago simulado. En producción, conectarías a Mercado Pago o Stripe.");
   }
 </script>
 
